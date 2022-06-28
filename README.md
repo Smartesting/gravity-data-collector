@@ -24,14 +24,12 @@ Install the logger and initialize it
 
 The ```GravityCollector.init()``` can take an ```options``` object
 
-| key     | use                                                                              | default value           |   |   |
-|---------|----------------------------------------------------------------------------------|-------------------------|---|---|
-| baseUrl | The URL of the Gravity server you want to send the usage traces to               | "https://gravity.smartesting.com" |   |   |
-| debug   | Prints the usage data in the browser console instead of posting them to a server | false                   |   |   |
-| authorizeBatch | Queues up to 10 logs before sending them to Gravity                              | false ||
-| logRequests | Logs Ajax requests and their responses                                           | false ||||
-
-
+| key            | use                                                                              | default value                     |     |     |
+|----------------|----------------------------------------------------------------------------------|-----------------------------------|-----|-----|
+| baseUrl        | The URL of the Gravity server you want to send the usage traces to               | "https://gravity.smartesting.com" |     |     |
+| debug          | Prints the usage data in the browser console instead of posting them to a server | false                             |     |     |
+| authorizeBatch | Queues up to 10 logs before sending them to Gravity                              | false                             ||
+| logRequests    | Logs Ajax requests and their responses                                           | false                             ||||
 
 ## Sandbox
 

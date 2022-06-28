@@ -1,3 +1,3 @@
 export default interface TLogHandler {
-  run: (log: Log) => void
+    run: (log: Log) => void;
 }
