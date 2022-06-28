@@ -6,11 +6,11 @@ import ClickEventHandler from './event-handlers/ClickEventHandler';
 import FocusOutEventHandler from './event-handlers/FocusOutEventHandler';
 import {createSessionEvent} from '../utils/createSessionEvent';
 
-class LoggerWrapper {
-  options?: TLoggerOptions
+class CollectorWrapper {
+  options?: TCollectorOptions
   logHandler: TLogHandler
 
-  constructor(authKey: string, options?: TLoggerOptions) {
+  constructor(authKey: string, options?: TCollectorOptions) {
       this.options = options
 
       const sessionId = uuidv4()
@@ -36,4 +36,4 @@ class LoggerWrapper {
   }
 }
 
-export default LoggerWrapper
+export default CollectorWrapper

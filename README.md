@@ -16,13 +16,13 @@ Install the logger and initialize it
     }
 
   // initialize
-  import GravityLogger from 'gravity-data-collector'
-  GravityLogger.init(/* API KEY*/)
+  import GravityCollector from 'gravity-data-collector'
+  GravityCollector.init(/* API KEY*/)
 ```
 
 ## Options
 
-The ```GravityLogger.init()``` can take an ```options``` object
+The ```GravityCollector.init()``` can take an ```options``` object
 
 | key     | use                                                                              | default value           |   |   |
 |---------|----------------------------------------------------------------------------------|-------------------------|---|---|

@@ -5,10 +5,10 @@ import ClickEventHandler from "./event-handlers/ClickEventHandler";
 import FocusOutEventHandler from "./event-handlers/FocusOutEventHandler";
 import {DebuggerLogHandler} from "./log-handlers/toDebug";
 import GravityLogHandler from "./log-handlers/toGravity";
-import LoggerWrapper from "./LoggerWrapper";
+import CollectorWrapper from "./CollectorWrapper";
 
 
-describe('LoggerWrapper', () => {
+describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
@@ -17,13 +17,13 @@ describe('LoggerWrapper', () => {
 
   describe('constructor', ()=> {
     it('instantiates a GravityLogHandler by default', () => {
-      const sut = new LoggerWrapper("abcd")
+      const sut = new CollectorWrapper("abcd")
       expect(sut.logHandler).toBeInstanceOf(GravityLogHandler)
     })
 
     it('instantiates a DebugLogHandler when options.debug', () => {
       vi.spyOn(DebuggerLogHandler.prototype, 'run').mockImplementation(() => { return {}})
-      const sut = new LoggerWrapper("abcd", {baseUrl: 'localhost', debug: true})
+      const sut = new CollectorWrapper("abcd", {baseUrl: 'localhost', debug: true})
       expect(sut.logHandler).toBeInstanceOf(DebuggerLogHandler)
     })
 
@@ -37,20 +37,20 @@ describe('LoggerWrapper', () => {
       const mock = vi.spyOn(GravityLogHandler.prototype, 'run')
         .mockImplementation((log: Log) => { return {}})
 
-      new LoggerWrapper("abcd")
+      new CollectorWrapper("abcd")
       expect(mock).toHaveBeenCalledWith(expectedEvent)
     })
 
     it('initializes ClickEventHandler', () => {
       vi.spyOn(ClickEventHandler.prototype, 'init').mockImplementation(() => { return {}})
-      new LoggerWrapper("abcd")
+      new CollectorWrapper("abcd")
 
       expect(ClickEventHandler.prototype.init).toHaveBeenCalledOnce()
     })
 
     it('initializes FocusOutEventHandler', () => {
       vi.spyOn(FocusOutEventHandler.prototype, 'init').mockImplementation(() => {return {}})
-      new LoggerWrapper("abcd")
+      new CollectorWrapper("abcd")
 
       expect(FocusOutEventHandler.prototype.init).toHaveBeenCalledOnce()
     })

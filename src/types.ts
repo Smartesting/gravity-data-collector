@@ -79,7 +79,7 @@ type ViewportData = {
   pixelDepth?: number;
 };
 
-type TLoggerOptions = {
+type TCollectorOptions = {
   baseUrl: string;
   debug?: boolean;
   authorizeBatch?: boolean;
