@@ -1,3 +1,5 @@
+![Node workflow](https://github.com/Smartesting/gravity-data-collector/actions/workflows/node.js.yml/badge.svg)
+
 # README #
 
 This repo contains the browser implementation of the Gravity Data Extractor
