@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gravity Data Collector - Sandbox</title>
+    <script id="logger" async type="text/javascript" src="dist/bundle.js"></script>
+
+    <script>
+      var script = document.querySelector('#logger');
+      script.addEventListener('load', function() {
+        window.GravityLogger.init('abcd', { debug: true })
+        window.GravityLogger.logEvent('A custom event', { attr1: "a string", attr2: 42, attr3: true})
+      });
+    </script>
+</head>
+
+  <body>
+    <button>Click me</button>
+    <input placeholder="Change value to track it" />
+  </body>
+</html>
