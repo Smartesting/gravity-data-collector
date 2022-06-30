@@ -1,34 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
-import { createSessionEvent } from "../utils/createSessionEvent";
-import ClickEventHandler from "./event-handlers/ClickEventHandler";
-import FocusOutEventHandler from "./event-handlers/FocusOutEventHandler";
-import { DebuggerLogHandler } from "./log-handlers/toDebug";
-import GravityLogHandler from "./log-handlers/toGravity";
+import ClickEventListener from "../eventListener/ClickEventListener";
+import FocusOutEventListener from "../eventListener/FocusOutEventListener";
+import { ConsoleEventHandler } from "../eventHandler/ConsoleEventHandler";
+import GravityEventHandler from "../eventHandler/GravityEventHandler";
 import CollectorWrapper from "./CollectorWrapper";
-
+import { createSessionEvent } from "../event/event";
 
 describe("CollectorWrapper", () => {
     beforeEach(() => {
         mockWindowScreen();
         mockWindowLocation();
-        vi.spyOn(GravityLogHandler.prototype, "run").mockImplementation((log: Log) => {
+        vi.spyOn(GravityEventHandler.prototype, "run").mockImplementation(() => {
             return {};
         });
     });
 
     describe("constructor", () => {
-        it("instantiates a GravityLogHandler by default", () => {
+        it("instantiates a GravityEventHandler by default", () => {
             const sut = new CollectorWrapper("abcd");
-            expect(sut.logHandler).toBeInstanceOf(GravityLogHandler);
+            expect(sut.eventHandler).toBeInstanceOf(GravityEventHandler);
         });
 
-        it("instantiates a DebugLogHandler when options.debug", () => {
-            vi.spyOn(DebuggerLogHandler.prototype, "run").mockImplementation(() => {
+        it("instantiates a ConsoleEventHandler when options.debug", () => {
+            vi.spyOn(ConsoleEventHandler.prototype, "run").mockImplementation(() => {
                 return {};
             });
             const sut = new CollectorWrapper("abcd", { baseUrl: "localhost", debug: true });
-            expect(sut.logHandler).toBeInstanceOf(DebuggerLogHandler);
+            expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler);
         });
 
         it("a \"sessionStarted\" event is sent when initialized", () => {
@@ -38,8 +37,8 @@ describe("CollectorWrapper", () => {
 
             const expectedEvent = createSessionEvent();
 
-            const mock = vi.spyOn(GravityLogHandler.prototype, "run")
-                .mockImplementation((log: Log) => {
+            const mock = vi.spyOn(GravityEventHandler.prototype, "run")
+                .mockImplementation(() => {
                     return {};
                 });
 
@@ -48,21 +47,21 @@ describe("CollectorWrapper", () => {
         });
 
         it("initializes ClickEventHandler", () => {
-            vi.spyOn(ClickEventHandler.prototype, "init").mockImplementation(() => {
+            vi.spyOn(ClickEventListener.prototype, "init").mockImplementation(() => {
                 return {};
             });
             new CollectorWrapper("abcd");
 
-            expect(ClickEventHandler.prototype.init).toHaveBeenCalledOnce();
+            expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce();
         });
 
         it("initializes FocusOutEventHandler", () => {
-            vi.spyOn(FocusOutEventHandler.prototype, "init").mockImplementation(() => {
+            vi.spyOn(FocusOutEventListener.prototype, "init").mockImplementation(() => {
                 return {};
             });
             new CollectorWrapper("abcd");
 
-            expect(FocusOutEventHandler.prototype.init).toHaveBeenCalledOnce();
+            expect(FocusOutEventListener.prototype.init).toHaveBeenCalledOnce();
         });
     });
 });

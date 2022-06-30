@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockClick, mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
 import { JSDOM } from "jsdom";
-import createGravityEvent from "./createGravityEvent";
 import EventType from "./eventType";
-import getLocationData from "./getLocationData";
-import getViewportData from "./getViewportData";
+import { createGravityEvent, createSessionEvent } from "./event";
+import viewport from "../utils/viewport";
+import location from "../utils/location";
 
 describe("createGravityEvent", () => {
     beforeEach(() => {
@@ -25,7 +25,7 @@ describe("createGravityEvent", () => {
         const elt = dom.window.document.querySelector("div");
         const event = await createGravityEvent(mockClick(elt as HTMLElement) as Event, EventType.Click);
 
-        expect(event.location).toEqual(getLocationData());
+        expect(event.location).toEqual(location());
     });
 
     it("returns viewport data", async () => {
@@ -33,7 +33,7 @@ describe("createGravityEvent", () => {
         const elt = dom.window.document.querySelector("div");
         const event = await createGravityEvent(mockClick(elt as HTMLElement) as Event, EventType.Click);
 
-        expect(event.viewportData).toEqual(getViewportData());
+        expect(event.viewportData).toEqual(viewport());
     });
 
     it("returns recordedAt", async () => {
@@ -90,5 +90,46 @@ describe("createGravityEvent", () => {
             expect(event.eventData?.elementRelOffsetX).toEqual(Math.trunc(clickEvent.clientX - (eltBounds?.left || 0)));
             expect(event.eventData?.elementRelOffsetY).toEqual(Math.trunc(clickEvent.clientY - (eltBounds?.top || 0)));
         });
+    });
+});
+
+describe("createSessionEvent", () => {
+    beforeEach(() => {
+        mockWindowScreen();
+        mockWindowLocation();
+    });
+
+    it("returns a GravitySessionStartedEvent", () => {
+        expect(createSessionEvent().type).toBe(EventType.SessionStarted);
+    });
+
+    it("returns viewportData", () => {
+        expect(createSessionEvent().viewportData).toEqual(viewport());
+    });
+
+    it("returns locationData", () => {
+        expect(createSessionEvent().location).toEqual(location());
+    });
+
+    it("returns recordedAt", () => {
+        const now = Date.parse("2022-05-12");
+        vi.useFakeTimers();
+        vi.setSystemTime(Date.parse("2022-05-12"));
+
+        expect(createSessionEvent().recordedAt).toEqual(now);
+    });
+
+    it("returns Cypress current test if any", () => {
+        expect(createSessionEvent().test).toBeUndefined();
+
+        Object.defineProperty(window, "Cypress", {
+            value: {
+                currentTest: {
+                    titlePath: ["foo", "bar", "testing stuff"]
+                }
+            }
+        });
+
+        expect(createSessionEvent().test).toEqual("foo > bar > testing stuff");
     });
 });

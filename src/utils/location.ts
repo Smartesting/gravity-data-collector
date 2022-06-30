@@ -1,4 +1,6 @@
-function getLocationData(): GravityLocation {
+import { GravityLocation } from "../types";
+
+function location(): GravityLocation {
     if (!window) {
         return {
             href: "",
@@ -14,4 +16,4 @@ function getLocationData(): GravityLocation {
     };
 }
 
-export default getLocationData;
+export default location;

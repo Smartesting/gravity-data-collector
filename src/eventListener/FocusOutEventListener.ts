@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
-import TLogHandler from "../log-handlers/TLogHandler";
-import createGravityEvent from "../../utils/createGravityEvent";
-import EventType from "../../utils/eventType";
-import { DataAnonymizer } from "../../utils/dataAnonymizer";
+import IEventHandler from "../eventHandler/IEventHandler";
+import EventType from "../event/eventType";
+import { DataAnonymizer } from "../anonymizer/dataAnonymizer";
+import { createGravityEvent } from "../event/event";
 
 const anonymizer = new DataAnonymizer(uuidv4());
 
 type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement;
 
-class FocusOutEventHandler {
-    private logHandler: TLogHandler;
+class FocusOutEventListener {
+    private eventHandler: IEventHandler;
 
-    constructor(logHandler: TLogHandler) {
-        this.logHandler = logHandler;
+    constructor(eventHandler: IEventHandler) {
+        this.eventHandler = eventHandler;
     }
 
     init() {
@@ -26,7 +26,7 @@ class FocusOutEventHandler {
                     if (gravityEvent.target) {
                         gravityEvent.target.value = inputValueType(elementTarget);
                     }
-                    this.logHandler.run(gravityEvent);
+                    this.eventHandler.run(gravityEvent);
                 }
             },
             true
@@ -57,4 +57,4 @@ function inputValueType(element: HTMLInputWithValue) {
     }
 }
 
-export default FocusOutEventHandler;
+export default FocusOutEventListener;

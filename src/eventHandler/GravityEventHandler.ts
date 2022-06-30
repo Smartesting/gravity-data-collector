@@ -1,15 +1,16 @@
-import TLogHandler from "./TLogHandler";
+import IEventHandler from "./IEventHandler";
+import { TEvent } from "../types";
 
-export default class GravityLogHandler implements TLogHandler {
+export default class GravityEventHandler implements IEventHandler {
     readonly DEFAULT_SERVER_BASE_URL = "https://gravity.smartesting.com";
-    readonly LOG_BATCH_LIMIT = 10;
+    readonly EVENT_BATCH_LIMIT = 10;
 
     serverUrl: string;
     private readonly authKey: string;
     private readonly sessionId: string;
     private readonly allowBatch: boolean;
 
-    private logQueue: Log[];
+    private eventQueue: TEvent[];
     private isRequestIdleCallbackScheduled: boolean;
 
     constructor(authKey: string, sessionId: string, baseServerUrl?: string | null, batch?: boolean | null) {
@@ -17,12 +18,12 @@ export default class GravityLogHandler implements TLogHandler {
         this.authKey = authKey;
         this.sessionId = sessionId;
         this.allowBatch = batch || false;
-        this.logQueue = [];
+        this.eventQueue = [];
         this.isRequestIdleCallbackScheduled = false;
     }
 
-    run(log: Log) {
-        this.logQueue.push(log);
+    run(event: TEvent) {
+        this.eventQueue.push(event);
         this.schedulePendingEvents();
     }
 
@@ -33,15 +34,15 @@ export default class GravityLogHandler implements TLogHandler {
         this.isRequestIdleCallbackScheduled = true;
 
         if ("requestIdleCallback" in window) {
-            requestIdleCallback(this.pushLogToServer.bind(this));
+            requestIdleCallback(this.pushEventToServer.bind(this));
         } else {
-            this.pushLogToServer();
+            this.pushEventToServer();
         }
     }
 
     // requestIdCallback for sending analytics data
     // https://developer.chrome.com/blog/using-requestidlecallback/#using-requestidlecallback-for-sending-analytics-data
-    private pushLogToServer(deadline?: { timeRemaining: any } | undefined) {
+    private pushEventToServer(deadline?: { timeRemaining: any } | undefined) {
         this.isRequestIdleCallbackScheduled = false;
 
         if (typeof deadline === "undefined")
@@ -51,17 +52,17 @@ export default class GravityLogHandler implements TLogHandler {
                 }
             };
 
-        while (deadline.timeRemaining() > 0 && this.logQueue.length > 0) {
-            let logBatch = null;
+        while (deadline.timeRemaining() > 0 && this.eventQueue.length > 0) {
+            let eventBatch = null;
 
             if (this.allowBatch) {
-                logBatch = [];
-                while (logBatch.length < this.LOG_BATCH_LIMIT && this.logQueue.length > 0) {
-                    if (this.logQueue.length > 0)
-                        logBatch.push(this.logQueue.shift());
+                eventBatch = [];
+                while (eventBatch.length < this.EVENT_BATCH_LIMIT && this.eventQueue.length > 0) {
+                    if (this.eventQueue.length > 0)
+                        eventBatch.push(this.eventQueue.shift());
                 }
             } else {
-                logBatch = this.logQueue.shift();
+                eventBatch = this.eventQueue.shift();
             }
 
             fetch(this.serverUrl, {
@@ -71,11 +72,11 @@ export default class GravityLogHandler implements TLogHandler {
                     "x-gravity-auth-key": this.authKey,
                     "x-gravity-session": this.sessionId
                 },
-                body: JSON.stringify(logBatch)
+                body: JSON.stringify(eventBatch)
             });
         }
 
-        if (this.logQueue.length > 0)
+        if (this.eventQueue.length > 0)
             this.schedulePendingEvents();
     }
 }

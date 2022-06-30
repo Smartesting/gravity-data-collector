@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockWindowLocation, mockWindowScreen } from "../../test-utils/mocks";
-import { createSessionEvent } from "../../utils/createSessionEvent";
-import GravityLogHandler from "./toGravity";
+import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
+import GravityEventHandler from "./GravityEventHandler";
+import { createSessionEvent } from "../event/event";
 
 declare module "vitest" {
     export interface TestContext {
@@ -9,10 +9,10 @@ declare module "vitest" {
     }
 }
 
-describe("GravityLogHandler", () => {
+describe("GravityEventHandler", () => {
     describe("constructor", () => {
         it("default server url to Gravity production environment", () => {
-            const sut = new GravityLogHandler("abcd", "aaa-111");
+            const sut = new GravityEventHandler("abcd", "aaa-111");
             expect(sut.serverUrl).toEqual(sut.DEFAULT_SERVER_BASE_URL + "/gravitylogger/savelog");
         });
     });
@@ -38,8 +38,8 @@ describe("GravityLogHandler", () => {
             if (ctx.actualFetch) global.fetch = ctx.actualFetch;
         });
 
-        it("sends log to Gravity server", () => {
-            const sut = new GravityLogHandler("abcd", "aaa-111");
+        it("sends event to Gravity server", () => {
+            const sut = new GravityEventHandler("abcd", "aaa-111");
             const sessionEvent = createSessionEvent();
             sut.run(createSessionEvent());
 
@@ -56,8 +56,8 @@ describe("GravityLogHandler", () => {
             expect(global.fetch).toBeCalledWith(expectedURL, expectedData);
         });
 
-        it("sends a batch of logs if the option is set", () => {
-            const sut = new GravityLogHandler("abcd", "aaa-111", undefined, true);
+        it("sends a batch of events if the option is set", () => {
+            const sut = new GravityEventHandler("abcd", "aaa-111", undefined, true);
             const sessionEvent = createSessionEvent();
             sut.run(createSessionEvent());
 

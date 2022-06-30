@@ -1,10 +1,11 @@
-import CollectorWrapper from "./lib/CollectorWrapper";
+import CollectorWrapper from "./CollectorWrapper";
+import { TCollectorOptions } from "../types";
 
 export default class GravityCollector {
-    loggerWrapper: CollectorWrapper | undefined;
+    collectorWrapper: CollectorWrapper | undefined;
 
     constructor(collectorWrapper: CollectorWrapper) {
-        this.loggerWrapper = collectorWrapper;
+        this.collectorWrapper = collectorWrapper;
     }
 
     static get instance() {

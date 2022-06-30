@@ -1,4 +1,6 @@
-function getViewportData(): ViewportData {
+import { ViewportData } from "../types";
+
+function viewport(): ViewportData {
     if (!window) {
         return {};
     }
@@ -19,4 +21,4 @@ function getViewportData(): ViewportData {
     };
 }
 
-export default getViewportData;
+export default viewport;

@@ -1,6 +1,7 @@
-import TLogHandler from "./TLogHandler";
+import IEventHandler from "./IEventHandler";
+import { TEvent } from "../types";
 
-export class DebuggerLogHandler implements TLogHandler {
+export class ConsoleEventHandler implements IEventHandler {
     private readonly authKey: string;
     private readonly sessionId: string;
 
@@ -9,10 +10,10 @@ export class DebuggerLogHandler implements TLogHandler {
         this.sessionId = sessionId;
     }
 
-    run(log: Log) {
+    run(event: TEvent) {
         console.debug("[GL DEBUG]");
         console.debug("Session: ", this.sessionId);
         console.debug("authKey: ", this.authKey);
-        console.debug(log);
+        console.debug(event);
     }
 }

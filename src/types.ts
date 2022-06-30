@@ -1,7 +1,7 @@
-type Log = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent | GravityRequestEvent;
-type GravityEventData = GravityClickEventData;
+export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent | GravityRequestEvent;
+export type GravityEventData = GravityClickEventData;
 
-type GravitySessionStartedEvent = {
+export type GravitySessionStartedEvent = {
     type: string;
     location: GravityLocation;
     recordedAt?: number;
@@ -9,7 +9,7 @@ type GravitySessionStartedEvent = {
     test?: string;
 };
 
-type GravityEvent = {
+export type GravityEvent = {
     type: string;
     location: GravityLocation;
     recordedAt?: number;
@@ -18,7 +18,7 @@ type GravityEvent = {
     eventData?: GravityEventData;
 };
 
-type GravityCustomEvent = {
+export type GravityCustomEvent = {
     type: string;
     location: GravityLocation;
     recordedAt?: number;
@@ -27,7 +27,7 @@ type GravityCustomEvent = {
     viewportData: ViewportData;
 };
 
-type GravityRequestEvent = {
+export type GravityRequestEvent = {
     type: string;
     requestData: {
         type: string;
@@ -46,7 +46,7 @@ type GravityRequestEvent = {
     };
 };
 
-type GravityEventTarget =
+export type GravityEventTarget =
     | {
     element: string;
     screenshot?: string
@@ -57,15 +57,15 @@ type GravityEventTarget =
 }
     | Record<string, string>;
 
-type GravityLocation = {
+export type GravityLocation = {
     href: string;
     pathname: string;
     search: string;
 };
 
-type CustomEventDataType = Record<string, string | number | boolean | Date>;
+export type CustomEventDataType = Record<string, string | number | boolean | Date>;
 
-type ViewportData = {
+export type ViewportData = {
     viewportWidth?: number;
     viewportHeight?: number;
     windowWidth?: number;
@@ -79,14 +79,14 @@ type ViewportData = {
     pixelDepth?: number;
 };
 
-type TCollectorOptions = {
+export type TCollectorOptions = {
     baseUrl: string;
     debug?: boolean;
     authorizeBatch?: boolean;
     logRequests?: boolean;
 };
 
-type GravityClickEventData = {
+export type GravityClickEventData = {
     elementRelOffsetX: number;
     elementRelOffsetY: number;
     clickOffsetX: number;

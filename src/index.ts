@@ -1,5 +1,5 @@
 import "regenerator-runtime/runtime";
-import GravityCollector from "./collector";
+import GravityCollector from "./collector/GravityCollector";
 
 if (window) {
     (window as any).GravityCollector = GravityCollector;
