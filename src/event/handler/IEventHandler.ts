@@ -1,4 +1,4 @@
-import { TEvent } from "../types";
+import { TEvent } from "../../types";
 
 export default interface IEventHandler {
     run: (event: TEvent) => void;

@@ -1,5 +1,5 @@
 import CollectorWrapper from "./CollectorWrapper";
-import { TCollectorOptions } from "../types";
+import { CollectorOptions } from "../types";
 
 export default class GravityCollector {
     collectorWrapper: CollectorWrapper | undefined;
@@ -12,7 +12,7 @@ export default class GravityCollector {
         return (window as any)._GravityCollector;
     }
 
-    static init(authKey: string, options?: TCollectorOptions) {
+    static init(authKey: string, options?: CollectorOptions) {
         if (!window) {
             throw new Error("Gravity Data Collector needs a `window` instance in order to work");
         }

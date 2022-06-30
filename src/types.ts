@@ -73,13 +73,13 @@ export type ViewportData = {
     screenWidth?: number;
     screenHeight?: number;
     availScreenWidth?: number;
-    avaiScreenHeight?: number;
+    availScreenHeight?: number;
     orientation?: string;
     colorDepth?: number;
     pixelDepth?: number;
 };
 
-export type TCollectorOptions = {
+export type CollectorOptions = {
     baseUrl: string;
     debug?: boolean;
     authorizeBatch?: boolean;

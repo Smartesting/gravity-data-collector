@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
-import IEventHandler from "../eventHandler/IEventHandler";
-import GravityEventHandler from "../eventHandler/GravityEventHandler";
-import { ConsoleEventHandler } from "../eventHandler/ConsoleEventHandler";
-import ClickEventListener from "../eventListener/ClickEventListener";
-import FocusOutEventListener from "../eventListener/FocusOutEventListener";
+import IEventHandler from "../event/handler/IEventHandler";
+import GravityEventHandler from "../event/handler/GravityEventHandler";
+import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
+import ClickEventListener from "../event/listener/ClickEventListener";
+import FocusOutEventListener from "../event/listener/FocusOutEventListener";
 import { createSessionEvent } from "../event/event";
-import { TCollectorOptions } from "../types";
+import { CollectorOptions } from "../types";
 
 class CollectorWrapper {
-    options?: TCollectorOptions;
+    options?: CollectorOptions;
     eventHandler: IEventHandler;
 
-    constructor(authKey: string, options?: TCollectorOptions) {
+    constructor(authKey: string, options?: CollectorOptions) {
         this.options = options;
 
         const sessionId = uuidv4();

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
+import { mockWindowLocation, mockWindowScreen } from "../../test-utils/mocks";
 import GravityEventHandler from "./GravityEventHandler";
-import { createSessionEvent } from "../event/event";
+import { createSessionEvent } from "../event";
 
 declare module "vitest" {
     export interface TestContext {

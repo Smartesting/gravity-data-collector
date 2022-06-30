@@ -14,7 +14,7 @@ function viewport(): ViewportData {
         screenWidth: window.screen.width,
         screenHeight: window.screen.height,
         availScreenWidth: window.screen.availWidth,
-        avaiScreenHeight: window.screen.availHeight,
+        availScreenHeight: window.screen.availHeight,
         colorDepth,
         pixelDepth,
         orientation: window.screen.orientation.type

@@ -1,5 +1,5 @@
 import IEventHandler from "./IEventHandler";
-import { TEvent } from "../types";
+import { TEvent } from "../../types";
 
 export default class GravityEventHandler implements IEventHandler {
     readonly DEFAULT_SERVER_BASE_URL = "https://gravity.smartesting.com";

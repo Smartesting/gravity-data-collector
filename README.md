@@ -8,13 +8,15 @@ This repo contains the browser implementation of the Gravity Data Extractor
 
 Install the logger and initialize it
 
-```
+```json
   // package.json
   "dependencies": {
       ...
       "gravity-data-collector": "git+https://github.com/Smartesting/gravity-data-collector.git"
     }
+```
 
+```typescript
   // initialize
   import GravityCollector from 'gravity-data-collector'
   GravityCollector.init(/* API KEY*/)

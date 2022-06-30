@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
-import ClickEventListener from "../eventListener/ClickEventListener";
-import FocusOutEventListener from "../eventListener/FocusOutEventListener";
-import { ConsoleEventHandler } from "../eventHandler/ConsoleEventHandler";
-import GravityEventHandler from "../eventHandler/GravityEventHandler";
+import ClickEventListener from "../event/listener/ClickEventListener";
+import FocusOutEventListener from "../event/listener/FocusOutEventListener";
+import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
+import GravityEventHandler from "../event/handler/GravityEventHandler";
 import CollectorWrapper from "./CollectorWrapper";
 import { createSessionEvent } from "../event/event";
 

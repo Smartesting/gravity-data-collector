@@ -34,5 +34,3 @@ export function mockClick(target: HTMLElement) {
     };
     return event;
 }
-
-export default { mockWindowScreen, mockWindowLocation, mockClick };

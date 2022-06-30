@@ -1,5 +1,5 @@
 import IEventHandler from "./IEventHandler";
-import { TEvent } from "../types";
+import { TEvent } from "../../types";
 
 export class ConsoleEventHandler implements IEventHandler {
     private readonly authKey: string;
