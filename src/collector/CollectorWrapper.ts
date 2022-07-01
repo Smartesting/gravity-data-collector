@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 import IEventHandler from "../event/handler/IEventHandler";
-import GravityEventHandler from "../event/handler/GravityEventHandler";
 import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
 import ClickEventListener from "../event/listener/ClickEventListener";
 import FocusOutEventListener from "../event/listener/FocusOutEventListener";
@@ -16,11 +15,7 @@ class CollectorWrapper {
 
         const sessionId = uuidv4();
 
-        if (this.options && this.options.debug) {
-            this.eventHandler = new ConsoleEventHandler(authKey, sessionId);
-        } else {
-            this.eventHandler = new GravityEventHandler(authKey, sessionId, (options && options.baseUrl) || null, (options && options.authorizeBatch) || false);
-        }
+        this.eventHandler = new ConsoleEventHandler(authKey, sessionId);
 
         this.initSession();
         this.initializeEventHandlers();

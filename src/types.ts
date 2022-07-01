@@ -81,10 +81,14 @@ export type ViewportData = {
 
 export type CollectorOptions = {
     baseUrl: string;
-    debug?: boolean;
     authorizeBatch?: boolean;
     logRequests?: boolean;
-};
+} & ConsoleEventHandlerOptions;
+
+export type ConsoleEventHandlerOptions = {
+    simulation?: boolean,
+    maxDelay?: number
+}
 
 export type GravityClickEventData = {
     elementRelOffsetX: number;

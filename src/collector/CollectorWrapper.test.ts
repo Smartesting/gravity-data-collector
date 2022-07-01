@@ -3,7 +3,6 @@ import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
 import ClickEventListener from "../event/listener/ClickEventListener";
 import FocusOutEventListener from "../event/listener/FocusOutEventListener";
 import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
-import GravityEventHandler from "../event/handler/GravityEventHandler";
 import CollectorWrapper from "./CollectorWrapper";
 import { createSessionEvent } from "../event/event";
 
@@ -11,22 +10,14 @@ describe("CollectorWrapper", () => {
     beforeEach(() => {
         mockWindowScreen();
         mockWindowLocation();
-        vi.spyOn(GravityEventHandler.prototype, "run").mockImplementation(() => {
+        vi.spyOn(ConsoleEventHandler.prototype, "run").mockImplementation(() => {
             return {};
         });
     });
 
     describe("constructor", () => {
-        it("instantiates a GravityEventHandler by default", () => {
+        it("instantiates a ConsoleEventHandler by default", () => {
             const sut = new CollectorWrapper("abcd");
-            expect(sut.eventHandler).toBeInstanceOf(GravityEventHandler);
-        });
-
-        it("instantiates a ConsoleEventHandler when options.debug", () => {
-            vi.spyOn(ConsoleEventHandler.prototype, "run").mockImplementation(() => {
-                return {};
-            });
-            const sut = new CollectorWrapper("abcd", { baseUrl: "localhost", debug: true });
             expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler);
         });
 
@@ -37,7 +28,7 @@ describe("CollectorWrapper", () => {
 
             const expectedEvent = createSessionEvent();
 
-            const mock = vi.spyOn(GravityEventHandler.prototype, "run")
+            const mock = vi.spyOn(ConsoleEventHandler.prototype, "run")
                 .mockImplementation(() => {
                     return {};
                 });

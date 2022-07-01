@@ -30,7 +30,7 @@ describe("ConsoleEventHandler", () => {
             if (ctx.actualDebug) console.debug = ctx.actualDebug;
         });
 
-        it("sends event to Gravity server", () => {
+        it("print event to debug console", () => {
             const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111");
             const sessionEvent = createSessionEvent();
             consoleEventHandler.run(createSessionEvent());
@@ -39,6 +39,34 @@ describe("ConsoleEventHandler", () => {
             expect(console.debug).toBeCalledWith("Session: ", "aaa-111");
             expect(console.debug).toBeCalledWith("authKey: ", "abcd");
             expect(console.debug).toBeCalledWith(sessionEvent);
+        });
+
+        it("print event with delay in simulation mode", () => {
+            const maxDelay = 2000;
+            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", {
+                simulation: true,
+                maxDelay
+            });
+            const sessionEvent = createSessionEvent();
+            consoleEventHandler.run(createSessionEvent());
+
+            vi.advanceTimersByTime(maxDelay);
+
+            expect(console.debug).toBeCalledWith("[GL DEBUG]");
+            expect(console.debug).toBeCalledWith("Session: ", "aaa-111");
+            expect(console.debug).toBeCalledWith("authKey: ", "abcd");
+            expect(console.debug).toBeCalledWith(sessionEvent);
+        });
+
+        it("wait before print event with delay in simulation mode", () => {
+            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", {
+                simulation: true,
+                maxDelay: 10000
+            });
+
+            consoleEventHandler.run(createSessionEvent());
+
+            expect(console.debug).toBeCalledTimes(0);
         });
     });
 });
