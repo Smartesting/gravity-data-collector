@@ -4,7 +4,8 @@ import unique from "@cypress/unique-selector";
 import viewport from "../utils/viewport";
 import location from "../utils/location";
 import { getHTMLElementAttributes } from "../utils/dom";
-import { GravityEvent, GravityRequestEvent, GravitySessionStartedEvent } from "../types";
+import { GravityEvent, GravitySessionStartedEvent } from "../types";
+import pJson from "./../../package.json";
 
 export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
     const gravityEvent: GravityEvent = {
@@ -44,33 +45,7 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
             // do nothing
         }
     }
-
     return gravityEvent;
-}
-
-export function createGravityRequestEvent(): GravityRequestEvent {
-    return {
-        type: EventType.Resource,
-        requestData: {
-            type: EventType.Request,
-            url: "",
-            method: "",
-            body: "",
-            recordedAt: Date.now(),
-            location: location()
-        },
-        responseData: {
-            type: EventType.Response,
-            status: 0,
-            body: "",
-            location: {
-                href: "",
-                pathname: "",
-                search: ""
-            },
-            recordedAt: undefined
-        }
-    };
 }
 
 export function createSessionEvent(): GravitySessionStartedEvent {
@@ -78,7 +53,8 @@ export function createSessionEvent(): GravitySessionStartedEvent {
         type: EventType.SessionStarted,
         recordedAt: Date.now(),
         location: location(),
-        viewportData: viewport()
+        viewportData: viewport(),
+        version: pJson.version
     };
 
     if ((<any>window).Cypress && (<any>window).Cypress.currentTest) {

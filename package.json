@@ -18,9 +18,9 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "build-sandbox": "browserify lib/index.js -p esmify -o dist/bundle.js",
-    "build-minified": "browserify lib/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
-    "watch-sandbox": "watchify lib/index.js -o dist/bundle.js -v"
+    "build-sandbox": "browserify lib/src/index.js -p esmify -o dist/bundle.js",
+    "build-minified": "browserify lib/src/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
+    "watch-sandbox": "watchify lib/src/index.js -o dist/bundle.js -v"
   },
   "repository": {
     "type": "git",
