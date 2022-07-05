@@ -3,6 +3,8 @@ import EventType from "./event/eventType";
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent;
 export type GravityEventData = GravityClickEventData;
 
+export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement;
+
 export type EventCommonProperties = {
     type: EventType,
     location: GravityLocation,
