@@ -1,6 +1,6 @@
 import { ViewportData } from "../types";
 
-function viewport(): ViewportData {
+function viewport(window: Window = global.window): ViewportData {
     if (!window) {
         return {};
     }
@@ -17,7 +17,7 @@ function viewport(): ViewportData {
         availScreenHeight: window.screen.availHeight,
         colorDepth,
         pixelDepth,
-        orientation: window.screen.orientation.type
+        orientation: window.screen.orientation ? window.screen.orientation.type : "landscape-primary"
     };
 }
 

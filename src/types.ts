@@ -64,10 +64,10 @@ export type ConsoleEventHandlerOptions = {
 }
 
 export type GravityClickEventData = {
-    elementRelOffsetX: number,
-    elementRelOffsetY: number,
     clickOffsetX: number,
     clickOffsetY: number,
-    elementOffsetX: number,
-    elementOffsetY: number
+    elementRelOffsetX?: number,
+    elementRelOffsetY?: number,
+    elementOffsetX?: number,
+    elementOffsetY?: number
 }

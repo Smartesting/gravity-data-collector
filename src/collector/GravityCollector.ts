@@ -17,6 +17,6 @@ export default class GravityCollector {
             throw new Error("Gravity Data Collector needs a `window` instance in order to work");
         }
 
-        (window as any)._GravityCollector = new GravityCollector(new CollectorWrapper(authKey, options));
+        (window as any)._GravityCollector = new GravityCollector(new CollectorWrapper(authKey, window, options));
     }
 }

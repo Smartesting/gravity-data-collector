@@ -1,18 +1,16 @@
 import IEventHandler from "../handler/IEventHandler";
 import EventType from "../eventType";
 import { createGravityEvent } from "../event";
+import EventListener from "./EventListener";
 
-class ClickEventListener {
-    private eventHandler: IEventHandler;
+class ClickEventListener extends EventListener {
 
-    constructor(eventHandler: IEventHandler) {
-        this.eventHandler = eventHandler;
+    constructor(eventHandler: IEventHandler, window: Window) {
+        super(eventHandler, EventType.Click, window);
     }
 
-    init() {
-        window.addEventListener("click", async (event) => {
-            this.eventHandler.run(await createGravityEvent(event, EventType.Click));
-        }, true);
+    async listener(event: MouseEvent) {
+        this.eventHandler.run(await createGravityEvent(event, this.eventType, this.window));
     }
 }
 

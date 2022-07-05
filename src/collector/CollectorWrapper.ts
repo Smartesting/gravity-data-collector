@@ -7,15 +7,16 @@ import { createSessionEvent } from "../event/event";
 import { CollectorOptions } from "../types";
 
 class CollectorWrapper {
-    options?: CollectorOptions;
     eventHandler: IEventHandler;
 
-    constructor(authKey: string, options?: CollectorOptions) {
-        this.options = options;
+    constructor(
+        authKey: string,
+        private readonly window: Window = global.window,
+        private readonly options: CollectorOptions = {}) {
 
         const sessionId = uuidv4();
 
-        this.eventHandler = new ConsoleEventHandler(authKey, sessionId);
+        this.eventHandler = new ConsoleEventHandler(authKey, sessionId, { ...options });
 
         this.initSession();
         this.initializeEventHandlers();
@@ -27,8 +28,8 @@ class CollectorWrapper {
     }
 
     private initializeEventHandlers() {
-        new ClickEventListener(this.eventHandler).init();
-        new FocusOutEventListener(this.eventHandler).init();
+        new ClickEventListener(this.eventHandler, this.window).init();
+        new FocusOutEventListener(this.eventHandler, this.window).init();
     }
 }
 
