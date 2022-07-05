@@ -1,38 +1,67 @@
-import { describe, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { JSDOM } from "jsdom";
 import FocusOutEventListener from "./FocusOutEventListener";
 import IEventHandler from "../handler/IEventHandler";
 import { fireEvent, getByRole, waitFor } from "@testing-library/dom";
+import sinon from "sinon";
 
-describe("event", () => {
+describe("FocusOutEventListener", () => {
 
-    describe("FocusOutEventListener", () => {
+    describe("listener", () => {
+
+        let eventHandler: IEventHandler;
+        let runSpy: sinon.SinonSpy;
+
+        beforeEach(() => {
+                eventHandler = {
+                    run: () => {
+                    }
+                };
+                runSpy = sinon.spy(eventHandler, "run");
+            }
+        );
+
+        afterEach(() => {
+            runSpy.restore();
+        });
 
         it("calls listener when focus out event been fired", async () => {
             const dom = new JSDOM(`
                 <div>
                     <input type="text" class="size-lg"/>
-                    <button class="size-lg"/>
                 </div>`);
-
-            let runCalled: boolean = false;
-            let eventHandler: IEventHandler = {
-                run: () => {
-                    runCalled = true;
-                }
-            };
 
             new FocusOutEventListener(eventHandler, dom.window as unknown as Window).init();
 
             const container = dom.window.document.querySelector("div");
             const input = await waitFor(() => getByRole(container as HTMLElement, "textbox"));
-            const button = await waitFor(() => getByRole(container as HTMLElement, "button"));
 
-            fireEvent.click(input);
-            fireEvent.click(button);
+            fireEvent.focusOut(input);
 
             await waitFor(() => {
-                if (!runCalled) throw new Error("Run has not been called");
+                expect(runSpy.calledOnce).toBeTruthy();
+            });
+        });
+
+        it("does not call listener if target is checkbox", async () => {
+            const dom = new JSDOM(`
+                <div>
+                    <input type="text" class="size-lg"/>
+                </div>`);
+
+            const listener = new FocusOutEventListener(eventHandler, dom.window as unknown as Window);
+            const listenerSpy = sinon.spy(listener, "listener");
+
+            listener.init();
+
+            const container = dom.window.document.querySelector("div");
+            const input = await waitFor(() => getByRole(container as HTMLElement, "textbox"));
+
+            fireEvent.focusOut(input);
+
+            await waitFor(() => {
+                expect(listenerSpy.calledOnce).toBeTruthy();
+                expect(runSpy.notCalled).toBeTruthy();
             });
         });
     });

@@ -18,19 +18,16 @@ class FocusOutEventListener extends EventListener {
     async listener(event: FocusEvent) {
         const elementTarget = event.target as HTMLInputWithValue;
 
-        if (elementTarget instanceof HTMLInputElement || elementTarget instanceof HTMLTextAreaElement) {
+        if (FocusOutEventListener.isExcluded(elementTarget)) return;
 
-            if (FocusOutEventListener.isExcluded(elementTarget)) return;
-
-            const gravityEvent = await createGravityEvent(event, this.eventType);
-            if (gravityEvent.target) {
-                gravityEvent.target.value = FocusOutEventListener.inputValueType(elementTarget);
-            }
-            this.eventHandler.run(gravityEvent);
+        const gravityEvent = await createGravityEvent(event, this.eventType);
+        if (gravityEvent.target) {
+            gravityEvent.target.value = FocusOutEventListener.inputValueType(elementTarget);
         }
+        this.eventHandler.run(gravityEvent);
     }
 
-    private static isExcluded(element: HTMLInputWithValue): boolean {
+    public static isExcluded(element: HTMLInputWithValue): boolean {
         switch (element.type) {
             case "checkbox":
                 return true;
