@@ -16,8 +16,7 @@ describe('ChangeEventListener', () => {
         }
       }
       runSpy = sinon.spy(eventHandler, 'run')
-    }
-    )
+    })
 
     afterEach(() => {
       runSpy.restore()

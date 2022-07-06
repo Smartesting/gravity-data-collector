@@ -16,8 +16,7 @@ describe('ClickEventListener', () => {
         }
       }
       runSpy = sinon.spy(eventHandler, 'run')
-    }
-    )
+    })
 
     afterEach(() => {
       runSpy.restore()
