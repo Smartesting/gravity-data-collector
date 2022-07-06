@@ -16,7 +16,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
+    "version": "npm run lint-fix && git add -A src",
     "postversion": "git push && git push --tags",
     "build-sandbox": "browserify lib/src/index.js -p esmify -o dist/bundle.js",
     "build-minified": "browserify lib/src/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
