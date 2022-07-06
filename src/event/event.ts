@@ -8,7 +8,7 @@ import {
   GravityEvent,
   GravityEventData,
   GravityEventTarget,
-  GravitySessionStartedEvent
+  GravitySessionStartedEvent,
 } from '../types'
 import pJson from './../../package.json'
 
@@ -18,7 +18,7 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
     location: location(),
     recordedAt: Date.now(),
     viewportData: viewport(),
-    eventData: createEventData(event, type)
+    eventData: createEventData(event, type),
   }
 
   const target = event.target as HTMLElement
@@ -33,8 +33,8 @@ export function createEventTarget(target: HTMLElement): GravityEventTarget {
     element: target.tagName.toLocaleLowerCase(),
     textContent: target.textContent ?? '',
     attributes: {
-      ...getHTMLElementAttributes(target)
-    }
+      ...getHTMLElementAttributes(target),
+    },
   }
 
   try {
@@ -55,7 +55,7 @@ function createEventData(event: Event, type: EventType): GravityEventData | unde
 function createMouseEventData(event: MouseEvent): GravityClickEventData {
   const eventData: GravityClickEventData = {
     clickOffsetX: Math.trunc(event.clientX),
-    clickOffsetY: Math.trunc(event.clientY)
+    clickOffsetY: Math.trunc(event.clientY),
   }
 
   const target = event.target as HTMLElement

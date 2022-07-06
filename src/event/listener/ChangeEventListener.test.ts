@@ -12,8 +12,7 @@ describe('ChangeEventListener', () => {
 
     beforeEach(() => {
       eventHandler = {
-        run: () => {
-        }
+        run: () => {},
       }
       runSpy = sinon.spy(eventHandler, 'run')
     })

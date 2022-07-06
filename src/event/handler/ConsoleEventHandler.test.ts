@@ -25,37 +25,27 @@ describe('ConsoleEventHandler', () => {
       const sessionEvent = createSessionEvent()
       consoleEventHandler.run(createSessionEvent())
 
-      expect(output).toStrictEqual([
-        ['[GL DEBUG]'],
-        ['Session: ', 'aaa-111'],
-        ['authKey: ', 'abcd'],
-        [sessionEvent]
-      ])
+      expect(output).toStrictEqual([['[GL DEBUG]'], ['Session: ', 'aaa-111'], ['authKey: ', 'abcd'], [sessionEvent]])
     })
 
     it('print event with delay in simulation mode', () => {
       const maxDelay = 2000
       const consoleEventHandler = new ConsoleEventHandler('abcd', 'aaa-111', outputer, {
         simulation: true,
-        maxDelay
+        maxDelay,
       })
       const sessionEvent = createSessionEvent()
       consoleEventHandler.run(createSessionEvent())
 
       vi.advanceTimersByTime(maxDelay)
 
-      expect(output).toEqual([
-        ['[GL DEBUG]'],
-        ['Session: ', 'aaa-111'],
-        ['authKey: ', 'abcd'],
-        [sessionEvent]
-      ])
+      expect(output).toEqual([['[GL DEBUG]'], ['Session: ', 'aaa-111'], ['authKey: ', 'abcd'], [sessionEvent]])
     })
 
     it('wait before print event with delay in simulation mode', () => {
       const consoleEventHandler = new ConsoleEventHandler('abcd', 'aaa-111', outputer, {
         simulation: true,
-        maxDelay: 10000
+        maxDelay: 10000,
       })
 
       consoleEventHandler.run(createSessionEvent())

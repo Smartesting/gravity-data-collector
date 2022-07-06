@@ -1,6 +1,6 @@
 ![Node workflow](https://github.com/Smartesting/gravity-data-collector/actions/workflows/node.js.yml/badge.svg)
 
-# README #
+# README
 
 This repo contains the browser implementation of the Gravity Data Collector
 
@@ -17,7 +17,7 @@ Install the logger and initialize it
 ```
 
 ```typescript
-  // initialize
+// initialize
 import GravityCollector from 'gravity-data-collector'
 
 GravityCollector.init(/* API KEY*/)
@@ -25,10 +25,10 @@ GravityCollector.init(/* API KEY*/)
 
 ## Options
 
-The ```GravityCollector.init()``` can take a ```CollectorOptions``` object with the following optional properties:
+The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
 | key        | type    | use                                                                                        | default value |
-|------------|---------|--------------------------------------------------------------------------------------------|---------------|
+| ---------- | ------- | ------------------------------------------------------------------------------------------ | ------------- |
 | simulation | Boolean | Enable simulation mode.                                                                    | false         |
 | maxDelay   | Integer | In simulation mode, adds a random delay between 0 and this value before printing an event. | 500           |
 

@@ -3,17 +3,13 @@
     "browser": true,
     "es2021": true
   },
-  "extends": [
-    "standard-with-typescript"
-  ],
+  "extends": ["standard-with-typescript"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/space-before-function-paren": [

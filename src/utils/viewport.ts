@@ -10,7 +10,7 @@ export default function viewport(): ViewportData {
     innerWidth: viewportWidth,
     innerHeight: viewportHeight,
     outerWidth: windowWidth,
-    outerHeight: windowHeight
+    outerHeight: windowHeight,
   } = window
 
   const {
@@ -20,7 +20,7 @@ export default function viewport(): ViewportData {
     width: screenWidth,
     height: screenHeight,
     availWidth: availScreenWidth,
-    availHeight: availScreenHeight
+    availHeight: availScreenHeight,
   } = window.screen
 
   return {
@@ -34,6 +34,6 @@ export default function viewport(): ViewportData {
     availScreenHeight,
     colorDepth,
     pixelDepth,
-    orientation: orientation?.type
+    orientation: orientation?.type,
   }
 }
