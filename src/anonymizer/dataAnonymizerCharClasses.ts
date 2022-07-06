@@ -178,7 +178,7 @@ const diacriticsData = [
 function createDiacritics(upperCase: boolean): string {
   let res = ''
   diacriticsData.forEach((dd) => {
-    if ((upperCase === true) && /^[A-Z].*/.test(dd.base)) {
+    if (upperCase && /^[A-Z].*/.test(dd.base)) {
       res += dd.letters
     } else {
       res += dd.letters
