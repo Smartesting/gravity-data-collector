@@ -1,8 +1,9 @@
-import "regenerator-runtime/runtime";
-import GravityCollector from "./collector";
+import 'regenerator-runtime/runtime'
+import GravityCollector from './collector/GravityCollector'
+import windowExists from './utils/windowExists'
 
-if (window) {
-    (window as any).GravityCollector = GravityCollector;
+if (windowExists()) {
+  ;(window as any).GravityCollector = GravityCollector
 }
 
-export default GravityCollector;
+export default GravityCollector

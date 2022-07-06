@@ -3,24 +3,25 @@
   "version": "1.0.0",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "types": "lib/types.d.ts",
   "files": [
     "lib"
   ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint --ext ts --max-warnings 0 src",
+    "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "prepare": "npm run build",
+    "prepare": "husky install",
+    "pretty-quick": "pretty-quick",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
+    "version": "npm run lint-fix && git add -A src",
     "postversion": "git push && git push --tags",
-    "build-sandbox": "browserify lib/index.js -p esmify -o dist/bundle.js",
-    "build-minified": "browserify lib/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
-    "watch-sandbox": "watchify lib/index.js -o dist/bundle.js -v"
+    "build-sandbox": "browserify lib/src/index.js -p esmify -o dist/bundle.js",
+    "build-minified": "browserify lib/src/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
+    "watch-sandbox": "watchify lib/src/index.js -o dist/bundle.js -v"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Smartesting/gravity-data-collector/issues"
   },
@@ -36,18 +37,29 @@
   "devDependencies": {
     "@babel/core": "^7.17.12",
     "@babel/preset-env": "^7.17.12",
+    "@testing-library/dom": "^8.13.0",
     "@types/jsdom": "^16.2.14",
+    "@types/node": "^18.0.0",
+    "@types/sinon": "^10.0.12",
     "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "core-js": "^3.22.5",
+    "esbuild": "^0.14.48",
+    "eslint": "^8.19.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.4",
+    "eslint-plugin-promise": "^6.0.0",
     "esmify": "^2.1.1",
+    "husky": "^8.0.1",
     "jsdom": "^19.0.0",
-    "prettier": "^2.6.1",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3",
     "regenerator-runtime": "^0.13.9",
+    "sinon": "^14.0.0",
     "tinyify": "^3.0.0",
-    "tslint": "^6.1.3",
-    "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.6.3",
     "vitest": "^0.12.4",
     "watchify": "^4.0.0"
@@ -67,5 +79,10 @@
         }
       ]
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }

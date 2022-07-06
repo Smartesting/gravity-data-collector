@@ -1,38 +1,61 @@
 export function mockWindowScreen() {
-    Object.defineProperty(window, "screen", {
-        value: {
-            width: 1020,
-            height: 850,
-            availWidth: 1440,
-            availHeight: 900,
-            colorDepth: 1,
-            pixelDepth: 1,
-            orientation: { type: "landscape" }
-        },
-        writable: true
-    });
+  Object.defineProperty(window, 'screen', {
+    value: {
+      width: 1020,
+      height: 850,
+      availWidth: 1440,
+      availHeight: 900,
+      colorDepth: 1,
+      pixelDepth: 1,
+      orientation: { type: 'landscape' },
+    },
+    writable: true,
+  })
 }
 
 export function mockWindowLocation() {
-    Object.defineProperty(window, "location", {
-        value: {
-            href: "https://www.foo.com/bar",
-            pathname: "/bar",
-            search: ""
-        },
-        writable: true
-    });
+  Object.defineProperty(window, 'location', {
+    value: {
+      href: 'https://www.foo.com/bar',
+      pathname: '/bar',
+      search: '',
+    },
+    writable: true,
+  })
 }
-
-type PointerEvent = {}
 
 export function mockClick(target: HTMLElement) {
-    const event: PointerEvent = {
-        target,
-        clientX: 10,
-        clientY: 10
-    };
-    return event;
+  const event = {
+    target,
+    clientX: 10,
+    clientY: 10,
+  }
+  return event
 }
 
-export default { mockWindowScreen, mockWindowLocation, mockClick };
+export function mockFocusOut(target: HTMLElement): FocusEvent {
+  // @ts-expect-error
+  return {
+    AT_TARGET: 0,
+    BUBBLING_PHASE: 0,
+    CAPTURING_PHASE: 0,
+    NONE: 0,
+    bubbles: false,
+    cancelBubble: false,
+    cancelable: false,
+    composed: false,
+    currentTarget: null,
+    defaultPrevented: false,
+    detail: 0,
+    eventPhase: 0,
+    isTrusted: false,
+    relatedTarget: null,
+    returnValue: false,
+    srcElement: null,
+    timeStamp: 0,
+    type: '',
+    view: null,
+    which: 0,
+    target,
+  }
+}
