@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint --ext ts --max-warnings 0 src",
+    "eslint": "eslint --ext ts --max-warnings 0 src --fix",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepare": "npm run build",

@@ -1,58 +1,64 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
-import ClickEventListener from "../event/listener/ClickEventListener";
-import ChangeEventListener from "../event/listener/ChangeEventListener";
-import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
-import CollectorWrapper from "./CollectorWrapper";
-import { createSessionEvent } from "../event/event";
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import ClickEventListener from '../event/listener/ClickEventListener'
+import ChangeEventListener from '../event/listener/ChangeEventListener'
+import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
+import CollectorWrapper from './CollectorWrapper'
+import { createSessionEvent } from '../event/event'
 
-describe("CollectorWrapper", () => {
-    beforeEach(() => {
-        mockWindowScreen();
-        mockWindowLocation();
-        vi.spyOn(ConsoleEventHandler.prototype, "run").mockImplementation(() => {
-            return {};
-        });
-    });
+describe('CollectorWrapper', () => {
+  beforeEach(() => {
+    mockWindowScreen()
+    mockWindowLocation()
+    vi.spyOn(ConsoleEventHandler.prototype, 'run').mockImplementation(() => {
+      return {}
+    })
+  })
 
-    describe("constructor", () => {
-        it("instantiates a ConsoleEventHandler by default", () => {
-            const sut = new CollectorWrapper("abcd");
-            expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler);
-        });
+  describe('constructor', () => {
+    function createCollectorWrapper() {
+      // We are testing the side effects of the constructor, so we wrap
+      // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
+      return new CollectorWrapper('abcd')
+    }
 
-        it('a "sessionStarted" event is sent when initialized', () => {
-            Date.parse("2022-05-12");
-            vi.useFakeTimers();
-            vi.setSystemTime(Date.parse("2022-05-12"));
+    it('instantiates a ConsoleEventHandler by default', () => {
+      const sut = createCollectorWrapper()
+      expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler)
+    })
 
-            const expectedEvent = createSessionEvent();
+    it('a "sessionStarted" event is sent when initialized', () => {
+      Date.parse('2022-05-12')
+      vi.useFakeTimers()
+      vi.setSystemTime(Date.parse('2022-05-12'))
 
-            const mock = vi.spyOn(ConsoleEventHandler.prototype, "run")
-                .mockImplementation(() => {
-                    return {};
-                });
+      const expectedEvent = createSessionEvent()
 
-            new CollectorWrapper("abcd");
-            expect(mock).toHaveBeenCalledWith(expectedEvent);
-        });
+      const mock = vi.spyOn(ConsoleEventHandler.prototype, 'run')
+        .mockImplementation(() => {
+          return {}
+        })
 
-        it("initializes ClickEventListener", () => {
-            vi.spyOn(ClickEventListener.prototype, "init").mockImplementation(() => {
-                return {};
-            });
-            new CollectorWrapper("abcd");
+      createCollectorWrapper()
+      expect(mock).toHaveBeenCalledWith(expectedEvent)
+    })
 
-            expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce();
-        });
+    it('initializes ClickEventListener', () => {
+      vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {
+        return {}
+      })
+      createCollectorWrapper()
 
-        it("initializes ChangeEventListener", () => {
-            vi.spyOn(ChangeEventListener.prototype, "init").mockImplementation(() => {
-                return {};
-            });
-            new CollectorWrapper("abcd");
+      expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce()
+    })
 
-            expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce();
-        });
-    });
-});
+    it('initializes ChangeEventListener', () => {
+      vi.spyOn(ChangeEventListener.prototype, 'init').mockImplementation(() => {
+        return {}
+      })
+      createCollectorWrapper()
+
+      expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce()
+    })
+  })
+})

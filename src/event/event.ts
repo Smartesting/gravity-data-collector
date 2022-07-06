@@ -1,88 +1,87 @@
-import unique from "@cypress/unique-selector";
-import viewport from "../utils/viewport";
-import location from "../utils/location";
-import { getHTMLElementAttributes } from "../utils/dom";
+import unique from '@cypress/unique-selector'
+import viewport from '../utils/viewport'
+import location from '../utils/location'
+import { getHTMLElementAttributes } from '../utils/dom'
 import {
-    EventType,
-    GravityClickEventData,
-    GravityEvent,
-    GravityEventData,
-    GravityEventTarget,
-    GravitySessionStartedEvent
-} from "../types";
-import pJson from "./../../package.json";
+  EventType,
+  GravityClickEventData,
+  GravityEvent,
+  GravityEventData,
+  GravityEventTarget,
+  GravitySessionStartedEvent
+} from '../types'
+import pJson from './../../package.json'
 
 export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
+  const gravityEvent: GravityEvent = {
+    type,
+    location: location(),
+    recordedAt: Date.now(),
+    viewportData: viewport(),
+    eventData: createEventData(event, type)
+  }
 
-    const gravityEvent: GravityEvent = {
-        type: type,
-        location: location(),
-        recordedAt: Date.now(),
-        viewportData: viewport(),
-        eventData: createEventData(event, type)
-    };
+  const target = event.target as HTMLElement
 
-    const target = event.target as HTMLElement;
+  if (target) gravityEvent.target = createEventTarget(target)
 
-    if (target) gravityEvent.target = createEventTarget(target);
-
-    return gravityEvent;
+  return gravityEvent
 }
 
 export function createEventTarget(target: HTMLElement): GravityEventTarget {
-    const eventTarget: GravityEventTarget = {
-        element: target.tagName.toLocaleLowerCase(),
-        textContent: target.textContent || "",
-        attributes: {
-            ...getHTMLElementAttributes(target)
-        }
-    };
-
-    try {
-        eventTarget.selector = unique(target);
-    } catch {
-        // do nothing
+  const eventTarget: GravityEventTarget = {
+    element: target.tagName.toLocaleLowerCase(),
+    textContent: target.textContent ?? '',
+    attributes: {
+      ...getHTMLElementAttributes(target)
     }
-    return eventTarget;
+  }
+
+  try {
+    eventTarget.selector = unique(target)
+  } catch {
+    // do nothing
+  }
+  return eventTarget
 }
 
 function createEventData(event: Event, type: EventType): GravityEventData | undefined {
-    switch (type) {
-        case EventType.Click:
-            return createMouseEventData(event as MouseEvent);
-    }
+  switch (type) {
+    case EventType.Click:
+      return createMouseEventData(event as MouseEvent)
+  }
 }
 
 function createMouseEventData(event: MouseEvent): GravityClickEventData {
+  const eventData: GravityClickEventData = {
+    clickOffsetX: Math.trunc(event.clientX),
+    clickOffsetY: Math.trunc(event.clientY)
+  }
 
-    const eventData: GravityClickEventData = {
-        clickOffsetX: Math.trunc(event.clientX),
-        clickOffsetY: Math.trunc(event.clientY)
-    };
-
-    const target = event.target as HTMLElement;
-    if (target) {
-        const targetOffset = target.getBoundingClientRect();
-        eventData.elementOffsetX = Math.trunc(targetOffset.left);
-        eventData.elementOffsetY = Math.trunc(targetOffset.top);
-        eventData.elementRelOffsetX = Math.trunc(event.clientX - targetOffset.left);
-        eventData.elementRelOffsetY = Math.trunc(event.clientY - targetOffset.top);
-    }
-    return eventData;
+  const target = event.target as HTMLElement
+  if (target) {
+    const targetOffset = target.getBoundingClientRect()
+    eventData.elementOffsetX = Math.trunc(targetOffset.left)
+    eventData.elementOffsetY = Math.trunc(targetOffset.top)
+    eventData.elementRelOffsetX = Math.trunc(event.clientX - targetOffset.left)
+    eventData.elementRelOffsetY = Math.trunc(event.clientY - targetOffset.top)
+  }
+  return eventData
 }
 
 export function createSessionEvent(): GravitySessionStartedEvent {
-    const initSessionEvent: GravitySessionStartedEvent = {
-        type: EventType.SessionStarted,
-        recordedAt: Date.now(),
-        location: location(),
-        viewportData: viewport(),
-        version: pJson.version
-    };
+  const initSessionEvent: GravitySessionStartedEvent = {
+    type: EventType.SessionStarted,
+    recordedAt: Date.now(),
+    location: location(),
+    viewportData: viewport(),
+    version: pJson.version
+  }
 
-    if ((<any>window).Cypress && (<any>window).Cypress.currentTest) {
-        initSessionEvent.test = (<any>window).Cypress.currentTest.titlePath.join(" > ");
-    }
+  const cypress = (window as any).Cypress
+  if (cypress?.currentTest) {
+    initSessionEvent.test = cypress.currentTest.titlePath.join(' > ')
+  }
 
-    return initSessionEvent;
+  return initSessionEvent
 }
