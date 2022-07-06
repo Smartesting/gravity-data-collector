@@ -11,6 +11,9 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "indent": "off",
+    "@typescript-eslint/indent": "off",
+    "comma-dangle": ["error", "always-multiline"],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/space-before-function-paren": [
       "error",
@@ -19,7 +22,6 @@
         "named": "never",
         "asyncArrow": "always"
       }
-    ],
-    "@typescript-eslint/strict-boolean-expression": "off"
+    ]
   }
 }
