@@ -16,7 +16,7 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
   const gravityEvent: GravityEvent = {
     type,
     location: location(),
-    recordedAt: Date.now(),
+    recordedAt: new Date().toISOString(),
     viewportData: viewport(),
     eventData: createEventData(event, type),
   }
@@ -72,7 +72,7 @@ function createMouseEventData(event: MouseEvent): GravityClickEventData {
 export function createSessionEvent(): GravitySessionStartedEvent {
   const initSessionEvent: GravitySessionStartedEvent = {
     type: EventType.SessionStarted,
-    recordedAt: Date.now(),
+    recordedAt: new Date().toISOString(),
     location: location(),
     viewportData: viewport(),
     version: pJson.version,

@@ -12,7 +12,7 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 export interface EventCommonProperties {
   type: EventType
   location: GravityLocation
-  recordedAt?: number
+  recordedAt?: string
   viewportData: ViewportData
 }
 

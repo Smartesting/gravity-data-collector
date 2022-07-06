@@ -44,7 +44,7 @@ describe('event', () => {
     })
 
     it('returns recordedAt', async () => {
-      const now = Date.parse('2022-05-12')
+      const now = new Date('2022-05-12').toISOString()
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
@@ -122,7 +122,7 @@ describe('event', () => {
     })
 
     it('returns recordedAt', () => {
-      const now = Date.parse('2022-05-12')
+      const now = new Date('2022-05-12').toISOString()
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
