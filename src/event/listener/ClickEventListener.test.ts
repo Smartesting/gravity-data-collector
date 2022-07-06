@@ -12,12 +12,10 @@ describe('ClickEventListener', () => {
 
     beforeEach(() => {
       eventHandler = {
-        run: () => {
-        }
+        run: () => {},
       }
       runSpy = sinon.spy(eventHandler, 'run')
-    }
-    )
+    })
 
     afterEach(() => {
       runSpy.restore()

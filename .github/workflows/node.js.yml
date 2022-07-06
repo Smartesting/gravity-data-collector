@@ -5,18 +5,17 @@ name: Build
 
 on:
   push:
-    branches: [ '**' ]
+    branches: ['**']
   pull_request:
-    branches: [ '**' ]
+    branches: ['**']
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [ 14.x, 16.x ]
+        node-version: [14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -30,4 +29,3 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run lint
-

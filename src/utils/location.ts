@@ -6,7 +6,7 @@ function location(): GravityLocation {
     return {
       href: '',
       pathname: '',
-      search: ''
+      search: '',
     }
   }
 
@@ -16,7 +16,7 @@ function location(): GravityLocation {
   return {
     href,
     pathname,
-    search
+    search,
   }
 }
 

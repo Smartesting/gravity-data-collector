@@ -25,7 +25,7 @@ function getCharClass(char: string): CharClass {
   if (charClass != null) return charClass
   return {
     name: 'other',
-    chars: char
+    chars: char,
   }
 }
 

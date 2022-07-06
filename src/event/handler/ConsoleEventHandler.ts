@@ -8,9 +8,8 @@ export class ConsoleEventHandler implements IEventHandler {
     private readonly authKey: string,
     private readonly sessionId: string,
     private readonly output: (...data: any[]) => void,
-    private readonly options: ConsoleEventHandlerOptions = {}
-  ) {
-  }
+    private readonly options: ConsoleEventHandlerOptions = {},
+  ) {}
 
   run(event: TEvent) {
     const { simulation } = this.options

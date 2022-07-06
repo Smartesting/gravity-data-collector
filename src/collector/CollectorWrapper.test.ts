@@ -34,10 +34,9 @@ describe('CollectorWrapper', () => {
 
       const expectedEvent = createSessionEvent()
 
-      const mock = vi.spyOn(ConsoleEventHandler.prototype, 'run')
-        .mockImplementation(() => {
-          return {}
-        })
+      const mock = vi.spyOn(ConsoleEventHandler.prototype, 'run').mockImplementation(() => {
+        return {}
+      })
 
       createCollectorWrapper()
       expect(mock).toHaveBeenCalledWith(expectedEvent)

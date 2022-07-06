@@ -2,7 +2,7 @@ export enum EventType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
   Change = 'change',
-  FocusOut = 'focusOut'
+  FocusOut = 'focusOut',
 }
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent
@@ -32,14 +32,16 @@ export type GravityCustomEvent = {
   customData: CustomEventDataType
 } & EventCommonProperties
 
-export type GravityEventTarget = | {
-  element: string
-  screenshot?: string
-  selector?: string
-  textContent?: string
-  value?: string
-  attributes?: Record<string, string>
-} | Record<string, string>
+export type GravityEventTarget =
+  | {
+      element: string
+      screenshot?: string
+      selector?: string
+      textContent?: string
+      value?: string
+      attributes?: Record<string, string>
+    }
+  | Record<string, string>
 
 export interface GravityLocation {
   href: string

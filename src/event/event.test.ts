@@ -131,9 +131,9 @@ describe('event', () => {
       Object.defineProperty(window, 'Cypress', {
         value: {
           currentTest: {
-            titlePath: ['foo', 'bar', 'testing stuff']
-          }
-        }
+            titlePath: ['foo', 'bar', 'testing stuff'],
+          },
+        },
       })
 
       expect(createSessionEvent().test).toEqual('foo > bar > testing stuff')

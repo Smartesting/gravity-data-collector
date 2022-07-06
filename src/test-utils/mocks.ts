@@ -7,9 +7,9 @@ export function mockWindowScreen() {
       availHeight: 900,
       colorDepth: 1,
       pixelDepth: 1,
-      orientation: { type: 'landscape' }
+      orientation: { type: 'landscape' },
     },
-    writable: true
+    writable: true,
   })
 }
 
@@ -18,9 +18,9 @@ export function mockWindowLocation() {
     value: {
       href: 'https://www.foo.com/bar',
       pathname: '/bar',
-      search: ''
+      search: '',
     },
-    writable: true
+    writable: true,
   })
 }
 
@@ -28,7 +28,7 @@ export function mockClick(target: HTMLElement) {
   const event = {
     target,
     clientX: 10,
-    clientY: 10
+    clientY: 10,
   }
   return event
 }
@@ -56,6 +56,6 @@ export function mockFocusOut(target: HTMLElement): FocusEvent {
     type: '',
     view: null,
     which: 0,
-    target
+    target,
   }
 }
