@@ -75,7 +75,8 @@ export function createSessionEvent(): GravitySessionStartedEvent {
     recordedAt: Date.now(),
     location: location(),
     viewportData: viewport(),
-    version: pJson.version
+    version: pJson.version,
+    agent: navigator.userAgent
   }
 
   const cypress = (window as any).Cypress

@@ -1,8 +1,7 @@
 export enum EventType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
-  Change = 'change',
-  FocusOut = 'focusOut'
+  Change = 'change'
 }
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent
@@ -20,6 +19,7 @@ export interface EventCommonProperties {
 export type GravitySessionStartedEvent = {
   test?: string
   version: string
+  agent: string
 } & EventCommonProperties
 
 export type GravityEvent = {
