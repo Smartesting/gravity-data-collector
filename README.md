@@ -51,3 +51,5 @@ npm run watch-sandbox
 
 Finally, open [index.html](index.html) with a browser, display the console (F12 with most browsers) and interact with
 the page to see collected events.
+
+**Note:** events may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by your developer tool.

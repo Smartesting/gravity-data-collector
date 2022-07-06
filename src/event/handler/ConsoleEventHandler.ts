@@ -14,7 +14,7 @@ export class ConsoleEventHandler implements IEventHandler {
 
   run(event: TEvent) {
     const { simulation } = this.options
-    if (!simulation) return this.printEvent(event)
+    if (simulation !== true) return this.printEvent(event)
 
     this.printEventWithDelay(event)
   }

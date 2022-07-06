@@ -1,7 +1,8 @@
 import { GravityLocation } from '../types'
+import windowExists from './windowExists'
 
 function location(): GravityLocation {
-  if (!window) {
+  if (!windowExists()) {
     return {
       href: '',
       pathname: '',
