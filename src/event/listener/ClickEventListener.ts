@@ -1,6 +1,6 @@
 import IEventHandler from "../handler/IEventHandler";
-import EventType from "../eventType";
 import { createGravityEvent } from "../event";
+import { EventType } from "../../types";
 
 class ClickEventListener {
     private eventHandler: IEventHandler;

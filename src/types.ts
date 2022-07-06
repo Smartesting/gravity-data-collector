@@ -1,4 +1,12 @@
-import EventType from "./event/eventType";
+export enum EventType {
+    SessionStarted = "sessionStarted",
+    Click = "click",
+    FocusOut = "focusout",
+    Custom = "custom",
+    Resource = "resource",
+    Request = "resource.request",
+    Response = "resource.response"
+}
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent;
 export type GravityEventData = GravityClickEventData;

@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import IEventHandler from "../handler/IEventHandler";
-import EventType from "../eventType";
 import { DataAnonymizer } from "../../anonymizer/dataAnonymizer";
 import { createGravityEvent } from "../event";
+import { EventType } from "../../types";
 
 const anonymizer = new DataAnonymizer(uuidv4());
 

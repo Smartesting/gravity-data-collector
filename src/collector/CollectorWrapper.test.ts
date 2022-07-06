@@ -21,7 +21,7 @@ describe("CollectorWrapper", () => {
             expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler);
         });
 
-        it("a \"sessionStarted\" event is sent when initialized", () => {
+        it('a "sessionStarted" event is sent when initialized', () => {
             Date.parse("2022-05-12");
             vi.useFakeTimers();
             vi.setSystemTime(Date.parse("2022-05-12"));

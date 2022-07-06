@@ -1,24 +1,39 @@
-import { ViewportData } from "../types";
+import { ViewportData } from '../types'
 
-function viewport(): ViewportData {
+export default function viewport(): ViewportData {
     if (!window) {
         return {};
     }
 
-    const { colorDepth, pixelDepth } = window.screen;
-    return {
-        viewportWidth: window.innerWidth,
-        viewportHeight: window.innerHeight,
-        windowWidth: window.outerWidth,
-        windowHeight: window.outerHeight,
-        screenWidth: window.screen.width,
-        screenHeight: window.screen.height,
-        availScreenWidth: window.screen.availWidth,
-        availScreenHeight: window.screen.availHeight,
+    const {
+        innerWidth: viewportWidth,
+        innerHeight: viewportHeight,
+        outerWidth: windowWidth,
+        outerHeight: windowHeight
+    } = window
+
+    const {
         colorDepth,
         pixelDepth,
-        orientation: window.screen.orientation.type
+        width: screenWidth,
+        height: screenHeight,
+        availWidth: availScreenWidth,
+        availHeight: availScreenHeight,
+    } = window.screen
+
+    const { type: orientation } = window.screen.orientation
+
+    return {
+        viewportWidth,
+        viewportHeight,
+        windowWidth,
+        windowHeight,
+        screenWidth,
+        screenHeight,
+        availScreenWidth,
+        availScreenHeight,
+        colorDepth,
+        pixelDepth,
+        orientation
     };
 }
-
-export default viewport;

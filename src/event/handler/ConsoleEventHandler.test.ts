@@ -1,72 +1,67 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockWindowLocation, mockWindowScreen } from "../../test-utils/mocks";
 import { createSessionEvent } from "../event";
 import { ConsoleEventHandler } from "./ConsoleEventHandler";
 
-declare module "vitest" {
-    export interface TestContext {
-        actualDebug?: (message?: any, ...optionalParams: any[]) => void;
-    }
-}
-
 describe("ConsoleEventHandler", () => {
 
     describe("run", () => {
-        beforeEach((ctx) => {
+        let output: any[][]
+        const outputer = (...data: any[]) => {
+            output.push(data)
+        }
+
+        beforeEach(() => {
             mockWindowLocation();
             mockWindowScreen();
 
             vi.useFakeTimers();
             vi.setSystemTime(Date.parse("2022-05-12"));
 
-            ctx.actualDebug = console.debug;
-
-            console.debug = vi.fn().mockImplementation(() => {
-                return;
-            });
+            output = []
         });
 
-        afterEach((ctx) => {
-            if (ctx.actualDebug) console.debug = ctx.actualDebug;
-        });
 
         it("print event to debug console", () => {
-            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111");
-            const sessionEvent = createSessionEvent();
-            consoleEventHandler.run(createSessionEvent());
+            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", outputer)
+            const sessionEvent = createSessionEvent()
+            consoleEventHandler.run(createSessionEvent())
 
-            expect(console.debug).toBeCalledWith("[GL DEBUG]");
-            expect(console.debug).toBeCalledWith("Session: ", "aaa-111");
-            expect(console.debug).toBeCalledWith("authKey: ", "abcd");
-            expect(console.debug).toBeCalledWith(sessionEvent);
+            expect(output).toStrictEqual([
+                ["[GL DEBUG]"],
+                ["Session: ", "aaa-111"],
+                ["authKey: ", "abcd"],
+                [sessionEvent]
+            ])
         });
 
         it("print event with delay in simulation mode", () => {
             const maxDelay = 2000;
-            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", {
+            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", outputer, {
                 simulation: true,
                 maxDelay
-            });
-            const sessionEvent = createSessionEvent();
-            consoleEventHandler.run(createSessionEvent());
+            })
+            const sessionEvent = createSessionEvent()
+            consoleEventHandler.run(createSessionEvent())
 
             vi.advanceTimersByTime(maxDelay);
 
-            expect(console.debug).toBeCalledWith("[GL DEBUG]");
-            expect(console.debug).toBeCalledWith("Session: ", "aaa-111");
-            expect(console.debug).toBeCalledWith("authKey: ", "abcd");
-            expect(console.debug).toBeCalledWith(sessionEvent);
+            expect(output).toEqual([
+                ["[GL DEBUG]"],
+                ["Session: ", "aaa-111"],
+                ["authKey: ", "abcd"],
+                [sessionEvent]
+            ])
         });
 
         it("wait before print event with delay in simulation mode", () => {
-            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", {
+            const consoleEventHandler = new ConsoleEventHandler("abcd", "aaa-111", outputer, {
                 simulation: true,
                 maxDelay: 10000
-            });
+            })
 
-            consoleEventHandler.run(createSessionEvent());
-
-            expect(console.debug).toBeCalledTimes(0);
+            consoleEventHandler.run(createSessionEvent())
+            expect(output).toEqual([])
         });
     });
 });

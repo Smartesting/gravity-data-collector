@@ -7,15 +7,14 @@ import { createSessionEvent } from "../event/event";
 import { CollectorOptions } from "../types";
 
 class CollectorWrapper {
-    options?: CollectorOptions;
-    eventHandler: IEventHandler;
+    readonly eventHandler: IEventHandler;
 
-    constructor(authKey: string, options?: CollectorOptions) {
+    constructor(authKey: string, private readonly options?: CollectorOptions) {
         this.options = options;
 
         const sessionId = uuidv4();
 
-        this.eventHandler = new ConsoleEventHandler(authKey, sessionId);
+        this.eventHandler = new ConsoleEventHandler(authKey, sessionId, console.debug.bind(console));
 
         this.initSession();
         this.initializeEventHandlers();
