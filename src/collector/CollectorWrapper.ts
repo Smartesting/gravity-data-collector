@@ -2,9 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import IEventHandler from "../event/handler/IEventHandler";
 import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
 import ClickEventListener from "../event/listener/ClickEventListener";
-import FocusOutEventListener from "../event/listener/FocusOutEventListener";
 import { createSessionEvent } from "../event/event";
 import { CollectorOptions } from "../types";
+import ChangeEventListener from "../event/listener/ChangeEventListener";
 
 class CollectorWrapper {
     eventHandler: IEventHandler;
@@ -29,7 +29,7 @@ class CollectorWrapper {
 
     private initializeEventHandlers() {
         new ClickEventListener(this.eventHandler, this.window).init();
-        new FocusOutEventListener(this.eventHandler, this.window).init();
+        new ChangeEventListener(this.eventHandler, this.window).init();
     }
 }
 

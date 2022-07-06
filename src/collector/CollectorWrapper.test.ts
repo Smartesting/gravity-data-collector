@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockWindowLocation, mockWindowScreen } from "../test-utils/mocks";
 import ClickEventListener from "../event/listener/ClickEventListener";
-import FocusOutEventListener from "../event/listener/FocusOutEventListener";
+import ChangeEventListener from "../event/listener/ChangeEventListener";
 import { ConsoleEventHandler } from "../event/handler/ConsoleEventHandler";
 import CollectorWrapper from "./CollectorWrapper";
 import { createSessionEvent } from "../event/event";
@@ -37,7 +37,7 @@ describe("CollectorWrapper", () => {
             expect(mock).toHaveBeenCalledWith(expectedEvent);
         });
 
-        it("initializes ClickEventHandler", () => {
+        it("initializes ClickEventListener", () => {
             vi.spyOn(ClickEventListener.prototype, "init").mockImplementation(() => {
                 return {};
             });
@@ -46,13 +46,13 @@ describe("CollectorWrapper", () => {
             expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce();
         });
 
-        it("initializes FocusOutEventHandler", () => {
-            vi.spyOn(FocusOutEventListener.prototype, "init").mockImplementation(() => {
+        it("initializes ChangeEventListener", () => {
+            vi.spyOn(ChangeEventListener.prototype, "init").mockImplementation(() => {
                 return {};
             });
             new CollectorWrapper("abcd");
 
-            expect(FocusOutEventListener.prototype.init).toHaveBeenCalledOnce();
+            expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce();
         });
     });
 });

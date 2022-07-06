@@ -11,15 +11,6 @@ export function getHTMLElementAttributes(elt: HTMLElement) {
     }, {});
 }
 
-export function isCheckbox(element: HTMLInputWithValue): boolean {
-    switch (element.type) {
-        case "checkbox":
-            return true;
-        default:
-            return false;
-    }
-}
-
 export function anonymizeInputValue(element: HTMLInputWithValue): string {
 
     const anonymizer = new DataAnonymizer(uuidv4());

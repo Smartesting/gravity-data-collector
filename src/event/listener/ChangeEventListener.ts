@@ -3,7 +3,7 @@ import EventType from "../eventType";
 import { createGravityEvent } from "../event";
 import EventListener from "./EventListener";
 import { HTMLInputWithValue } from "../../types";
-import { anonymizeInputValue, isCheckbox } from "../../utils/dom";
+import { anonymizeInputValue } from "../../utils/dom";
 
 class ChangeEventListener extends EventListener {
 
@@ -13,8 +13,6 @@ class ChangeEventListener extends EventListener {
 
     async listener(event: FocusEvent) {
         const elementTarget = event.target as HTMLInputWithValue;
-
-        if (!isCheckbox(elementTarget)) return;
 
         const gravityEvent = await createGravityEvent(event, this.eventType);
         if (gravityEvent.target) {

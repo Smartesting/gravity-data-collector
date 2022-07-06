@@ -4,7 +4,6 @@ import { JSDOM } from "jsdom";
 import IEventHandler from "../handler/IEventHandler";
 import { fireEvent, getByRole, waitFor } from "@testing-library/dom";
 import ChangeEventListener from "./ChangeEventListener";
-import FocusOutEventListener from "./FocusOutEventListener";
 
 describe("ChangeEventListener", () => {
 
@@ -50,7 +49,7 @@ describe("ChangeEventListener", () => {
                     <input type="text" class="size-lg"/>
                 </div>`);
 
-            const listener = new FocusOutEventListener(eventHandler, dom.window as unknown as Window);
+            const listener = new ChangeEventListener(eventHandler, dom.window as unknown as Window);
             const listenerSpy = sinon.spy(listener, "listener");
 
             listener.init();
@@ -58,7 +57,7 @@ describe("ChangeEventListener", () => {
             const container = dom.window.document.querySelector("div");
             const input = await waitFor(() => getByRole(container as HTMLElement, "textbox"));
 
-            fireEvent.focusOut(input);
+            fireEvent.change(input);
 
             await waitFor(() => {
                 expect(listenerSpy.calledOnce).toBeTruthy();
