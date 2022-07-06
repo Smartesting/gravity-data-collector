@@ -23,7 +23,7 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
 
   const target = event.target as HTMLElement
 
-  if (target) gravityEvent.target = createEventTarget(target)
+  if (target !== null) gravityEvent.target = createEventTarget(target)
 
   return gravityEvent
 }
@@ -59,7 +59,7 @@ function createMouseEventData(event: MouseEvent): GravityClickEventData {
   }
 
   const target = event.target as HTMLElement
-  if (target) {
+  if (target !== null) {
     const targetOffset = target.getBoundingClientRect()
     eventData.elementOffsetX = Math.trunc(targetOffset.left)
     eventData.elementOffsetY = Math.trunc(targetOffset.top)
@@ -79,7 +79,7 @@ export function createSessionEvent(): GravitySessionStartedEvent {
   }
 
   const cypress = (window as any).Cypress
-  if (cypress?.currentTest) {
+  if (cypress?.currentTest !== undefined) {
     initSessionEvent.test = cypress.currentTest.titlePath.join(' > ')
   }
 

@@ -1,7 +1,8 @@
 import { ViewportData } from '../types'
+import windowExists from './windowExists'
 
 export default function viewport(): ViewportData {
-  if (!window) {
+  if (!windowExists()) {
     return {}
   }
 
@@ -33,6 +34,6 @@ export default function viewport(): ViewportData {
     availScreenHeight,
     colorDepth,
     pixelDepth,
-    orientation: orientation ? orientation.type : undefined
+    orientation: orientation?.type
   }
 }
