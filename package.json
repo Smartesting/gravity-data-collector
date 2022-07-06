@@ -42,6 +42,8 @@
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "core-js": "^3.22.5",
+    "eslint": "^8.19.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
     "esmify": "^2.1.1",
     "jsdom": "^19.0.0",
     "prettier": "^2.6.1",
