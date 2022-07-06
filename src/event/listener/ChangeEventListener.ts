@@ -1,8 +1,7 @@
 import IEventHandler from "../handler/IEventHandler";
-import EventType from "../eventType";
 import { createGravityEvent } from "../event";
 import EventListener from "./EventListener";
-import { HTMLInputWithValue } from "../../types";
+import { EventType, HTMLInputWithValue } from "../../types";
 import { anonymizeInputValue } from "../../utils/dom";
 
 class ChangeEventListener extends EventListener {

@@ -1,7 +1,7 @@
 import IEventHandler from "../handler/IEventHandler";
-import EventType from "../eventType";
 import { createGravityEvent } from "../event";
 import EventListener from "./EventListener";
+import { EventType } from "../../types";
 
 class ClickEventListener extends EventListener {
 
@@ -10,7 +10,7 @@ class ClickEventListener extends EventListener {
     }
 
     async listener(event: MouseEvent) {
-        this.eventHandler.run(await createGravityEvent(event, this.eventType, this.window));
+        this.eventHandler.run(await createGravityEvent(event, this.eventType));
     }
 }
 

@@ -1,5 +1,5 @@
 import IEventHandler from "../handler/IEventHandler";
-import EventType from "../eventType";
+import { EventType } from "../../types";
 
 export default abstract class EventListener {
 
@@ -7,7 +7,8 @@ export default abstract class EventListener {
         protected readonly eventHandler: IEventHandler,
         protected readonly eventType: EventType,
         protected readonly window: Window
-    ) { }
+    ) {
+    }
 
     init(): void {
         this.window.addEventListener(this.eventType, this.listener.bind(this), true);

@@ -7,16 +7,16 @@ import { CollectorOptions } from "../types";
 import ChangeEventListener from "../event/listener/ChangeEventListener";
 
 class CollectorWrapper {
-    eventHandler: IEventHandler;
 
-    constructor(
-        authKey: string,
-        private readonly window: Window = global.window,
-        private readonly options: CollectorOptions = {}) {
+    readonly eventHandler: IEventHandler;
+
+    constructor(authKey: string,
+                options?: CollectorOptions,
+                private readonly window: Window = global.window) {
 
         const sessionId = uuidv4();
 
-        this.eventHandler = new ConsoleEventHandler(authKey, sessionId, { ...options });
+        this.eventHandler = new ConsoleEventHandler(authKey, sessionId, console.debug.bind(console), options);
 
         this.initSession();
         this.initializeEventHandlers();

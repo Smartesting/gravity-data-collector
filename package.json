@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "The browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "types": "lib/types.d.ts",
   "files": [
     "lib"
   ],
@@ -28,7 +28,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Smartesting/gravity-data-collector/issues"
   },

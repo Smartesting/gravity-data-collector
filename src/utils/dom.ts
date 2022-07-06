@@ -2,12 +2,12 @@ import { HTMLInputWithValue } from "../types";
 import { DataAnonymizer } from "../anonymizer/dataAnonymizer";
 import { v4 as uuidv4 } from "uuid";
 
-export function getHTMLElementAttributes(elt: HTMLElement) {
-    const attrList = elt.getAttributeNames();
+export function getHTMLElementAttributes(element: HTMLElement) {
+    const attributeNames = element.getAttributeNames();
 
-    return attrList.reduce<Record<string, string>>((acc, attr) => {
-        acc[attr] = elt.getAttribute(attr) || "";
-        return acc;
+    return attributeNames.reduce<Record<string, string>>((attributes, attributeName) => {
+        attributes[attributeName] = element.getAttribute(attributeName) || "";
+        return attributes;
     }, {});
 }
 

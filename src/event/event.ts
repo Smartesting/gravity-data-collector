@@ -1,9 +1,9 @@
-// @ts-ignore
 import unique from "@cypress/unique-selector";
 import viewport from "../utils/viewport";
 import location from "../utils/location";
 import { getHTMLElementAttributes } from "../utils/dom";
 import {
+    EventType,
     GravityClickEventData,
     GravityEvent,
     GravityEventData,
@@ -11,15 +11,14 @@ import {
     GravitySessionStartedEvent
 } from "../types";
 import pJson from "./../../package.json";
-import EventType from "./eventType";
 
-export async function createGravityEvent(event: Event, type: EventType, window: Window = global.window): Promise<GravityEvent> {
+export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
 
     const gravityEvent: GravityEvent = {
         type: type,
         location: location(),
         recordedAt: Date.now(),
-        viewportData: viewport(window),
+        viewportData: viewport(),
         eventData: createEventData(event, type)
     };
 
