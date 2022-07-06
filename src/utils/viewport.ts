@@ -1,6 +1,7 @@
-import { ViewportData } from '../types'
+import { ViewportData } from "../types";
 
 export default function viewport(): ViewportData {
+
     if (!window) {
         return {};
     }
@@ -10,18 +11,17 @@ export default function viewport(): ViewportData {
         innerHeight: viewportHeight,
         outerWidth: windowWidth,
         outerHeight: windowHeight
-    } = window
+    } = window;
 
     const {
         colorDepth,
         pixelDepth,
+        orientation,
         width: screenWidth,
         height: screenHeight,
         availWidth: availScreenWidth,
-        availHeight: availScreenHeight,
-    } = window.screen
-
-    const { type: orientation } = window.screen.orientation
+        availHeight: availScreenHeight
+    } = window.screen;
 
     return {
         viewportWidth,
@@ -34,6 +34,6 @@ export default function viewport(): ViewportData {
         availScreenHeight,
         colorDepth,
         pixelDepth,
-        orientation
+        orientation: orientation ? orientation.type : undefined
     };
 }

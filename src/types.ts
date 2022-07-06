@@ -1,15 +1,13 @@
 export enum EventType {
     SessionStarted = "sessionStarted",
     Click = "click",
-    FocusOut = "focusout",
-    Custom = "custom",
-    Resource = "resource",
-    Request = "resource.request",
-    Response = "resource.response"
+    Change = "change"
 }
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent;
 export type GravityEventData = GravityClickEventData;
+
+export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement;
 
 export type EventCommonProperties = {
     type: EventType,
@@ -72,10 +70,10 @@ export type ConsoleEventHandlerOptions = {
 }
 
 export type GravityClickEventData = {
-    elementRelOffsetX: number,
-    elementRelOffsetY: number,
     clickOffsetX: number,
     clickOffsetY: number,
-    elementOffsetX: number,
-    elementOffsetY: number
+    elementRelOffsetX?: number,
+    elementRelOffsetY?: number,
+    elementOffsetX?: number,
+    elementOffsetY?: number
 }

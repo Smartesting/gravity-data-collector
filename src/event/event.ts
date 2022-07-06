@@ -2,48 +2,73 @@ import unique from "@cypress/unique-selector";
 import viewport from "../utils/viewport";
 import location from "../utils/location";
 import { getHTMLElementAttributes } from "../utils/dom";
-import { GravityEvent, GravitySessionStartedEvent, EventType } from "../types";
+import {
+    EventType,
+    GravityClickEventData,
+    GravityEvent,
+    GravityEventData,
+    GravityEventTarget,
+    GravitySessionStartedEvent
+} from "../types";
 import pJson from "./../../package.json";
 
 export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
+
     const gravityEvent: GravityEvent = {
         type: type,
         location: location(),
         recordedAt: Date.now(),
-        viewportData: viewport()
+        viewportData: viewport(),
+        eventData: createEventData(event, type)
     };
 
     const target = event.target as HTMLElement;
 
-    if (target) {
-        if (type === EventType.Click) {
-            const targetOffset = target.getBoundingClientRect();
-            const pointerEvent = event as PointerEvent;
-            gravityEvent.eventData = {
-                clickOffsetX: Math.trunc(pointerEvent.clientX),
-                clickOffsetY: Math.trunc(pointerEvent.clientY),
-                elementOffsetX: Math.trunc(targetOffset.left),
-                elementOffsetY: Math.trunc(targetOffset.top),
-                elementRelOffsetX: Math.trunc(pointerEvent.clientX - targetOffset.left),
-                elementRelOffsetY: Math.trunc(pointerEvent.clientY - targetOffset.top)
-            };
-        }
+    if (target) gravityEvent.target = createEventTarget(target);
 
-        gravityEvent.target = {
-            element: target.tagName.toLocaleLowerCase(),
-            textContent: target.textContent || "",
-            attributes: {
-                ...getHTMLElementAttributes(target)
-            }
-        };
-
-        try {
-            gravityEvent.target.selector = unique(target);
-        } catch {
-            // do nothing
-        }
-    }
     return gravityEvent;
+}
+
+export function createEventTarget(target: HTMLElement): GravityEventTarget {
+    const eventTarget: GravityEventTarget = {
+        element: target.tagName.toLocaleLowerCase(),
+        textContent: target.textContent || "",
+        attributes: {
+            ...getHTMLElementAttributes(target)
+        }
+    };
+
+    try {
+        eventTarget.selector = unique(target);
+    } catch {
+        // do nothing
+    }
+    return eventTarget;
+}
+
+function createEventData(event: Event, type: EventType): GravityEventData | undefined {
+    switch (type) {
+        case EventType.Click:
+            return createMouseEventData(event as MouseEvent);
+    }
+}
+
+function createMouseEventData(event: MouseEvent): GravityClickEventData {
+
+    const eventData: GravityClickEventData = {
+        clickOffsetX: Math.trunc(event.clientX),
+        clickOffsetY: Math.trunc(event.clientY)
+    };
+
+    const target = event.target as HTMLElement;
+    if (target) {
+        const targetOffset = target.getBoundingClientRect();
+        eventData.elementOffsetX = Math.trunc(targetOffset.left);
+        eventData.elementOffsetY = Math.trunc(targetOffset.top);
+        eventData.elementRelOffsetX = Math.trunc(event.clientX - targetOffset.left);
+        eventData.elementRelOffsetY = Math.trunc(event.clientY - targetOffset.top);
+    }
+    return eventData;
 }
 
 export function createSessionEvent(): GravitySessionStartedEvent {
