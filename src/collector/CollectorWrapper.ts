@@ -9,7 +9,7 @@ import ChangeEventListener from '../event/listener/ChangeEventListener'
 class CollectorWrapper {
   readonly eventHandler: IEventHandler
 
-  constructor(authKey: string, options?: CollectorOptions, private readonly window: Window = global.window) {
+  constructor(authKey: string, private readonly window: Window, options?: CollectorOptions) {
     const sessionId = uuidv4()
 
     this.eventHandler = new ConsoleEventHandler(authKey, sessionId, console.debug.bind(console), options)
