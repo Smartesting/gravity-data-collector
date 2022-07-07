@@ -14,6 +14,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepare": "husky install",
+    "preinstall": "npm i",
     "install": "npm run build",
     "pretty-quick": "pretty-quick",
     "prepublishOnly": "npm test && npm run lint",
