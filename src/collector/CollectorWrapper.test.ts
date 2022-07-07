@@ -19,7 +19,7 @@ describe('CollectorWrapper', () => {
     function createCollectorWrapper() {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper('abcd')
+      return new CollectorWrapper('abcd', global.window)
     }
 
     it('instantiates a ConsoleEventHandler by default', () => {
