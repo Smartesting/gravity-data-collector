@@ -69,7 +69,7 @@ describe('event', () => {
         const element = dom.window.document.querySelector('li')
         const event = await createGravityEvent(mockClick(element as HTMLElement) as unknown as Event, EventType.Click)
 
-        expect(event.target?.textContent).toEqual('I am a list item')
+        expect(event.target?.textContent).toBeUndefined()
       })
 
       it('html attributes', async () => {

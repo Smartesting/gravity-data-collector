@@ -11,11 +11,26 @@ export function getHTMLElementAttributes(element: HTMLElement) {
   }, {})
 }
 
+export function isInteractiveElement(element: HTMLElement) {
+  switch (element.tagName.toLowerCase()) {
+    case 'button':
+      return true
+    case 'a':
+      return true
+    case 'select':
+      return true
+    case 'input':
+      return true
+    default:
+      return false
+  }
+}
+
 export function anonymizeInputValue(element: HTMLInputWithValue): string {
   const anonymizer = new DataAnonymizer(uuidv4())
   switch (element.type) {
     case 'checkbox':
-      return (!!(element as HTMLInputElement).checked).toString()
+      return (element as HTMLInputElement).checked.toString()
     case 'email':
       return anonymizer.anonymize(element.value)
     case 'file':
