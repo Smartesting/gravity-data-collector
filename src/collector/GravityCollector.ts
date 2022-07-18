@@ -2,6 +2,10 @@ import CollectorWrapper from './CollectorWrapper'
 import { CollectorOptions } from '../types'
 import windowExists from '../utils/windowExists'
 
+const DEFAULT_GRAVITY_OPTIONS: CollectorOptions = {
+  debug: false,
+}
+
 export default class GravityCollector {
   collectorWrapper: CollectorWrapper | undefined
 
@@ -13,11 +17,11 @@ export default class GravityCollector {
     return (window as any)._GravityCollector
   }
 
-  static init(authKey: string, options?: CollectorOptions) {
+  static init(options: CollectorOptions = DEFAULT_GRAVITY_OPTIONS) {
     if (!windowExists()) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
 
-    ;(window as any)._GravityCollector = new GravityCollector(new CollectorWrapper(authKey, window, options))
+    ;(window as any)._GravityCollector = new GravityCollector(new CollectorWrapper(options, window))
   }
 }

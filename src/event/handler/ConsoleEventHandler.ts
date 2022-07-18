@@ -5,7 +5,6 @@ const DEFAULT_MAX_DELAY = 500
 
 export class ConsoleEventHandler implements IEventHandler {
   constructor(
-    private readonly authKey: string,
     private readonly sessionId: string,
     private readonly output: (...data: any[]) => void,
     private readonly options: ConsoleEventHandlerOptions = {},
@@ -29,7 +28,6 @@ export class ConsoleEventHandler implements IEventHandler {
   private printEvent(event: TEvent) {
     this.output('[GL DEBUG]')
     this.output('Session: ', this.sessionId)
-    this.output('authKey: ', this.authKey)
     this.output(event)
   }
 }

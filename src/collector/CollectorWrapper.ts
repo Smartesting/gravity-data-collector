@@ -3,16 +3,16 @@ import IEventHandler from '../event/handler/IEventHandler'
 import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import ClickEventListener from '../event/listener/ClickEventListener'
 import { createSessionEvent } from '../event/createSessionEvent'
-import { CollectorOptions } from '../types'
+import { CollectorOptions, ConsoleEventHandlerOptions } from '../types'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 
 class CollectorWrapper {
   readonly eventHandler: IEventHandler
 
-  constructor(authKey: string, private readonly window: Window, options?: CollectorOptions) {
+  constructor(options: CollectorOptions, private readonly window: Window) {
     const sessionId = uuidv4()
 
-    this.eventHandler = new ConsoleEventHandler(authKey, sessionId, console.debug.bind(console), options)
+    this.eventHandler = new ConsoleEventHandler(sessionId, console.debug.bind(console), options as ConsoleEventHandlerOptions)
 
     this.initSession()
     this.initializeEventHandlers()
