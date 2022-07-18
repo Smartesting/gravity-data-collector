@@ -29,6 +29,8 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 | key        | type    | use                                                                                        | default value |
 | ---------- | ------- | ------------------------------------------------------------------------------------------ | ------------- |
+| debug      | Boolean | Logs events in the console instead of sending them to Gravity                              | false         |
+| authKey    | String  | The authentication key provided by Gravity to select the correct collection                |               |
 | simulation | Boolean | Enable simulation mode.                                                                    | false         |
 | maxDelay   | Integer | In simulation mode, adds a random delay between 0 and this value before printing an event. | 500           |
 

@@ -9,7 +9,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
   if (options.debug === true) {
     const consoleOptions = options as ConsoleEventHandlerOptions
     const simulation = consoleOptions.simulation ?? false
-    const maxDelay = consoleOptions.maxDelay ?? 0
+    const maxDelay = consoleOptions.maxDelay ?? 500
 
     return {
       debug: true,

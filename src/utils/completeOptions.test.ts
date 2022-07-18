@@ -17,7 +17,7 @@ describe('completeOptions', () => {
       const expected: CollectorOptions = {
         debug: true,
         simulation: false,
-        maxDelay: 0,
+        maxDelay: 500,
       }
       expect(completed).toStrictEqual(expected)
     })

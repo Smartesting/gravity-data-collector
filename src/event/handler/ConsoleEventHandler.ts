@@ -1,8 +1,6 @@
 import IEventHandler from './IEventHandler'
 import { ConsoleEventHandlerOptions, TEvent } from '../../types'
 
-const DEFAULT_MAX_DELAY = 500
-
 export class ConsoleEventHandler implements IEventHandler {
   constructor(
     private readonly sessionId: string,
@@ -18,7 +16,7 @@ export class ConsoleEventHandler implements IEventHandler {
   }
 
   private printEventWithDelay(event: TEvent) {
-    const maxDelay = this.options.maxDelay ?? DEFAULT_MAX_DELAY
+    const { maxDelay } = this.options
 
     setTimeout(() => {
       this.printEvent(event)
