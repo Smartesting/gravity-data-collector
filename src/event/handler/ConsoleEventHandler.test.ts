@@ -21,7 +21,7 @@ describe('ConsoleEventHandler', () => {
     })
 
     it('print event to debug console', () => {
-      const consoleEventHandler = new ConsoleEventHandler('aaa-111', outputer)
+      const consoleEventHandler = new ConsoleEventHandler('aaa-111', outputer, { simulation: false, maxDelay: 0 })
       const sessionEvent = createSessionEvent()
       consoleEventHandler.run(createSessionEvent())
 

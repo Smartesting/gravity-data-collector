@@ -7,12 +7,12 @@ export class ConsoleEventHandler implements IEventHandler {
   constructor(
     private readonly sessionId: string,
     private readonly output: (...data: any[]) => void,
-    private readonly options: ConsoleEventHandlerOptions = {},
+    private readonly options: ConsoleEventHandlerOptions,
   ) {}
 
   run(event: TEvent) {
     const { simulation } = this.options
-    if (simulation !== true) return this.printEvent(event)
+    if (!simulation) return this.printEvent(event)
 
     this.printEventWithDelay(event)
   }
