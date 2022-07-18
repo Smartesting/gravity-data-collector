@@ -1,5 +1,5 @@
 import IEventHandler from '../handler/IEventHandler'
-import { createGravityEvent } from '../event'
+import { createGravityEvent } from '../createGravityEvent'
 import EventListener from './EventListener'
 import { EventType, HTMLInputWithValue } from '../../types'
 import { sanitizeHTMLElementValue } from '../../utils/sanitizeHTMLElementValue'

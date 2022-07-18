@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import IEventHandler from '../event/handler/IEventHandler'
 import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import ClickEventListener from '../event/listener/ClickEventListener'
-import { createSessionEvent } from '../event/event'
+import { createSessionEvent } from '../event/createSessionEvent'
 import { CollectorOptions } from '../types'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 

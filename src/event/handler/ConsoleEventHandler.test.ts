@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../../test-utils/mocks'
-import { createSessionEvent } from '../event'
+import { createSessionEvent } from '../createSessionEvent'
 import { ConsoleEventHandler } from './ConsoleEventHandler'
 
 describe('ConsoleEventHandler', () => {

@@ -1,16 +1,14 @@
-import unique from '@cypress/unique-selector'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
+import unique from '@cypress/unique-selector'
 import { getHTMLElementAttributes, isInteractiveElement } from '../utils/dom'
 import {
   EventType,
-  GravityClickEventData,
   GravityEvent,
+  GravityClickEventData,
   GravityEventData,
   GravityEventTarget,
-  GravitySessionStartedEvent,
 } from '../types'
-import pJson from './../../package.json'
 
 export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
   const gravityEvent: GravityEvent = {
@@ -23,26 +21,9 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
 
   const target = event.target as HTMLElement
 
-  if (target !== null) gravityEvent.target = createEventTarget(target)
+  if (target !== null) { gravityEvent.target = createEventTarget(target) }
 
   return gravityEvent
-}
-
-export function createEventTarget(target: HTMLElement): GravityEventTarget {
-  const eventTarget: GravityEventTarget = {
-    element: target.tagName.toLocaleLowerCase(),
-    textContent: isInteractiveElement(target) ? target.textContent ?? '' : undefined,
-    attributes: {
-      ...getHTMLElementAttributes(target),
-    },
-  }
-
-  try {
-    eventTarget.selector = unique(target)
-  } catch {
-    // do nothing
-  }
-  return eventTarget
 }
 
 function createEventData(event: Event, type: EventType): GravityEventData | undefined {
@@ -69,20 +50,19 @@ function createMouseEventData(event: MouseEvent): GravityClickEventData {
   return eventData
 }
 
-export function createSessionEvent(): GravitySessionStartedEvent {
-  const initSessionEvent: GravitySessionStartedEvent = {
-    type: EventType.SessionStarted,
-    recordedAt: new Date().toISOString(),
-    location: location(),
-    viewportData: viewport(),
-    version: pJson.version,
-    agent: navigator.userAgent,
+function createEventTarget(target: HTMLElement): GravityEventTarget {
+  const eventTarget: GravityEventTarget = {
+    element: target.tagName.toLocaleLowerCase(),
+    textContent: isInteractiveElement(target) ? target.textContent ?? '' : undefined,
+    attributes: {
+      ...getHTMLElementAttributes(target),
+    },
   }
 
-  const cypress = (window as any).Cypress
-  if (cypress?.currentTest !== undefined) {
-    initSessionEvent.test = cypress.currentTest.titlePath.join(' > ')
+  try {
+    eventTarget.selector = unique(target)
+  } catch {
+    // do nothing
   }
-
-  return initSessionEvent
+  return eventTarget
 }

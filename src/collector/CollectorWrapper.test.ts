@@ -4,7 +4,7 @@ import ClickEventListener from '../event/listener/ClickEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import CollectorWrapper from './CollectorWrapper'
-import { createSessionEvent } from '../event/event'
+import { createSessionEvent } from '../event/createSessionEvent'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
