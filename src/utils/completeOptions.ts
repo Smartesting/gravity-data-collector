@@ -25,5 +25,6 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
   return {
     debug: false,
     authKey: gravityOptions.authKey,
+    delay: gravityOptions.delay ?? 5000,
   }
 }

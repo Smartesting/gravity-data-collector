@@ -33,16 +33,17 @@ describe('completeOptions', () => {
     })
   })
 
-  describe('when  debug is set to true', () => {
-    it('throws an error if authkey is not provided', () => {
+  describe('when  debug is set to false', () => {
+    it('throws an error if authKey is not provided', () => {
       expect(() => completeOptions({ debug: false })).toThrow('No AuthKey provided')
     })
 
-    it('returns the authKey and debug mode', () => {
+    it('returns the authKey, the debug mode and the default delay', () => {
       const completed = completeOptions({ debug: false, authKey: '123-456-789' })
       const expected: CollectorOptions = {
         debug: false,
         authKey: '123-456-789',
+        delay: 5000,
       }
       expect(completed).toStrictEqual(expected)
     })

@@ -6,6 +6,8 @@ import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionEvent } from '../event/createSessionEvent'
 import { CollectorOptions } from '../types'
+import UnloadEventListener from '../event/listener/UnloadEventListener'
+import { GravityEventHandler } from '../event/handler/GravityEventHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -67,6 +69,15 @@ describe('CollectorWrapper', () => {
 
         expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce()
       })
+
+      it('initializes UnloadEventListener', () => {
+        vi.spyOn(UnloadEventListener.prototype, 'init').mockImplementation(() => {
+          return {}
+        })
+        createCollectorWrapper()
+
+        expect(UnloadEventListener.prototype.init).toHaveBeenCalledOnce()
+      })
     })
 
     describe('when debug option is set to false (default version)', () => {
@@ -86,9 +97,9 @@ describe('CollectorWrapper', () => {
           }
         })
 
-        it('throws an error', () => {
-          // TODO: use a real eventCollector would be way nicer ;)
-          expect(() => createCollectorWrapper()).toThrowError('Not implemented yet')
+        it('instantiates a GravityEventHandler', () => {
+          const sut = createCollectorWrapper()
+          expect(sut.eventHandler).toBeInstanceOf(GravityEventHandler)
         })
       })
     })

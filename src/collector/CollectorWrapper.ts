@@ -5,6 +5,8 @@ import ClickEventListener from '../event/listener/ClickEventListener'
 import { createSessionEvent } from '../event/createSessionEvent'
 import { CollectorOptions, ConsoleEventHandlerOptions, GravityEventHandlerOptions } from '../types'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
+import { GravityEventHandler } from '../event/handler/GravityEventHandler'
+import UnloadEventListener from '../event/listener/UnloadEventListener'
 
 class CollectorWrapper {
   readonly eventHandler: IEventHandler
@@ -13,33 +15,31 @@ class CollectorWrapper {
     const sessionId = uuidv4()
 
     this.eventHandler = options.debug
-      ? this.createConsoleHandler(sessionId, options as ConsoleEventHandlerOptions)
-      : this.createGravityHandler(sessionId, options as GravityEventHandlerOptions)
+      ? createConsoleHandler(sessionId, options as ConsoleEventHandlerOptions)
+      : createGravityHandler(sessionId, options as GravityEventHandlerOptions)
 
     this.initSession()
     this.initializeEventHandlers()
   }
 
   private initSession() {
-    const event = createSessionEvent()
-    return this.eventHandler.run(event)
+    return this.eventHandler.run(createSessionEvent())
   }
 
   private initializeEventHandlers() {
     new ClickEventListener(this.eventHandler, this.window).init()
     new ChangeEventListener(this.eventHandler, this.window).init()
+    new UnloadEventListener(this.eventHandler, this.window).init()
   }
+}
 
-  private createConsoleHandler(sessionId: string, options: ConsoleEventHandlerOptions) {
-    return new ConsoleEventHandler(sessionId, console.debug.bind(console), options)
-  }
+function createConsoleHandler(sessionId: string, options: ConsoleEventHandlerOptions) {
+  return new ConsoleEventHandler(sessionId, console.debug.bind(console), options)
+}
 
-  private createGravityHandler(sessionId: string, options: GravityEventHandlerOptions): IEventHandler {
-    if (options.authKey === undefined) throw new Error('No AuthKey was specified')
-
-    // TODO: instanciate real handler
-    throw new Error('Not implemented yet')
-  }
+function createGravityHandler(sessionId: string, options: GravityEventHandlerOptions): IEventHandler {
+  if (options.authKey === undefined) throw new Error('No AuthKey was specified')
+  return new GravityEventHandler(sessionId, options)
 }
 
 export default CollectorWrapper

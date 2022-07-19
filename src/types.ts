@@ -1,10 +1,11 @@
 export enum EventType {
   SessionStarted = 'sessionStarted',
+  Unload = 'unload',
   Click = 'click',
   Change = 'change'
 }
 
-export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent
+export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent | GravitySessionEndedEvent
 export type GravityEventData = GravityClickEventData
 
 export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
@@ -21,6 +22,8 @@ export type GravitySessionStartedEvent = {
   version: string
   agent: string
 } & EventCommonProperties
+
+export type GravitySessionEndedEvent = {} & EventCommonProperties
 
 export type GravityEvent = {
   target?: GravityEventTarget
@@ -71,6 +74,7 @@ export type HandlerOptions = GravityEventHandlerOptions | ConsoleEventHandlerOpt
 
 export interface GravityEventHandlerOptions {
   authKey: string
+  delay: number
 }
 
 export interface ConsoleEventHandlerOptions {
@@ -86,3 +90,7 @@ export interface GravityClickEventData {
   elementOffsetX?: number
   elementOffsetY?: number
 }
+
+export type SessionEvent = {
+  sessionId: string
+} & TEvent
