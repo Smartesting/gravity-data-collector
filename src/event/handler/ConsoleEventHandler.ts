@@ -1,25 +1,22 @@
 import IEventHandler from './IEventHandler'
 import { ConsoleEventHandlerOptions, TEvent } from '../../types'
 
-const DEFAULT_MAX_DELAY = 500
-
 export class ConsoleEventHandler implements IEventHandler {
   constructor(
-    private readonly authKey: string,
     private readonly sessionId: string,
     private readonly output: (...data: any[]) => void,
-    private readonly options: ConsoleEventHandlerOptions = {},
+    private readonly options: ConsoleEventHandlerOptions,
   ) {}
 
   run(event: TEvent) {
     const { simulation } = this.options
-    if (simulation !== true) return this.printEvent(event)
+    if (!simulation) return this.printEvent(event)
 
     this.printEventWithDelay(event)
   }
 
   private printEventWithDelay(event: TEvent) {
-    const maxDelay = this.options.maxDelay ?? DEFAULT_MAX_DELAY
+    const { maxDelay } = this.options
 
     setTimeout(() => {
       this.printEvent(event)
@@ -29,7 +26,6 @@ export class ConsoleEventHandler implements IEventHandler {
   private printEvent(event: TEvent) {
     this.output('[GL DEBUG]')
     this.output('Session: ', this.sessionId)
-    this.output('authKey: ', this.authKey)
     this.output(event)
   }
 }

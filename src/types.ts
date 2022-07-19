@@ -63,11 +63,19 @@ export interface ViewportData {
   pixelDepth?: number
 }
 
-export type CollectorOptions = {} & ConsoleEventHandlerOptions
+export type CollectorOptions = {
+  debug: boolean
+} & HandlerOptions
+
+export type HandlerOptions = GravityEventHandlerOptions | ConsoleEventHandlerOptions
+
+export interface GravityEventHandlerOptions {
+  authKey: string
+}
 
 export interface ConsoleEventHandlerOptions {
-  simulation?: boolean
-  maxDelay?: number
+  simulation: boolean
+  maxDelay: number
 }
 
 export interface GravityClickEventData {
