@@ -11,8 +11,10 @@ export function buildGravityTrackingApiUrl(authKey: string) {
 export function defaultEventSessionSender(
   authKey: string,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (reason: string) => void = nop): (sessionEvents: SessionEvent[]) => Promise<void> {
-  return async (sessionEvents: SessionEvent[]) => await sendSessionEvents(authKey, sessionEvents, successCallback, errorCallback)
+  errorCallback: (reason: string) => void = nop,
+): (sessionEvents: SessionEvent[]) => Promise<void> {
+  return async (sessionEvents: SessionEvent[]) =>
+    await sendSessionEvents(authKey, sessionEvents, successCallback, errorCallback)
 }
 
 export function debugEventSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
@@ -36,7 +38,8 @@ async function sendSessionEvents(
   authKey: string,
   sessionEvents: SessionEvent[],
   successCallback: (payload: any) => void,
-  errorCallback: (reason: string) => void): Promise<void> {
+  errorCallback: (reason: string) => void,
+): Promise<void> {
   try {
     const response = await fetch(buildGravityTrackingApiUrl(authKey), {
       method: 'POST',

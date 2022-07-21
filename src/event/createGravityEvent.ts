@@ -2,13 +2,7 @@ import viewport from '../utils/viewport'
 import location from '../utils/location'
 import unique from '@cypress/unique-selector'
 import { getHTMLElementAttributes, isInteractiveElement } from '../utils/dom'
-import {
-  EventType,
-  GravityEvent,
-  GravityClickEventData,
-  GravityEventData,
-  GravityEventTarget,
-} from '../types'
+import { EventType, GravityEvent, GravityClickEventData, GravityEventData, GravityEventTarget } from '../types'
 
 export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
   const gravityEvent: GravityEvent = {
@@ -21,7 +15,9 @@ export async function createGravityEvent(event: Event, type: EventType): Promise
 
   const target = event.target as HTMLElement
 
-  if (target !== null) { gravityEvent.target = createEventTarget(target) }
+  if (target !== null) {
+    gravityEvent.target = createEventTarget(target)
+  }
 
   return gravityEvent
 }

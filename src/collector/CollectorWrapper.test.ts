@@ -12,9 +12,7 @@ describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
-    vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {
-
-    })
+    vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
   })
 
   describe('constructor', () => {
@@ -39,32 +37,28 @@ describe('CollectorWrapper', () => {
 
         const expectedEvent = createSessionStartedEvent()
 
-        const mock = vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {
-        })
+        const mock = vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
 
         createCollectorWrapper()
         expect(mock).toHaveBeenCalledWith(expectedEvent)
       })
 
       it('initializes ClickEventListener', () => {
-        vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {
-        })
+        vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {})
         createCollectorWrapper()
 
         expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
       it('initializes ChangeEventListener', () => {
-        vi.spyOn(ChangeEventListener.prototype, 'init').mockImplementation(() => {
-        })
+        vi.spyOn(ChangeEventListener.prototype, 'init').mockImplementation(() => {})
         createCollectorWrapper()
 
         expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
       it('initializes UnloadEventListener', () => {
-        vi.spyOn(UnloadEventListener.prototype, 'init').mockImplementation(() => {
-        })
+        vi.spyOn(UnloadEventListener.prototype, 'init').mockImplementation(() => {})
         createCollectorWrapper()
 
         expect(UnloadEventListener.prototype.init).toHaveBeenCalledOnce()

@@ -11,7 +11,9 @@ class CollectorWrapper {
   readonly eventHandler: EventHandler
 
   constructor(options: CollectorOptions, private readonly window: Window) {
-    const output = options.debug ? debugEventSessionSender(options.maxDelay) : defaultEventSessionSender(options.authKey)
+    const output = options.debug
+      ? debugEventSessionSender(options.maxDelay)
+      : defaultEventSessionSender(options.authKey)
     this.eventHandler = new EventHandler(uuidv4(), options.requestInterval, output)
 
     this.initSession()

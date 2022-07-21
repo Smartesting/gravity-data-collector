@@ -1,3 +1,1 @@
-export function nop() {
-
-}
+export function nop() {}
