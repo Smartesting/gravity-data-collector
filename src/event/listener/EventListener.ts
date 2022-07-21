@@ -1,9 +1,9 @@
-import IEventHandler from '../handler/IEventHandler'
+import EventHandler from '../handler/EventHandler'
 import { EventType } from '../../types'
 
 export default abstract class EventListener {
   protected constructor(
-    protected readonly eventHandler: IEventHandler,
+    protected readonly eventHandler: EventHandler,
     protected readonly eventType: EventType,
     protected readonly window: Window,
   ) {}

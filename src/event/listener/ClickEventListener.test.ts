@@ -1,41 +1,34 @@
-import sinon from 'sinon'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vitest } from 'vitest'
 import { JSDOM } from 'jsdom'
-import IEventHandler from '../handler/IEventHandler'
+import EventHandler from '../handler/EventHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ClickEventListener from './ClickEventListener'
+import { nop } from '../../utils/nop'
 
 describe('ClickEventListener', () => {
   describe('listener', () => {
-    let eventHandler: IEventHandler
-    let runSpy: sinon.SinonSpy
+    const eventHandler = new EventHandler('aaa-111', 0, nop)
+    const runSpy = vitest.spyOn(eventHandler, 'run')
 
     beforeEach(() => {
-      eventHandler = {
-        run: () => {},
-      }
-      runSpy = sinon.spy(eventHandler, 'run')
-    })
-
-    afterEach(() => {
-      runSpy.restore()
+      vitest.restoreAllMocks()
     })
 
     it('calls listener when click event been fired', async () => {
       const dom = new JSDOM(`
                 <div>
-                    <button class="size-lg"/>
+                    <button class='size-lg'/>
                 </div>`)
 
       new ClickEventListener(eventHandler, dom.window as unknown as Window).init()
 
-      const container = dom.window.document.querySelector('div')
-      const button = await waitFor(() => getByRole(container as HTMLElement, 'button'))
+      const container = dom.window.document.querySelector('div')!
+      const button = await waitFor(() => getByRole(container, 'button'))
 
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(runSpy.calledOnce).toBeTruthy()
+        expect(runSpy).toHaveBeenCalledOnce()
       })
     })
   })

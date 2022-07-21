@@ -1,10 +1,10 @@
-import IEventHandler from '../handler/IEventHandler'
+import EventHandler from '../handler/EventHandler'
 import { createGravityEvent } from '../createGravityEvent'
 import EventListener from './EventListener'
 import { EventType } from '../../types'
 
 class ClickEventListener extends EventListener {
-  constructor(eventHandler: IEventHandler, window: Window) {
+  constructor(eventHandler: EventHandler, window: Window) {
     super(eventHandler, EventType.Click, window)
   }
 

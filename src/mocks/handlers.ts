@@ -1,13 +1,19 @@
 import { rest } from 'msw'
-import { buildGravityTrackingApiUrl } from '../event/handler/configuration'
+import { buildGravityTrackingApiUrl } from '../event/handler/eventSessionSender'
 
 export const VALID_AUTH_KEY = 'VALID_AUTH_KEY'
+export const DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR = 'DUMMY_AUTH_KEY_CAUSING_ERROR'
 
 export const handlers = [
 
   rest.post(buildGravityTrackingApiUrl(':authKey'), async (req, res, ctx) => {
     const { authKey } = req.params
-    if (authKey !== VALID_AUTH_KEY) return await res(ctx.status(404), ctx.json({}))
+    if (authKey === DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR) {
+      throw new Error('Network Error')
+    }
+    if (authKey !== VALID_AUTH_KEY) {
+      return await res(ctx.status(404), ctx.json({}))
+    }
     const payload = await req.json()
     if (!Array.isArray(payload)) return await res(ctx.status(422), ctx.json({}))
 

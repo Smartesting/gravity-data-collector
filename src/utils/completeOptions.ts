@@ -1,4 +1,4 @@
-import { CollectorOptions, ConsoleEventHandlerOptions, GravityEventHandlerOptions } from '../types'
+import { CollectorOptions } from '../types'
 
 export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
   const authKeyError = new Error('No AuthKey provided')
@@ -7,24 +7,21 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
   }
 
   if (options.debug === true) {
-    const consoleOptions = options as ConsoleEventHandlerOptions
-    const simulation = consoleOptions.simulation ?? false
-    const maxDelay = consoleOptions.maxDelay ?? 500
-
     return {
+      authKey: options.authKey ?? '',
       debug: true,
-      simulation,
-      maxDelay,
+      maxDelay: options.maxDelay ?? 500,
+      requestInterval: options.requestInterval ?? 5000,
     }
   }
 
-  const gravityOptions = options as GravityEventHandlerOptions
-  if (gravityOptions.authKey === null || gravityOptions.authKey === undefined) {
+  if (options.authKey === null || options.authKey === undefined) {
     throw authKeyError
   }
   return {
+    authKey: options.authKey,
     debug: false,
-    authKey: gravityOptions.authKey,
-    delay: gravityOptions.delay ?? 5000,
+    maxDelay: 0,
+    requestInterval: options.requestInterval ?? 5000,
   }
 }

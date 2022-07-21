@@ -1,29 +1,25 @@
 import { v4 as uuidv4 } from 'uuid'
-import IEventHandler from '../event/handler/IEventHandler'
-import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import ClickEventListener from '../event/listener/ClickEventListener'
-import { createSessionEvent } from '../event/createSessionEvent'
-import { CollectorOptions, ConsoleEventHandlerOptions, GravityEventHandlerOptions } from '../types'
+import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
+import { CollectorOptions } from '../types'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
-import { GravityEventHandler } from '../event/handler/GravityEventHandler'
+import EventHandler from '../event/handler/EventHandler'
 import UnloadEventListener from '../event/listener/UnloadEventListener'
+import { debugEventSessionSender, defaultEventSessionSender } from '../event/handler/eventSessionSender'
 
 class CollectorWrapper {
-  readonly eventHandler: IEventHandler
+  readonly eventHandler: EventHandler
 
   constructor(options: CollectorOptions, private readonly window: Window) {
-    const sessionId = uuidv4()
-
-    this.eventHandler = options.debug
-      ? createConsoleHandler(sessionId, options as ConsoleEventHandlerOptions)
-      : createGravityHandler(sessionId, options as GravityEventHandlerOptions)
+    const output = options.debug ? debugEventSessionSender(options.maxDelay) : defaultEventSessionSender(options.authKey)
+    this.eventHandler = new EventHandler(uuidv4(), options.requestInterval, output)
 
     this.initSession()
     this.initializeEventHandlers()
   }
 
   private initSession() {
-    return this.eventHandler.run(createSessionEvent())
+    return this.eventHandler.run(createSessionStartedEvent())
   }
 
   private initializeEventHandlers() {
@@ -31,15 +27,6 @@ class CollectorWrapper {
     new ChangeEventListener(this.eventHandler, this.window).init()
     new UnloadEventListener(this.eventHandler, this.window).init()
   }
-}
-
-function createConsoleHandler(sessionId: string, options: ConsoleEventHandlerOptions) {
-  return new ConsoleEventHandler(sessionId, console.debug.bind(console), options)
-}
-
-function createGravityHandler(sessionId: string, options: GravityEventHandlerOptions): IEventHandler {
-  if (options.authKey === undefined) throw new Error('No AuthKey was specified')
-  return new GravityEventHandler(sessionId, options)
 }
 
 export default CollectorWrapper

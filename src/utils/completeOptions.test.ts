@@ -15,19 +15,21 @@ describe('completeOptions', () => {
     it('completes simulation to false and maxDelay to zero', () => {
       const completed = completeOptions({ debug: true })
       const expected: CollectorOptions = {
+        authKey: '',
+        requestInterval: 5000,
         debug: true,
-        simulation: false,
-        maxDelay: 500,
+        maxDelay: 500
       }
       expect(completed).toStrictEqual(expected)
     })
 
     it('keeps values provided by the user', () => {
-      const completed = completeOptions({ debug: true, simulation: true, maxDelay: 15 })
+      const completed = completeOptions({ debug: true, maxDelay: 15 })
       const expected: CollectorOptions = {
+        authKey: '',
+        requestInterval: 5000,
         debug: true,
-        simulation: true,
-        maxDelay: 15,
+        maxDelay: 15
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -38,12 +40,13 @@ describe('completeOptions', () => {
       expect(() => completeOptions({ debug: false })).toThrow('No AuthKey provided')
     })
 
-    it('returns the authKey, the debug mode and the default delay', () => {
+    it('returns the authKey, the debug mode and the default requestInterval', () => {
       const completed = completeOptions({ debug: false, authKey: '123-456-789' })
       const expected: CollectorOptions = {
-        debug: false,
         authKey: '123-456-789',
-        delay: 5000,
+        requestInterval: 5000,
+        debug: false,
+        maxDelay: 0
       }
       expect(completed).toStrictEqual(expected)
     })

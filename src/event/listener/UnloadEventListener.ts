@@ -1,15 +1,21 @@
-import IEventHandler from '../handler/IEventHandler'
-import { createGravityEvent } from '../createGravityEvent'
+import EventHandler from '../handler/EventHandler'
 import EventListener from './EventListener'
-import { EventType } from '../../types'
+import { EventType, GravitySessionEndedEvent } from '../../types'
+import viewport from '../../utils/viewport'
+import location from '../../utils/location'
 
 class UnloadEventListener extends EventListener {
-  constructor(eventHandler: IEventHandler, window: Window) {
+  constructor(eventHandler: EventHandler, window: Window) {
     super(eventHandler, EventType.Unload, window)
   }
 
   async listener(event: Event) {
-    this.eventHandler.run(await createGravityEvent(event, this.eventType))
+    const sessionEndedEvent : GravitySessionEndedEvent = {
+      viewportData: viewport(),
+      location: location(),
+      type: this.eventType,
+    }
+    this.eventHandler.run(sessionEndedEvent)
   }
 }
 

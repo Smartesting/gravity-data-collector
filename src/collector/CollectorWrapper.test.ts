@@ -2,19 +2,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import ClickEventListener from '../event/listener/ClickEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
-import { ConsoleEventHandler } from '../event/handler/ConsoleEventHandler'
 import CollectorWrapper from './CollectorWrapper'
-import { createSessionEvent } from '../event/createSessionEvent'
+import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
 import { CollectorOptions } from '../types'
 import UnloadEventListener from '../event/listener/UnloadEventListener'
-import { GravityEventHandler } from '../event/handler/GravityEventHandler'
+import EventHandler from '../event/handler/EventHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
-    vi.spyOn(ConsoleEventHandler.prototype, 'run').mockImplementation(() => {
-      return {}
+    vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {
+
     })
   })
 
@@ -29,12 +28,8 @@ describe('CollectorWrapper', () => {
 
     describe('when debug option is set to true', () => {
       beforeEach(() => {
+        // @ts-ignore
         options = { debug: true }
-      })
-
-      it('instantiates a ConsoleEventHandler by default', () => {
-        const sut = createCollectorWrapper()
-        expect(sut.eventHandler).toBeInstanceOf(ConsoleEventHandler)
       })
 
       it('a "sessionStarted" event is sent when initialized', () => {
@@ -42,10 +37,9 @@ describe('CollectorWrapper', () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
-        const expectedEvent = createSessionEvent()
+        const expectedEvent = createSessionStartedEvent()
 
-        const mock = vi.spyOn(ConsoleEventHandler.prototype, 'run').mockImplementation(() => {
-          return {}
+        const mock = vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {
         })
 
         createCollectorWrapper()
@@ -54,7 +48,6 @@ describe('CollectorWrapper', () => {
 
       it('initializes ClickEventListener', () => {
         vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {
-          return {}
         })
         createCollectorWrapper()
 
@@ -63,7 +56,6 @@ describe('CollectorWrapper', () => {
 
       it('initializes ChangeEventListener', () => {
         vi.spyOn(ChangeEventListener.prototype, 'init').mockImplementation(() => {
-          return {}
         })
         createCollectorWrapper()
 
@@ -72,35 +64,10 @@ describe('CollectorWrapper', () => {
 
       it('initializes UnloadEventListener', () => {
         vi.spyOn(UnloadEventListener.prototype, 'init').mockImplementation(() => {
-          return {}
         })
         createCollectorWrapper()
 
         expect(UnloadEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-    })
-
-    describe('when debug option is set to false (default version)', () => {
-      beforeEach(() => {
-        options = { debug: false }
-      })
-
-      it('throws an error if AuthKey is not set', () => {
-        expect(() => createCollectorWrapper()).toThrowError('No AuthKey was specified')
-      })
-
-      describe('when AuthKey is specified', () => {
-        beforeEach(() => {
-          options = {
-            debug: false,
-            authKey: '123-456-789',
-          }
-        })
-
-        it('instantiates a GravityEventHandler', () => {
-          const sut = createCollectorWrapper()
-          expect(sut.eventHandler).toBeInstanceOf(GravityEventHandler)
-        })
       })
     })
   })

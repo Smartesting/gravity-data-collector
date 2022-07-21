@@ -1,11 +1,11 @@
-import IEventHandler from '../handler/IEventHandler'
+import EventHandler from '../handler/EventHandler'
 import { createGravityEvent } from '../createGravityEvent'
 import EventListener from './EventListener'
 import { EventType, HTMLInputWithValue } from '../../types'
 import { sanitizeHTMLElementValue } from '../../utils/sanitizeHTMLElementValue'
 
 class ChangeEventListener extends EventListener {
-  constructor(eventHandler: IEventHandler, window: Window) {
+  constructor(eventHandler: EventHandler, window: Window) {
     super(eventHandler, EventType.Change, window)
   }
 
