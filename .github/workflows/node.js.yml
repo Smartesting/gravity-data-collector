@@ -29,6 +29,4 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run lint
-      - run: ./node_modules/.bin/prettier -w .
-      - name: Ensure GIT repository is clean after prettier was executed
-        run: bash -c "[[ -n \$(git status -s) ]] && exit 1 || exit 0"
+      - run: ./node_modules/.bin/prettier -c .
