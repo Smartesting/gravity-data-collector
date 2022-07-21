@@ -30,7 +30,7 @@ describe('EventHandler', () => {
       expect(output).toHaveBeenCalledTimes(0)
       vitest.advanceTimersByTime(5000)
       expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as Array<any>)[0]).toHaveLength(3)
+      expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
     })
 
     it('outputs events if "unload" event has been handled', async () => {
@@ -40,7 +40,7 @@ describe('EventHandler', () => {
       eventHandler.run(await mockGravityClickEvent())
       eventHandler.run(await createGravityEvent(new Event('unload'), EventType.Unload))
       expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as Array<any>)[0]).toHaveLength(4)
+      expect((output.mock.lastCall as any[])[0]).toHaveLength(4)
     })
 
     it('skips outputs if no more buffered events', async () => {
@@ -51,12 +51,11 @@ describe('EventHandler', () => {
       vitest.advanceTimersByTime(10000)
       expect(output).toHaveBeenCalledTimes(1)
     })
-
   })
 })
 
 async function mockGravityClickEvent() {
   const dom = new JSDOM('<div>Click Me</div>')
-  const element = dom.window.document.querySelector('div')!
-  return await createGravityEvent(mockClick(element) as unknown as Event, EventType.Click)
+  const element = dom.window.document.querySelector('div')
+  return await createGravityEvent(mockClick(element as unknown as HTMLElement) as unknown as Event, EventType.Click)
 }

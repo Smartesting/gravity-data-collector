@@ -28,7 +28,7 @@ describe('CollectorWrapper', () => {
 
     describe('when debug option is set to true', () => {
       beforeEach(() => {
-        // @ts-ignore
+        // @ts-expect-error
         options = { debug: true }
       })
 

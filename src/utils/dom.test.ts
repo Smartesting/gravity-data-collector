@@ -5,70 +5,70 @@ import { isInteractiveElement } from './dom'
 describe('isInteractiveElement', () => {
   it('detects button as an interactive element', () => {
     const dom = new JSDOM('<button/>')
-    const buttonElement = dom.window.document.querySelector('button')!
+    const buttonElement = dom.window.document.querySelector('button')
 
-    expect(isInteractiveElement(buttonElement)).toBeTruthy()
+    expect(isInteractiveElement(buttonElement as unknown as HTMLElement)).toBeTruthy()
   })
 
   it('detects link as an interactive element', () => {
     const dom = new JSDOM('<a/>')
-    const linkElement = dom.window.document.querySelector('a')!
+    const linkElement = dom.window.document.querySelector('a')
 
-    expect(isInteractiveElement(linkElement)).toBeTruthy()
+    expect(isInteractiveElement(linkElement as unknown as HTMLElement)).toBeTruthy()
   })
 
   it('detects input as an interactive element', () => {
     const dom = new JSDOM('<input/>')
-    const inputElement = dom.window.document.querySelector('input')!
+    const inputElement = dom.window.document.querySelector('input')
 
-    expect(isInteractiveElement(inputElement)).toBeTruthy()
+    expect(isInteractiveElement(inputElement as unknown as HTMLElement)).toBeTruthy()
   })
 
   it('detects select as an interactive element', () => {
     const dom = new JSDOM('<select/>')
-    const selectElement = dom.window.document.querySelector('select')!
+    const selectElement = dom.window.document.querySelector('select')
 
-    expect(isInteractiveElement(selectElement)).toBeTruthy()
+    expect(isInteractiveElement(selectElement as unknown as HTMLElement)).toBeTruthy()
   })
 
   it('does not detect body as an interactive element', () => {
     const dom = new JSDOM('<body/>')
-    const bodyElement = dom.window.document.querySelector('body')!
+    const bodyElement = dom.window.document.querySelector('body')
 
-    expect(isInteractiveElement(bodyElement)).toBeFalsy()
+    expect(isInteractiveElement(bodyElement as unknown as HTMLElement)).toBeFalsy()
   })
 
   it('does not detect html as an interactive element', () => {
     const dom = new JSDOM('<html lang="en"/>')
-    const htmlElement = dom.window.document.querySelector('html')!
+    const htmlElement = dom.window.document.querySelector('html')
 
-    expect(isInteractiveElement(htmlElement)).toBeFalsy()
+    expect(isInteractiveElement(htmlElement as unknown as HTMLElement)).toBeFalsy()
   })
 
   it('does not detect div as an interactive element', () => {
     const dom = new JSDOM('<div/>')
-    const divElement = dom.window.document.querySelector('div')!
+    const divElement = dom.window.document.querySelector('div')
 
-    expect(isInteractiveElement(divElement)).toBeFalsy()
+    expect(isInteractiveElement(divElement as unknown as HTMLElement)).toBeFalsy()
   })
 
   it('does not detect list as an interactive element', () => {
     const dom = new JSDOM('<li/>')
-    const listElement = dom.window.document.querySelector('li')!
+    const listElement = dom.window.document.querySelector('li')
 
-    expect(isInteractiveElement(listElement)).toBeFalsy()
+    expect(isInteractiveElement(listElement as unknown as HTMLElement)).toBeFalsy()
   })
 
   it('does not detect list item as an interactive element', () => {
     const dom = new JSDOM('<ul/>')
-    const listItemElement = dom.window.document.querySelector('ul')!
+    const listItemElement = dom.window.document.querySelector('ul')
 
-    expect(isInteractiveElement(listItemElement)).toBeFalsy()
+    expect(isInteractiveElement(listItemElement as unknown as HTMLElement)).toBeFalsy()
   })
 
   it('does not detect fieldSet item as an interactive element', () => {
     const dom = new JSDOM('<fieldSet/>')
-    const fieldSetItemElement: HTMLElement = dom.window.document.querySelector('fieldSet')!
-    expect(isInteractiveElement(fieldSetItemElement)).toBeFalsy()
+    const fieldSetItemElement = dom.window.document.querySelector('fieldSet')
+    expect(isInteractiveElement(fieldSetItemElement as unknown as HTMLElement)).toBeFalsy()
   })
 })

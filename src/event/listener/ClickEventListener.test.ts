@@ -22,8 +22,8 @@ describe('ClickEventListener', () => {
 
       new ClickEventListener(eventHandler, dom.window as unknown as Window).init()
 
-      const container = dom.window.document.querySelector('div')!
-      const button = await waitFor(() => getByRole(container, 'button'))
+      const container = dom.window.document.querySelector('div')
+      const button = await waitFor(() => getByRole(container as unknown as HTMLElement, 'button'))
 
       fireEvent.click(button)
 

@@ -115,9 +115,9 @@ describe('sanitizeHTMLElementValue', () => {
 })
 
 function selectInputInDom(dom: JSDOM): HTMLInputElement {
-  return dom.window.document.querySelector('input')!
+  return dom.window.document.querySelector('input') as unknown as HTMLInputElement
 }
 
 function selectTextAreaInDom(dom: JSDOM): HTMLTextAreaElement {
-  return dom.window.document.querySelector('textarea')!
+  return dom.window.document.querySelector('textarea') as unknown as HTMLTextAreaElement
 }

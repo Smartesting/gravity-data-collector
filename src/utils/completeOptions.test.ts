@@ -18,7 +18,7 @@ describe('completeOptions', () => {
         authKey: '',
         requestInterval: 5000,
         debug: true,
-        maxDelay: 500
+        maxDelay: 500,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -29,7 +29,7 @@ describe('completeOptions', () => {
         authKey: '',
         requestInterval: 5000,
         debug: true,
-        maxDelay: 15
+        maxDelay: 15,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -46,7 +46,7 @@ describe('completeOptions', () => {
         authKey: '123-456-789',
         requestInterval: 5000,
         debug: false,
-        maxDelay: 0
+        maxDelay: 0,
       }
       expect(completed).toStrictEqual(expected)
     })

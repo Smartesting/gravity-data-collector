@@ -66,7 +66,7 @@ export interface ViewportData {
   pixelDepth?: number
 }
 
-export type CollectorOptions = {
+export interface CollectorOptions {
   authKey: string
   requestInterval: number
   debug: boolean

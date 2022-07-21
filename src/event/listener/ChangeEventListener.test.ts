@@ -22,8 +22,8 @@ describe('ChangeEventListener', () => {
 
       new ChangeEventListener(eventHandler, dom.window as unknown as Window).init()
 
-      const container = dom.window.document.querySelector('div')!
-      const checkBox = await waitFor(() => getByRole(container, 'checkbox'))
+      const container = dom.window.document.querySelector('div')
+      const checkBox = await waitFor(() => getByRole(container as unknown as HTMLElement, 'checkbox'))
 
       fireEvent.change(checkBox)
 
@@ -43,8 +43,8 @@ describe('ChangeEventListener', () => {
 
       listener.init()
 
-      const container = dom.window.document.querySelector('div')!
-      const input = await waitFor(() => getByRole(container, 'textbox'))
+      const container = dom.window.document.querySelector('div')
+      const input = await waitFor(() => getByRole(container as unknown as HTMLElement, 'textbox'))
 
       fireEvent.change(input)
 

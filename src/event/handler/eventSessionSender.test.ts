@@ -5,17 +5,15 @@ import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mock
 import { waitFor } from '@testing-library/dom'
 
 describe('eventSessionSender', () => {
-  const sessionEvents: SessionEvent[] = [{} as SessionEvent, {} as SessionEvent]
+  const event = {}
+  const sessionEvents: SessionEvent[] = [event as SessionEvent, event as SessionEvent]
 
   describe('defaultEventSessionSender', () => {
-
     beforeEach(() => {
       vi.restoreAllMocks()
     })
 
-    const spySuccess = vi.fn().mockImplementation(payload => {
-      console.log('BLA', payload)
-    })
+    const spySuccess = vi.fn()
     const spyError = vi.fn()
 
     it('sends session events if valid auth key', async () => {
@@ -36,13 +34,12 @@ describe('eventSessionSender', () => {
       await defaultEventSessionSender(DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, spySuccess, spyError)(sessionEvents)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledOnce()
-        expect((spyError.mock.lastCall as Array<any>)[0]).toMatch(/request to (.+?) failed, reason: Network Error/)
+        expect((spyError.mock.lastCall as any[])[0]).toMatch(/request to (.+?) failed, reason: Network Error/)
       })
     })
   })
 
   describe('debugEventSessionSender', () => {
-
     beforeEach(() => {
       vi.useFakeTimers()
       vi.clearAllTimers()
@@ -62,5 +59,4 @@ describe('eventSessionSender', () => {
       expect(spyOutput).toHaveBeenCalledTimes(3)
     })
   })
-
 })

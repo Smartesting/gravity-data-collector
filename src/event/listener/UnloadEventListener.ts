@@ -10,7 +10,7 @@ class UnloadEventListener extends EventListener {
   }
 
   async listener(event: Event) {
-    const sessionEndedEvent : GravitySessionEndedEvent = {
+    const sessionEndedEvent: GravitySessionEndedEvent = {
       viewportData: viewport(),
       location: location(),
       type: this.eventType,
