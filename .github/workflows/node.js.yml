@@ -30,4 +30,4 @@ jobs:
       - run: npm test
       - run: npm run lint
       - run: ./node_modules/.bin/prettier -w .
-      - run: [[ -n $(git status -s) ]] && exit 1
+      - run: bash -c "[[ -n \$(git status -s) ]] && exit 1 || exit 0"
