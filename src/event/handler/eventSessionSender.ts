@@ -47,6 +47,7 @@ async function sendSessionEvents(
     })
 
     if (response.status === 200) {
+      console.log(`${sessionEvents.length} session events successfully sent to Gravity Server`)
       successCallback(await response.json())
     } else {
       errorCallback(`error ${response.status}, ${response.statusText}`)
