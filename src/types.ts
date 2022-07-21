@@ -35,14 +35,14 @@ export type GravityCustomEvent = {
   customData: CustomEventDataType
 } & EventCommonProperties
 
-export type GravityEventTarget = | {
+export interface GravityEventTarget {
   element: string
   screenshot?: string
   selector?: string
   textContent?: string
   value?: string
   attributes?: Record<string, string>
-} | Record<string, string>
+}
 
 export interface GravityLocation {
   href: string
