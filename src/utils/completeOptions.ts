@@ -1,4 +1,5 @@
-import { CollectorOptions, ConsoleEventHandlerOptions, GravityEventHandlerOptions } from '../types'
+import { GRAVITY_SERVER_ADDRESS } from '../event/handler/eventSessionSender'
+import { CollectorOptions } from '../types'
 
 export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
   const authKeyError = new Error('No AuthKey provided')
@@ -6,24 +7,28 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     throw authKeyError
   }
 
-  if (options.debug === true) {
-    const consoleOptions = options as ConsoleEventHandlerOptions
-    const simulation = consoleOptions.simulation ?? false
-    const maxDelay = consoleOptions.maxDelay ?? 500
+  const debug = options.debug === true ?? false
 
-    return {
-      debug: true,
-      simulation,
-      maxDelay,
-    }
+  const defaultOptions: CollectorOptions = {
+    authKey: '',
+    debug: false,
+    maxDelay: 0,
+    requestInterval: 5000,
+    gravityServerUrl: GRAVITY_SERVER_ADDRESS,
   }
 
-  const gravityOptions = options as GravityEventHandlerOptions
-  if (gravityOptions.authKey === null || gravityOptions.authKey === undefined) {
+  const debugDefaultOptions = {
+    ...defaultOptions,
+    maxDelay: 500,
+  }
+
+  const completedOptions = {
+    ...(debug ? debugDefaultOptions : defaultOptions),
+    ...options,
+  }
+
+  if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError
   }
-  return {
-    debug: false,
-    authKey: gravityOptions.authKey,
-  }
+  return completedOptions
 }

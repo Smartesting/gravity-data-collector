@@ -3,7 +3,7 @@ import location from '../utils/location'
 import { EventType, GravitySessionStartedEvent } from '../types'
 import pJson from './../../package.json'
 
-export function createSessionEvent(): GravitySessionStartedEvent {
+export function createSessionStartedEvent(): GravitySessionStartedEvent {
   const initSessionEvent: GravitySessionStartedEvent = {
     type: EventType.SessionStarted,
     recordedAt: new Date().toISOString(),

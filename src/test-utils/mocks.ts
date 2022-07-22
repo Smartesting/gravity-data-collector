@@ -24,17 +24,16 @@ export function mockWindowLocation() {
   })
 }
 
-export function mockClick(target: HTMLElement) {
-  const event = {
+export function mockClick(target: HTMLElement): PointerEvent {
+  return {
     target,
     clientX: 10,
     clientY: 10,
-  }
-  return event
+    height: 0,
+  } as unknown as PointerEvent
 }
 
 export function mockFocusOut(target: HTMLElement): FocusEvent {
-  // @ts-expect-error
   return {
     AT_TARGET: 0,
     BUBBLING_PHASE: 0,
@@ -57,5 +56,5 @@ export function mockFocusOut(target: HTMLElement): FocusEvent {
     view: null,
     which: 0,
     target,
-  }
+  } as unknown as FocusEvent
 }

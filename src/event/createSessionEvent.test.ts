@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import { createSessionEvent } from './createSessionEvent'
+import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import pJson from '../../package.json'
@@ -14,23 +14,23 @@ describe('event', () => {
 
   describe('createSessionEvent', () => {
     it('returns a GravitySessionStartedEvent', () => {
-      expect(createSessionEvent().type).toBe(EventType.SessionStarted)
+      expect(createSessionStartedEvent().type).toBe(EventType.SessionStarted)
     })
 
     it('returns viewportData', () => {
-      expect(createSessionEvent().viewportData).toEqual(viewport())
+      expect(createSessionStartedEvent().viewportData).toEqual(viewport())
     })
 
     it('returns collector version', () => {
-      expect(createSessionEvent().version).toEqual(pJson.version)
+      expect(createSessionStartedEvent().version).toEqual(pJson.version)
     })
 
     it('returns user agent', () => {
-      expect(createSessionEvent().agent).toEqual(navigator.userAgent)
+      expect(createSessionStartedEvent().agent).toEqual(navigator.userAgent)
     })
 
     it('returns locationData', () => {
-      expect(createSessionEvent().location).toEqual(location())
+      expect(createSessionStartedEvent().location).toEqual(location())
     })
 
     it('returns recordedAt', () => {
@@ -38,11 +38,11 @@ describe('event', () => {
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
-      expect(createSessionEvent().recordedAt).toEqual(now)
+      expect(createSessionStartedEvent().recordedAt).toEqual(now)
     })
 
     it('returns Cypress current test if any', () => {
-      expect(createSessionEvent().test).toBeUndefined()
+      expect(createSessionStartedEvent().test).toBeUndefined()
 
       Object.defineProperty(window, 'Cypress', {
         value: {
@@ -52,7 +52,7 @@ describe('event', () => {
         },
       })
 
-      expect(createSessionEvent().test).toEqual('foo > bar > testing stuff')
+      expect(createSessionStartedEvent().test).toEqual('foo > bar > testing stuff')
     })
   })
 })
