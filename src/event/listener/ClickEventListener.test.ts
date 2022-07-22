@@ -15,11 +15,13 @@ describe('ClickEventListener', () => {
     })
 
     it('calls listener when click event been fired', async () => {
-      const { element, domWindow } = createElementInJSDOM(`
+      const { element, domWindow } = createElementInJSDOM(
+        `
                 <div>
                     <button class='size-lg'/>
                 </div>`,
-                'div')
+        'div',
+      )
 
       new ClickEventListener(eventHandler, domWindow).init()
       const button = await waitFor(() => getByRole(element, 'button'))

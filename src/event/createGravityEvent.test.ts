@@ -21,10 +21,7 @@ describe('event', () => {
     it('returns the specified "type"', async () => {
       const { element } = createElementInJSDOM('<button>Click Me</button>', 'button')
 
-      const event = await createGravityEvent(
-        mockClick(element),
-        EventType.Click,
-      )
+      const event = await createGravityEvent(mockClick(element), EventType.Click)
 
       expect(event.type).toEqual(EventType.Click)
     })
@@ -32,10 +29,7 @@ describe('event', () => {
     it('returns location data', async () => {
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = await createGravityEvent(
-        mockClick(element),
-        EventType.Click,
-      )
+      const event = await createGravityEvent(mockClick(element), EventType.Click)
 
       expect(event.location).toEqual(location())
     })
@@ -43,10 +37,7 @@ describe('event', () => {
     it('returns viewport data', async () => {
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = await createGravityEvent(
-        mockClick(element),
-        EventType.Click,
-      )
+      const event = await createGravityEvent(mockClick(element), EventType.Click)
 
       expect(event.viewportData).toEqual(viewport())
     })
@@ -58,10 +49,7 @@ describe('event', () => {
 
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = await createGravityEvent(
-        mockClick(element),
-        EventType.Click,
-      )
+      const event = await createGravityEvent(mockClick(element), EventType.Click)
 
       expect(event.recordedAt).toEqual(now)
     })
@@ -70,10 +58,7 @@ describe('event', () => {
       it('tag name', async () => {
         const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-        const event = await createGravityEvent(
-          mockClick(element),
-          EventType.Click,
-        )
+        const event = await createGravityEvent(mockClick(element), EventType.Click)
 
         expect(event.target?.element).toEqual('div')
       })
@@ -82,10 +67,7 @@ describe('event', () => {
         const { element } = createElementInJSDOM('<li>I am a list item</li>', 'li')
         if (element == null) throw new Error('Element is null')
 
-        const event = await createGravityEvent(
-          mockClick(element),
-          EventType.Click,
-        )
+        const event = await createGravityEvent(mockClick(element), EventType.Click)
 
         expect(event.target?.textContent).toBeUndefined()
       })
@@ -93,10 +75,7 @@ describe('event', () => {
       it('html attributes', async () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        const event = await createGravityEvent(
-          mockClick(element),
-          EventType.Click,
-        )
+        const event = await createGravityEvent(mockClick(element), EventType.Click)
 
         expect((event.target?.attributes as Record<string, string>).type).toEqual('text')
         expect((event.target?.attributes as Record<string, string>)['data-testid']).toEqual('userName')

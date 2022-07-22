@@ -28,7 +28,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
   }
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
-      throw authKeyError
+    throw authKeyError
   }
   return completedOptions
 }

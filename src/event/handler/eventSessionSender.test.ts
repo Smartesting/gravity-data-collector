@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { debugEventSessionSender, defaultEventSessionSender, GRAVITY_SERVER_ADDRESS } from '../../event/handler/eventSessionSender'
+import {
+  debugEventSessionSender,
+  defaultEventSessionSender,
+  GRAVITY_SERVER_ADDRESS,
+} from '../../event/handler/eventSessionSender'
 import { SessionEvent } from '../../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
@@ -31,7 +35,12 @@ describe('eventSessionSender', () => {
     })
 
     it('catches any error', async () => {
-      await defaultEventSessionSender(DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, GRAVITY_SERVER_ADDRESS, spySuccess, spyError)(sessionEvents)
+      await defaultEventSessionSender(
+        DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR,
+        GRAVITY_SERVER_ADDRESS,
+        spySuccess,
+        spyError,
+      )(sessionEvents)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledOnce()
         expect((spyError.mock.lastCall as any[])[0]).toMatch(/request to (.+?) failed, reason: Network Error/)

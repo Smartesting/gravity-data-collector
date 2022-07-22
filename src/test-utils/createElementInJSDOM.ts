@@ -1,6 +1,9 @@
 import { JSDOM } from 'jsdom'
 
-export default function createElementInJSDOM(elementHTML: string, querySelector: string): {
+export default function createElementInJSDOM(
+  elementHTML: string,
+  querySelector: string,
+): {
   element: HTMLElement
   domWindow: Window
 } {

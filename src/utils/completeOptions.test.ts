@@ -69,7 +69,11 @@ describe('completeOptions', () => {
       })
 
       it('does not override user input for gravityServerUrl', () => {
-        const completed = completeOptions({ debug: false, authKey: '123-456-789', gravityServerUrl: 'http://localhost:3000' })
+        const completed = completeOptions({
+          debug: false,
+          authKey: '123-456-789',
+          gravityServerUrl: 'http://localhost:3000',
+        })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
           requestInterval: 5000,

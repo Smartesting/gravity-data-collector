@@ -15,11 +15,13 @@ describe('ChangeEventListener', () => {
     })
 
     it('calls listener when change event been fired', async () => {
-      const { element, domWindow } = createElementInJSDOM(`
+      const { element, domWindow } = createElementInJSDOM(
+        `
         <div>
           <input type='checkbox' id='checkbox1' name='checkbox1'>
         </div>`,
-        'div')
+        'div',
+      )
 
       new ChangeEventListener(eventHandler, domWindow).init()
 
@@ -33,11 +35,13 @@ describe('ChangeEventListener', () => {
     })
 
     it('does not call listener if target is not a checkbox', async () => {
-      const { element, domWindow } = createElementInJSDOM(`
+      const { element, domWindow } = createElementInJSDOM(
+        `
         <div>
             <input type='text' class='size-lg'/>
         </div>`,
-        'div')
+        'div',
+      )
 
       const listener = new ChangeEventListener(eventHandler, domWindow)
       const listenerSpy = vitest.spyOn(listener, 'listener')
