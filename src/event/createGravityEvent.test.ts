@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockClick, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import { JSDOM } from 'jsdom'
 import { createGravityEvent } from './createGravityEvent'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { EventType } from '../types'
+import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 
 describe('event', () => {
   beforeEach(() => {
@@ -19,10 +19,10 @@ describe('event', () => {
     })
 
     it('returns the specified "type"', async () => {
-      const dom = new JSDOM('<button>Click Me</button>')
-      const element = dom.window.document.querySelector('button')
+      const { element } = createElementInJSDOM('<button>Click Me</button>', 'button')
+
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement),
+        mockClick(element),
         EventType.Click,
       )
 
@@ -30,10 +30,10 @@ describe('event', () => {
     })
 
     it('returns location data', async () => {
-      const dom = new JSDOM('<div>Click Me</div>')
-      const element = dom.window.document.querySelector('div')
+      const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
+
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement),
+        mockClick(element),
         EventType.Click,
       )
 
@@ -41,10 +41,10 @@ describe('event', () => {
     })
 
     it('returns viewport data', async () => {
-      const dom = new JSDOM('<div>Click Me</div>')
-      const element = dom.window.document.querySelector('div')
+      const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
+
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement),
+        mockClick(element),
         EventType.Click,
       )
 
@@ -56,10 +56,10 @@ describe('event', () => {
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
-      const dom = new JSDOM('<div>Click Me</div>')
-      const element = dom.window.document.querySelector('div')
+      const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
+
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement),
+        mockClick(element),
         EventType.Click,
       )
 
@@ -68,10 +68,10 @@ describe('event', () => {
 
     describe('target data embeds...', () => {
       it('tag name', async () => {
-        const dom = new JSDOM('<div>Click Me</div>')
-        const element = dom.window.document.querySelector('div')
+        const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
+
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement),
+          mockClick(element),
           EventType.Click,
         )
 
@@ -79,10 +79,11 @@ describe('event', () => {
       })
 
       it('text content', async () => {
-        const dom = new JSDOM('<li>I am a list item</li>')
-        const element = dom.window.document.querySelector('li')
+        const { element } = createElementInJSDOM('<li>I am a list item</li>', 'li')
+        if (element == null) throw new Error('Element is null')
+
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement),
+          mockClick(element),
           EventType.Click,
         )
 
@@ -90,10 +91,10 @@ describe('event', () => {
       })
 
       it('html attributes', async () => {
-        const dom = new JSDOM('<input type="text" data-testid="userName" class="size-lg"/>')
-        const element = dom.window.document.querySelector('input')
+        const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
+
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement),
+          mockClick(element),
           EventType.Click,
         )
 
@@ -103,9 +104,9 @@ describe('event', () => {
       })
 
       it('pointer coordinates data when the event is a click', async () => {
-        const dom = new JSDOM('<input type="text" data-testid="userName" class="size-lg"/>')
-        const element = dom.window.document.querySelector('input')
-        const clickEvent = mockClick(element as unknown as HTMLElement)
+        const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
+
+        const clickEvent = mockClick(element)
         const event = await createGravityEvent(clickEvent, EventType.Click)
 
         expect(event.eventData?.clickOffsetX).toEqual(clickEvent.clientX)

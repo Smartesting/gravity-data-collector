@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import { JSDOM } from 'jsdom'
 import EventHandler from '../handler/EventHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ChangeEventListener from './ChangeEventListener'
 import { nop } from '../../utils/nop'
+import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
 
 describe('ChangeEventListener', () => {
   describe('listener', () => {
@@ -15,15 +15,15 @@ describe('ChangeEventListener', () => {
     })
 
     it('calls listener when change event been fired', async () => {
-      const dom = new JSDOM(`
-                <div>
-                    <input type='checkbox' id='checkbox1' name='checkbox1'>
-                </div>`)
+      const { element, domWindow } = createElementInJSDOM(`
+        <div>
+          <input type='checkbox' id='checkbox1' name='checkbox1'>
+        </div>`,
+        'div')
 
-      new ChangeEventListener(eventHandler, dom.window as unknown as Window).init()
+      new ChangeEventListener(eventHandler, domWindow).init()
 
-      const container = dom.window.document.querySelector('div')
-      const checkBox = await waitFor(() => getByRole(container as unknown as HTMLElement, 'checkbox'))
+      const checkBox = await waitFor(() => getByRole(element, 'checkbox'))
 
       fireEvent.change(checkBox)
 
@@ -33,18 +33,18 @@ describe('ChangeEventListener', () => {
     })
 
     it('does not call listener if target is not a checkbox', async () => {
-      const dom = new JSDOM(`
-                <div>
-                    <input type='text' class='size-lg'/>
-                </div>`)
+      const { element, domWindow } = createElementInJSDOM(`
+        <div>
+            <input type='text' class='size-lg'/>
+        </div>`,
+        'div')
 
-      const listener = new ChangeEventListener(eventHandler, dom.window as unknown as Window)
+      const listener = new ChangeEventListener(eventHandler, domWindow)
       const listenerSpy = vitest.spyOn(listener, 'listener')
 
       listener.init()
 
-      const container = dom.window.document.querySelector('div')
-      const input = await waitFor(() => getByRole(container as unknown as HTMLElement, 'textbox'))
+      const input = await waitFor(() => getByRole(element, 'textbox'))
 
       fireEvent.change(input)
 

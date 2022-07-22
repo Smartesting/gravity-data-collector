@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import { JSDOM } from 'jsdom'
 import EventHandler from '../handler/EventHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ClickEventListener from './ClickEventListener'
 import { nop } from '../../utils/nop'
+import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
 
 describe('ClickEventListener', () => {
   describe('listener', () => {
@@ -15,15 +15,14 @@ describe('ClickEventListener', () => {
     })
 
     it('calls listener when click event been fired', async () => {
-      const dom = new JSDOM(`
+      const { element, domWindow } = createElementInJSDOM(`
                 <div>
                     <button class='size-lg'/>
-                </div>`)
+                </div>`,
+                'div')
 
-      new ClickEventListener(eventHandler, dom.window as unknown as Window).init()
-
-      const container = dom.window.document.querySelector('div')
-      const button = await waitFor(() => getByRole(container as unknown as HTMLElement, 'button'))
+      new ClickEventListener(eventHandler, domWindow).init()
+      const button = await waitFor(() => getByRole(element, 'button'))
 
       fireEvent.click(button)
 

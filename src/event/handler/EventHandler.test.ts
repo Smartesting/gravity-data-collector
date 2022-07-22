@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
 import EventHandler from '../../event/handler/EventHandler'
 import { createSessionStartedEvent } from '../../event/createSessionStartedEvent'
-import { JSDOM } from 'jsdom'
 import { createGravityEvent } from '../../event/createGravityEvent'
 import { mockClick } from '../../test-utils/mocks'
 import { EventType } from '../../types'
+import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
 
 describe('EventHandler', () => {
   describe('run', () => {
@@ -55,7 +55,6 @@ describe('EventHandler', () => {
 })
 
 async function mockGravityClickEvent() {
-  const dom = new JSDOM('<div>Click Me</div>')
-  const element = dom.window.document.querySelector('div')
-  return await createGravityEvent(mockClick(element as unknown as HTMLElement) as unknown as Event, EventType.Click)
+  const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
+  return await createGravityEvent(mockClick(element), EventType.Click)
 }
