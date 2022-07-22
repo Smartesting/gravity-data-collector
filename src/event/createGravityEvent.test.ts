@@ -22,7 +22,7 @@ describe('event', () => {
       const dom = new JSDOM('<button>Click Me</button>')
       const element = dom.window.document.querySelector('button')
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement) as unknown as Event,
+        mockClick(element as unknown as HTMLElement),
         EventType.Click,
       )
 
@@ -33,7 +33,7 @@ describe('event', () => {
       const dom = new JSDOM('<div>Click Me</div>')
       const element = dom.window.document.querySelector('div')
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement) as unknown as Event,
+        mockClick(element as unknown as HTMLElement),
         EventType.Click,
       )
 
@@ -44,7 +44,7 @@ describe('event', () => {
       const dom = new JSDOM('<div>Click Me</div>')
       const element = dom.window.document.querySelector('div')
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement) as unknown as Event,
+        mockClick(element as unknown as HTMLElement),
         EventType.Click,
       )
 
@@ -59,7 +59,7 @@ describe('event', () => {
       const dom = new JSDOM('<div>Click Me</div>')
       const element = dom.window.document.querySelector('div')
       const event = await createGravityEvent(
-        mockClick(element as unknown as HTMLElement) as unknown as Event,
+        mockClick(element as unknown as HTMLElement),
         EventType.Click,
       )
 
@@ -71,7 +71,7 @@ describe('event', () => {
         const dom = new JSDOM('<div>Click Me</div>')
         const element = dom.window.document.querySelector('div')
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement) as unknown as Event,
+          mockClick(element as unknown as HTMLElement),
           EventType.Click,
         )
 
@@ -82,7 +82,7 @@ describe('event', () => {
         const dom = new JSDOM('<li>I am a list item</li>')
         const element = dom.window.document.querySelector('li')
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement) as unknown as Event,
+          mockClick(element as unknown as HTMLElement),
           EventType.Click,
         )
 
@@ -93,7 +93,7 @@ describe('event', () => {
         const dom = new JSDOM('<input type="text" data-testid="userName" class="size-lg"/>')
         const element = dom.window.document.querySelector('input')
         const event = await createGravityEvent(
-          mockClick(element as unknown as HTMLElement) as unknown as Event,
+          mockClick(element as unknown as HTMLElement),
           EventType.Click,
         )
 
@@ -105,7 +105,7 @@ describe('event', () => {
       it('pointer coordinates data when the event is a click', async () => {
         const dom = new JSDOM('<input type="text" data-testid="userName" class="size-lg"/>')
         const element = dom.window.document.querySelector('input')
-        const clickEvent = mockClick(element as unknown as HTMLElement) as unknown as PointerEvent
+        const clickEvent = mockClick(element as unknown as HTMLElement)
         const event = await createGravityEvent(clickEvent, EventType.Click)
 
         expect(event.eventData?.clickOffsetX).toEqual(clickEvent.clientX)
