@@ -69,6 +69,7 @@ export interface ViewportData {
 export interface CollectorOptions {
   authKey: string
   requestInterval: number
+  gravityServerUrl: string
   debug: boolean
   maxDelay: number
 }

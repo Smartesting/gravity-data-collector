@@ -1,3 +1,4 @@
+import { GRAVITY_SERVER_ADDRESS } from '../event/handler/eventSessionSender'
 import { CollectorOptions } from '../types'
 
 export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
@@ -6,22 +7,28 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     throw authKeyError
   }
 
-  if (options.debug === true) {
-    return {
-      authKey: options.authKey ?? '',
-      debug: true,
-      maxDelay: options.maxDelay ?? 500,
-      requestInterval: options.requestInterval ?? 5000,
-    }
-  }
+  const debug = options.debug === true ?? false
 
-  if (options.authKey === null || options.authKey === undefined) {
-    throw authKeyError
-  }
-  return {
-    authKey: options.authKey,
+  const defaultOptions: CollectorOptions = {
+    authKey: '',
     debug: false,
     maxDelay: 0,
-    requestInterval: options.requestInterval ?? 5000,
+    requestInterval: 5000,
+    gravityServerUrl: GRAVITY_SERVER_ADDRESS,
   }
+
+  const debugDefaultOptions = {
+    ...defaultOptions,
+    maxDelay: 500,
+  }
+
+  const completedOptions = {
+    ...(debug ? debugDefaultOptions : defaultOptions),
+    ...options,
+  }
+
+  if (!debug && (options.authKey === null || options.authKey === undefined)) {
+      throw authKeyError
+  }
+  return completedOptions
 }

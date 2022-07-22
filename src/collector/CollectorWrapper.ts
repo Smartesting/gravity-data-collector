@@ -13,7 +13,7 @@ class CollectorWrapper {
   constructor(options: CollectorOptions, private readonly window: Window) {
     const output = options.debug
       ? debugEventSessionSender(options.maxDelay)
-      : defaultEventSessionSender(options.authKey)
+      : defaultEventSessionSender(options.authKey, options.gravityServerUrl)
     this.eventHandler = new EventHandler(uuidv4(), options.requestInterval, output)
 
     this.initSession()

@@ -27,12 +27,13 @@ GravityCollector.init(/*options*/)
 
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
-| key             | type    | use                                                                                           | default value |
-| --------------- | ------- | --------------------------------------------------------------------------------------------- | ------------- |
-| authKey         | String  | The authentication key provided by Gravity to select the correct collection                   |               |
-| requestInterval | Integer | Time (in ms) between two sends to Gravity server (buffering)                                  | 5000          |
-| debug           | Boolean | Logs events in the console instead of sending them to Gravity                                 | false         |
-| maxDelay        | Integer | In debug mode, adds a random delay (in ms) between 0 and this value before printing an event. | 500           |
+| key              | type    | use                                                                                           | default value                                  |
+| --------------- -| ------- | --------------------------------------------------------------------------------------------- | -----------------------------------------------|
+| authKey          | String  | The authentication key provided by Gravity to select the correct collection                   |                                                |
+| requestInterval  | Integer | Time (in ms) between two sends to Gravity server (buffering)                                  | 5000                                           |
+| gravityServerUrl | String  | Gravity server URL                                                                            | https://smartestinggravityserver.herokuapp.com |
+| debug            | Boolean | Logs events in the console instead of sending them to Gravity                                 | false                                          |
+| maxDelay         | Integer | In debug mode, adds a random delay (in ms) between 0 and this value before printing an event. | 500                                            |
 
 ## Sandbox
 

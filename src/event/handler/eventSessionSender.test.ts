@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { debugEventSessionSender, defaultEventSessionSender } from '../../event/handler/eventSessionSender'
+import { debugEventSessionSender, defaultEventSessionSender, GRAVITY_SERVER_ADDRESS } from '../../event/handler/eventSessionSender'
 import { SessionEvent } from '../../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
@@ -17,21 +17,21 @@ describe('eventSessionSender', () => {
     const spyError = vi.fn()
 
     it('sends session events if valid auth key', async () => {
-      await defaultEventSessionSender(VALID_AUTH_KEY, spySuccess)(sessionEvents)
+      await defaultEventSessionSender(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, spySuccess)(sessionEvents)
       await waitFor(() => {
         expect(spySuccess).toHaveBeenCalledWith({ error: null })
       })
     })
 
     it('catches error if invalid auth key', async () => {
-      await defaultEventSessionSender('DUMMY_AUTH_KEY', spySuccess, spyError)(sessionEvents)
+      await defaultEventSessionSender('DUMMY_AUTH_KEY', GRAVITY_SERVER_ADDRESS, spySuccess, spyError)(sessionEvents)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledWith('error 404, Not Found')
       })
     })
 
     it('catches any error', async () => {
-      await defaultEventSessionSender(DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, spySuccess, spyError)(sessionEvents)
+      await defaultEventSessionSender(DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, GRAVITY_SERVER_ADDRESS, spySuccess, spyError)(sessionEvents)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledOnce()
         expect((spyError.mock.lastCall as any[])[0]).toMatch(/request to (.+?) failed, reason: Network Error/)
