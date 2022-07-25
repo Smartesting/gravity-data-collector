@@ -58,34 +58,34 @@ describe('sanitizeHTMLElementValue', () => {
     expect(sanitizeHTMLElementValue(element)).toBe('true')
   })
 
-  it('does not sanitize search inputs', () => {
+  it('sanitizes search inputs', () => {
     const element = selectInputInDom('<input type="search" value="the best test automation solution"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('the best test automation solution')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{search}}')
   })
 
-  it('does not sanitize date inputs', () => {
+  it('sanitizes date inputs', () => {
     const element = selectInputInDom('<input type="date" value="2022-07-12"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('2022-07-12')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{date}}')
   })
 
-  it('does not sanitize date-time inputs', () => {
+  it('sanitizes date-time inputs', () => {
     const element = selectInputInDom('<input type="datetime-local" value="2022-07-12T15:30"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('2022-07-12T15:30')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{datetime-local}}')
   })
 
-  it('does not sanitize time inputs', () => {
+  it('sanitizes time inputs', () => {
     const element = selectInputInDom('<input type="time" value="13:30"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('13:30')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{time}}')
   })
 
-  it('does not sanitize month inputs', () => {
+  it('sanitizes month inputs', () => {
     const element = selectInputInDom('<input type="month" value="2022-07"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('2022-07')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{month}}')
   })
 
-  it('does not sanitize week inputs', () => {
+  it('sanitize week inputs', () => {
     const element = selectInputInDom('<input type="week" value="2017-W01"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('2017-W01')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{week}}')
   })
 
   it('does not sanitize color inputs', () => {
@@ -108,9 +108,9 @@ describe('sanitizeHTMLElementValue', () => {
     expect(sanitizeHTMLElementValue(element)).toBe('Click to reset')
   })
 
-  it('does not sanitize range inputs', () => {
+  it('sanitizes range inputs', () => {
     const element = selectInputInDom('<input type="range" value="90"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('90')
+    expect(sanitizeHTMLElementValue(element)).toBe('{{range}}')
   })
 })
 

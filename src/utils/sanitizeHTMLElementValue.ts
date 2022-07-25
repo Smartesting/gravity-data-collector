@@ -1,17 +1,17 @@
 import { HTMLInputWithValue } from '../types'
 
-const CRITICAL_INPUT_TYPES = ['textarea', 'text', 'number', 'hidden', 'url', 'tel', 'password', 'email', 'file']
+const INPUT_TYPES_SKIPPING_SANITIZING = ['color', 'button', 'reset', 'submit']
 
 export function sanitizeHTMLElementValue(element: HTMLInputWithValue) {
-  if (CRITICAL_INPUT_TYPES.includes(element.type)) {
-    return `{{${getInputType(element)}}}`
+  if (INPUT_TYPES_SKIPPING_SANITIZING.includes(element.type)) {
+    return element.value
   }
   switch (element.type) {
     case 'checkbox':
     case 'radio':
       return (element as HTMLInputElement).checked.toString()
     default:
-      return element.value
+      return `{{${getInputType(element)}}}`
   }
 }
 
