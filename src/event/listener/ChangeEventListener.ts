@@ -9,7 +9,7 @@ class ChangeEventListener extends EventListener {
     super(eventHandler, EventType.Change, window)
   }
 
-  async listener(event: FocusEvent) {
+  async listener(event: InputEvent) {
     const elementTarget = event.target as HTMLInputWithValue
     const gravityEvent = await createGravityEvent(event, this.eventType)
     if (gravityEvent.target != null) {

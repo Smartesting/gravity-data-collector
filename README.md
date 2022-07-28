@@ -9,8 +9,10 @@ This repo contains the browser implementation of the Gravity Data Collector
 Install the logger via `npm`. In your `package.json`, add the following:
 
 ```json
-"dependencies": {
-  "gravity-data-collector": "https://github.com/Smartesting/gravity-data-collector/tarball/main"
+{
+  "dependencies": {
+    "gravity-data-collector": "https://github.com/Smartesting/gravity-data-collector/tarball/main"
+  }
 }
 ```
 

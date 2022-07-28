@@ -26,7 +26,10 @@ describe('completeOptions', () => {
     })
 
     it('keeps values provided by the user', () => {
-      const completed = completeOptions({ debug: true, maxDelay: 15 })
+      const completed = completeOptions({
+        debug: true,
+        maxDelay: 15,
+      })
       const expected: CollectorOptions = {
         authKey: '',
         requestInterval: 5000,
@@ -45,7 +48,10 @@ describe('completeOptions', () => {
 
     describe('when authKey is set', () => {
       it('sets default value for requestInterval, maxDelay and gravityServerUrl', () => {
-        const completed = completeOptions({ debug: false, authKey: '123-456-789' })
+        const completed = completeOptions({
+          debug: false,
+          authKey: '123-456-789',
+        })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
           requestInterval: 5000,
@@ -57,7 +63,11 @@ describe('completeOptions', () => {
       })
 
       it('does not override user input for requestInterval', () => {
-        const completed = completeOptions({ debug: false, authKey: '123-456-789', requestInterval: 1234 })
+        const completed = completeOptions({
+          debug: false,
+          authKey: '123-456-789',
+          requestInterval: 1234,
+        })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
           requestInterval: 1234,
