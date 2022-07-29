@@ -11,7 +11,7 @@ Install the logger via `npm`. In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "gravity-data-collector": "https://github.com/Smartesting/gravity-data-collector/tarball/main"
+      "@smartesting/gravity-data-collector": "^1.0.16"
   }
 }
 ```
@@ -20,7 +20,7 @@ Initialize it:
 
 ```typescript
 // initialize
-import GravityCollector from 'gravity-data-collector'
+import GravityCollector from '@smartesting/gravity-data-collector/dist'
 
 GravityCollector.init(/*options*/)
 ```

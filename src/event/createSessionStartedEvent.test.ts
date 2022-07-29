@@ -3,8 +3,8 @@ import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import { createSessionStartedEvent } from './createSessionStartedEvent'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import pJson from '../../package.json'
 import { EventType } from '../types'
+import { config } from '../config'
 
 describe('event', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('event', () => {
     mockWindowLocation()
   })
 
-  describe('createSessionEvent', () => {
+  describe('createSessionStartedEvent', () => {
     it('returns a GravitySessionStartedEvent', () => {
       expect(createSessionStartedEvent().type).toBe(EventType.SessionStarted)
     })
@@ -22,7 +22,7 @@ describe('event', () => {
     })
 
     it('returns collector version', () => {
-      expect(createSessionStartedEvent().version).toEqual(pJson.version)
+      expect(createSessionStartedEvent().version).toEqual(config.COLLECTOR_VERSION)
     })
 
     it('returns user agent', () => {

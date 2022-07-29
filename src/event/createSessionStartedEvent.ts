@@ -1,7 +1,7 @@
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { EventType, GravitySessionStartedEvent } from '../types'
-import pJson from './../../package.json'
+import { config } from '../config'
 
 export function createSessionStartedEvent(): GravitySessionStartedEvent {
   const initSessionEvent: GravitySessionStartedEvent = {
@@ -9,7 +9,7 @@ export function createSessionStartedEvent(): GravitySessionStartedEvent {
     recordedAt: new Date().toISOString(),
     location: location(),
     viewportData: viewport(),
-    version: pJson.version,
+    version: config.COLLECTOR_VERSION,
     agent: navigator.userAgent,
   }
 
