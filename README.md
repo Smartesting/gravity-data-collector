@@ -8,7 +8,9 @@ This repo contains the browser implementation of the Gravity Data Collector
 
 ### Via NPM
 
-> npm i @smartesting/gravity-data-collector
+```console
+npm i @smartesting/gravity-data-collector
+```
 
 ### By updating package.json
 
