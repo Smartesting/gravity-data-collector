@@ -6,17 +6,23 @@ This repo contains the browser implementation of the Gravity Data Collector
 
 ## How to use
 
-Install the logger via `npm`. In your `package.json`, add the following:
+### Via NPM
+
+> npm i @smartesting/gravity-data-collector
+
+### By updating package.json
+
+In your `package.json`, add the following:
 
 ```json
 {
   "dependencies": {
-    "gravity-data-collector": "https://github.com/Smartesting/gravity-data-collector/tarball/main"
+    "@smartesting/gravity-data-collector": "^1.0.0"
   }
 }
 ```
 
-Initialize it:
+### Initializaton
 
 ```typescript
 // initialize
