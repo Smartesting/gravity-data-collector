@@ -13,6 +13,7 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 export interface EventCommonProperties {
   type: EventType
   location: GravityLocation
+  document: GravityDocument
   recordedAt?: string
   viewportData: ViewportData
 }
@@ -64,6 +65,10 @@ export interface ViewportData {
   orientation?: string
   colorDepth?: number
   pixelDepth?: number
+}
+
+export interface GravityDocument {
+  title: string
 }
 
 export interface CollectorOptions {

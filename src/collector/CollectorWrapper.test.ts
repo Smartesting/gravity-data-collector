@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import ClickEventListener from '../event/listener/ClickEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
@@ -12,6 +12,7 @@ describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
+    mockWindowDocument()
     vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
   })
 

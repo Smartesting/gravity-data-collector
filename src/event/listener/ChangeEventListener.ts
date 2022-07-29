@@ -9,9 +9,9 @@ class ChangeEventListener extends EventListener {
     super(eventHandler, EventType.Change, window)
   }
 
-  async listener(event: InputEvent) {
+  listener(event: InputEvent) {
     const elementTarget = event.target as HTMLInputWithValue
-    const gravityEvent = await createGravityEvent(event, this.eventType)
+    const gravityEvent = createGravityEvent(event, this.eventType)
     if (gravityEvent.target != null) {
       gravityEvent.target.value = sanitizeHTMLElementValue(elementTarget)
     }

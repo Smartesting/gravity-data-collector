@@ -1,3 +1,5 @@
+import { GravityDocument } from '../types'
+
 export function mockWindowScreen() {
   Object.defineProperty(window, 'screen', {
     value: {
@@ -11,6 +13,14 @@ export function mockWindowScreen() {
     },
     writable: true,
   })
+}
+
+export function mockWindowDocument(): GravityDocument {
+  const document = {
+    title: 'Hello world!',
+  }
+  Object.defineProperty(window, 'document', { value: document })
+  return document
 }
 
 export function mockWindowLocation() {

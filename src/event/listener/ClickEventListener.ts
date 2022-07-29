@@ -8,8 +8,8 @@ class ClickEventListener extends EventListener {
     super(eventHandler, EventType.Click, window)
   }
 
-  async listener(event: MouseEvent) {
-    this.eventHandler.run(await createGravityEvent(event, this.eventType))
+  listener(event: MouseEvent) {
+    this.eventHandler.run(createGravityEvent(event, this.eventType))
   }
 }
 
