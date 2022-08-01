@@ -4,7 +4,9 @@
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
-  "files": [ "/dist" ],
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "lint": "eslint --ext ts --max-warnings 0 src",
