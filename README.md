@@ -11,7 +11,7 @@ Install the logger via `npm`. In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^1.0.16"
+    "@smartesting/gravity-data-collector": "^1.0.0"
   }
 }
 ```
