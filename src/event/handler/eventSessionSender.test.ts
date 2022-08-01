@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  debugEventSessionSender,
-  defaultEventSessionSender,
-  GRAVITY_SERVER_ADDRESS,
-} from '../../event/handler/eventSessionSender'
+import { debugEventSessionSender, defaultEventSessionSender, GRAVITY_SERVER_ADDRESS } from './eventSessionSender'
 import { SessionEvent } from '../../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mocks/handlers'
 import { waitFor } from '@testing-library/dom'

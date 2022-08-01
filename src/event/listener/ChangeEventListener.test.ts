@@ -18,7 +18,7 @@ describe('ChangeEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
         <div>
-          <input type='checkbox' id='checkbox1' name='checkbox1'>
+          <input type="checkbox" id="checkbox1" name="checkbox1">
         </div>`,
         'div',
       )
@@ -31,30 +31,6 @@ describe('ChangeEventListener', () => {
 
       await waitFor(() => {
         expect(runSpy).toHaveBeenCalledOnce()
-      })
-    })
-
-    it('does not call listener if target is not a checkbox', async () => {
-      const { element, domWindow } = createElementInJSDOM(
-        `
-        <div>
-            <input type='text' class='size-lg'/>
-        </div>`,
-        'div',
-      )
-
-      const listener = new ChangeEventListener(eventHandler, domWindow)
-      const listenerSpy = vitest.spyOn(listener, 'listener')
-
-      listener.init()
-
-      const input = await waitFor(() => getByRole(element, 'textbox'))
-
-      fireEvent.change(input)
-
-      await waitFor(() => {
-        expect(listenerSpy).toHaveBeenCalledOnce()
-        expect(runSpy).toHaveBeenCalledTimes(0)
       })
     })
   })

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Gravity Data Collector - Sandbox</title>
+    <script async id="logger" src="dist/bundle.js" type="text/javascript"></script>
+
+    <script>
+      var script = document.querySelector('#logger')
+      script.addEventListener('load', function () {
+        window.GravityCollector.init({ debug: true })
+      })
+    </script>
+  </head>
+
+  <body>
+    <button>Click me</button>
+
+    <fieldset style="display: grid; grid-row-gap: 10px">
+      <legend>Enter textual values:</legend>
+      <input placeholder="Change value to track it" />
+      <textarea placeholder="Change text to track it" rows="4"></textarea>
+      <input placeholder="Change password to track it" type="password" />
+      <input placeholder="Change date to track it" type="date" />
+      <input placeholder="Change search to track it" type="search" />
+    </fieldset>
+
+    <fieldset>
+      <legend>Choose a value:</legend>
+
+      <div>
+        <input id="ID1" name="testRadio" type="radio" value="1" />
+        <label for="ID1">1</label>
+      </div>
+      <div>
+        <input id="ID2" name="testRadio" type="radio" value="2" />
+        <label for="ID2">2</label>
+      </div>
+      <div>
+        <input id="ID3" name="testRadio" type="radio" value="3" />
+        <label for="ID3">3</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Choose a combination:</legend>
+
+      <div>
+        <input checked id="checkbox1" name="checkbox1" type="checkbox" />
+        <label for="checkbox1">Checkbox 1</label>
+      </div>
+
+      <div>
+        <input id="checkbox2" name="checkbox2" type="checkbox" />
+        <label for="checkbox2">Checkbox 2</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Follow the link</legend>
+      <div>
+        <a>Link to nowhere</a>
+      </div>
+    </fieldset>
+  </body>
+</html>

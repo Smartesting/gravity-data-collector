@@ -18,7 +18,7 @@ describe('ClickEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>
-                    <button class='size-lg'/>
+                    <button class="size-lg"/>
                 </div>`,
         'div',
       )
