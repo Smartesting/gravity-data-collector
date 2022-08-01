@@ -37,7 +37,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 ## Sandbox
 
-In order to test modifications on the library, a sandbox is accessible in [index.html](index.html) file
+In order to test modifications on the library, a sandbox is accessible in [index.html](sample/index.html) file
 
 First, build the lib
 
@@ -52,7 +52,7 @@ npm run build-sandbox
 npm run watch-sandbox
 ```
 
-Finally, open [index.html](index.html) with a browser, display the console (F12 with most browsers) and interact with
+Finally, open [index.html](sample/index.html) with a browser, display the console (F12 with most browsers) and interact with
 the page to see collected events.
 
 **Note:** events may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by your developer tool.
