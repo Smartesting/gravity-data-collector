@@ -9,4 +9,4 @@ npm install
 npm run prepare
 ```
 
-This should take care of installing both tool as well as a `git` hooks which will ensure `prettier` is ran on all files staged for commit.
+This should take care of installing both tool as a `git` hooks which will ensure `prettier` is ran on all files staged for commit.
