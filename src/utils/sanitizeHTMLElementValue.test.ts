@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
+import { sanitizeHTMLElementValue } from './sanitizeHTMLElementValue'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 
 describe('sanitizeHTMLElementValue', () => {
