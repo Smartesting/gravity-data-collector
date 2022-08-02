@@ -15,14 +15,15 @@
     "coverage": "vitest run --coverage",
     "prepare": "husky install",
     "prettier-check": "prettier --check .",
+    "prettier-write": "prettier --write .",
     "pretty-quick": "pretty-quick",
     "prepublishOnly": "npm run build && npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run lint-fix && git add -A src",
     "postversion": "git push && git push --tags",
-    "build-sandbox": "browserify lib/src/index.js -p esmify -o dist/bundle.js",
-    "build-minified": "browserify lib/src/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
-    "watch-sandbox": "watchify lib/src/index.js -o dist/bundle.js -v",
+    "build-sandbox": "browserify dist/index.js -p esmify -o dist-sandbox/bundle.js",
+    "build-minified": "browserify dist/index.js -p esmify -p tinyify -o dist-sandbox/gravity-logger-min.js",
+    "watch-sandbox": "watchify dist/index.js -o dist/bundle.js -v",
     "webstorm-integration": "vitest --watch --reporter=dot --reporter=json --outputFile=.vitest-result.json"
   },
   "repository": {
