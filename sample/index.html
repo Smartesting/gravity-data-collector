@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Gravity Data Collector - Sandbox</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+      function navigateTo (context, urlPath) {
+        const {
+          html,
+          pageTitle,
+        } = context
+        document.title = pageTitle
+        window.history.pushState(context, '', urlPath)
+        $('#content').load(html)
+      }
+
+      window.onpopstate = function (e) {
+        if (!e.state) {
+          document.title = 'Gravity Data Collector - Sandbox'
+          $('#content').load('index.html')
+        }
+      }
+    </script>
+
+    <script async id="logger" src="../dist/bundle.js" type="text/javascript"></script>
+    <script>
+      var script = document.querySelector('#logger')
+      script.addEventListener('load', function () {
+        window.GravityCollector.init({
+          debug: true,
+          // authKey: '9440f1f5-52d4-468c-a842-86e6b3f4a225',
+          // gravityServerUrl: 'http://localhost:3000',
+          requestInterval: 100,
+        })
+      })
+    </script>
+</head>
+
+<body>
+<div id="content">
+    <H1>Gravity Data Collector sample</H1>
+    <p>
+        Some data values are sanitized before to be sent to Gravity server (all the input texts for instance). Others
+        are
+        kept as they are.
+    </p>
+
+    <fieldset style="display: grid; grid-row-gap: 10px">
+        <legend>Navigate to sanitized values</legend>
+        <div>
+            <a href="sanitized_values.html">Follow link: Play with sanitized values</a>
+        </div>
+        <div>
+            <form action="sanitized_values.html">
+                <input type="submit" value="Submit form: Play with sanitized values" />
+            </form>
+        </div>
+        <div>
+            <button id="btn1"
+                onclick="navigateTo({ html: 'sanitized_values.html', pageTitle: 'Sanitized values' }, '../sample/sanitized_values.html')">
+                Load content: Play with sanitized values
+            </button>
+            <label for="btn1">Only works with HTTP</label>
+        </div>
+    </fieldset>
+    <p>
+    <fieldset style="display: grid; grid-row-gap: 10px">
+        <legend>Navigate to unmodified values</legend>
+        <div>
+            <a href="unmodified_values.html">Follow link: Play with unmodified values</a>
+        </div>
+        <div>
+            <form action="unmodified_values.html">
+                <input type="submit" value="Submit form: Play with unmodified values" />
+            </form>
+        </div>
+        <div>
+            <button id="btn2"
+                onclick="navigateTo({ html: 'unmodified_values.html', pageTitle: 'Unmodified values' }, '../sample/unmodified_values.html')">
+                Load content: Play with unmodified values
+            </button>
+            <label for="btn2">Only works with HTTP</label>
+        </div>
+    </fieldset>
+</div>
+
+
+</body>
+</html>
