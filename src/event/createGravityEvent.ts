@@ -3,11 +3,13 @@ import location from '../utils/location'
 import unique from '@cypress/unique-selector'
 import { getHTMLElementAttributes, isInteractiveElement } from '../utils/dom'
 import { EventType, GravityClickEventData, GravityEvent, GravityEventData, GravityEventTarget } from '../types'
+import gravityDocument from '../utils/gravityDocument'
 
-export async function createGravityEvent(event: Event, type: EventType): Promise<GravityEvent> {
+export function createGravityEvent(event: Event, type: EventType): GravityEvent {
   const gravityEvent: GravityEvent = {
     type,
     location: location(),
+    document: gravityDocument(),
     recordedAt: new Date().toISOString(),
     viewportData: viewport(),
     eventData: createEventData(event, type),

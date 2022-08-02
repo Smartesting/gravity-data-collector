@@ -3,6 +3,7 @@ import EventListener from './EventListener'
 import { EventType, GravitySessionEndedEvent } from '../../types'
 import viewport from '../../utils/viewport'
 import location from '../../utils/location'
+import gravityDocument from '../../utils/gravityDocument'
 
 class UnloadEventListener extends EventListener {
   constructor(eventHandler: EventHandler, window: Window) {
@@ -13,6 +14,7 @@ class UnloadEventListener extends EventListener {
     const sessionEndedEvent: GravitySessionEndedEvent = {
       viewportData: viewport(),
       location: location(),
+      document: gravityDocument(),
       type: this.eventType,
     }
     this.eventHandler.run(sessionEndedEvent)
