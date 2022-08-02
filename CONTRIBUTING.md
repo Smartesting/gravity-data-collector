@@ -19,8 +19,9 @@ for commit.
 
 1. Increase version number in [package.json](package.json).
 2. Increase version number in [config.ts](src/config.ts).
-3. Update [Changelog](CHANGELOG.md).
-   1. Set version number.
+3. Run `npm install` in order to update [package-lock.json](package-lock.json) with the right version number.
+4. Update [Changelog](CHANGELOG.md).
+   1. Set current version number to `Unreleased` section.
    2. Remove empty entries.
    3. Add link to compare changes with previous release.
 
@@ -39,7 +40,8 @@ npm.
 
 ## Semantic Versioning
 
-Based on [Semantic Versioning](https://semver.org/spec/v2.0.0.html), given a version number `MAJOR.MINOR.PATCH`, increment
+Based on [Semantic Versioning](https://semver.org/spec/v2.0.0.html), given a version number `MAJOR.MINOR.PATCH`,
+increment
 the:
 
 - `MAJOR` version when you make incompatible API changes.
