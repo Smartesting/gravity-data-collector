@@ -24,11 +24,19 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
 
   const completedOptions = {
     ...(debug ? debugDefaultOptions : defaultOptions),
-    ...options,
+    ...sanitizeOptions(options),
   }
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError
   }
   return completedOptions
+}
+
+function sanitizeOptions(options: Partial<CollectorOptions>): Partial<CollectorOptions> {
+  let sanitized = options
+  if (options.gravityServerUrl) {
+    sanitized.gravityServerUrl = options.gravityServerUrl.replace(/\/$/, '')
+  }
+  return sanitized
 }

@@ -93,6 +93,22 @@ describe('completeOptions', () => {
         }
         expect(completed).toStrictEqual(expected)
       })
+
+      it('strips trailing slash for gravityServerUrl if needed', () => {
+        const completed = completeOptions({
+          debug: false,
+          authKey: '123-456-789',
+          gravityServerUrl: 'http://localhost:3000/',
+        })
+        const expected: CollectorOptions = {
+          authKey: '123-456-789',
+          requestInterval: 5000,
+          debug: false,
+          maxDelay: 0,
+          gravityServerUrl: 'http://localhost:3000',
+        }
+        expect(completed).toStrictEqual(expected)
+      })
     })
   })
 })
