@@ -34,8 +34,8 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
 }
 
 function sanitizeOptions(options: Partial<CollectorOptions>): Partial<CollectorOptions> {
-  let sanitized = options
-  if (options.gravityServerUrl) {
+  const sanitized = options
+  if (options.gravityServerUrl !== undefined) {
     sanitized.gravityServerUrl = options.gravityServerUrl.replace(/\/$/, '')
   }
   return sanitized
