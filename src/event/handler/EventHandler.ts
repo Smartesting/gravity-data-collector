@@ -1,6 +1,6 @@
 import { EventType, SessionEvent, TEvent } from '../../types'
 
-export default class EventHandler implements EventHandler {
+export default class EventHandler {
   private readonly buffer: SessionEvent[] = []
   private readonly timer?: NodeJS.Timer
 

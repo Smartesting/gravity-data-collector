@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
 import EventHandler from '../handler/EventHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
-import ClickEventListener from './ClickEventListener'
+import PointerUpEventListener from './PointerUpEventListener'
 import { nop } from '../../utils/nop'
 import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
 
@@ -14,7 +14,7 @@ describe('ClickEventListener', () => {
       vitest.restoreAllMocks()
     })
 
-    it('calls listener when click event been fired', async () => {
+    it('calls listener when click event been fired by mouse', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>
@@ -23,10 +23,10 @@ describe('ClickEventListener', () => {
         'div',
       )
 
-      new ClickEventListener(eventHandler, domWindow).init()
+      new PointerUpEventListener(eventHandler, domWindow).init()
       const button = await waitFor(() => getByRole(element, 'button'))
 
-      fireEvent.click(button)
+      fireEvent.pointerUp(button)
 
       await waitFor(() => {
         expect(runSpy).toHaveBeenCalledOnce()

@@ -26,12 +26,12 @@ export function createGravityEvent(event: Event, type: EventType): GravityEvent 
 
 function createEventData(event: Event, type: EventType): GravityEventData | undefined {
   switch (type) {
-    case EventType.Click:
-      return createMouseEventData(event as MouseEvent)
+    case EventType.PointerUp:
+      return createPointerUpEventData(event as PointerEvent)
   }
 }
 
-function createMouseEventData(event: MouseEvent): GravityClickEventData {
+function createPointerUpEventData(event: MouseEvent): GravityClickEventData {
   const eventData: GravityClickEventData = {
     clickOffsetX: Math.trunc(event.clientX),
     clickOffsetY: Math.trunc(event.clientY),

@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `keyup` listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
+
 ### Changed
+
+- Replace `click` listener by `pointerup` listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
 
 ### Deprecated
 

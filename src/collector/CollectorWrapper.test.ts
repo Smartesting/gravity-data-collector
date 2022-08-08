@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import ClickEventListener from '../event/listener/ClickEventListener'
+import PointerUpEventListener from '../event/listener/PointerUpEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
@@ -45,10 +45,10 @@ describe('CollectorWrapper', () => {
       })
 
       it('initializes ClickEventListener', () => {
-        vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {})
+        vi.spyOn(PointerUpEventListener.prototype, 'init').mockImplementation(() => {})
         createCollectorWrapper()
 
-        expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce()
+        expect(PointerUpEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
       it('initializes ChangeEventListener', () => {

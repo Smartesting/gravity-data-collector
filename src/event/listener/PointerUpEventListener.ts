@@ -3,9 +3,9 @@ import { createGravityEvent } from '../createGravityEvent'
 import EventListener from './EventListener'
 import { EventType } from '../../types'
 
-class ClickEventListener extends EventListener {
+class PointerUpEventListener extends EventListener {
   constructor(eventHandler: EventHandler, window: Window) {
-    super(eventHandler, EventType.Click, window)
+    super(eventHandler, EventType.PointerUp, window)
   }
 
   listener(event: MouseEvent) {
@@ -13,4 +13,4 @@ class ClickEventListener extends EventListener {
   }
 }
 
-export default ClickEventListener
+export default PointerUpEventListener
