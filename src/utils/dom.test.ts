@@ -1,64 +1,65 @@
 import { describe, expect, it } from 'vitest'
-import { isInteractiveElement } from './dom'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import { isCheckableElement } from './dom'
 
-describe('isInteractiveElement', () => {
-  it('detects button as an interactive element', () => {
+describe('isCheckableElement', () => {
+  it('detects checkbox as a checkable element', () => {
+    const { element } = createElementInJSDOM('<input type="checkbox"/>', 'input')
+    expect(isCheckableElement(element)).toBeTruthy()
+  })
+
+  it('detects radio as a checkable element', () => {
+    const { element } = createElementInJSDOM('<input type="radio"/>', 'input')
+    expect(isCheckableElement(element)).toBeTruthy()
+  })
+
+  it('does not detect button as a checkable element', () => {
     const { element } = createElementInJSDOM('<button/>', 'button')
-
-    expect(isInteractiveElement(element)).toBeTruthy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('detects link as an interactive element', () => {
+  it('does not detect link as a checkable element', () => {
     const { element } = createElementInJSDOM('<a/>', 'a')
-
-    expect(isInteractiveElement(element)).toBeTruthy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('detects input as an interactive element', () => {
+  it('does not detect simple input as a checkable element', () => {
     const { element } = createElementInJSDOM('<input/>', 'input')
-
-    expect(isInteractiveElement(element)).toBeTruthy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('detects select as an interactive element', () => {
+  it('does not detect select as a checkable element', () => {
     const { element } = createElementInJSDOM('<select/>', 'select')
-
-    expect(isInteractiveElement(element)).toBeTruthy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect body as an interactive element', () => {
+  it('does not detect body as a checkable element', () => {
     const { element } = createElementInJSDOM('<body/>', 'body')
-
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect html as an interactive element', () => {
+  it('does not detect html as a checkable element', () => {
     const { element } = createElementInJSDOM('<html lang="en"/>', 'html')
-
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect div as an interactive element', () => {
+  it('does not detect div as a checkable element', () => {
     const { element } = createElementInJSDOM('<div/>', 'div')
-
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect list as an interactive element', () => {
+  it('does not detect list as a checkable element', () => {
     const { element } = createElementInJSDOM('<li/>', 'li')
-
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect list item as an interactive element', () => {
+  it('does not detect list item as a checkable element', () => {
     const { element } = createElementInJSDOM('<ul/>', 'ul')
-
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 
-  it('does not detect fieldSet item as an interactive element', () => {
+  it('does not detect fieldSet item as a checkable element', () => {
     const { element } = createElementInJSDOM('<fieldSet/>', 'fieldSet')
-    expect(isInteractiveElement(element)).toBeFalsy()
+    expect(isCheckableElement(element)).toBeFalsy()
   })
 })

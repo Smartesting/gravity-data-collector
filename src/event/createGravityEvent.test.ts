@@ -86,61 +86,82 @@ describe('event', () => {
         expect(event.target?.element).toEqual('div')
       })
 
-      it('text content', () => {
-        const { element } = createElementInJSDOM('<li>I am a list item</li>', 'li')
-        if (element == null) throw new Error('Element is null')
-
-        const event = createGravityEvent(mockClick(element), EventType.Click)
-
-        expect(event.target?.textContent).toBeUndefined()
-      })
-
-      it('html attributes', () => {
+      it('type is recorded if element has the type attributes', () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
         const event = createGravityEvent(mockClick(element), EventType.Click)
 
-        expect((event.target?.attributes as Record<string, string>).type).toEqual('text')
-        expect((event.target?.attributes as Record<string, string>)['data-testid']).toEqual('userName')
-        expect((event.target?.attributes as Record<string, string>).class).toEqual('size-lg')
+        expect(event.target?.attributes?.type).toEqual('text')
       })
 
-      it('pointer coordinates data when the event is a click', () => {
+      it('selector', () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        const clickEvent = mockClick(element)
-        const event = createGravityEvent(clickEvent, EventType.Click)
+        const event = createGravityEvent(mockClick(element), EventType.Click)
 
-        const eltBounds = element?.getBoundingClientRect()
-
-        expect(event.eventData).toEqual({
-          clickOffsetX: clickEvent.clientX,
-          clickOffsetY: clickEvent.clientY,
-          elementOffsetX: eltBounds?.left,
-          elementOffsetY: eltBounds?.top,
-          elementRelOffsetX: Math.trunc(clickEvent.clientX - (eltBounds?.left ?? 0)),
-          elementRelOffsetY: Math.trunc(clickEvent.clientY - (eltBounds?.top ?? 0)),
-        })
+        expect(event.target?.selector).toEqual('.size-lg')
       })
 
-      it('key data when the event is a keyup', () => {
-        const keyEvent = mockKeyUp()
-        const event = createGravityEvent(keyEvent, EventType.KeyUp)
+      it('value not recorded if input is a text box', () => {
+        const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        expect(event.eventData).toEqual({
-          key: '',
-          code: '',
-        })
+        const event = createGravityEvent(mockClick(element), EventType.Click)
+
+        expect(event.target?.value).toBeUndefined()
       })
 
-      it('key data when the event is a keydown', () => {
-        const keyEvent = mockKeyDown()
-        const event = createGravityEvent(keyEvent, EventType.KeyDown)
+      it('"true" is recorded if input is a checked checkbox', () => {
+        const { element } = createElementInJSDOM('<input type="checkbox" class="size-lg" checked/>', 'input')
 
-        expect(event.eventData).toEqual({
-          key: '',
-          code: '',
-        })
+        const event = createGravityEvent(mockClick(element), EventType.Click)
+
+        expect(event.target?.value).equals('true')
+      })
+
+      it('"false" is recorded if input is a checked checkbox', () => {
+        const { element } = createElementInJSDOM('<input type="checkbox" class="size-lg"/>', 'input')
+
+        const event = createGravityEvent(mockClick(element), EventType.Click)
+
+        expect(event.target?.value).equals('false')
+      })
+    })
+
+    it('pointer coordinates data when the event is a click', () => {
+      const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
+
+      const clickEvent = mockClick(element)
+      const event = createGravityEvent(clickEvent, EventType.Click)
+
+      const eltBounds = element?.getBoundingClientRect()
+
+      expect(event.eventData).toEqual({
+        clickOffsetX: clickEvent.clientX,
+        clickOffsetY: clickEvent.clientY,
+        elementOffsetX: eltBounds?.left,
+        elementOffsetY: eltBounds?.top,
+        elementRelOffsetX: Math.trunc(clickEvent.clientX - (eltBounds?.left ?? 0)),
+        elementRelOffsetY: Math.trunc(clickEvent.clientY - (eltBounds?.top ?? 0)),
+      })
+    })
+
+    it('key data when the event is a keyup', () => {
+      const keyEvent = mockKeyUp()
+      const event = createGravityEvent(keyEvent, EventType.KeyUp)
+
+      expect(event.eventData).toEqual({
+        key: '',
+        code: '',
+      })
+    })
+
+    it('key data when the event is a keydown', () => {
+      const keyEvent = mockKeyDown()
+      const event = createGravityEvent(keyEvent, EventType.KeyDown)
+
+      expect(event.eventData).toEqual({
+        key: '',
+        code: '',
       })
     })
   })

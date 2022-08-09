@@ -1,7 +1,6 @@
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import unique from '@cypress/unique-selector'
-import { getHTMLElementAttributes, isInteractiveElement } from '../utils/dom'
 import {
   EventType,
   GravityClickEventData,
@@ -11,6 +10,7 @@ import {
   GravityKeyEventData,
 } from '../types'
 import gravityDocument from '../utils/gravityDocument'
+import { isCheckableElement } from '../utils/dom'
 
 export function createGravityEvent(event: Event, type: EventType): GravityEvent {
   const gravityEvent: GravityEvent = {
@@ -75,16 +75,19 @@ function createKeyboardEventData(event: KeyboardEvent): GravityKeyEventData {
 function createEventTarget(target: HTMLElement): GravityEventTarget {
   const eventTarget: GravityEventTarget = {
     element: target.tagName.toLocaleLowerCase(),
-    textContent: isInteractiveElement(target) ? target.textContent ?? '' : undefined,
-    attributes: {
-      ...getHTMLElementAttributes(target),
-    },
+  }
+
+  const type = target.getAttribute('type')
+  if (type !== null) eventTarget.attributes = { type }
+
+  if (isCheckableElement(target)) {
+    eventTarget.value = (target as HTMLInputElement).checked.toString()
   }
 
   try {
     eventTarget.selector = unique(target)
   } catch {
-    // do nothing
+    // ignore
   }
   return eventTarget
 }

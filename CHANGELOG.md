@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Stop recording the whole `attributes` object from html elements
+
 ### Fixed
 
 - Simplify sample
