@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import PointerUpEventListener from '../event/listener/PointerUpEventListener'
+import ClickEventListener from '../event/listener/ClickEventListener'
 import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
 import { CollectorOptions } from '../types'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
@@ -7,6 +7,7 @@ import EventHandler from '../event/handler/EventHandler'
 import UnloadEventListener from '../event/listener/UnloadEventListener'
 import { debugEventSessionSender, defaultEventSessionSender } from '../event/handler/eventSessionSender'
 import KeyUpEventListener from '../event/listener/KeyUpEventListener'
+import KeyDownEventListener from '../event/listener/KeyDownEventListener'
 
 class CollectorWrapper {
   readonly eventHandler: EventHandler
@@ -26,8 +27,9 @@ class CollectorWrapper {
   }
 
   private initializeEventHandlers() {
-    new PointerUpEventListener(this.eventHandler, this.window).init()
+    new ClickEventListener(this.eventHandler, this.window).init()
     new KeyUpEventListener(this.eventHandler, this.window).init()
+    new KeyDownEventListener(this.eventHandler, this.window).init()
     new ChangeEventListener(this.eventHandler, this.window).init()
     new UnloadEventListener(this.eventHandler, this.window).init()
   }

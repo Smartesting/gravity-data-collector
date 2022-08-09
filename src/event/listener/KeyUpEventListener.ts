@@ -9,22 +9,7 @@ class KeyUpEventListener extends EventListener {
   }
 
   listener(event: KeyboardEvent) {
-    const gravityEvent = createGravityEvent(event, this.eventType)
-    if (gravityEvent.target !== undefined) {
-      if (event.code.toLowerCase() === 'space') {
-        const type = (gravityEvent.target.attributes as Record<string, string>).type
-        if (type !== 'radio' && type !== 'checkbox' && type !== 'button') {
-          return
-        }
-      }
-      if (event.code.toLowerCase() === 'enter' || event.code.toLowerCase() === 'numpadEnter') {
-        const type = (gravityEvent.target.attributes as Record<string, string>).type
-        if (type !== 'button') {
-          return
-        }
-      }
-      this.eventHandler.run(gravityEvent)
-    }
+    this.eventHandler.run(createGravityEvent(event, this.eventType))
   }
 }
 

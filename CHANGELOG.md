@@ -11,11 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `keyup` listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
+- Add `keyup` event listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
+- Add `keydown` event listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
 
 ### Changed
 
-- Replace `click` listener by `pointerup` listener (see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
+- Stop logging `click` event while fired by keyboard (
+  see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
 
 ### Deprecated
 
@@ -39,5 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Track user events: `sessionStarted`, `click`, `change` and `sessionEnded` (which corresponds to the `unload` DOM event)
+- Track user events: `sessionStarted`, `click`, `change` and `sessionEnded` (which corresponds to the `unload` DOM
+  event)
 - Add debug options: when set to `true`, logs events in the console instead of sending to Gravity

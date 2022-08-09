@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import PointerUpEventListener from '../event/listener/PointerUpEventListener'
+import ClickEventListener from '../event/listener/ClickEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
 import { CollectorOptions } from '../types'
 import UnloadEventListener from '../event/listener/UnloadEventListener'
 import EventHandler from '../event/handler/EventHandler'
+import KeyUpEventListener from '../event/listener/KeyUpEventListener'
+import KeyDownEventListener from '../event/listener/KeyDownEventListener'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -45,10 +47,10 @@ describe('CollectorWrapper', () => {
       })
 
       it('initializes ClickEventListener', () => {
-        vi.spyOn(PointerUpEventListener.prototype, 'init').mockImplementation(() => {})
+        vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(() => {})
         createCollectorWrapper()
 
-        expect(PointerUpEventListener.prototype.init).toHaveBeenCalledOnce()
+        expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
       it('initializes ChangeEventListener', () => {
@@ -63,6 +65,20 @@ describe('CollectorWrapper', () => {
         createCollectorWrapper()
 
         expect(UnloadEventListener.prototype.init).toHaveBeenCalledOnce()
+      })
+
+      it('initializes KeyUpEventListener', () => {
+        vi.spyOn(KeyUpEventListener.prototype, 'init').mockImplementation(() => {})
+        createCollectorWrapper()
+
+        expect(KeyUpEventListener.prototype.init).toHaveBeenCalledOnce()
+      })
+
+      it('initializes KeyDownEventListener', () => {
+        vi.spyOn(KeyDownEventListener.prototype, 'init').mockImplementation(() => {})
+        createCollectorWrapper()
+
+        expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
       })
     })
   })

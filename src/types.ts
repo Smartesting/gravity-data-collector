@@ -2,9 +2,9 @@ export enum EventType {
   SessionStarted = 'sessionStarted',
   Unload = 'unload',
   Click = 'click',
-  PointerUp = 'pointerup',
   Change = 'change',
   KeyUp = 'keyup',
+  KeyDown = 'keydown',
 }
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent | GravitySessionEndedEvent

@@ -3,14 +3,14 @@ import { createGravityEvent } from '../createGravityEvent'
 import EventListener from './EventListener'
 import { EventType } from '../../types'
 
-class PointerUpEventListener extends EventListener {
+class KeyDownEventListener extends EventListener {
   constructor(eventHandler: EventHandler, window: Window) {
-    super(eventHandler, EventType.PointerUp, window)
+    super(eventHandler, EventType.KeyDown, window)
   }
 
-  listener(event: MouseEvent) {
+  listener(event: KeyboardEvent) {
     this.eventHandler.run(createGravityEvent(event, this.eventType))
   }
 }
 
-export default PointerUpEventListener
+export default KeyDownEventListener
