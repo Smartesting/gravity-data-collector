@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Stop logging `click` event while fired by keyboard (
+- Stop recording `click` event while fired by keyboard (
   see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
 
 ### Deprecated
