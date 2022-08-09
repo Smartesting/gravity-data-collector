@@ -8,7 +8,7 @@ export enum EventType {
 }
 
 export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent | GravitySessionEndedEvent
-export type GravityEventData = GravityClickEventData
+export type GravityEventData = GravityClickEventData | GravityKeyEventData
 
 export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
@@ -88,6 +88,11 @@ export interface GravityClickEventData {
   elementRelOffsetY?: number
   elementOffsetX?: number
   elementOffsetY?: number
+}
+
+export interface GravityKeyEventData {
+  key: string
+  code: string
 }
 
 export type SessionEvent = {

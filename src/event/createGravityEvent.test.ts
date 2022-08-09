@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockClick, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import {
+  mockClick,
+  mockKeyDown,
+  mockKeyUp,
+  mockWindowDocument,
+  mockWindowLocation,
+  mockWindowScreen,
+} from '../test-utils/mocks'
 import { createGravityEvent } from './createGravityEvent'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
@@ -104,14 +111,36 @@ describe('event', () => {
         const clickEvent = mockClick(element)
         const event = createGravityEvent(clickEvent, EventType.Click)
 
-        expect(event.eventData?.clickOffsetX).toEqual(clickEvent.clientX)
-        expect(event.eventData?.clickOffsetY).toEqual(clickEvent.clientY)
-
         const eltBounds = element?.getBoundingClientRect()
-        expect(event.eventData?.elementOffsetX).toEqual(eltBounds?.left)
-        expect(event.eventData?.elementOffsetY).toEqual(eltBounds?.top)
-        expect(event.eventData?.elementRelOffsetX).toEqual(Math.trunc(clickEvent.clientX - (eltBounds?.left ?? 0)))
-        expect(event.eventData?.elementRelOffsetY).toEqual(Math.trunc(clickEvent.clientY - (eltBounds?.top ?? 0)))
+
+        expect(event.eventData).toEqual({
+          clickOffsetX: clickEvent.clientX,
+          clickOffsetY: clickEvent.clientY,
+          elementOffsetX: eltBounds?.left,
+          elementOffsetY: eltBounds?.top,
+          elementRelOffsetX: Math.trunc(clickEvent.clientX - (eltBounds?.left ?? 0)),
+          elementRelOffsetY: Math.trunc(clickEvent.clientY - (eltBounds?.top ?? 0)),
+        })
+      })
+
+      it('key data when the event is a keyup', () => {
+        const keyEvent = mockKeyUp()
+        const event = createGravityEvent(keyEvent, EventType.KeyUp)
+
+        expect(event.eventData).toEqual({
+          key: '',
+          code: '',
+        })
+      })
+
+      it('key data when the event is a keydown', () => {
+        const keyEvent = mockKeyDown()
+        const event = createGravityEvent(keyEvent, EventType.KeyDown)
+
+        expect(event.eventData).toEqual({
+          key: '',
+          code: '',
+        })
       })
     })
   })

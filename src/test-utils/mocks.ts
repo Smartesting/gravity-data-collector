@@ -43,28 +43,10 @@ export function mockClick(target: HTMLElement): PointerEvent {
   } as unknown as PointerEvent
 }
 
-export function mockFocusOut(target: HTMLElement): FocusEvent {
-  return {
-    AT_TARGET: 0,
-    BUBBLING_PHASE: 0,
-    CAPTURING_PHASE: 0,
-    NONE: 0,
-    bubbles: false,
-    cancelBubble: false,
-    cancelable: false,
-    composed: false,
-    currentTarget: null,
-    defaultPrevented: false,
-    detail: 0,
-    eventPhase: 0,
-    isTrusted: false,
-    relatedTarget: null,
-    returnValue: false,
-    srcElement: null,
-    timeStamp: 0,
-    type: '',
-    view: null,
-    which: 0,
-    target,
-  } as unknown as FocusEvent
+export function mockKeyUp(): KeyboardEvent {
+  return new KeyboardEvent('keyup', {})
+}
+
+export function mockKeyDown(): KeyboardEvent {
+  return new KeyboardEvent('keydown', {})
 }
