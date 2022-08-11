@@ -1,14 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { debugEventSessionSender, defaultEventSessionSender, GRAVITY_SERVER_ADDRESS } from './eventSessionSender'
-import { SessionEvent } from '../../types'
+import {
+  debugUserActionSessionSender,
+  defaultUserActionSessionSender,
+  GRAVITY_SERVER_ADDRESS,
+} from './userActionSessionSender'
+import { SessionUserAction } from '../../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
 
-describe('eventSessionSender', () => {
-  const event = {}
-  const sessionEvents: SessionEvent[] = [event as SessionEvent, event as SessionEvent]
+describe('userActionSessionSender', () => {
+  const action = {}
+  const sessionActions: SessionUserAction[] = [action as SessionUserAction, action as SessionUserAction]
 
-  describe('defaultEventSessionSender', () => {
+  describe('defaultUserActionSessionSender', () => {
     beforeEach(() => {
       vi.restoreAllMocks()
     })
@@ -16,27 +20,32 @@ describe('eventSessionSender', () => {
     const spySuccess = vi.fn()
     const spyError = vi.fn()
 
-    it('sends session events if valid auth key', async () => {
-      await defaultEventSessionSender(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, spySuccess)(sessionEvents)
+    it('sends session user actions if valid auth key', async () => {
+      await defaultUserActionSessionSender(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, spySuccess)(sessionActions)
       await waitFor(() => {
         expect(spySuccess).toHaveBeenCalledWith({ error: null })
       })
     })
 
     it('catches error if invalid auth key', async () => {
-      await defaultEventSessionSender('DUMMY_AUTH_KEY', GRAVITY_SERVER_ADDRESS, spySuccess, spyError)(sessionEvents)
+      await defaultUserActionSessionSender(
+        'DUMMY_AUTH_KEY',
+        GRAVITY_SERVER_ADDRESS,
+        spySuccess,
+        spyError,
+      )(sessionActions)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledWith('error 404, Not Found')
       })
     })
 
     it('catches any error', async () => {
-      await defaultEventSessionSender(
+      await defaultUserActionSessionSender(
         DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR,
         GRAVITY_SERVER_ADDRESS,
         spySuccess,
         spyError,
-      )(sessionEvents)
+      )(sessionActions)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledOnce()
         expect((spyError.mock.lastCall as any[])[0]).toMatch(/request to (.+?) failed, reason: Network Error/)
@@ -44,7 +53,7 @@ describe('eventSessionSender', () => {
     })
   })
 
-  describe('debugEventSessionSender', () => {
+  describe('debugUserActionSessionSender', () => {
     beforeEach(() => {
       vi.useFakeTimers()
       vi.clearAllTimers()
@@ -52,13 +61,13 @@ describe('eventSessionSender', () => {
     })
     const spyOutput = vi.fn()
 
-    it('outputs session events immediately if no maxDelay', () => {
-      debugEventSessionSender(0, spyOutput)(sessionEvents)
+    it('outputs session user actions immediately if no maxDelay', () => {
+      debugUserActionSessionSender(0, spyOutput)(sessionActions)
       expect(spyOutput).toHaveBeenCalledTimes(3)
     })
 
-    it('outputs session events immediately if maxDelay', () => {
-      debugEventSessionSender(5000, spyOutput)(sessionEvents)
+    it('outputs session user actions immediately if maxDelay', () => {
+      debugUserActionSessionSender(5000, spyOutput)(sessionActions)
       expect(spyOutput).toHaveBeenCalledTimes(0)
       vi.advanceTimersByTime(5000)
       expect(spyOutput).toHaveBeenCalledTimes(3)

@@ -1,4 +1,4 @@
-import { SessionEvent } from '../../types'
+import { SessionUserAction } from '../../types'
 import fetch from 'cross-fetch'
 import { nop } from '../../utils/nop'
 
@@ -8,51 +8,51 @@ export function buildGravityTrackingApiUrl(authKey: string, gravityServerUrl: st
   return `${gravityServerUrl}/api/tracking/${authKey}/publish`
 }
 
-export function defaultEventSessionSender(
+export function defaultUserActionSessionSender(
   authKey: string,
   gravityServerUrl: string,
   successCallback: (payload: any) => void = nop,
   errorCallback: (reason: string) => void = nop,
-): (sessionEvents: SessionEvent[]) => Promise<void> {
-  return async (sessionEvents: SessionEvent[]) =>
-    await sendSessionEvents(authKey, gravityServerUrl, sessionEvents, successCallback, errorCallback)
+): (sessionActions: SessionUserAction[]) => Promise<void> {
+  return async (sessionActions: SessionUserAction[]) =>
+    await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, successCallback, errorCallback)
 }
 
-export function debugEventSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
-  return (sessionEvents: SessionEvent[]) => {
+export function debugUserActionSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
+  return (sessionActions: SessionUserAction[]) => {
     if (maxDelay === 0) {
-      printSessionEvents(sessionEvents, output)
+      printSessionUserActions(sessionActions, output)
     }
     setTimeout(() => {
-      printSessionEvents(sessionEvents, output)
+      printSessionUserActions(sessionActions, output)
     }, Math.random() * maxDelay)
   }
 }
 
-function printSessionEvents(sessionEvents: SessionEvent[], output: (args: any) => void) {
+function printSessionUserActions(sessionActions: SessionUserAction[], output: (args: any) => void) {
   output('[Gravity Logger (debug mode)]')
-  output(`${sessionEvents.length} session events: `)
-  output(sessionEvents)
+  output(`${sessionActions.length} session user actions: `)
+  output(sessionActions)
 }
 
-async function sendSessionEvents(
+async function sendSessionUserActions(
   authKey: string,
   gravityServerUrl: string,
-  sessionEvents: SessionEvent[],
+  sessionActions: SessionUserAction[],
   successCallback: (payload: any) => void,
   errorCallback: (reason: string) => void,
 ): Promise<void> {
   try {
     const response = await fetch(buildGravityTrackingApiUrl(authKey, gravityServerUrl), {
       method: 'POST',
-      body: JSON.stringify(sessionEvents),
+      body: JSON.stringify(sessionActions),
       headers: {
         'Content-Type': 'application/json',
       },
     })
 
     if (response.status === 200) {
-      console.log(`${sessionEvents.length} session events successfully sent to Gravity Server`)
+      console.log(`${sessionActions.length} session user actions successfully sent to Gravity Server`)
       successCallback(await response.json())
     } else {
       errorCallback(`error ${response.status}, ${response.statusText}`)

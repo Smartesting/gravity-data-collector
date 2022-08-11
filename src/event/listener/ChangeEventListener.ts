@@ -1,17 +1,17 @@
 import EventHandler from '../handler/EventHandler'
-import { createGravityEvent } from '../createGravityEvent'
+import { createTargetedUserAction } from '../../action/createTargetedUserAction'
 import EventListener from './EventListener'
-import { EventType, HTMLInputWithValue } from '../../types'
+import { UserActionType, HTMLInputWithValue } from '../../types'
 import { sanitizeHTMLElementValue } from '../../utils/sanitizeHTMLElementValue'
 
 class ChangeEventListener extends EventListener {
   constructor(eventHandler: EventHandler, window: Window) {
-    super(eventHandler, EventType.Change, window)
+    super(eventHandler, UserActionType.Change, window)
   }
 
   listener(event: InputEvent) {
     const elementTarget = event.target as HTMLInputWithValue
-    const gravityEvent = createGravityEvent(event, this.eventType)
+    const gravityEvent = createTargetedUserAction(event, this.userActionType)
     if (gravityEvent.target != null) {
       gravityEvent.target.value = sanitizeHTMLElementValue(elementTarget)
     }

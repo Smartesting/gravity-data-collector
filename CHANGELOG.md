@@ -16,14 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Stop recording `click` event while fired by keyboard (
+- Stop recording `click` while it is fired by keyboard (
   see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
+- Objects sent to Gravity Server are now called `UserAction` instead of `TEvent`
 
 ### Deprecated
 
 ### Removed
 
-- Stop recording `unload` event
+- Stop recording `unload`
 - Stop recording the whole `attributes` object from html elements
 
 ### Fixed

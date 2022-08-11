@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
 import EventHandler from '../../event/handler/EventHandler'
-import { createSessionStartedEvent } from '../createSessionStartedEvent'
-import { createGravityEvent } from '../createGravityEvent'
+import { createSessionStartedUserAction } from '../../action/createSessionStartedUserAction'
+import { createTargetedUserAction } from '../../action/createTargetedUserAction'
 import { mockClick } from '../../test-utils/mocks'
-import { EventType } from '../../types'
+import { UserActionType } from '../../types'
 import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
-import { UNLOAD_EVENT_TYPE } from '../listener/UnloadEventListener'
+import { UNLOAD_USER_ACTION_TYPE } from '../listener/UnloadEventListener'
 
 describe('EventHandler', () => {
   describe('run', () => {
@@ -16,16 +16,16 @@ describe('EventHandler', () => {
       vi.restoreAllMocks()
     })
 
-    it('outputs events if requestInterval=0', async () => {
+    it('outputs actions if requestInterval=0', async () => {
       const eventHandler = new EventHandler('aaa-111', 0, output)
-      eventHandler.run(createSessionStartedEvent())
+      eventHandler.run(createSessionStartedUserAction())
       eventHandler.run(mockGravityClickEvent())
       expect(output).toHaveBeenCalledTimes(2)
     })
 
-    it('outputs events if requestInterval>0', async () => {
+    it('outputs actions if requestInterval>0', async () => {
       const eventHandler = new EventHandler('aaa-111', 5000, output)
-      eventHandler.run(createSessionStartedEvent())
+      eventHandler.run(createSessionStartedUserAction())
       eventHandler.run(mockGravityClickEvent())
       eventHandler.run(mockGravityClickEvent())
       expect(output).toHaveBeenCalledTimes(0)
@@ -34,19 +34,19 @@ describe('EventHandler', () => {
       expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
     })
 
-    it('outputs events if "unload" event has been handled', async () => {
+    it('outputs actions if "unload" event has been handled', async () => {
       const eventHandler = new EventHandler('aaa-111', 5000, output)
-      eventHandler.run(createSessionStartedEvent())
+      eventHandler.run(createSessionStartedUserAction())
       eventHandler.run(mockGravityClickEvent())
       eventHandler.run(mockGravityClickEvent())
-      eventHandler.run(createGravityEvent(new Event('unload'), UNLOAD_EVENT_TYPE))
+      eventHandler.run(createTargetedUserAction(new Event('unload'), UNLOAD_USER_ACTION_TYPE))
       expect(output).toHaveBeenCalledTimes(1)
       expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
     })
 
     it('skips outputs if no more buffered events', async () => {
       const eventHandler = new EventHandler('aaa-111', 5000, output)
-      eventHandler.run(createSessionStartedEvent())
+      eventHandler.run(createSessionStartedUserAction())
       vitest.advanceTimersByTime(5000)
       expect(output).toHaveBeenCalledTimes(1)
       vitest.advanceTimersByTime(10000)
@@ -57,5 +57,5 @@ describe('EventHandler', () => {
 
 function mockGravityClickEvent() {
   const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
-  return createGravityEvent(mockClick(element), EventType.Click)
+  return createTargetedUserAction(mockClick(element), UserActionType.Click)
 }

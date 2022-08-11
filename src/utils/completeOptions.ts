@@ -1,5 +1,5 @@
-import { GRAVITY_SERVER_ADDRESS } from '../event/handler/eventSessionSender'
 import { CollectorOptions } from '../types'
+import { GRAVITY_SERVER_ADDRESS } from '../event/handler/userActionSessionSender'
 
 export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
   const authKeyError = new Error('No AuthKey provided')

@@ -7,13 +7,13 @@ import {
   mockWindowLocation,
   mockWindowScreen,
 } from '../test-utils/mocks'
-import { createGravityEvent } from './createGravityEvent'
+import { createTargetedUserAction } from './createTargetedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { EventType, GravityDocument } from '../types'
+import { GravityDocument, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 
-describe('event', () => {
+describe('action', () => {
   let document: GravityDocument
 
   beforeEach(() => {
@@ -22,21 +22,21 @@ describe('event', () => {
     document = mockWindowDocument()
   })
 
-  describe('createGravityEvent', () => {
+  describe('createTargetedUserAction', () => {
     it('returns the specified "type"', () => {
       const { element } = createElementInJSDOM('<button>Click Me</button>', 'button')
 
-      const event = createGravityEvent(mockClick(element), EventType.Click)
+      const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-      expect(event.type).toEqual(EventType.Click)
+      expect(action.type).toEqual(UserActionType.Click)
     })
 
     it('returns location data', () => {
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = createGravityEvent(mockClick(element), EventType.Click)
+      const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-      expect(event.location).toEqual(location())
+      expect(action.location).toEqual(location())
     })
 
     it('returns document data', () => {
@@ -52,17 +52,17 @@ describe('event', () => {
         'html',
       )
 
-      const event = createGravityEvent(mockClick(element), EventType.Click)
+      const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-      expect(event.document.title).toEqual(document.title)
+      expect(action.document.title).toEqual(document.title)
     })
 
     it('returns viewport data', () => {
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = createGravityEvent(mockClick(element), EventType.Click)
+      const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-      expect(event.viewportData).toEqual(viewport())
+      expect(action.viewportData).toEqual(viewport())
     })
 
     it('returns recordedAt', () => {
@@ -72,58 +72,58 @@ describe('event', () => {
 
       const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const event = createGravityEvent(mockClick(element), EventType.Click)
+      const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-      expect(event.recordedAt).toEqual(now)
+      expect(action.recordedAt).toEqual(now)
     })
 
     describe('target data embeds...', () => {
       it('tag name', () => {
         const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.element).toEqual('div')
+        expect(action.target?.element).toEqual('div')
       })
 
       it('type is recorded if element has the type attributes', () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.attributes?.type).toEqual('text')
+        expect(action.target?.type).toEqual('text')
       })
 
       it('selector', () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.selector).toEqual('.size-lg')
+        expect(action.target?.selector).toEqual('.size-lg')
       })
 
       it('value not recorded if input is a text box', () => {
         const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.value).toBeUndefined()
+        expect(action.target?.value).toBeUndefined()
       })
 
       it('"true" is recorded if input is a checked checkbox', () => {
         const { element } = createElementInJSDOM('<input type="checkbox" class="size-lg" checked/>', 'input')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.value).equals('true')
+        expect(action.target?.value).equals('true')
       })
 
       it('"false" is recorded if input is a checked checkbox', () => {
         const { element } = createElementInJSDOM('<input type="checkbox" class="size-lg"/>', 'input')
 
-        const event = createGravityEvent(mockClick(element), EventType.Click)
+        const action = createTargetedUserAction(mockClick(element), UserActionType.Click)
 
-        expect(event.target?.value).equals('false')
+        expect(action.target?.value).equals('false')
       })
     })
 
@@ -131,11 +131,11 @@ describe('event', () => {
       const { element } = createElementInJSDOM('<input type="text" data-testid="userName" class="size-lg"/>', 'input')
 
       const clickEvent = mockClick(element)
-      const event = createGravityEvent(clickEvent, EventType.Click)
+      const action = createTargetedUserAction(clickEvent, UserActionType.Click)
 
       const eltBounds = element?.getBoundingClientRect()
 
-      expect(event.eventData).toEqual({
+      expect(action.userActionData).toEqual({
         clickOffsetX: clickEvent.clientX,
         clickOffsetY: clickEvent.clientY,
         elementOffsetX: eltBounds?.left,
@@ -147,9 +147,9 @@ describe('event', () => {
 
     it('key data when the event is a keyup', () => {
       const keyEvent = mockKeyUp()
-      const event = createGravityEvent(keyEvent, EventType.KeyUp)
+      const action = createTargetedUserAction(keyEvent, UserActionType.KeyUp)
 
-      expect(event.eventData).toEqual({
+      expect(action.userActionData).toEqual({
         key: '',
         code: '',
       })
@@ -157,9 +157,9 @@ describe('event', () => {
 
     it('key data when the event is a keydown', () => {
       const keyEvent = mockKeyDown()
-      const event = createGravityEvent(keyEvent, EventType.KeyDown)
+      const action = createTargetedUserAction(keyEvent, UserActionType.KeyDown)
 
-      expect(event.eventData).toEqual({
+      expect(action.userActionData).toEqual({
         key: '',
         code: '',
       })

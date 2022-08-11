@@ -1,23 +1,23 @@
 import EventHandler from '../handler/EventHandler'
 import EventListener from './EventListener'
-import { EventType } from '../../types'
-import { createGravityEvent } from '../createGravityEvent'
+import { UserActionType } from '../../types'
+import { createTargetedUserAction } from '../../action/createTargetedUserAction'
 
-export const UNLOAD_EVENT_TYPE = 'unload' as EventType
+export const UNLOAD_USER_ACTION_TYPE = 'unload' as UserActionType
 
 class UnloadEventListener extends EventListener {
   constructor(eventHandler: EventHandler, window: Window) {
-    super(eventHandler, UNLOAD_EVENT_TYPE, window)
+    super(eventHandler, UNLOAD_USER_ACTION_TYPE, window)
   }
 
   async listener(event: Event) {
     this.eventHandler.run(
-      createGravityEvent(
+      createTargetedUserAction(
         {
           ...event,
           target: null,
         },
-        UNLOAD_EVENT_TYPE,
+        UNLOAD_USER_ACTION_TYPE,
       ),
     )
   }

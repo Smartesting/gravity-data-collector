@@ -1,4 +1,4 @@
-export enum EventType {
+export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
   Change = 'change',
@@ -6,44 +6,54 @@ export enum EventType {
   KeyDown = 'keydown',
 }
 
-export type TEvent = GravitySessionStartedEvent | GravityEvent | GravityCustomEvent
-export type GravityEventData = GravityClickEventData | GravityKeyEventData
+export type UserAction = SessionStartedUserAction | TargetedUserAction
 
-export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
+export type SessionStartedUserAction = {
+  test?: string
+  version: string
+  agent: string
+} & UserActionProperties
 
-export interface EventCommonProperties {
-  type: EventType
+export type TargetedUserAction = {
+  target?: UserActionTarget
+  userActionData?: UserActionData
+} & UserActionProperties
+
+export interface UserActionProperties {
+  type: UserActionType
   location: GravityLocation
   document: GravityDocument
   recordedAt?: string
   viewportData: ViewportData
 }
 
-export type GravitySessionStartedEvent = {
-  test?: string
-  version: string
-  agent: string
-} & EventCommonProperties
+export type UserActionData = ClickUserActionData | KeyUserActionData
 
-export type GravityEvent = {
-  target?: GravityEventTarget
-  eventData?: GravityEventData
-} & EventCommonProperties
-
-export type GravityCustomEvent = {
-  name: string
-  customData: CustomEventDataType
-} & EventCommonProperties
-
-export interface EventTargetAttributes {
-  type?: string
+export interface ClickUserActionData {
+  clickOffsetX: number
+  clickOffsetY: number
+  elementRelOffsetX?: number
+  elementRelOffsetY?: number
+  elementOffsetX?: number
+  elementOffsetY?: number
 }
 
-export interface GravityEventTarget {
+export interface KeyUserActionData {
+  key: string
+  code: string
+}
+
+export interface SessionUserAction {
+  sessionId: string
+}
+
+export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
+
+export interface UserActionTarget {
   element: string
   selector?: string
   value?: string
-  attributes?: EventTargetAttributes
+  type?: string
 }
 
 export interface GravityLocation {
@@ -51,8 +61,6 @@ export interface GravityLocation {
   pathname: string
   search: string
 }
-
-export type CustomEventDataType = Record<string, string | number | boolean | Date>
 
 export interface ViewportData {
   viewportWidth?: number
@@ -79,21 +87,3 @@ export interface CollectorOptions {
   debug: boolean
   maxDelay: number
 }
-
-export interface GravityClickEventData {
-  clickOffsetX: number
-  clickOffsetY: number
-  elementRelOffsetX?: number
-  elementRelOffsetY?: number
-  elementOffsetX?: number
-  elementOffsetY?: number
-}
-
-export interface GravityKeyEventData {
-  key: string
-  code: string
-}
-
-export type SessionEvent = {
-  sessionId: string
-} & TEvent

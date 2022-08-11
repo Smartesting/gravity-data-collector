@@ -1,36 +1,36 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import { createSessionStartedEvent } from './createSessionStartedEvent'
+import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { EventType } from '../types'
+import { UserActionType } from '../types'
 import { config } from '../config'
 
-describe('event', () => {
+describe('action', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
   })
 
-  describe('createSessionStartedEvent', () => {
-    it('returns a GravitySessionStartedEvent', () => {
-      expect(createSessionStartedEvent().type).toBe(EventType.SessionStarted)
+  describe('createSessionStartedUserAction', () => {
+    it('returns a SessionStartedUserAction', () => {
+      expect(createSessionStartedUserAction().type).toBe(UserActionType.SessionStarted)
     })
 
     it('returns viewportData', () => {
-      expect(createSessionStartedEvent().viewportData).toEqual(viewport())
+      expect(createSessionStartedUserAction().viewportData).toEqual(viewport())
     })
 
     it('returns collector version', () => {
-      expect(createSessionStartedEvent().version).toEqual(config.COLLECTOR_VERSION)
+      expect(createSessionStartedUserAction().version).toEqual(config.COLLECTOR_VERSION)
     })
 
     it('returns user agent', () => {
-      expect(createSessionStartedEvent().agent).toEqual(navigator.userAgent)
+      expect(createSessionStartedUserAction().agent).toEqual(navigator.userAgent)
     })
 
     it('returns locationData', () => {
-      expect(createSessionStartedEvent().location).toEqual(location())
+      expect(createSessionStartedUserAction().location).toEqual(location())
     })
 
     it('returns recordedAt', () => {
@@ -38,11 +38,11 @@ describe('event', () => {
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
-      expect(createSessionStartedEvent().recordedAt).toEqual(now)
+      expect(createSessionStartedUserAction().recordedAt).toEqual(now)
     })
 
     it('returns Cypress current test if any', () => {
-      expect(createSessionStartedEvent().test).toBeUndefined()
+      expect(createSessionStartedUserAction().test).toBeUndefined()
 
       Object.defineProperty(window, 'Cypress', {
         value: {
@@ -52,7 +52,7 @@ describe('event', () => {
         },
       })
 
-      expect(createSessionStartedEvent().test).toEqual('foo > bar > testing stuff')
+      expect(createSessionStartedUserAction().test).toEqual('foo > bar > testing stuff')
     })
   })
 })

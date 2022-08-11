@@ -1,14 +1,14 @@
-import { SessionEvent, TEvent } from '../../types'
-import { UNLOAD_EVENT_TYPE } from '../listener/UnloadEventListener'
+import { SessionUserAction, UserAction } from '../../types'
+import { UNLOAD_USER_ACTION_TYPE } from '../listener/UnloadEventListener'
 
 export default class EventHandler {
-  private readonly buffer: SessionEvent[] = []
+  private readonly buffer: SessionUserAction[] = []
   private readonly timer?: NodeJS.Timer
 
   constructor(
     private readonly sessionId: string,
     private readonly requestInterval: number,
-    private readonly output: (sessionEvents: SessionEvent[]) => void,
+    private readonly output: (sessionActions: SessionUserAction[]) => void,
   ) {
     if (requestInterval > 0) {
       this.timer = setInterval(() => {
@@ -17,14 +17,14 @@ export default class EventHandler {
     }
   }
 
-  run(event: TEvent) {
-    if (event.type === UNLOAD_EVENT_TYPE) {
+  run(action: UserAction) {
+    if (action.type === UNLOAD_USER_ACTION_TYPE) {
       clearInterval(this.timer)
       this.flush()
       return
     }
 
-    this.buffer.push(this.toSessionEvent(event))
+    this.buffer.push(this.toSessionUserAction(action))
 
     if (this.timer == null) {
       this.flush()
@@ -38,10 +38,10 @@ export default class EventHandler {
     this.output(this.buffer.splice(0, this.buffer.length))
   }
 
-  private toSessionEvent(event: TEvent): SessionEvent {
+  private toSessionUserAction(action: UserAction): SessionUserAction {
     return {
       sessionId: this.sessionId,
-      ...event,
+      ...action,
     }
   }
 }

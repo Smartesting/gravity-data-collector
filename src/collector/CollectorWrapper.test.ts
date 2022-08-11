@@ -3,7 +3,7 @@ import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../tes
 import ClickEventListener from '../event/listener/ClickEventListener'
 import ChangeEventListener from '../event/listener/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
-import { createSessionStartedEvent } from '../event/createSessionStartedEvent'
+import { createSessionStartedUserAction } from '../action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
 import UnloadEventListener from '../event/listener/UnloadEventListener'
 import EventHandler from '../event/handler/EventHandler'
@@ -33,17 +33,17 @@ describe('CollectorWrapper', () => {
         options = { debug: true }
       })
 
-      it('a "sessionStarted" event is sent when initialized', () => {
+      it('a "sessionStarted" action is sent when initialized', () => {
         Date.parse('2022-05-12')
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
-        const expectedEvent = createSessionStartedEvent()
+        const expectedAction = createSessionStartedUserAction()
 
         const mock = vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
 
         createCollectorWrapper()
-        expect(mock).toHaveBeenCalledWith(expectedEvent)
+        expect(mock).toHaveBeenCalledWith(expectedAction)
       })
 
       it('initializes ClickEventListener', () => {
