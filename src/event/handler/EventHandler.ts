@@ -1,4 +1,5 @@
-import { EventType, SessionEvent, TEvent } from '../../types'
+import { SessionEvent, TEvent } from '../../types'
+import { UNLOAD_EVENT_TYPE } from '../listener/UnloadEventListener'
 
 export default class EventHandler {
   private readonly buffer: SessionEvent[] = []
@@ -17,13 +18,15 @@ export default class EventHandler {
   }
 
   run(event: TEvent) {
-    this.buffer.push(this.toSessionEvent(event))
-    if (this.timer == null) {
+    if (event.type === UNLOAD_EVENT_TYPE) {
+      clearInterval(this.timer)
       this.flush()
       return
     }
-    if (event.type === EventType.Unload) {
-      clearInterval(this.timer)
+
+    this.buffer.push(this.toSessionEvent(event))
+
+    if (this.timer == null) {
       this.flush()
     }
   }

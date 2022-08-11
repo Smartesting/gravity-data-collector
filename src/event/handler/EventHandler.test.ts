@@ -5,6 +5,7 @@ import { createGravityEvent } from '../createGravityEvent'
 import { mockClick } from '../../test-utils/mocks'
 import { EventType } from '../../types'
 import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
+import { UNLOAD_EVENT_TYPE } from '../listener/UnloadEventListener'
 
 describe('EventHandler', () => {
   describe('run', () => {
@@ -38,9 +39,9 @@ describe('EventHandler', () => {
       eventHandler.run(createSessionStartedEvent())
       eventHandler.run(mockGravityClickEvent())
       eventHandler.run(mockGravityClickEvent())
-      eventHandler.run(createGravityEvent(new Event('unload'), EventType.Unload))
+      eventHandler.run(createGravityEvent(new Event('unload'), UNLOAD_EVENT_TYPE))
       expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as any[])[0]).toHaveLength(4)
+      expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
     })
 
     it('skips outputs if no more buffered events', async () => {
