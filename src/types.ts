@@ -45,6 +45,7 @@ export interface KeyUserActionData {
 
 export interface SessionUserAction {
   sessionId: string
+  type: UserActionType
 }
 
 export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
