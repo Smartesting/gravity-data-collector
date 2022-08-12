@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { GravityDocument, UserActionType } from '../types'
@@ -75,7 +74,7 @@ describe('action', () => {
       it('tag name', () => {
         const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-        const action = createClickUserAction(element)!
+        const action = createClickUserAction(element)
 
         expect(action.target.element).toEqual('div')
       })
@@ -140,7 +139,7 @@ describe('action', () => {
 
     it('key data when the event is a keyup', () => {
       const { element } = createElementInJSDOM('<div/>', 'div')
-      const action = createKeyUpUserAction(element, "Shift", "ShiftLeft")
+      const action = createKeyUpUserAction(element, 'Shift', 'ShiftLeft')
       expect(action.userActionData).toEqual({
         key: 'Shift',
         code: 'ShiftLeft',
@@ -149,7 +148,7 @@ describe('action', () => {
 
     it('key data when the event is a keydown', () => {
       const { element } = createElementInJSDOM('<div/>', 'div')
-      const action = createKeyDownUserAction(element, "Shift", "ShiftLeft")
+      const action = createKeyDownUserAction(element, 'Shift', 'ShiftLeft')
       expect(action.userActionData).toEqual({
         key: 'Shift',
         code: 'ShiftLeft',

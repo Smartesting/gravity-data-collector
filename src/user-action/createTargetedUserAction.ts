@@ -14,7 +14,8 @@ import location from '../utils/location'
 
 export function createTargetedUserAction(event: Event, type: UserActionType): TargetedUserAction | null {
   const target = event.target as HTMLElement
-  if (!target) return null
+  if (target === null || target === undefined) return null
+
   const userAction: TargetedUserAction = {
     type,
     target: createActionTarget(target),
