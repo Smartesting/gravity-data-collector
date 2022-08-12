@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import EventHandler from '../handler/EventHandler'
+import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
-import { nop } from '../../utils/nop'
-import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
-import KeyDownEventListener from './KeyDownEventListener'
+import { nop } from '../utils/nop'
+import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 
 describe('KeyDownEventListener', () => {
   describe('listener', () => {
-    const eventHandler = new EventHandler('aaa-111', 0, nop)
-    const runSpy = vitest.spyOn(eventHandler, 'run')
+    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const runSpy = vitest.spyOn(userActionHandler, 'handle')
 
     beforeEach(() => {
       vitest.restoreAllMocks()
@@ -23,7 +23,7 @@ describe('KeyDownEventListener', () => {
         'div',
       )
 
-      new KeyDownEventListener(eventHandler, domWindow).init()
+      new KeyDownEventListener(userActionHandler, domWindow).init()
       const button = await waitFor(() => getByRole(element, 'checkbox'))
 
       fireEvent.keyDown(button)
@@ -42,7 +42,7 @@ describe('KeyDownEventListener', () => {
         'div',
       )
 
-      new KeyDownEventListener(eventHandler, domWindow).init()
+      new KeyDownEventListener(userActionHandler, domWindow).init()
       const div = await waitFor(() => getByRole(element, 'cell'))
 
       fireEvent.keyDown(div)
@@ -63,7 +63,7 @@ describe('KeyDownEventListener', () => {
         'div',
       )
 
-      new KeyDownEventListener(eventHandler, domWindow).init()
+      new KeyDownEventListener(userActionHandler, domWindow).init()
 
       const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
       const search = await waitFor(() => getByRole(element, 'searchbox'))
@@ -91,7 +91,7 @@ describe('KeyDownEventListener', () => {
         'div',
       )
 
-      new KeyDownEventListener(eventHandler, domWindow).init()
+      new KeyDownEventListener(userActionHandler, domWindow).init()
 
       const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
       const search = await waitFor(() => getByRole(element, 'searchbox'))

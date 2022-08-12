@@ -3,9 +3,9 @@ import {
   debugUserActionSessionSender,
   defaultUserActionSessionSender,
   GRAVITY_SERVER_ADDRESS,
-} from './userActionSessionSender'
-import { SessionUserAction } from '../../types'
-import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../../mocks/handlers'
+} from '../user-action/userActionSessionSender'
+import { SessionUserAction } from '../types'
+import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
 
 describe('userActionSessionSender', () => {

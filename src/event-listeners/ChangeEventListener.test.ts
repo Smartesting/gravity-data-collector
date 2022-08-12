@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import EventHandler from '../handler/EventHandler'
+import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
-import ChangeEventListener from './ChangeEventListener'
-import { nop } from '../../utils/nop'
-import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
+import ChangeEventListener from '../event-listeners/ChangeEventListener'
+import { nop } from '../utils/nop'
+import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 
 describe('ChangeEventListener', () => {
   describe('listener', () => {
-    const eventHandler = new EventHandler('aaa-111', 0, nop)
-    const runSpy = vitest.spyOn(eventHandler, 'run')
+    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const runSpy = vitest.spyOn(userActionHandler, 'handle')
 
     beforeEach(() => {
       vitest.restoreAllMocks()
@@ -23,7 +23,7 @@ describe('ChangeEventListener', () => {
         'div',
       )
 
-      new ChangeEventListener(eventHandler, domWindow).init()
+      new ChangeEventListener(userActionHandler, domWindow).init()
 
       const checkBox = await waitFor(() => getByRole(element, 'checkbox'))
 

@@ -1,6 +1,6 @@
-import { SessionUserAction } from '../../types'
+import { SessionUserAction } from '../types'
 import fetch from 'cross-fetch'
-import { nop } from '../../utils/nop'
+import { nop } from '../utils/nop'
 
 export const GRAVITY_SERVER_ADDRESS = 'https://smartestinggravityserver.herokuapp.com'
 

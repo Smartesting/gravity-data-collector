@@ -1,37 +1,37 @@
 import { v4 as uuidv4 } from 'uuid'
-import ClickEventListener from '../event/listener/ClickEventListener'
-import { createSessionStartedUserAction } from '../action/createSessionStartedUserAction'
+import ClickEventListener from '../event-listeners/ClickEventListener'
+import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
-import ChangeEventListener from '../event/listener/ChangeEventListener'
-import EventHandler from '../event/handler/EventHandler'
-import UnloadEventListener from '../event/listener/UnloadEventListener'
-import KeyUpEventListener from '../event/listener/KeyUpEventListener'
-import KeyDownEventListener from '../event/listener/KeyDownEventListener'
-import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../event/handler/userActionSessionSender'
+import ChangeEventListener from '../event-listeners/ChangeEventListener'
+import UserActionHandler from '../user-action/UserActionHandler'
+import UnloadEventListener from '../event-listeners/UnloadEventListener'
+import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
+import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
+import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 
 class CollectorWrapper {
-  readonly eventHandler: EventHandler
+  readonly userActionHandler: UserActionHandler
 
   constructor(options: CollectorOptions, private readonly window: Window) {
     const output = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
       : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
-    this.eventHandler = new EventHandler(uuidv4(), options.requestInterval, output)
+    this.userActionHandler = new UserActionHandler(uuidv4(), options.requestInterval, output)
 
     this.initSession()
-    this.initializeEventHandlers()
+    this.initializeEventListeners()
   }
 
   private initSession() {
-    return this.eventHandler.run(createSessionStartedUserAction())
+    return this.userActionHandler.handle(createSessionStartedUserAction())
   }
 
-  private initializeEventHandlers() {
-    new ClickEventListener(this.eventHandler, this.window).init()
-    new KeyUpEventListener(this.eventHandler, this.window).init()
-    new KeyDownEventListener(this.eventHandler, this.window).init()
-    new ChangeEventListener(this.eventHandler, this.window).init()
-    new UnloadEventListener(this.eventHandler, this.window).init()
+  private initializeEventListeners() {
+    new ClickEventListener(this.userActionHandler, this.window).init()
+    new KeyUpEventListener(this.userActionHandler, this.window).init()
+    new KeyDownEventListener(this.userActionHandler, this.window).init()
+    new ChangeEventListener(this.userActionHandler, this.window).init()
+    new UnloadEventListener(this.userActionHandler, this.window).init()
   }
 }
 

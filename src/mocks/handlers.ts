@@ -1,5 +1,5 @@
 import { rest } from 'msw'
-import { buildGravityTrackingApiUrl, GRAVITY_SERVER_ADDRESS } from '../event/handler/userActionSessionSender'
+import { buildGravityTrackingApiUrl, GRAVITY_SERVER_ADDRESS } from '../user-action/userActionSessionSender'
 
 export const VALID_AUTH_KEY = 'VALID_AUTH_KEY'
 export const DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR = 'DUMMY_AUTH_KEY_CAUSING_ERROR'

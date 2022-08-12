@@ -34,19 +34,29 @@ export function mockWindowLocation() {
   })
 }
 
-export function mockClick(target: HTMLElement): PointerEvent {
+export function mockClick(target: HTMLElement, clientX: number = 10, clientY: number = 10): PointerEvent {
   return {
     target,
-    clientX: 10,
-    clientY: 10,
+    clientX,
+    clientY,
     height: 0,
   } as unknown as PointerEvent
 }
 
-export function mockKeyUp(): KeyboardEvent {
-  return new KeyboardEvent('keyup', {})
+export function mockKeyUp(target: HTMLElement, key: string, code: string): KeyboardEvent {
+  return {
+    type: 'keyup',
+    key,
+    code,
+    target,
+  } as unknown as KeyboardEvent
 }
 
-export function mockKeyDown(): KeyboardEvent {
-  return new KeyboardEvent('keydown', {})
+export function mockKeyDown(target: HTMLElement, key: string, code: string): KeyboardEvent {
+  return {
+    type: 'keydown',
+    key,
+    code,
+    target,
+  } as unknown as KeyboardEvent
 }

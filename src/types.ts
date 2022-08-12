@@ -15,7 +15,7 @@ export type SessionStartedUserAction = {
 } & UserActionProperties
 
 export type TargetedUserAction = {
-  target?: UserActionTarget
+  target: UserActionTarget
   userActionData?: UserActionData
 } & UserActionProperties
 
@@ -43,7 +43,7 @@ export interface KeyUserActionData {
   code: string
 }
 
-export interface SessionUserAction {
+export type SessionUserAction = UserAction & {
   sessionId: string
 }
 

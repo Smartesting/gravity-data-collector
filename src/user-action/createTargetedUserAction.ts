@@ -12,25 +12,21 @@ import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 
-export function createTargetedUserAction(event: Event, type: UserActionType): TargetedUserAction {
+export function createTargetedUserAction(event: Event, type: UserActionType): TargetedUserAction | null {
+  const target = event.target as HTMLElement
+  if (!target) return null
   const userAction: TargetedUserAction = {
     type,
+    target: createActionTarget(target),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
     viewportData: viewport(),
   }
-
-  const actionData = createActionData(event, type)
-  if (actionData !== null) {
-    userAction.userActionData = actionData
+  const userActionData = createActionData(event, type)
+  if (userActionData !== null) {
+    userAction.userActionData = userActionData
   }
-
-  const target = event.target as HTMLElement
-  if (target !== null) {
-    userAction.target = createActionTarget(target)
-  }
-
   return userAction
 }
 

@@ -1,7 +1,6 @@
-import { SessionUserAction, UserAction } from '../../types'
-import { UNLOAD_USER_ACTION_TYPE } from '../listener/UnloadEventListener'
+import { SessionUserAction, UserAction } from '../types'
 
-export default class EventHandler {
+export default class UserActionHandler {
   private readonly buffer: SessionUserAction[] = []
   private readonly timer?: NodeJS.Timer
 
@@ -17,15 +16,8 @@ export default class EventHandler {
     }
   }
 
-  run(action: UserAction) {
-    if (action.type === UNLOAD_USER_ACTION_TYPE) {
-      clearInterval(this.timer)
-      this.flush()
-      return
-    }
-
+  handle(action: UserAction) {
     this.buffer.push(this.toSessionUserAction(action))
-
     if (this.timer == null) {
       this.flush()
     }

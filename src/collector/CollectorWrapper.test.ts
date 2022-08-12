@@ -1,21 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import ClickEventListener from '../event/listener/ClickEventListener'
-import ChangeEventListener from '../event/listener/ChangeEventListener'
+import ClickEventListener from '../event-listeners/ClickEventListener'
+import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
-import { createSessionStartedUserAction } from '../action/createSessionStartedUserAction'
+import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
-import UnloadEventListener from '../event/listener/UnloadEventListener'
-import EventHandler from '../event/handler/EventHandler'
-import KeyUpEventListener from '../event/listener/KeyUpEventListener'
-import KeyDownEventListener from '../event/listener/KeyDownEventListener'
+import UnloadEventListener from '../event-listeners/UnloadEventListener'
+import UserActionHandler from '../user-action/UserActionHandler'
+import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
+import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
     mockWindowDocument()
-    vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
+    vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(() => {})
   })
 
   describe('constructor', () => {
@@ -40,7 +40,7 @@ describe('CollectorWrapper', () => {
 
         const expectedAction = createSessionStartedUserAction()
 
-        const mock = vi.spyOn(EventHandler.prototype, 'run').mockImplementation(() => {})
+        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(() => {})
 
         createCollectorWrapper()
         expect(mock).toHaveBeenCalledWith(expectedAction)

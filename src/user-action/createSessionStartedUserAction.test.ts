@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
-import { createSessionStartedUserAction } from './createSessionStartedUserAction'
+import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { UserActionType } from '../types'
