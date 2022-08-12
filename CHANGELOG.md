@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Stop recording `click` while it is fired by keyboard (
   see [#2](https://github.com/Smartesting/gravity-data-collector/issues/2))
-- Objects sent to Gravity Server are now called `UserAction` instead of `TEvent`
+- Objects sent to Gravity Server are now called `SessionUserAction` instead of `SessionEvent`
 
 ### Deprecated
 
