@@ -3,7 +3,11 @@ import { createTargetedUserAction } from '../user-action/createTargetedUserActio
 import { mockClick, mockKeyDown, mockKeyUp } from '../test-utils/mocks'
 import { AssertionError } from 'assert'
 
-export function createClickUserAction(element: HTMLElement, clientX: number = 10, clientY: number = 10): TargetedUserAction {
+export function createClickUserAction(
+  element: HTMLElement,
+  clientX: number = 10,
+  clientY: number = 10,
+): TargetedUserAction {
   const userAction = createTargetedUserAction(mockClick(element, clientX, clientY), UserActionType.Click)
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null Click User Action' })

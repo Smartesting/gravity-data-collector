@@ -35,13 +35,13 @@ describe('action', () => {
     it('returns document data', () => {
       const { element } = createElementInJSDOM(
         '<html lang="en">' +
-        ' <head>' +
-        '   <title></title>' +
-        ' </head>' +
-        ' <body>' +
-        '   <div>Click Me</div>' +
-        ' </body>' +
-        '</html>',
+          ' <head>' +
+          '   <title></title>' +
+          ' </head>' +
+          ' <body>' +
+          '   <div>Click Me</div>' +
+          ' </body>' +
+          '</html>',
         'html',
       )
 
