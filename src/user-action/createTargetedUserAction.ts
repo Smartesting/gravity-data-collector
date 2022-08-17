@@ -11,14 +11,19 @@ import { isCheckableElement } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
+import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 
-export function createTargetedUserAction(event: Event, type: UserActionType): TargetedUserAction | null {
+export function createTargetedUserAction(
+  event: Event,
+  type: UserActionType,
+  document: Document = global.document,
+): TargetedUserAction | null {
   const target = event.target as HTMLElement
   if (target === null || target === undefined) return null
 
   const userAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target),
+    target: createActionTarget(target, document),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -69,7 +74,7 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement): UserActionTarget {
+function createActionTarget(target: HTMLElement, document: Document = global.document): UserActionTarget {
   const actionTarget: UserActionTarget = {
     element: target.tagName.toLocaleLowerCase(),
   }
@@ -86,5 +91,9 @@ function createActionTarget(target: HTMLElement): UserActionTarget {
   } catch {
     // ignore
   }
+
+  const displayInfo = createTargetDisplayInfo(target, document)
+  if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
+
   return actionTarget
 }

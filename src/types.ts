@@ -54,6 +54,13 @@ export interface UserActionTarget {
   selector?: string
   value?: string
   type?: string
+  displayInfo?: TargetDisplayInfo
+}
+
+export interface TargetDisplayInfo {
+  placeholder?: string
+  label?: string
+  text?: string
 }
 
 export interface GravityLocation {

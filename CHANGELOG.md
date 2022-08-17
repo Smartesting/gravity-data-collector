@@ -11,7 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add display info to target: `label`, `placeholder` and `text`.
+- Add a `select` element to sample.
+
 ### Changed
+
+- Emit `ES5` Javascript code instead of `es2021`
 
 ### Deprecated
 
