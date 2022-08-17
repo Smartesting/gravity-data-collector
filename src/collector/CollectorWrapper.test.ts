@@ -9,6 +9,7 @@ import UnloadEventListener from '../event-listeners/UnloadEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('CollectorWrapper', () => {
     function createCollectorWrapper() {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper(options, global.window)
+      return new CollectorWrapper(options, global.window, new MemorySessionIdHandler())
     }
 
     describe('when debug option is set to true', () => {

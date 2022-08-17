@@ -8,17 +8,26 @@ import UnloadEventListener from '../event-listeners/UnloadEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
+import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
 
-  constructor(options: CollectorOptions, private readonly window: Window) {
+  constructor(
+    private readonly options: CollectorOptions,
+    private readonly window: Window,
+    private readonly sessionIdHandler: SessionIdHandler,
+  ) {
     const output = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
       : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
-    this.userActionHandler = new UserActionHandler(uuidv4(), options.requestInterval, output)
+    const isSet = sessionIdHandler.isSet()
+    if (!isSet) {
+      sessionIdHandler.set(uuidv4())
+    }
+    this.userActionHandler = new UserActionHandler(sessionIdHandler.get(), options.requestInterval, output)
 
-    this.initSession()
+    if (!isSet) this.initSession()
     this.initializeEventListeners()
   }
 

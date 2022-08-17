@@ -2,6 +2,7 @@ import CollectorWrapper from './CollectorWrapper'
 import { CollectorOptions } from '../types'
 import windowExists from '../utils/windowExists'
 import completeOptions from '../utils/completeOptions'
+import SessionStorageSessionIdHandler from '../session-id-handler/SessionStorageSessionIdHandler'
 
 export default class GravityCollector {
   collectorWrapper: CollectorWrapper | undefined
@@ -18,6 +19,8 @@ export default class GravityCollector {
     if (!windowExists()) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
-    ;(window as any)._GravityCollector = new GravityCollector(new CollectorWrapper(completeOptions(options), window))
+    ;(window as any)._GravityCollector = new GravityCollector(
+      new CollectorWrapper(completeOptions(options), window, new SessionStorageSessionIdHandler()),
+    )
   }
 }
