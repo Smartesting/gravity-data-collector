@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
 import UserActionHandler from '../user-action/UserActionHandler'
-import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
+import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { createClickUserAction } from '../test-utils/userActions'
 
