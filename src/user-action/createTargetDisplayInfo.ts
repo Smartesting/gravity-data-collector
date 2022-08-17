@@ -4,24 +4,29 @@ export function createTargetDisplayInfo(
   element: HTMLElement,
   document: Document = global.document,
 ): TargetDisplayInfo | undefined {
-  const displayInfo: TargetDisplayInfo = {}
-
-  const text = element.textContent
-
   switch (element.tagName.toLowerCase()) {
     case 'a':
     case 'button':
-      if (text !== null && !isEmpty(text)) displayInfo.text = text
-      return displayInfo
+      return createHtmlClickableDisplayInfo(element, document)
     case 'textarea':
     case 'select':
     case 'input':
       return createHTMLInputDisplayInfo(element as HTMLInputElement, document)
-    case 'body':
-    case 'html':
     default:
       return undefined
   }
+}
+
+function createHtmlClickableDisplayInfo(element: HTMLElement, document: Document) {
+  const displayInfo: TargetDisplayInfo = {}
+
+  const text = element.textContent
+  if (text !== null && !isEmpty(text)) displayInfo.text = text
+
+  const label = findLabelForElement(element, document)
+  if (label !== null && !isEmpty(label)) displayInfo.label = label
+
+  return displayInfo
 }
 
 function createHTMLInputDisplayInfo(
@@ -29,18 +34,15 @@ function createHTMLInputDisplayInfo(
   document: Document = global.document,
 ): TargetDisplayInfo | undefined {
   const displayInfo: TargetDisplayInfo = {}
+
   const placeholder = element.placeholder
+  if (placeholder !== undefined && !isEmpty(placeholder)) displayInfo.placeholder = placeholder
 
   const label = findLabelForElement(element, document)
   if (label !== null && !isEmpty(label)) displayInfo.label = label
 
-  switch (element.type.toLowerCase()) {
-    case 'button':
-      if (element.value !== undefined && !isEmpty(element.value)) displayInfo.text = element.value
-      break
-    default:
-      if (placeholder !== undefined && !isEmpty(placeholder)) displayInfo.placeholder = placeholder
-      break
+  if (element.type.toLowerCase() === 'button') {
+    if (element.value !== undefined && !isEmpty(element.value)) displayInfo.text = element.value
   }
   return displayInfo
 }
