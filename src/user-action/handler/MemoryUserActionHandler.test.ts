@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
-import { createSessionStartedUserAction } from './createSessionStartedUserAction'
-import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import { createClickUserAction } from '../test-utils/userActions'
+import MemoryUserActionHandler from './MemoryUserActionHandler'
+import { createSessionStartedUserAction } from '../createSessionStartedUserAction'
+import createElementInJSDOM from '../../test-utils/createElementInJSDOM'
+import { createClickUserAction } from '../../test-utils/userActions'
 
-describe('UserActionHandler', () => {
+describe('MemoryUserActionHandler', () => {
   describe('run', () => {
     const output = vitest.fn()
 
@@ -14,14 +14,14 @@ describe('UserActionHandler', () => {
     })
 
     it('outputs actions if requestInterval=0', async () => {
-      const userActionHandler = new UserActionHandler('aaa-111', 0, output)
+      const userActionHandler = new MemoryUserActionHandler('aaa-111', 0, output)
       userActionHandler.handle(createSessionStartedUserAction())
       userActionHandler.handle(mockGravityClickEvent())
       expect(output).toHaveBeenCalledTimes(2)
     })
 
     it('outputs actions if requestInterval>0', async () => {
-      const userActionHandler = new UserActionHandler('aaa-111', 5000, output)
+      const userActionHandler = new MemoryUserActionHandler('aaa-111', 5000, output)
       userActionHandler.handle(createSessionStartedUserAction())
       userActionHandler.handle(mockGravityClickEvent())
       userActionHandler.handle(mockGravityClickEvent())
@@ -32,7 +32,7 @@ describe('UserActionHandler', () => {
     })
 
     it('flush actions on demand (unload case)', async () => {
-      const userActionHandler = new UserActionHandler('aaa-111', 5000, output)
+      const userActionHandler = new MemoryUserActionHandler('aaa-111', 5000, output)
       userActionHandler.handle(createSessionStartedUserAction())
       userActionHandler.handle(mockGravityClickEvent())
       userActionHandler.handle(mockGravityClickEvent())
@@ -42,7 +42,7 @@ describe('UserActionHandler', () => {
     })
 
     it('skips outputs if no more buffered events', async () => {
-      const userActionHandler = new UserActionHandler('aaa-111', 5000, output)
+      const userActionHandler = new MemoryUserActionHandler('aaa-111', 5000, output)
       userActionHandler.handle(createSessionStartedUserAction())
       vitest.advanceTimersByTime(5000)
       expect(output).toHaveBeenCalledTimes(1)

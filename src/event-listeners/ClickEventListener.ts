@@ -1,10 +1,10 @@
-import UserActionHandler from '../user-action/UserActionHandler'
+import IUserActionHandler from '../user-action/handler/IUserActionHandler'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import EventListener from '../event-listeners/EventListener'
 import { UserActionType } from '../types'
 
 class ClickEventListener extends EventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window) {
+  constructor(userActionHandler: IUserActionHandler, window: Window) {
     super(userActionHandler, UserActionType.Click, window)
   }
 

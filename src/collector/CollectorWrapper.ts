@@ -3,15 +3,16 @@ import ClickEventListener from '../event-listeners/ClickEventListener'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
-import UserActionHandler from '../user-action/UserActionHandler'
+import IUserActionHandler from '../user-action/handler/IUserActionHandler'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
+import SessionStorageUserActionHandler from '../user-action/handler/SessionStorageUserActionHandler'
 
 class CollectorWrapper {
-  readonly userActionHandler: UserActionHandler
+  readonly userActionHandler: IUserActionHandler
 
   constructor(
     private readonly options: CollectorOptions,
@@ -25,7 +26,7 @@ class CollectorWrapper {
     if (!isSet) {
       sessionIdHandler.set(uuidv4())
     }
-    this.userActionHandler = new UserActionHandler(sessionIdHandler.get(), options.requestInterval, output)
+    this.userActionHandler = new SessionStorageUserActionHandler(sessionIdHandler.get(), options.requestInterval, output)
 
     if (!isSet) this.initSession()
     this.initializeEventListeners()

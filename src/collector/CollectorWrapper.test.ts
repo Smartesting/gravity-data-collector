@@ -6,19 +6,20 @@ import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MemoryUserActionHandler from '../user-action/handler/MemoryUserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import { nop } from '../utils/nop'
+import SessionStorageUserActionHandler from '../user-action/handler/SessionStorageUserActionHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
     mockWindowDocument()
-    vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+    vi.spyOn(MemoryUserActionHandler.prototype, 'handle').mockImplementation(nop)
   })
 
   describe('constructor', () => {
@@ -41,7 +42,7 @@ describe('CollectorWrapper', () => {
         vi.setSystemTime(Date.parse('2022-05-12'))
 
         const expectedAction = createSessionStartedUserAction()
-        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+        const mock = vi.spyOn(SessionStorageUserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper()
         expect(mock).toHaveBeenCalledWith(expectedAction)
@@ -49,7 +50,7 @@ describe('CollectorWrapper', () => {
 
       it('does not send "sessionStarted" action if session id exists', () => {
         const sessionIdHandler = new MemorySessionIdHandler()
-        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+        const mock = vi.spyOn(SessionStorageUserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper(sessionIdHandler)
         expect(mock).toHaveBeenCalledOnce()

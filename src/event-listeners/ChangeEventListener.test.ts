@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MemoryUserActionHandler from '../user-action/handler/MemoryUserActionHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import { nop } from '../utils/nop'
@@ -7,7 +7,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 
 describe('ChangeEventListener', () => {
   describe('listener', () => {
-    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const userActionHandler = new MemoryUserActionHandler('aaa-111', 0, nop)
     const runSpy = vitest.spyOn(userActionHandler, 'handle')
 
     beforeEach(() => {

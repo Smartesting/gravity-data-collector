@@ -1,6 +1,8 @@
-import { SessionUserAction, UserAction } from '../types'
+import { SessionUserAction, UserAction } from '../../types'
+import IUserActionHandler from './IUserActionHandler'
+import { toSessionUserAction } from '../createSessionUserAction'
 
-export default class UserActionHandler {
+export default class MemoryUserActionHandler implements IUserActionHandler {
   private readonly buffer: SessionUserAction[] = []
   private readonly timer?: NodeJS.Timer
 
@@ -17,7 +19,7 @@ export default class UserActionHandler {
   }
 
   handle(action: UserAction) {
-    this.buffer.push(this.toSessionUserAction(action))
+    this.buffer.push(toSessionUserAction(action, this.sessionId))
     if (this.timer == null) {
       this.flush()
     }
@@ -28,12 +30,5 @@ export default class UserActionHandler {
       return
     }
     this.output(this.buffer.splice(0, this.buffer.length))
-  }
-
-  private toSessionUserAction(action: UserAction): SessionUserAction {
-    return {
-      sessionId: this.sessionId,
-      ...action,
-    }
   }
 }

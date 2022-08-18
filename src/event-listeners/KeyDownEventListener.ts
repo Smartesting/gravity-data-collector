@@ -2,10 +2,10 @@ import { createTargetedUserAction } from '../user-action/createTargetedUserActio
 import EventListener from '../event-listeners/EventListener'
 import { UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
-import UserActionHandler from '../user-action/UserActionHandler'
+import IUserActionHandler from '../user-action/handler/IUserActionHandler'
 
 class KeyDownEventListener extends EventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window) {
+  constructor(userActionHandler: IUserActionHandler, window: Window) {
     super(userActionHandler, UserActionType.KeyDown, window)
   }
 

@@ -1,9 +1,9 @@
-import UserActionHandler from '../user-action/UserActionHandler'
+import IUserActionHandler from '../user-action/handler/IUserActionHandler'
 import { UserActionType } from '../types'
 
 export default abstract class EventListener {
   protected constructor(
-    protected readonly userActionHandler: UserActionHandler,
+    protected readonly userActionHandler: IUserActionHandler,
     protected readonly userActionType: UserActionType,
     protected readonly window: Window,
   ) {}

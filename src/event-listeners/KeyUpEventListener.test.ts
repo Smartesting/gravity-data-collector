@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
+import MemoryUserActionHandler from '../user-action/handler/MemoryUserActionHandler'
 
 describe('KeyUpEventListener', () => {
   describe('listener', () => {
-    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const userActionHandler = new MemoryUserActionHandler('aaa-111', 0, nop)
     const runSpy = vitest.spyOn(userActionHandler, 'handle')
 
     beforeEach(() => {
