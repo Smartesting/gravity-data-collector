@@ -1,7 +1,7 @@
 import SessionIdHandler from './SessionIdHandler'
 
 export default class MemorySessionIdHandler implements SessionIdHandler {
-  sessionId: string | undefined
+  private sessionId?: string
 
   get(): string {
     if (this.sessionId !== undefined) {
