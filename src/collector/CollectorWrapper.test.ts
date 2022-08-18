@@ -5,7 +5,7 @@ import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions } from '../types'
-import UnloadEventListener from '../event-listeners/UnloadEventListener'
+import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
@@ -75,11 +75,11 @@ describe('CollectorWrapper', () => {
         expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
-      it('initializes UnloadEventListener', () => {
-        vi.spyOn(UnloadEventListener.prototype, 'init').mockImplementation(nop)
+      it('initializes BeforeUnloadEventListener', () => {
+        vi.spyOn(BeforeUnloadEventListener.prototype, 'init').mockImplementation(nop)
         createCollectorWrapper()
 
-        expect(UnloadEventListener.prototype.init).toHaveBeenCalledOnce()
+        expect(BeforeUnloadEventListener.prototype.init).toHaveBeenCalledOnce()
       })
 
       it('initializes KeyUpEventListener', () => {

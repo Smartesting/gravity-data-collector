@@ -13,13 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- use `window.sessionStorage` to save and retrieve user session id
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Use `window.sessionStorage` to save and retrieve user session id.
+- Use `beforeunload` to collect form submission
 
 ## [2.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v2.0.0...v2.1.0)
 
