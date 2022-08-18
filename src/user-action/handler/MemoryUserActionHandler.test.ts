@@ -31,16 +31,6 @@ describe('MemoryUserActionHandler', () => {
       expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
     })
 
-    it('flush actions on demand (unload case)', async () => {
-      const userActionHandler = new MemoryUserActionHandler('aaa-111', 5000, output)
-      userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockGravityClickEvent())
-      userActionHandler.handle(mockGravityClickEvent())
-      userActionHandler.flush()
-      expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
-    })
-
     it('skips outputs if no more buffered events', async () => {
       const userActionHandler = new MemoryUserActionHandler('aaa-111', 5000, output)
       userActionHandler.handle(createSessionStartedUserAction())

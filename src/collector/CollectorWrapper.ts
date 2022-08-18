@@ -4,7 +4,6 @@ import { createSessionStartedUserAction } from '../user-action/createSessionStar
 import { CollectorOptions } from '../types'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import IUserActionHandler from '../user-action/handler/IUserActionHandler'
-import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
@@ -41,7 +40,6 @@ class CollectorWrapper {
     new KeyUpEventListener(this.userActionHandler, this.window).init()
     new KeyDownEventListener(this.userActionHandler, this.window).init()
     new ChangeEventListener(this.userActionHandler, this.window).init()
-    new BeforeUnloadEventListener(this.userActionHandler, this.window).init()
   }
 }
 
