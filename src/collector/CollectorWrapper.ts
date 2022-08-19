@@ -25,7 +25,11 @@ class CollectorWrapper {
     if (!isSet) {
       sessionIdHandler.set(uuidv4())
     }
-    this.userActionHandler = new SessionStorageUserActionHandler(sessionIdHandler.get(), options.requestInterval, output)
+    this.userActionHandler = new SessionStorageUserActionHandler(
+      sessionIdHandler.get(),
+      options.requestInterval,
+      output,
+    )
 
     if (!isSet) this.initSession()
     this.initializeEventListeners()
