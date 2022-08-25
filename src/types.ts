@@ -1,3 +1,5 @@
+export { sendSessionUserActions } from './user-action/userActionSessionSender'
+
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
