@@ -15,7 +15,7 @@ export function defaultUserActionSessionSender(
   errorCallback: (reason: string) => void = nop,
 ): (sessionActions: SessionUserAction[]) => Promise<void> {
   return async (sessionActions: SessionUserAction[]) =>
-    await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, successCallback, errorCallback)
+    await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, null, successCallback, errorCallback)
 }
 
 export function debugUserActionSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
@@ -39,14 +39,16 @@ export async function sendSessionUserActions(
   authKey: string,
   gravityServerUrl: string,
   sessionActions: SessionUserAction[],
-  successCallback: (payload: any) => void,
-  errorCallback: (reason: string) => void,
+  source: string | null = null,
+  successCallback: (payload: any) => void = nop,
+  errorCallback: (reason: string) => void = nop,
 ): Promise<any> {
   try {
     const response = await fetch(buildGravityTrackingApiUrl(authKey, gravityServerUrl), {
       method: 'POST',
       body: JSON.stringify(sessionActions),
       headers: {
+        Origin: source !== null ? source : '',
         'Content-Type': 'application/json',
       },
     })
