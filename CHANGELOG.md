@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Add `source: string` optionnal parameter to `sendSessionUserActions`
+- Add `source: string` optional parameter to `sendSessionUserActions`
 
 ### Deprecated
 
