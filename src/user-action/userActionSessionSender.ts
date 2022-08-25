@@ -35,11 +35,13 @@ function printSessionUserActions(sessionActions: SessionUserAction[], output: (a
   output(sessionActions)
 }
 
-export async function sendSessionUserActions(authKey: string,
-                                             gravityServerUrl: string,
-                                             sessionActions: SessionUserAction[],
-                                             successCallback: (payload: any) => void,
-                                             errorCallback: (reason: string) => void): Promise<any> {
+export async function sendSessionUserActions(
+  authKey: string,
+  gravityServerUrl: string,
+  sessionActions: SessionUserAction[],
+  successCallback: (payload: any) => void,
+  errorCallback: (reason: string) => void,
+): Promise<any> {
   try {
     const response = await fetch(buildGravityTrackingApiUrl(authKey, gravityServerUrl), {
       method: 'POST',

@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Info
 
 ### Added
-- Export `sendSessionUserActions` in [types.ts](./src/types.ts) 
+
+- Export `sendSessionUserActions` in [types.ts](./src/types.ts)
+
 ### Changed
 
 ### Deprecated
