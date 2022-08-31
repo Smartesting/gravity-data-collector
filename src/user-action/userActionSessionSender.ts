@@ -53,7 +53,6 @@ export async function sendSessionUserActions(
       },
     })
     if (response.status === 200) {
-      console.log(`${sessionActions.length} session user actions successfully sent to Gravity Server`)
       successCallback(await response.json())
     } else {
       errorCallback(`error ${response.status}, ${response.statusText}`)
