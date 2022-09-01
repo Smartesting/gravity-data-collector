@@ -1,12 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  buildGravityTrackingApiUrl,
   debugUserActionSessionSender,
   defaultUserActionSessionSender,
   GRAVITY_SERVER_ADDRESS,
+  sendSessionUserActions,
 } from './userActionSessionSender'
 import { SessionUserAction } from '../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
+import { nop } from '../utils/nop'
 
 describe('userActionSessionSender', () => {
   const action = {}
@@ -71,6 +74,43 @@ describe('userActionSessionSender', () => {
       expect(spyOutput).toHaveBeenCalledTimes(0)
       vi.advanceTimersByTime(5000)
       expect(spyOutput).toHaveBeenCalledTimes(3)
+    })
+  })
+
+  describe('sendSessionUserActions', () => {
+    it('sets the `Origin` header when a source is provided', async () => {
+      const fetch = vi.fn()
+
+      await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions, 'http://example.com', nop, nop, fetch)
+
+      expect(fetch).toBeCalledWith(
+        buildGravityTrackingApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS),
+        {
+          body: JSON.stringify(sessionActions),
+          headers: {
+            "Content-Type": "application/json",
+            "Origin": "http://example.com"
+          },
+          method: "POST"
+        }
+      )
+    })
+
+    it('does not set the `Origin` header when no source is provided', async () => {
+      const fetch = vi.fn()
+
+      await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions, null, nop, nop, fetch)
+
+      expect(fetch).toBeCalledWith(
+        buildGravityTrackingApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS),
+        {
+          body: JSON.stringify(sessionActions),
+          headers: {
+            "Content-Type": "application/json"
+          },
+          method: "POST"
+        }
+      )
     })
   })
 })
