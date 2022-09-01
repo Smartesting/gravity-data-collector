@@ -12,11 +12,12 @@ import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
+import getDocument from '../utils/getDocument'
 
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
-  document: Document = global.document,
+  document: Document = getDocument(),
 ): TargetedUserAction | null {
   const target = event.target as HTMLElement
   if (target === null || target === undefined) return null
@@ -74,7 +75,7 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement, document: Document = global.document): UserActionTarget {
+function createActionTarget(target: HTMLElement, document: Document = getDocument()): UserActionTarget {
   const actionTarget: UserActionTarget = {
     element: target.tagName.toLocaleLowerCase(),
   }

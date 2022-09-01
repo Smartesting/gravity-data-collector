@@ -1,8 +1,9 @@
 import { TargetDisplayInfo } from '../types'
+import getDocument from '../utils/getDocument'
 
 export function createTargetDisplayInfo(
   element: HTMLElement,
-  document: Document = global.document,
+  document: Document = getDocument(),
 ): TargetDisplayInfo | undefined {
   switch (element.tagName.toLowerCase()) {
     case 'a':
@@ -31,7 +32,7 @@ function createHtmlClickableDisplayInfo(element: HTMLElement, document: Document
 
 function createHTMLInputDisplayInfo(
   element: HTMLInputElement,
-  document: Document = global.document,
+  document: Document = getDocument(),
 ): TargetDisplayInfo | undefined {
   const displayInfo: TargetDisplayInfo = {}
 
@@ -47,7 +48,7 @@ function createHTMLInputDisplayInfo(
   return displayInfo
 }
 
-function findLabelForElement(element: HTMLElement, document: Document = global.document): string | null {
+function findLabelForElement(element: HTMLElement, document: Document = getDocument()): string | null {
   const id = element.id
   if (id !== null) {
     const labels = document.getElementsByTagName('label')
