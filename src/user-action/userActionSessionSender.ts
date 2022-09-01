@@ -45,7 +45,7 @@ export async function sendSessionUserActions(
   fetch = crossfetch,
 ): Promise<any> {
   try {
-    const headers: { 'Content-Type': string; Origin?: string } = {
+    const headers: any = {
       'Content-Type': 'application/json',
     }
     if (source !== null) {
