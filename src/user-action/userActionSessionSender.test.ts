@@ -88,11 +88,11 @@ describe('userActionSessionSender', () => {
         {
           body: JSON.stringify(sessionActions),
           headers: {
-            "Content-Type": "application/json",
-            "Origin": "http://example.com"
+            'Content-Type': 'application/json',
+            Origin: 'http://example.com',
           },
-          method: "POST"
-        }
+          method: 'POST',
+        },
       )
     })
 
@@ -106,10 +106,10 @@ describe('userActionSessionSender', () => {
         {
           body: JSON.stringify(sessionActions),
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
           },
-          method: "POST"
-        }
+          method: 'POST',
+        },
       )
     })
   })
