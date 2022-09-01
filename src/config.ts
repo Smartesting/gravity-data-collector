@@ -1,3 +1,3 @@
 export const config = {
-  COLLECTOR_VERSION: '2.1.3',
+  COLLECTOR_VERSION: '2.1.4',
 }
