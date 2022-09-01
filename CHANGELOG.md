@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
- - Do not set `Origin` header when no source is provided. (see [#8](https://github.com/Smartesting/gravity-data-collector/issues/8))
+- Do not set `Origin` header when no source is provided. (see [#8](https://github.com/Smartesting/gravity-data-collector/issues/8))
 
 ## [2.1.3](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.2...v2.1.3)
 
