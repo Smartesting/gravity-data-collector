@@ -19,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-
 ## [2.1.4](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.3...v2.1.4)
 
 ### Fixed
