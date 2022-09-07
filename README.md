@@ -39,6 +39,8 @@ Put this tag in each page that must use Gravity Data Collector.
 ></script>
 ```
 
+Please, look to [index.html](sample/index.html) to see how to use the script in HTML.
+
 **Note:** The minified version of Gravity Data Collector is available only since release 2.1.5
 
 ## Initialization
