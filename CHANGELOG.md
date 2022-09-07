@@ -5,21 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.4...main)
+## [2.1.5](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.4...v2.1.5)
 
 ### Info
 
-- A minified version is now deploy with npm package and can be accessed using [UNPKG](https://unpkg.com/) service
+- Minified version are not available for previous releases
 
 ### Added
 
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
+- A minified version is now deploy with npm package and can be accessed using [UNPKG](https://unpkg.com/) service
 
 ## [2.1.4](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.3...v2.1.4)
 
