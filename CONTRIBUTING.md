@@ -24,7 +24,7 @@ for commit.
    1. Set current version number to `Unreleased` section.
    2. Remove empty entries.
    3. Add link to compare changes with previous release.
-5. Update [README](README.md) snippets for `package.json` and script tag.
+5. Update [README](README.md) snippet for `package.json`.
 
 ### Creating the release:
 

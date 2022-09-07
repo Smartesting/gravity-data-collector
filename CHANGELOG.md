@@ -19,9 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Remove version from the minify script link in README and sample
+
 ## [2.1.6](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.5...v2.1.6)
 
-### Fix
+### Fixed
 
 - Restore the local link toward local dist-sandbox/bundle.js in sample
 
