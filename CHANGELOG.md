@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Info
 
+- A minified version is now deploy with npm package and can be accessed using [UNPKG](https://unpkg.com/) service
+
 ### Added
 
 ### Changed

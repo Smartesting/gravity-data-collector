@@ -24,7 +24,24 @@ In your `package.json`, add the following:
 }
 ```
 
-### Initializaton
+In your `package.json`, add the following:
+
+### From a script tag
+
+Put this tag in each page that must use Gravity Data Collector.
+
+```html
+<script
+  async
+  id="logger"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@2.1.5/dist/gravity-logger-min.js"
+  type="text/javascript"
+></script>
+```
+
+**Note:** The minified version of Gravity Data Collector is available only since release 2.1.5
+
+## Initialization
 
 ```typescript
 // initialize
@@ -66,5 +83,6 @@ Finally, open [index.html](sample/index.html) with a browser, display the consol
 with
 the page to see collected user actions.
 
-**Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by your
+**Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by
+your
 developer tool.
