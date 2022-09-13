@@ -1,4 +1,5 @@
 import { SessionUserAction, UserAction } from '../types'
+import UserActionHistory from '../user-actions-history/UserActionHistory'
 
 export default class UserActionHandler {
   private readonly buffer: SessionUserAction[] = []
@@ -8,6 +9,7 @@ export default class UserActionHandler {
     private readonly sessionId: string,
     private readonly requestInterval: number,
     private readonly output: (sessionActions: SessionUserAction[]) => void,
+    private readonly userActionHistory?: UserActionHistory,
   ) {
     if (requestInterval > 0) {
       this.timer = setInterval(() => {
@@ -18,6 +20,7 @@ export default class UserActionHandler {
 
   handle(action: UserAction) {
     this.buffer.push(this.toSessionUserAction(action))
+    if (this.userActionHistory !== undefined) this.userActionHistory.push(action)
     if (this.timer == null) {
       this.flush()
     }

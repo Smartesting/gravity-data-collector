@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Stop collecting consecutive keydown actions targeting the same element (see [#9](https://github.com/Smartesting/gravity-data-collector/issues/9))
+
 ### Deprecated
 
 ### Removed

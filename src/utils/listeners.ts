@@ -2,10 +2,10 @@ import { HTMLInputWithValue } from '../types'
 
 const TAG_NAME_DISALLOWED_BY_KEY_LISTENERS = ['textarea']
 const INPUT_ALLOWED_BY_KEY_LISTENERS = ['radio', 'select', 'checkbox', 'button']
-const KEY_ALLOWED_BY_KEY_LISTENERS = ['tab']
+const KEYS_ALLOWED_BY_KEY_LISTENERS = ['tab']
 
 export function isKeyAllowedByKeyListeners(keyCode: string): boolean {
-  return KEY_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
+  return KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
 }
 
 export function isTargetAllowedByKeyListeners(target: EventTarget | null): boolean {

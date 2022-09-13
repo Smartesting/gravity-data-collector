@@ -9,9 +9,11 @@ import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
+import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
+  readonly userActionsHistory: MemoryUserActionsHistory
 
   constructor(
     private readonly options: CollectorOptions,
@@ -25,7 +27,14 @@ class CollectorWrapper {
     if (!isSet) {
       sessionIdHandler.set(uuidv4())
     }
-    this.userActionHandler = new UserActionHandler(sessionIdHandler.get(), options.requestInterval, output)
+    this.userActionsHistory = new MemoryUserActionsHistory()
+
+    this.userActionHandler = new UserActionHandler(
+      sessionIdHandler.get(),
+      options.requestInterval,
+      output,
+      this.userActionsHistory,
+    )
 
     if (!isSet) this.initSession()
     this.initializeEventListeners()
@@ -38,7 +47,7 @@ class CollectorWrapper {
   private initializeEventListeners() {
     new ClickEventListener(this.userActionHandler, this.window).init()
     new KeyUpEventListener(this.userActionHandler, this.window).init()
-    new KeyDownEventListener(this.userActionHandler, this.window).init()
+    new KeyDownEventListener(this.userActionHandler, this.window, this.userActionsHistory).init()
     new ChangeEventListener(this.userActionHandler, this.window).init()
     new BeforeUnloadEventListener(this.userActionHandler, this.window).init()
   }
