@@ -1,6 +1,6 @@
 import { UserAction } from '../types'
 
-export default interface UserActionHistory {
+export default interface UserActionsHistory {
   push: (userAction: UserAction) => void
 
   getLast: () => UserAction

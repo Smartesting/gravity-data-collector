@@ -3,13 +3,13 @@ import EventListener from '../event-listeners/EventListener'
 import { KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
 import UserActionHandler from '../user-action/UserActionHandler'
-import UserActionHistory from '../user-actions-history/UserActionHistory'
+import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 
 class KeyDownEventListener extends EventListener {
   constructor(
     userActionHandler: UserActionHandler,
     window: Window,
-    private readonly userActionHistory: UserActionHistory,
+    private readonly userActionHistory: UserActionsHistory,
   ) {
     super(userActionHandler, UserActionType.KeyDown, window)
   }

@@ -1,5 +1,5 @@
 import { SessionUserAction, UserAction } from '../types'
-import UserActionHistory from '../user-actions-history/UserActionHistory'
+import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 
 export default class UserActionHandler {
   private readonly buffer: SessionUserAction[] = []
@@ -9,7 +9,7 @@ export default class UserActionHandler {
     private readonly sessionId: string,
     private readonly requestInterval: number,
     private readonly output: (sessionActions: SessionUserAction[]) => void,
-    private readonly userActionHistory?: UserActionHistory,
+    private readonly userActionHistory?: UserActionsHistory,
   ) {
     if (requestInterval > 0) {
       this.timer = setInterval(() => {

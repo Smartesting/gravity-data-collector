@@ -4,12 +4,12 @@ import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/do
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
-import UserActionHistory from '../user-actions-history/UserActionHistory'
+import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 
 describe('KeyDownEventListener', () => {
   describe('listener', () => {
-    let userActionHistory: UserActionHistory
+    let userActionHistory: UserActionsHistory
     let userActionHandler: UserActionHandler
     let handleSpy: SpyInstance
 

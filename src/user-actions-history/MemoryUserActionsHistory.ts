@@ -1,4 +1,4 @@
-import UserActionsHistory from './UserActionHistory'
+import UserActionsHistory from './UserActionsHistory'
 import { UserAction } from '../types'
 
 export default class MemoryUserActionsHistory implements UserActionsHistory {
