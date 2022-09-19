@@ -33,6 +33,7 @@ class CollectorWrapper {
       sessionIdHandler.get(),
       options.requestInterval,
       output,
+      options.onPublish,
       this.userActionsHistory,
     )
 

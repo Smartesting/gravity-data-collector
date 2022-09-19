@@ -9,6 +9,7 @@ export default class UserActionHandler {
     private readonly sessionId: string,
     private readonly requestInterval: number,
     private readonly output: (sessionActions: SessionUserAction[]) => void,
+    private readonly onPublish?: (sessionActions: SessionUserAction[]) => void,
     private readonly userActionHistory?: UserActionsHistory,
   ) {
     if (requestInterval > 0) {
@@ -30,7 +31,11 @@ export default class UserActionHandler {
     if (this.buffer.length === 0) {
       return
     }
-    this.output(this.buffer.splice(0, this.buffer.length))
+    const sessionUserActions = this.buffer.splice(0, this.buffer.length)
+    this.output(sessionUserActions)
+    if (this.onPublish) {
+      this.onPublish(sessionUserActions)
+    }
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {

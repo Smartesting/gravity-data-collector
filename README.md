@@ -63,6 +63,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | gravityServerUrl | String  | Gravity server URL                                                                                  | https://smartestinggravityserver.herokuapp.com |
 | debug            | Boolean | Logs user action in the console instead of sending them to Gravity                                  | false                                          |
 | maxDelay         | Integer | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action. | 500                                            |
+| onPublish        | function | Adds a function called after each publish to the gravity server. | none                                            |
 
 ## Sandbox
 
