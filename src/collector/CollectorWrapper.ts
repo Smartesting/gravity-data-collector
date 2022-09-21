@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions } from '../types'
+import { CollectorOptions, SessionStartedUserAction } from '../types'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
@@ -10,6 +10,7 @@ import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
+import TestNameHandler from '../test-name-handler/TestNameHandler'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -19,12 +20,16 @@ class CollectorWrapper {
     private readonly options: CollectorOptions,
     private readonly window: Window,
     private readonly sessionIdHandler: SessionIdHandler,
+    private readonly testNameHandler: TestNameHandler,
   ) {
     const output = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
       : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
-    const isSet = sessionIdHandler.isSet()
-    if (!isSet) {
+
+    const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
+    testNameHandler.refresh()
+
+    if (isNewSession) {
       sessionIdHandler.set(uuidv4())
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
@@ -36,12 +41,12 @@ class CollectorWrapper {
       this.userActionsHistory,
     )
 
-    if (!isSet) this.initSession()
+    if (isNewSession) this.initSession(createSessionStartedUserAction())
     this.initializeEventListeners()
   }
 
-  private initSession() {
-    return this.userActionHandler.handle(createSessionStartedUserAction())
+  private initSession(sessionStartedUserAction: SessionStartedUserAction) {
+    return this.userActionHandler.handle(sessionStartedUserAction)
   }
 
   private initializeEventListeners() {

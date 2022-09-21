@@ -12,6 +12,8 @@ import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import { nop } from '../utils/nop'
+import TestNameHandler from '../test-name-handler/TestNameHandler'
+import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -24,10 +26,13 @@ describe('CollectorWrapper', () => {
   describe('constructor', () => {
     let options: CollectorOptions
 
-    function createCollectorWrapper(sessionIdHandler: SessionIdHandler = new MemorySessionIdHandler()) {
+    function createCollectorWrapper(
+      sessionIdHandler: SessionIdHandler = new MemorySessionIdHandler(),
+      testNameHandler: TestNameHandler = new SessionStorageTestNameHandler(),
+    ) {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper(options, global.window, sessionIdHandler)
+      return new CollectorWrapper(options, global.window, sessionIdHandler, testNameHandler)
     }
 
     describe('when debug option is set to true', () => {
@@ -59,6 +64,21 @@ describe('CollectorWrapper', () => {
         createCollectorWrapper(sessionIdHandler)
         expect(mock).not.toHaveBeenCalled()
         expect(sessionIdHandler.get()).toEqual(sessionId)
+      })
+
+      it('a "sessionStarted" action is sent if session id exists but this is a new test', () => {
+        const sessionIdHandler = new MemorySessionIdHandler()
+        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+
+        createCollectorWrapper(sessionIdHandler)
+
+        const testNameHandler = new SessionStorageTestNameHandler()
+        vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(() => {
+          return 'test'
+        })
+
+        createCollectorWrapper(sessionIdHandler, testNameHandler)
+        expect(mock).toHaveBeenCalledOnce()
       })
 
       it('initializes ClickEventListener', () => {

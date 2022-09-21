@@ -1,6 +1,6 @@
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { UserActionType, SessionStartedUserAction } from '../types'
+import { SessionStartedUserAction, UserActionType } from '../types'
 import { config } from '../config'
 import gravityDocument from '../utils/gravityDocument'
 
