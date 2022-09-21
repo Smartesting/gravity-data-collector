@@ -19,7 +19,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^2.1.7"
+    "@smartesting/gravity-data-collector": "^2.1.8"
   }
 }
 ```

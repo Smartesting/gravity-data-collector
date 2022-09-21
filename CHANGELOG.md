@@ -5,22 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.7...main)
-
-### Info
-
-### Added
+## [2.1.8](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.7...v2.1.8)
 
 ### Changed
 
 - Start a new session when the collector is run in a Cypress test context and the current test name is different from
   the previous one.
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ## [2.1.7](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.6...v2.1.7)
 
