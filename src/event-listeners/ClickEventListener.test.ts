@@ -14,7 +14,7 @@ describe('ClickEventListener', () => {
       vitest.restoreAllMocks()
     })
 
-    it('calls listener when click event been fired by a pointer', async () => {
+    it('calls handler when click event been fired by a pointer', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>
@@ -36,7 +36,7 @@ describe('ClickEventListener', () => {
       })
     })
 
-    it('does not calls listener when click event been not fired by a pointer', async () => {
+    it('does not calls handler when click event been not fired by a pointer', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>

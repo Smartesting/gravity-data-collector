@@ -14,7 +14,7 @@ describe('BeforeUnloadEventListener', () => {
       vitest.restoreAllMocks()
     })
 
-    it('calls listener when beforeunload event been fired', async () => {
+    it('calls handler when beforeunload event been fired', async () => {
       const { domWindow } = createElementInJSDOM('<div/>', 'div')
       new BeforeUnloadEventListener(userActionHandler, domWindow).init()
       domWindow.dispatchEvent(new Event('beforeunload'))

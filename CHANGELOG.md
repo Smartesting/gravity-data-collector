@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Collect `Enter` and `NumpadEnter` key down and press while targeting an input
+
 ### Changed
 
 ### Deprecated

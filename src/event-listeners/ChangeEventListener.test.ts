@@ -14,7 +14,7 @@ describe('ChangeEventListener', () => {
       vitest.restoreAllMocks()
     })
 
-    it('calls listener when change event been fired', async () => {
+    it('calls handler when change event been fired', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
         <div>
