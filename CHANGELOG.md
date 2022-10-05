@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Sending user actions twice when `maxDelay` is set to `0`
+
 ## [2.1.9](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.8...v2.1.9)
 
 ### Added
