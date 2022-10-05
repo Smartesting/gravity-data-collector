@@ -30,7 +30,7 @@ export default class UserActionHandler {
     if (this.buffer.length === 0) {
       return
     }
-    this.output(this.buffer.splice(0, this.buffer.length))
+    this.output(this.buffer.splice(0))
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {

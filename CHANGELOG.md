@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Records all `click` events, even where they are fired by a key or an automated test framework
+
 ### Deprecated
 
 ### Removed
