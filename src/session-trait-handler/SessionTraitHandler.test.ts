@@ -6,7 +6,6 @@ import { waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 
 describe('SessionTraitHandler', () => {
-
   describe('defaultUserActionSessionSender', () => {
     beforeEach(() => {
       vi.restoreAllMocks()
@@ -57,7 +56,6 @@ describe('SessionTraitHandler', () => {
       expect(spyOutput).toHaveBeenCalledTimes(2)
       expect(spyOutput).toHaveBeenLastCalledWith('identify session with connected = true')
     })
-
   })
 
   describe('sendSessionTrait', () => {

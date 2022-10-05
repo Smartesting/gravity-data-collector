@@ -13,13 +13,15 @@ export function defaultSessionTraitHandler(
   successCallback: (payload: any) => void = nop,
   errorCallback: (reason: string) => void = nop,
 ): SessionTraitHandler {
-  return async (traitName: string, traitValue: TraitValue) => {
-    await sendSessionTrait(authKey, gravityServerUrl, sessionId, traitName, traitValue, source, successCallback, errorCallback)
+  return (traitName: string, traitValue: TraitValue): void => {
+    void (async () => {
+      await sendSessionTrait(authKey, gravityServerUrl, sessionId, traitName, traitValue, source, successCallback, errorCallback)
+    })()
   }
 }
 
 export function debugSessionTraitHandler(output: (args: any) => void = console.log): SessionTraitHandler {
-  return (traitName: string, traitValue: TraitValue) => {
+  return (traitName: string, traitValue: TraitValue): void => {
     output('[Gravity Logger (debug mode)]')
     output(`identify session with ${traitName} = ${JSON.stringify(traitValue)}`)
   }
@@ -35,7 +37,7 @@ export async function sendSessionTrait(
   successCallback: (payload: any) => void = nop,
   errorCallback: (reason: string) => void = nop,
   fetch = crossfetch,
-): Promise<any> {
+) {
   try {
     const body: any = {}
     body[traitName] = traitValue
@@ -55,7 +57,6 @@ export async function sendSessionTrait(
     } else {
       errorCallback(`error ${response.status}, ${response.statusText}`)
     }
-    return await response.json()
   } catch (err: any) {
     errorCallback(err.message)
   }

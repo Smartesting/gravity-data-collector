@@ -32,7 +32,7 @@ export default class GravityCollector {
 
   static identifySession(traitName: string, traitValue: TraitValue) {
     const collectorWrapper = (window as any)._GravityCollector.collectorWrapper
-    if (!collectorWrapper) {
+    if (collectorWrapper === undefined) {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
     }
     collectorWrapper.identifySession(traitName, traitValue)
