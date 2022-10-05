@@ -20,7 +20,7 @@ describe('KeyDownEventListener', () => {
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
     })
 
-    it('calls listener when key down event been fired', async () => {
+    it('calls handler when key down event been fired', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>
@@ -39,7 +39,7 @@ describe('KeyDownEventListener', () => {
       })
     })
 
-    it('calls listener when key down event been fired on a div', async () => {
+    it('calls handler when key down event been fired on a div', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
                 <div>
@@ -107,30 +107,44 @@ describe('KeyDownEventListener', () => {
       })
     })
 
-    it('calls listener when Tab key down even on text inputs', async () => {
-      const { element, domWindow } = createElementInJSDOM(
-        `
+    describe('When press on allowed key', () => {
+      it('calls handler when the key is Tab', async () => {
+        await assertHandleUserActionIsCalled('Tab')
+      })
+
+      it('calls handler when the key is Enter', async () => {
+        await assertHandleUserActionIsCalled('Enter')
+      })
+
+      it('calls handler when the key is NumpadEnter', async () => {
+        await assertHandleUserActionIsCalled('NumpadEnter')
+      })
+
+      async function assertHandleUserActionIsCalled(code: string) {
+        const { element, domWindow } = createElementInJSDOM(
+          `
             <div>
                 <input id="text-1" type="text"/>
                 <textarea id="text-2"></textarea>
                 <input id="text-5" type="search" />
             </div>`,
-        'div',
-      )
+          'div',
+        )
 
-      new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+        new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
 
-      const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
-      const search = await waitFor(() => getByRole(element, 'searchbox'))
+        const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
+        const search = await waitFor(() => getByRole(element, 'searchbox'))
 
-      for (const input of inputs) {
-        fireEvent.keyDown(input, { code: 'Tab' })
+        for (const input of inputs) {
+          fireEvent.keyDown(input, { code })
+        }
+        fireEvent.keyDown(search, { code })
+
+        await waitFor(() => {
+          expect(handleSpy).toHaveBeenCalledTimes(3)
+        })
       }
-      fireEvent.keyDown(search, { code: 'Tab' })
-
-      await waitFor(() => {
-        expect(handleSpy).toHaveBeenCalledTimes(3)
-      })
     })
   })
 })

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.7...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.9...main)
 
 ### Info
 
@@ -19,11 +19,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.1.9](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.8...v2.1.9)
+
+### Added
+
+- Collect `Enter` and `NumpadEnter` key down and press while targeting an input
+
+## [2.1.8](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.7...v2.1.8)
+
+### Changed
+
+- Start a new session when the collector is run in a Cypress test context and the current test name is different from
+  the previous one.
+
 ## [2.1.7](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.6...v2.1.7)
 
 ### Changed
 
-- Stop collecting consecutive keydown actions targeting the same element (see [#9](https://github.com/Smartesting/gravity-data-collector/issues/9))
+- Stop collecting consecutive keydown actions targeting the same element (
+  see [#9](https://github.com/Smartesting/gravity-data-collector/issues/9))
 
 ### Fixed
 
@@ -49,8 +63,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Do not set `Origin` header when no source is provided. (see [#8](https://github.com/Smartesting/gravity-data-collector/issues/8))
-- Do not access directly `global.document`, leave it to a function dedicated if `global` is not defined. (see [#7](https://github.com/Smartesting/gravity-data-collector/issues/7))
+- Do not set `Origin` header when no source is provided. (
+  see [#8](https://github.com/Smartesting/gravity-data-collector/issues/8))
+- Do not access directly `global.document`, leave it to a function dedicated if `global` is not defined. (
+  see [#7](https://github.com/Smartesting/gravity-data-collector/issues/7))
 
 ## [2.1.3](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.2...v2.1.3)
 
