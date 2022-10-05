@@ -20,9 +20,13 @@ export function defaultUserActionSessionSender(
 
 export function debugUserActionSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
   return (sessionActions: SessionUserAction[]) => {
-    setTimeout(() => {
+    if (maxDelay === 0) {
       printSessionUserActions(sessionActions, output)
-    }, Math.random() * maxDelay)
+    } else {
+      setTimeout(() => {
+        printSessionUserActions(sessionActions, output)
+      }, Math.random() * maxDelay)
+    }
   }
 }
 
