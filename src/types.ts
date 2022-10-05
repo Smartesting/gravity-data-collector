@@ -96,3 +96,5 @@ export interface CollectorOptions {
   debug: boolean
   maxDelay: number
 }
+
+export type TraitValue = string | number | boolean

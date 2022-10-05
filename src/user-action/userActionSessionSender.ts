@@ -1,12 +1,7 @@
 import { SessionUserAction } from '../types'
 import crossfetch from 'cross-fetch'
 import { nop } from '../utils/nop'
-
-export const GRAVITY_SERVER_ADDRESS = 'https://smartestinggravityserver.herokuapp.com'
-
-export function buildGravityTrackingApiUrl(authKey: string, gravityServerUrl: string) {
-  return `${gravityServerUrl}/api/tracking/${authKey}/publish`
-}
+import { buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
 
 export function defaultUserActionSessionSender(
   authKey: string,
@@ -51,7 +46,7 @@ export async function sendSessionUserActions(
     if (source !== null) {
       headers.Origin = source
     }
-    const response = await fetch(buildGravityTrackingApiUrl(authKey, gravityServerUrl), {
+    const response = await fetch(buildGravityTrackingPublishApiUrl(authKey, gravityServerUrl), {
       method: 'POST',
       body: JSON.stringify(sessionActions),
       headers,

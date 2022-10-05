@@ -14,6 +14,7 @@ import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import { nop } from '../utils/nop'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
+import completeOptions from '../utils/completeOptions'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -115,6 +116,15 @@ describe('CollectorWrapper', () => {
 
         expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
       })
+    })
+  })
+
+  describe('identifySession', () => {
+    it('delegates session trait to handler', () => {
+      const collectorWrapper = new CollectorWrapper(completeOptions({ debug: true }), global.window, new MemorySessionIdHandler(), new SessionStorageTestNameHandler())
+      const mock = vi.spyOn(collectorWrapper, 'sessionTraitHandler').mockImplementation(nop)
+      collectorWrapper.identifySession('connected', true)
+      expect(mock).toHaveBeenCalledWith('connected', true)
     })
   })
 })

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CollectorOptions } from '../types'
 import completeOptions from './completeOptions'
-import { GRAVITY_SERVER_ADDRESS } from '../user-action/userActionSessionSender'
+import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 describe('completeOptions', () => {
   it('throws an error when not provided a CollectorOptions', () => {
