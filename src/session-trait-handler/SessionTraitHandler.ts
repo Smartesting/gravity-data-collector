@@ -15,7 +15,16 @@ export function defaultSessionTraitHandler(
 ): SessionTraitHandler {
   return (traitName: string, traitValue: TraitValue): void => {
     void (async () => {
-      await sendSessionTrait(authKey, gravityServerUrl, sessionId, traitName, traitValue, source, successCallback, errorCallback)
+      await sendSessionTrait(
+        authKey,
+        gravityServerUrl,
+        sessionId,
+        traitName,
+        traitValue,
+        source,
+        successCallback,
+        errorCallback,
+      )
     })()
   }
 }

@@ -121,7 +121,12 @@ describe('CollectorWrapper', () => {
 
   describe('identifySession', () => {
     it('delegates session trait to handler', () => {
-      const collectorWrapper = new CollectorWrapper(completeOptions({ debug: true }), global.window, new MemorySessionIdHandler(), new SessionStorageTestNameHandler())
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true }),
+        global.window,
+        new MemorySessionIdHandler(),
+        new SessionStorageTestNameHandler(),
+      )
       const mock = vi.spyOn(collectorWrapper, 'sessionTraitHandler').mockImplementation(nop)
       collectorWrapper.identifySession('connected', true)
       expect(mock).toHaveBeenCalledWith('connected', true)

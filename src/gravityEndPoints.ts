@@ -4,6 +4,10 @@ export function buildGravityTrackingPublishApiUrl(authKey: string, gravityServer
   return `${gravityServerUrl}/api/tracking/${authKey}/publish`
 }
 
-export function buildGravityTrackingIdentifySessionApiUrl(authKey: string, gravityServerUrl: string, sessionId: string) {
+export function buildGravityTrackingIdentifySessionApiUrl(
+  authKey: string,
+  gravityServerUrl: string,
+  sessionId: string,
+) {
   return `${gravityServerUrl}/api/tracking/${authKey}/identify/${sessionId}`
 }

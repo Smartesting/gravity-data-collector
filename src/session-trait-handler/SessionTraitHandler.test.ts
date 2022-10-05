@@ -15,14 +15,27 @@ describe('SessionTraitHandler', () => {
     const spyError = vi.fn()
 
     it('sends session trait if valid auth key', async () => {
-      await defaultSessionTraitHandler(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abd', null, spySuccess)('connected', true)
+      await defaultSessionTraitHandler(
+        VALID_AUTH_KEY,
+        GRAVITY_SERVER_ADDRESS,
+        '123-abd',
+        null,
+        spySuccess,
+      )('connected', true)
       await waitFor(() => {
         expect(spySuccess).toHaveBeenCalledWith({ error: null })
       })
     })
 
     it('catches error if invalid auth key', async () => {
-      await defaultSessionTraitHandler('DUMMY_AUTH_KEY', GRAVITY_SERVER_ADDRESS, '123-abc', null, spySuccess, spyError)('connected', true)
+      await defaultSessionTraitHandler(
+        'DUMMY_AUTH_KEY',
+        GRAVITY_SERVER_ADDRESS,
+        '123-abc',
+        null,
+        spySuccess,
+        spyError,
+      )('connected', true)
       await waitFor(() => {
         expect(spyError).toHaveBeenCalledWith('error 404, Not Found')
       })
@@ -62,30 +75,56 @@ describe('SessionTraitHandler', () => {
     it('sets the `Origin` header when a source is provided', async () => {
       const fetch = vi.fn()
 
-      await sendSessionTrait(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc', 'connected', true, 'http://example.com', nop, nop, fetch)
+      await sendSessionTrait(
+        VALID_AUTH_KEY,
+        GRAVITY_SERVER_ADDRESS,
+        '123-abc',
+        'connected',
+        true,
+        'http://example.com',
+        nop,
+        nop,
+        fetch,
+      )
 
-      expect(fetch).toBeCalledWith(buildGravityTrackingIdentifySessionApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc'), {
-        body: JSON.stringify({ connected: true }),
-        headers: {
-          'Content-Type': 'application/json',
-          Origin: 'http://example.com',
+      expect(fetch).toBeCalledWith(
+        buildGravityTrackingIdentifySessionApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc'),
+        {
+          body: JSON.stringify({ connected: true }),
+          headers: {
+            'Content-Type': 'application/json',
+            Origin: 'http://example.com',
+          },
+          method: 'POST',
         },
-        method: 'POST',
-      })
+      )
     })
 
     it('does not set the `Origin` header when no source is provided', async () => {
       const fetch = vi.fn()
 
-      await sendSessionTrait(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc', 'connected', true, null, nop, nop, fetch)
+      await sendSessionTrait(
+        VALID_AUTH_KEY,
+        GRAVITY_SERVER_ADDRESS,
+        '123-abc',
+        'connected',
+        true,
+        null,
+        nop,
+        nop,
+        fetch,
+      )
 
-      expect(fetch).toBeCalledWith(buildGravityTrackingIdentifySessionApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc'), {
-        body: JSON.stringify({ connected: true }),
-        headers: {
-          'Content-Type': 'application/json',
+      expect(fetch).toBeCalledWith(
+        buildGravityTrackingIdentifySessionApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, '123-abc'),
+        {
+          body: JSON.stringify({ connected: true }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
         },
-        method: 'POST',
-      })
+      )
     })
   })
 })
