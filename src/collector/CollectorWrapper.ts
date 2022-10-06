@@ -11,11 +11,8 @@ import { debugUserActionSessionSender, defaultUserActionSessionSender } from '..
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
-import {
-  debugSessionTraitHandler,
-  defaultSessionTraitHandler,
-  SessionTraitHandler,
-} from '../session-trait-handler/SessionTraitHandler'
+import SessionTraitHandler from '../session-trait/SessionTraitHandler'
+import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -32,6 +29,10 @@ class CollectorWrapper {
       ? debugUserActionSessionSender(options.maxDelay)
       : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
 
+    const sessionTraitOutput = options.debug
+      ? debugSessionTraitSender(options.maxDelay)
+      : defaultSessionTraitSender(options.authKey, options.gravityServerUrl)
+
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
     testNameHandler.refresh()
 
@@ -46,16 +47,17 @@ class CollectorWrapper {
       userActionOutput,
       this.userActionsHistory,
     )
-    this.sessionTraitHandler = options.debug
-      ? debugSessionTraitHandler()
-      : defaultSessionTraitHandler(options.authKey, options.gravityServerUrl, sessionIdHandler.get())
-
+    this.sessionTraitHandler = new SessionTraitHandler(
+      sessionIdHandler.get(),
+      options.requestInterval,
+      sessionTraitOutput,
+    )
     if (isNewSession) this.initSession(createSessionStartedUserAction())
     this.initializeEventListeners()
   }
 
   identifySession(traitName: string, traitValue: TraitValue) {
-    this.sessionTraitHandler(traitName, traitValue)
+    this.sessionTraitHandler.handle(traitName, traitValue)
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {

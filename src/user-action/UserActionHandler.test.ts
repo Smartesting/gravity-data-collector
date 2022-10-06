@@ -5,7 +5,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { createClickUserAction } from '../test-utils/userActions'
 
 describe('UserActionHandler', () => {
-  describe('run', () => {
+  describe('handle', () => {
     const output = vitest.fn()
 
     beforeEach(() => {

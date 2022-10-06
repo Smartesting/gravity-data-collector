@@ -1,55 +1,46 @@
-import { TraitValue } from '../types'
 import crossfetch from 'cross-fetch'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingIdentifySessionApiUrl } from '../gravityEndPoints'
+import { Traits } from './SessionTraitHandler'
 
-export type SessionTraitHandler = (traitName: string, traitValue: TraitValue) => void
-
-export function defaultSessionTraitHandler(
+export function defaultSessionTraitSender(
   authKey: string,
   gravityServerUrl: string,
-  sessionId: string,
-  source: string | null = null,
   successCallback: (payload: any) => void = nop,
   errorCallback: (reason: string) => void = nop,
-): SessionTraitHandler {
-  return (traitName: string, traitValue: TraitValue): void => {
-    void (async () => {
-      await sendSessionTrait(
-        authKey,
-        gravityServerUrl,
-        sessionId,
-        traitName,
-        traitValue,
-        source,
-        successCallback,
-        errorCallback,
-      )
-    })()
+) {
+  return async (sessionId: string, traits: Traits) => {
+    await sendSessionTraits(authKey, gravityServerUrl, sessionId, traits, null, successCallback, errorCallback)
   }
 }
 
-export function debugSessionTraitHandler(output: (args: any) => void = console.log): SessionTraitHandler {
-  return (traitName: string, traitValue: TraitValue): void => {
-    output('[Gravity Logger (debug mode)]')
-    output(`identify session with ${traitName} = ${JSON.stringify(traitValue)}`)
+export function debugSessionTraitSender(maxDelay: number, output: (args: any) => void = console.log) {
+  return (_sessionId: string, traits: Traits) => {
+    if (maxDelay === 0) {
+      printTraits(traits, output)
+    }
+    setTimeout(() => {
+      printTraits(traits, output)
+    }, Math.random() * maxDelay)
   }
 }
 
-export async function sendSessionTrait(
+function printTraits(traits: Traits, output: (args: any) => void) {
+  output('[Gravity Logger (debug mode)]')
+  output(`identify session with ${JSON.stringify(traits)}`)
+}
+
+export async function sendSessionTraits(
   authKey: string,
   gravityServerUrl: string,
   sessionId: string,
-  traitName: string,
-  traitValue: TraitValue,
+  traits: Traits,
   source: string | null = null,
   successCallback: (payload: any) => void = nop,
   errorCallback: (reason: string) => void = nop,
   fetch = crossfetch,
 ) {
   try {
-    const body: any = {}
-    body[traitName] = traitValue
     const headers: any = {
       'Content-Type': 'application/json',
     }
@@ -58,7 +49,7 @@ export async function sendSessionTrait(
     }
     const response = await fetch(buildGravityTrackingIdentifySessionApiUrl(authKey, gravityServerUrl, sessionId), {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: JSON.stringify(traits),
       headers,
     })
     if (response.status === 200) {

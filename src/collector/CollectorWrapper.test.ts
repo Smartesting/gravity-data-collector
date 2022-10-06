@@ -15,6 +15,7 @@ import { nop } from '../utils/nop'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 import completeOptions from '../utils/completeOptions'
+import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -127,7 +128,7 @@ describe('CollectorWrapper', () => {
         new MemorySessionIdHandler(),
         new SessionStorageTestNameHandler(),
       )
-      const mock = vi.spyOn(collectorWrapper, 'sessionTraitHandler').mockImplementation(nop)
+      const mock = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
       collectorWrapper.identifySession('connected', true)
       expect(mock).toHaveBeenCalledWith('connected', true)
     })
