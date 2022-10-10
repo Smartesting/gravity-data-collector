@@ -17,10 +17,11 @@ export function debugUserActionSessionSender(maxDelay: number, output: (args: an
   return (sessionActions: SessionUserAction[]) => {
     if (maxDelay === 0) {
       printSessionUserActions(sessionActions, output)
+    } else {
+      setTimeout(() => {
+        printSessionUserActions(sessionActions, output)
+      }, Math.random() * maxDelay)
     }
-    setTimeout(() => {
-      printSessionUserActions(sessionActions, output)
-    }, Math.random() * maxDelay)
   }
 }
 
