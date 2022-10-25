@@ -1,15 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  buildGravityTrackingApiUrl,
   debugUserActionSessionSender,
   defaultUserActionSessionSender,
-  GRAVITY_SERVER_ADDRESS,
   sendSessionUserActions,
 } from './userActionSessionSender'
 import { SessionUserAction } from '../types'
 import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../mocks/handlers'
 import { waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
+import { buildGravityTrackingPublishApiUrl, GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 describe('userActionSessionSender', () => {
   const action = {}
@@ -91,7 +90,7 @@ describe('userActionSessionSender', () => {
         fetch,
       )
 
-      expect(fetch).toBeCalledWith(buildGravityTrackingApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS), {
+      expect(fetch).toBeCalledWith(buildGravityTrackingPublishApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS), {
         body: JSON.stringify(sessionActions),
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +105,7 @@ describe('userActionSessionSender', () => {
 
       await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions, null, nop, nop, fetch)
 
-      expect(fetch).toBeCalledWith(buildGravityTrackingApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS), {
+      expect(fetch).toBeCalledWith(buildGravityTrackingPublishApiUrl(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS), {
         body: JSON.stringify(sessionActions),
         headers: {
           'Content-Type': 'application/json',

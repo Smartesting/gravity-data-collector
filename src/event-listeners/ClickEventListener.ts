@@ -9,12 +9,9 @@ class ClickEventListener extends EventListener {
   }
 
   listener(event: MouseEvent) {
-    const pointerEvent = event as PointerEvent
-    if (pointerEvent.pointerType !== undefined && pointerEvent.pointerType !== '') {
-      const userAction = createTargetedUserAction(event, this.userActionType)
-      if (userAction !== null) {
-        this.userActionHandler.handle(userAction)
-      }
+    const userAction = createTargetedUserAction(event, this.userActionType)
+    if (userAction !== null) {
+      this.userActionHandler.handle(userAction)
     }
   }
 }

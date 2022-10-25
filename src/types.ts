@@ -101,3 +101,5 @@ export interface CollectorOptions {
 export interface onPublish {
   (userAction: SessionUserAction[]): void
 }
+
+export type TraitValue = string | number | boolean

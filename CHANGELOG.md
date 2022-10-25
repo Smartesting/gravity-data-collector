@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.9...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.11...main)
 
 ### Info
 
@@ -18,6 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+## [2.1.11](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.10...v2.1.11)
+
+### Added
+
+- Add `GravityCollector.identifySession` method to record custom session data
+
+## [2.1.10](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.9...v2.1.10)
+
+### Changed
+
+- Records all `click` events, even where they are fired by a key or an automated test framework
+
+### Fixed
+
+- Sending user actions twice when `maxDelay` is set to `0`
 
 ## [2.1.9](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.8...v2.1.9)
 
@@ -41,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Remove version from the minify script link in README and sample
+- Remove version from the minified script link in README and sample
 
 ## [2.1.6](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.5...v2.1.6)
 

@@ -31,7 +31,7 @@ export default class UserActionHandler {
     if (this.buffer.length === 0) {
       return
     }
-    const sessionUserActions = this.buffer.splice(0, this.buffer.length)
+    const sessionUserActions = this.buffer.splice(0)
     this.output(sessionUserActions)
     if (this.onPublish) {
       this.onPublish(sessionUserActions)

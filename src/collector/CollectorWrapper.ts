@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionStartedUserAction } from '../types'
+import { CollectorOptions, SessionStartedUserAction, TraitValue } from '../types'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
@@ -11,10 +11,13 @@ import { debugUserActionSessionSender, defaultUserActionSessionSender } from '..
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
+import SessionTraitHandler from '../session-trait/SessionTraitHandler'
+import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
   readonly userActionsHistory: MemoryUserActionsHistory
+  readonly sessionTraitHandler: SessionTraitHandler
 
   constructor(
     private readonly options: CollectorOptions,
@@ -22,9 +25,13 @@ class CollectorWrapper {
     private readonly sessionIdHandler: SessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
   ) {
-    const output = options.debug
+    const userActionOutput = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
       : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
+
+    const sessionTraitOutput = options.debug
+      ? debugSessionTraitSender(options.maxDelay)
+      : defaultSessionTraitSender(options.authKey, options.gravityServerUrl)
 
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
     testNameHandler.refresh()
@@ -37,13 +44,21 @@ class CollectorWrapper {
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler.get(),
       options.requestInterval,
-      output,
+      userActionOutput,
       options.onPublish,
       this.userActionsHistory,
     )
-
+    this.sessionTraitHandler = new SessionTraitHandler(
+      sessionIdHandler.get(),
+      options.requestInterval,
+      sessionTraitOutput,
+    )
     if (isNewSession) this.initSession(createSessionStartedUserAction())
     this.initializeEventListeners()
+  }
+
+  identifySession(traitName: string, traitValue: TraitValue) {
+    this.sessionTraitHandler.handle(traitName, traitValue)
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {
