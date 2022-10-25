@@ -45,6 +45,7 @@ class CollectorWrapper {
       sessionIdHandler.get(),
       options.requestInterval,
       userActionOutput,
+      options.onPublish,
       this.userActionsHistory,
     )
     this.sessionTraitHandler = new SessionTraitHandler(

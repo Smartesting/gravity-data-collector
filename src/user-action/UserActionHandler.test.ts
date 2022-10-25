@@ -7,6 +7,7 @@ import { createClickUserAction } from '../test-utils/userActions'
 describe('UserActionHandler', () => {
   describe('handle', () => {
     const output = vitest.fn()
+    const onPublish = vitest.fn()
 
     beforeEach(() => {
       vi.useFakeTimers()
@@ -48,6 +49,13 @@ describe('UserActionHandler', () => {
       expect(output).toHaveBeenCalledTimes(1)
       vitest.advanceTimersByTime(10000)
       expect(output).toHaveBeenCalledTimes(1)
+    })
+
+    it('calls onPublish if it is defined', async () => {
+      const userActionHandler = new UserActionHandler('aaa-111', 0, output, onPublish)
+      userActionHandler.handle(createSessionStartedUserAction())
+      userActionHandler.handle(mockGravityClickEvent())
+      expect(onPublish).toHaveBeenCalledTimes(2)
     })
   })
 })
