@@ -16,7 +16,7 @@ describe('KeyDownEventListener', () => {
     beforeEach(() => {
       vitest.restoreAllMocks()
       userActionHistory = new MemoryUserActionsHistory()
-      userActionHandler = new UserActionHandler('aaa-111', 0, nop, userActionHistory)
+      userActionHandler = new UserActionHandler('aaa-111', 0, nop, nop, userActionHistory)
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
     })
 
