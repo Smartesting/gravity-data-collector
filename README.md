@@ -1,16 +1,23 @@
 ![Node workflow](https://github.com/Smartesting/gravity-data-collector/actions/workflows/node.js.yml/badge.svg)
 
-# README
+# Gravity Data Collector - README
 
-This repo contains the browser implementation of the Gravity Data Collector
+This repo contains the browser implementation of the Gravity Data Collector.
+Learn more about Gravity [on our website](https://gravity-testing.com)
 
-## How to use
+## Setup
 
 ### Via NPM
 
 ```console
 npm i @smartesting/gravity-data-collector
 ```
+
+### Via Yarn
+```console
+yarn add @smartesting/gravity-data-collector
+```
+
 
 ### By updating package.json
 
@@ -69,16 +76,16 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 ### Identify sessions with _traits_
 
-A session trait is a characteristic identifying a session and allows a user to easily retrieve it in Gravity thanks to
-a filters system based on these traits.
+A sessions trait allows you to add context to the collected sessions so you can easily segment them in Gravity.
+It is done by calling the `identifySession` method.
 
-For instance, it is possible to identify a connected end-user by calling the function `identifySession`:
+For instance, you can identify the sessions of users connected to your app:
 
 ```typescript
 window.GravityCollector.identifySession('connected', true)
 ```
 
-**Note**: Please, keep in mind that each trait cans only have a single value. It means if you set the trait `connected`
+**Note**: Please, keep in mind that each trait can only have a single value. It means if you set the trait `connected`
 to `true` and then to `false`, the first value will be overwritten.
 
 ## Sandbox
