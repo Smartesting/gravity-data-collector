@@ -5,9 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.11...main)
-
-### Info
+## [2.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.11...v2.2.0)
 
 ### Added
 
@@ -16,12 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update README.md: describe how to identify session with traits
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ## [2.1.11](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.10...v2.1.11)
 
