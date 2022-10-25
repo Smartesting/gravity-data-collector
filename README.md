@@ -64,6 +64,22 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | debug            | Boolean | Logs user action in the console instead of sending them to Gravity                                  | false                                          |
 | maxDelay         | Integer | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action. | 500                                            |
 
+## Features
+
+### Identify sessions with _traits_
+
+A session trait is a characteristic identifying a session and allows a user to easily retrieve it in Gravity thanks to
+a filters system based on these traits.
+
+For instance, it is possible to identify a connected end-user by calling the function `identifySession`:
+
+```typescript
+window.GravityCollector.identifySession('connected', true)
+```
+
+**Note**: Please, keep in mind that each trait cans only have a single value. It means if you set the trait `connected`
+to `true` and then to `false`, the first value will be overwritten.
+
 ## Sandbox
 
 In order to test modifications on the library, a sandbox is accessible in [index.html](sample/index.html) file
