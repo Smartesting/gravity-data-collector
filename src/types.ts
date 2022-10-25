@@ -95,11 +95,7 @@ export interface CollectorOptions {
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
-  onPublish?: onPublish
-}
-
-export interface onPublish {
-  (userAction: SessionUserAction[]): void
+  onPublish?: (userAction: SessionUserAction[]) => void
 }
 
 export type TraitValue = string | number | boolean

@@ -33,7 +33,7 @@ export default class UserActionHandler {
     }
     const sessionUserActions = this.buffer.splice(0)
     this.output(sessionUserActions)
-    if (this.onPublish) {
+    if (this.onPublish !== undefined) {
       this.onPublish(sessionUserActions)
     }
   }

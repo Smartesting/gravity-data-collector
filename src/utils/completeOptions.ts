@@ -14,7 +14,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     debug: false,
     maxDelay: 0,
     requestInterval: 5000,
-    gravityServerUrl: GRAVITY_SERVER_ADDRESS
+    gravityServerUrl: GRAVITY_SERVER_ADDRESS,
   }
 
   const debugDefaultOptions = {
