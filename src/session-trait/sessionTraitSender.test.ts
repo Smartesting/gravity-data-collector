@@ -33,7 +33,7 @@ describe('sessionTraitSender', () => {
         spyError,
       )('123-abd', { connected: true })
       await waitFor(() => {
-        expect(spyError).toHaveBeenCalledWith('error 404, Not Found')
+        expect(spyError).toHaveBeenCalledWith(403)
       })
     })
 

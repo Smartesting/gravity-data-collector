@@ -7,7 +7,7 @@ export function defaultUserActionSessionSender(
   authKey: string,
   gravityServerUrl: string,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (reason: string) => void = nop,
+  errorCallback: (error: number) => void = nop,
 ): (sessionActions: SessionUserAction[]) => Promise<void> {
   return async (sessionActions: SessionUserAction[]) =>
     await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, null, successCallback, errorCallback)
@@ -37,7 +37,7 @@ export async function sendSessionUserActions(
   sessionActions: SessionUserAction[],
   source: string | null = null,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (reason: string) => void = nop,
+  errorCallback: (error: number) => void = nop,
   fetch = crossfetch,
 ): Promise<any> {
   try {
@@ -52,10 +52,11 @@ export async function sendSessionUserActions(
       body: JSON.stringify(sessionActions),
       headers,
     })
+    const responseJson = await response.json()
     if (response.status === 200) {
-      successCallback(await response.json())
+      successCallback(responseJson)
     } else {
-      errorCallback(`error ${response.status}, ${response.statusText}`)
+      errorCallback(response.status)
     }
     return await response.json()
   } catch (err: any) {

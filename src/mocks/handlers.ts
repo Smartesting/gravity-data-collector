@@ -15,7 +15,7 @@ export const handlers = [
       throw new Error('Network Error')
     }
     if (authKey !== VALID_AUTH_KEY) {
-      return await res(ctx.status(404), ctx.json({}))
+      return await res(ctx.status(403), ctx.json({}))
     }
     const payload = await req.json()
     if (!Array.isArray(payload)) return await res(ctx.status(422), ctx.json({}))
@@ -31,7 +31,7 @@ export const handlers = [
         throw new Error('Network Error')
       }
       if (authKey !== VALID_AUTH_KEY) {
-        return await res(ctx.status(404), ctx.json({}))
+        return await res(ctx.status(403), ctx.json({}))
       }
       const payload = await req.json()
       for (const value of Object.values(payload)) {

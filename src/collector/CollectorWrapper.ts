@@ -1,23 +1,27 @@
 import { v4 as uuidv4 } from 'uuid'
-import ClickEventListener from '../event-listeners/ClickEventListener'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions, SessionStartedUserAction, TraitValue } from '../types'
-import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
-import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
-import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
+import { nop } from '../utils/nop'
+import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
+import ClickEventListener from '../event-listeners/ClickEventListener'
+import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
+import ChangeEventListener from '../event-listeners/ChangeEventListener'
+import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
+import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
+import { config } from '../config'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
   readonly userActionsHistory: MemoryUserActionsHistory
   readonly sessionTraitHandler: SessionTraitHandler
+  readonly eventListenerHandler: EventListenersHandler
 
   constructor(
     private readonly options: CollectorOptions,
@@ -25,9 +29,16 @@ class CollectorWrapper {
     private readonly sessionIdHandler: SessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
   ) {
+    this.eventListenerHandler = new EventListenersHandler(config.ERRORS_TERMINATE_TRACKING)
+
     const userActionOutput = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
-      : defaultUserActionSessionSender(options.authKey, options.gravityServerUrl)
+      : defaultUserActionSessionSender(
+          options.authKey,
+          options.gravityServerUrl,
+          nop,
+          this.eventListenerHandler.getSenderErrorCallback(),
+        )
 
     const sessionTraitOutput = options.debug
       ? debugSessionTraitSender(options.maxDelay)
@@ -53,8 +64,18 @@ class CollectorWrapper {
       options.requestInterval,
       sessionTraitOutput,
     )
+
     if (isNewSession) this.initSession(createSessionStartedUserAction())
-    this.initializeEventListeners()
+
+    this.eventListenerHandler.pushEventListeners(
+      new ClickEventListener(this.userActionHandler, this.window),
+      new KeyUpEventListener(this.userActionHandler, this.window),
+      new KeyDownEventListener(this.userActionHandler, this.window, this.userActionsHistory),
+      new ChangeEventListener(this.userActionHandler, this.window),
+      new BeforeUnloadEventListener(this.userActionHandler, this.window),
+    )
+
+    this.eventListenerHandler.initializeEventListeners()
   }
 
   identifySession(traitName: string, traitValue: TraitValue) {
@@ -63,14 +84,6 @@ class CollectorWrapper {
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {
     return this.userActionHandler.handle(sessionStartedUserAction)
-  }
-
-  private initializeEventListeners() {
-    new ClickEventListener(this.userActionHandler, this.window).init()
-    new KeyUpEventListener(this.userActionHandler, this.window).init()
-    new KeyDownEventListener(this.userActionHandler, this.window, this.userActionsHistory).init()
-    new ChangeEventListener(this.userActionHandler, this.window).init()
-    new BeforeUnloadEventListener(this.userActionHandler, this.window).init()
   }
 }
 

@@ -37,7 +37,7 @@ describe('userActionSessionSender', () => {
         spyError,
       )(sessionActions)
       await waitFor(() => {
-        expect(spyError).toHaveBeenCalledWith('error 404, Not Found')
+        expect(spyError).toHaveBeenCalledWith(403)
       })
     })
 

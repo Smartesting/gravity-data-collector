@@ -7,7 +7,7 @@ export function defaultSessionTraitSender(
   authKey: string,
   gravityServerUrl: string,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (reason: string) => void = nop,
+  errorCallback: (error: number) => void = nop,
 ) {
   return async (sessionId: string, traits: Traits) => {
     await sendSessionTraits(authKey, gravityServerUrl, sessionId, traits, null, successCallback, errorCallback)
@@ -37,7 +37,7 @@ export async function sendSessionTraits(
   traits: Traits,
   source: string | null = null,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (reason: string) => void = nop,
+  errorCallback: (error: number) => void = nop,
   fetch = crossfetch,
 ) {
   try {
@@ -55,7 +55,7 @@ export async function sendSessionTraits(
     if (response.status === 200) {
       successCallback(await response.json())
     } else {
-      errorCallback(`error ${response.status}, ${response.statusText}`)
+      errorCallback(response.status)
     }
   } catch (err: any) {
     errorCallback(err.message)
