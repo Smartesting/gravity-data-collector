@@ -57,10 +57,14 @@ describe('EventListenersHandler', () => {
   })
 
   it('throws an error if handler has not been initialized before activating tracking', async () => {
-    expect(trackingHandler.activateTracking()).toThrowError()
+    expect(function () {
+      trackingHandler.activateTracking()
+    }).toThrowError()
   })
 
   it('throws an error if handler has not been initialized before deactivating tracking', async () => {
-    expect(trackingHandler.deactivateTracking()).toThrowError()
+    expect(function () {
+      trackingHandler.deactivateTracking()
+    }).toThrowError()
   })
 })
