@@ -1,15 +1,13 @@
-import { TraitValue } from '../types'
-
-export type Traits = Record<string, TraitValue>
+import { SessionTraits, SessionTraitValue } from '../types'
 
 export default class SessionTraitHandler {
-  private buffer: Traits = {}
+  private buffer: SessionTraits = {}
   private readonly timer?: NodeJS.Timer
 
   constructor(
     private readonly sessionId: string,
     private readonly requestInterval: number,
-    private readonly output: (sessionId: string, traits: Traits) => void,
+    private readonly output: (sessionId: string, traits: SessionTraits) => void,
   ) {
     if (requestInterval > 0) {
       this.timer = setInterval(() => {
@@ -18,7 +16,7 @@ export default class SessionTraitHandler {
     }
   }
 
-  handle(traitName: string, traitValue: TraitValue) {
+  handle(traitName: string, traitValue: SessionTraitValue) {
     this.buffer[traitName] = traitValue
     if (this.timer == null) {
       this.flush()

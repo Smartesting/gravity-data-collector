@@ -1,21 +1,32 @@
 import crossfetch from 'cross-fetch'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingIdentifySessionApiUrl } from '../gravityEndPoints'
-import { Traits } from './SessionTraitHandler'
+import { SessionTraits } from '../types'
+
+export interface IdentifySessionResponse {
+  error: IdentifySessionError | null
+}
+
+export enum IdentifySessionError {
+  accessDenied = 'no_access',
+  noCollection = 'no_collection',
+  invalidField = 'invalid_field',
+  incorrectSource = 'incorrect_source',
+}
 
 export function defaultSessionTraitSender(
   authKey: string,
   gravityServerUrl: string,
-  successCallback: (payload: any) => void = nop,
-  errorCallback: (error: number) => void = nop,
+  successCallback: () => void = nop,
+  errorCallback: (statusCode: number, reason: IdentifySessionError) => void = nop,
 ) {
-  return async (sessionId: string, traits: Traits) => {
-    await sendSessionTraits(authKey, gravityServerUrl, sessionId, traits, null, successCallback, errorCallback)
+  return async (sessionId: string, traits: SessionTraits): Promise<IdentifySessionResponse> => {
+    return await sendSessionTraits(authKey, gravityServerUrl, sessionId, traits, null, successCallback, errorCallback)
   }
 }
 
 export function debugSessionTraitSender(maxDelay: number, output: (args: any) => void = console.log) {
-  return (_sessionId: string, traits: Traits) => {
+  return (_sessionId: string, traits: SessionTraits) => {
     if (maxDelay === 0) {
       printTraits(traits, output)
     }
@@ -25,7 +36,7 @@ export function debugSessionTraitSender(maxDelay: number, output: (args: any) =>
   }
 }
 
-function printTraits(traits: Traits, output: (args: any) => void) {
+function printTraits(traits: SessionTraits, output: (args: any) => void) {
   output('[Gravity Logger (debug mode)]')
   output(`identify session with ${JSON.stringify(traits)}`)
 }
@@ -34,30 +45,28 @@ export async function sendSessionTraits(
   authKey: string,
   gravityServerUrl: string,
   sessionId: string,
-  traits: Traits,
+  sessionTraits: SessionTraits,
   source: string | null = null,
-  successCallback: (payload: any) => void = nop,
-  errorCallback: (error: number) => void = nop,
+  successCallback: () => void = nop,
+  errorCallback: (statusCode: number, error: IdentifySessionError) => void = nop,
   fetch = crossfetch,
-) {
-  try {
-    const headers: any = {
-      'Content-Type': 'application/json',
-    }
-    if (source !== null) {
-      headers.Origin = source
-    }
-    const response = await fetch(buildGravityTrackingIdentifySessionApiUrl(authKey, gravityServerUrl, sessionId), {
-      method: 'POST',
-      body: JSON.stringify(traits),
-      headers,
-    })
-    if (response.status === 200) {
-      successCallback(await response.json())
-    } else {
-      errorCallback(response.status)
-    }
-  } catch (err: any) {
-    errorCallback(err.message)
+): Promise<IdentifySessionResponse> {
+  const headers: any = {
+    'Content-Type': 'application/json',
   }
+  if (source !== null) {
+    headers.Origin = source
+  }
+  const response = await fetch(buildGravityTrackingIdentifySessionApiUrl(authKey, gravityServerUrl, sessionId), {
+    method: 'POST',
+    body: JSON.stringify(sessionTraits),
+    headers,
+  })
+  const identifySessionResponse: IdentifySessionResponse = await response.json()
+  if (response.status === 200) {
+    successCallback()
+  } else {
+    identifySessionResponse.error !== null && errorCallback(response.status, identifySessionResponse.error)
+  }
+  return identifySessionResponse
 }
