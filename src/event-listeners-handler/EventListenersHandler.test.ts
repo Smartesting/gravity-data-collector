@@ -43,5 +43,4 @@ describe('EventListenersHandler', () => {
     expect(ClickEventListener.prototype.terminate).toHaveBeenCalledOnce()
     expect(BeforeUnloadEventListener.prototype.terminate).toHaveBeenCalledOnce()
   })
-
 })

@@ -1,27 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import ClickEventListener from '../event-listeners/ClickEventListener'
-import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
-import UserActionHandler from '../user-action/UserActionHandler'
-import { nop } from '../utils/nop'
-import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import TrackingHandler, { GRAVITY_SESSION_TRACKING_SUSPENDED } from './TrackingHandler'
 
 describe('EventListenersHandler', () => {
   let trackingHandler: TrackingHandler
   let eventListenersHandler: EventListenersHandler
-  let clickEventListener: ClickEventListener
-  let beforeUnloadEventListener: BeforeUnloadEventListener
-  let userActionsHistory: UserActionsHistory
-  let userActionHandler: UserActionHandler
 
   beforeEach(() => {
-    userActionsHistory = new MemoryUserActionsHistory()
-    userActionHandler = new UserActionHandler('aaa-111', 0, nop, nop, userActionsHistory)
-
     eventListenersHandler = new EventListenersHandler([])
-    trackingHandler = new TrackingHandler([403,409])
+    trackingHandler = new TrackingHandler([403, 409])
 
     window.sessionStorage.clear()
   })
@@ -40,7 +27,6 @@ describe('EventListenersHandler', () => {
 
     expect(TrackingHandler.prototype.activateTracking).not.toHaveBeenCalled()
   })
-
 
   it('disable tracking when receiving a 403 error', async () => {
     vi.spyOn(TrackingHandler.prototype, 'deactivateTracking')

@@ -24,7 +24,6 @@ class CollectorWrapper {
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
-  
 
   constructor(
     private readonly options: CollectorOptions,
@@ -75,8 +74,8 @@ class CollectorWrapper {
       new KeyUpEventListener(this.userActionHandler, this.window),
       new KeyDownEventListener(this.userActionHandler, this.window, this.userActionsHistory),
       new ChangeEventListener(this.userActionHandler, this.window),
-      new BeforeUnloadEventListener(this.userActionHandler, this.window)]
-    )
+      new BeforeUnloadEventListener(this.userActionHandler, this.window),
+    ])
 
     this.trackingHandler.init(this.eventListenerHandler)
   }
