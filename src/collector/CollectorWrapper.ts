@@ -16,12 +16,15 @@ import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import { config } from '../config'
+import TrackingHandler from '../tracking-handler/TrackingHandler'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
   readonly userActionsHistory: MemoryUserActionsHistory
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
+  readonly trackingHandler: TrackingHandler
+  
 
   constructor(
     private readonly options: CollectorOptions,
@@ -29,7 +32,7 @@ class CollectorWrapper {
     private readonly sessionIdHandler: SessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
   ) {
-    this.eventListenerHandler = new EventListenersHandler(config.ERRORS_TERMINATE_TRACKING)
+    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
     const userActionOutput = options.debug
       ? debugUserActionSessionSender(options.maxDelay)
@@ -37,7 +40,7 @@ class CollectorWrapper {
           options.authKey,
           options.gravityServerUrl,
           nop,
-          this.eventListenerHandler.getSenderErrorCallback(),
+          this.trackingHandler.getSenderErrorCallback(),
         )
 
     const sessionTraitOutput = options.debug
@@ -67,19 +70,19 @@ class CollectorWrapper {
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
-    this.eventListenerHandler.pushEventListeners(
+    this.eventListenerHandler = new EventListenersHandler([
       new ClickEventListener(this.userActionHandler, this.window),
       new KeyUpEventListener(this.userActionHandler, this.window),
       new KeyDownEventListener(this.userActionHandler, this.window, this.userActionsHistory),
       new ChangeEventListener(this.userActionHandler, this.window),
-      new BeforeUnloadEventListener(this.userActionHandler, this.window),
+      new BeforeUnloadEventListener(this.userActionHandler, this.window)]
     )
 
-    this.eventListenerHandler.initializeEventListeners()
+    this.trackingHandler.init(this.eventListenerHandler)
   }
 
   identifySession(traitName: string, traitValue: TraitValue) {
-    this.sessionTraitHandler.handle(traitName, traitValue)
+    if (this.trackingHandler.isTracking()) this.sessionTraitHandler.handle(traitName, traitValue)
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {

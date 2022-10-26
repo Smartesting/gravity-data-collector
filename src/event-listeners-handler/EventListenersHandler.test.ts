@@ -21,10 +21,10 @@ describe('EventListenersHandler', () => {
     clickEventListener = new ClickEventListener(userActionHandler, window)
     beforeUnloadEventListener = new BeforeUnloadEventListener(userActionHandler, window)
 
-    eventListenersHandler = new EventListenersHandler([403, 409], [clickEventListener, beforeUnloadEventListener])
+    eventListenersHandler = new EventListenersHandler([clickEventListener, beforeUnloadEventListener])
   })
 
-  it('initializes all listeners', async () => {
+  it('initializes all listeners when the initialize function is called', async () => {
     vi.spyOn(ClickEventListener.prototype, 'init')
     vi.spyOn(BeforeUnloadEventListener.prototype, 'init')
 
@@ -34,33 +34,14 @@ describe('EventListenersHandler', () => {
     expect(BeforeUnloadEventListener.prototype.init).toHaveBeenCalledOnce()
   })
 
-  it('terminates listeners when receiving a 403 error', async () => {
+  it('terminates listeners when the terminate function is called', async () => {
     vi.spyOn(ClickEventListener.prototype, 'terminate')
     vi.spyOn(BeforeUnloadEventListener.prototype, 'terminate')
 
-    eventListenersHandler.getSenderErrorCallback()(403)
+    eventListenersHandler.terminateEventListeners()
 
     expect(ClickEventListener.prototype.terminate).toHaveBeenCalledOnce()
     expect(BeforeUnloadEventListener.prototype.terminate).toHaveBeenCalledOnce()
   })
 
-  it('terminates listeners when receiving a 409 error', async () => {
-    vi.spyOn(ClickEventListener.prototype, 'terminate')
-    vi.spyOn(BeforeUnloadEventListener.prototype, 'terminate')
-
-    eventListenersHandler.getSenderErrorCallback()(409)
-
-    expect(ClickEventListener.prototype.terminate).toHaveBeenCalledOnce()
-    expect(BeforeUnloadEventListener.prototype.terminate).toHaveBeenCalledOnce()
-  })
-
-  it('does not terminate listeners when receiving a 404 error', async () => {
-    vi.spyOn(ClickEventListener.prototype, 'terminate')
-    vi.spyOn(BeforeUnloadEventListener.prototype, 'terminate')
-
-    eventListenersHandler.getSenderErrorCallback()(404)
-
-    expect(ClickEventListener.prototype.terminate).not.toHaveBeenCalled()
-    expect(BeforeUnloadEventListener.prototype.terminate).not.toHaveBeenCalled()
-  })
 })
