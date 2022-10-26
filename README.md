@@ -14,10 +14,10 @@ npm i @smartesting/gravity-data-collector
 ```
 
 ### Via Yarn
+
 ```console
 yarn add @smartesting/gravity-data-collector
 ```
-
 
 ### By updating package.json
 
