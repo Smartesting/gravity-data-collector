@@ -44,7 +44,12 @@ class CollectorWrapper {
 
     const sessionTraitOutput = options.debug
       ? debugSessionTraitSender(options.maxDelay)
-      : defaultSessionTraitSender(options.authKey, options.gravityServerUrl)
+      : defaultSessionTraitSender(
+          options.authKey,
+          options.gravityServerUrl,
+          nop,
+          this.trackingHandler.getSenderErrorCallback(),
+        )
 
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
     testNameHandler.refresh()

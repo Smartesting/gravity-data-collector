@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import TrackingHandler, { GRAVITY_SESSION_TRACKING_SUSPENDED } from './TrackingHandler'
 
-describe('EventListenersHandler', () => {
+describe('TrackingHandler', () => {
   let trackingHandler: TrackingHandler
   let eventListenersHandler: EventListenersHandler
 
