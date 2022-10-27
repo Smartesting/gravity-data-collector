@@ -1,59 +1,18 @@
+import { v4 as uuidv4 } from 'uuid'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  AddSessionUserActionsError,
   debugUserActionSessionSender,
-  defaultUserActionSessionSender,
   sendSessionUserActions,
 } from './userActionSessionSender'
 import { SessionUserAction } from '../types'
-import { DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR, VALID_AUTH_KEY } from '../mocks/handlers'
-import { waitFor } from '@testing-library/dom'
+import { VALID_AUTH_KEY } from '../mocks/handlers'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingPublishApiUrl, GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 describe('userActionSessionSender', () => {
-  const action = {}
+  const action = { sessionId: uuidv4() }
   const sessionActions: SessionUserAction[] = [action as SessionUserAction, action as SessionUserAction]
-
-  describe('defaultUserActionSessionSender', () => {
-    beforeEach(() => {
-      vi.restoreAllMocks()
-    })
-
-    const spySuccess = vi.fn()
-    const spyError = vi.fn()
-
-    it('sends session user actions if valid auth key', async () => {
-      await defaultUserActionSessionSender(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, spySuccess)(sessionActions)
-      await waitFor(() => {
-        expect(spySuccess).toHaveBeenCalledWith({ error: null })
-      })
-    })
-
-    it('catches error if invalid auth key', async () => {
-      await defaultUserActionSessionSender(
-        'DUMMY_AUTH_KEY',
-        GRAVITY_SERVER_ADDRESS,
-        spySuccess,
-        spyError,
-      )(sessionActions)
-      await waitFor(() => {
-        expect(spyError).toHaveBeenCalledWith(403)
-      })
-    })
-
-    it('catches any error', async () => {
-      await defaultUserActionSessionSender(
-        DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR,
-        GRAVITY_SERVER_ADDRESS,
-        spySuccess,
-        spyError,
-      )(sessionActions)
-      await waitFor(() => {
-        expect(spyError).toHaveBeenCalledOnce()
-        expect((spyError.mock.lastCall as any[])[0]).toMatch(/request to (.+?) failed, reason: Network Error/)
-      })
-    })
-  })
 
   describe('debugUserActionSessionSender', () => {
     beforeEach(() => {
@@ -78,7 +37,7 @@ describe('userActionSessionSender', () => {
 
   describe('sendSessionUserActions', () => {
     it('sets the `Origin` header when a source is provided', async () => {
-      const fetch = vi.fn()
+      const fetch = mockFetch()
 
       await sendSessionUserActions(
         VALID_AUTH_KEY,
@@ -101,7 +60,7 @@ describe('userActionSessionSender', () => {
     })
 
     it('does not set the `Origin` header when no source is provided', async () => {
-      const fetch = vi.fn()
+      const fetch = mockFetch()
 
       await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions, null, nop, nop, fetch)
 
@@ -113,5 +72,85 @@ describe('userActionSessionSender', () => {
         method: 'POST',
       })
     })
+
+    describe('return a response typed AddSessionUserActionsResponse', async () => {
+      const onSuccess: () => void = vi.fn()
+      const onError: (statusCode: number, reason: AddSessionUserActionsError) => void = vi.fn()
+
+      beforeEach(() => {
+        vi.clearAllMocks()
+      })
+
+      it('without error if succeeded', async () => {
+        expect(
+          await sendSessionUserActions(
+            VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: null })
+        expect(onSuccess).toHaveBeenCalled()
+        expect(onError).not.toHaveBeenCalled()
+      })
+
+      it('with null error if authKey does not match a known session collection', async () => {
+        expect(
+          await sendSessionUserActions(
+            'unknownAuthKey',
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: null })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(404, null)
+      })
+
+      it('with incorrectSource error if source is not allowed', async () => {
+        expect(
+          await sendSessionUserActions(
+            VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            'https://polop.com',
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: AddSessionUserActionsError.incorrectSource })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(403, AddSessionUserActionsError.incorrectSource)
+      })
+
+      it('with notUUID error if sessionId is not an UUID', async () => {
+        expect(
+          await sendSessionUserActions(
+            VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            [
+              {
+                ...sessionActions[0],
+                sessionId: 'not_an_uuid',
+              },
+            ],
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: AddSessionUserActionsError.notUUID })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(422, AddSessionUserActionsError.notUUID)
+      })
+    })
   })
 })
+
+function mockFetch() {
+  return vi.fn().mockImplementation(() => ({
+    json: async (): Promise<any> => await Promise.resolve({}),
+  }))
+}

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionStartedUserAction, TraitValue } from '../types'
+import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
@@ -80,7 +80,7 @@ class CollectorWrapper {
     this.trackingHandler.init(this.eventListenerHandler)
   }
 
-  identifySession(traitName: string, traitValue: TraitValue) {
+  identifySession(traitName: string, traitValue: SessionTraitValue) {
     if (this.trackingHandler.isTracking()) this.sessionTraitHandler.handle(traitName, traitValue)
   }
 

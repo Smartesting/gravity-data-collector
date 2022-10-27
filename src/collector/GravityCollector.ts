@@ -1,5 +1,5 @@
 import CollectorWrapper from './CollectorWrapper'
-import { CollectorOptions, TraitValue } from '../types'
+import { CollectorOptions, SessionTraitValue } from '../types'
 import windowExists from '../utils/windowExists'
 import completeOptions from '../utils/completeOptions'
 import SessionStorageSessionIdHandler from '../session-id-handler/SessionStorageSessionIdHandler'
@@ -30,7 +30,7 @@ export default class GravityCollector {
     )
   }
 
-  static identifySession(traitName: string, traitValue: TraitValue) {
+  static identifySession(traitName: string, traitValue: SessionTraitValue) {
     const collectorWrapper = (window as any)._GravityCollector.collectorWrapper
     if (collectorWrapper === undefined) {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')

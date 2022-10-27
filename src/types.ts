@@ -98,4 +98,6 @@ export interface CollectorOptions {
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 
-export type TraitValue = string | number | boolean
+export type SessionTraits = Record<string, SessionTraitValue>
+
+export type SessionTraitValue = string | number | boolean

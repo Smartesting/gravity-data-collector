@@ -5,7 +5,7 @@ const INPUT_ALLOWED_BY_KEY_LISTENERS = ['radio', 'select', 'checkbox', 'button']
 const KEYS_ALLOWED_BY_KEY_LISTENERS = ['tab', 'enter', 'numpadenter']
 
 export function isKeyAllowedByKeyListeners(keyCode: string): boolean {
-  return KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
+  return keyCode !== undefined && KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
 }
 
 export function isTargetAllowedByKeyListeners(target: EventTarget | null): boolean {
