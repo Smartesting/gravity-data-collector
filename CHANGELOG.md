@@ -24,7 +24,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Stop tracking when receiving errors specified in [config.ts](./src/config.ts)
-
 - Prevent error in method `isKeyAllowedByKeyListeners`
 
 ## [2.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v2.1.11...v2.2.0)
