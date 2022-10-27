@@ -3,14 +3,25 @@ import crossfetch from 'cross-fetch'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
 
+export interface AddSessionUserActionsResponse {
+  error: AddSessionUserActionsError | null
+}
+
+export enum AddSessionUserActionsError {
+  incorrectSource = 'incorrect_source',
+  conflict = 'conflict',
+  notUUID = 'not_a_uuid',
+}
+
 export function defaultUserActionSessionSender(
   authKey: string,
   gravityServerUrl: string,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (error: number) => void = nop,
-): (sessionActions: SessionUserAction[]) => Promise<void> {
-  return async (sessionActions: SessionUserAction[]) =>
-    await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, null, successCallback, errorCallback)
+  errorCallback: (statusCode: number, reason: AddSessionUserActionsError) => void = nop,
+) {
+  return async (sessionActions: SessionUserAction[]): Promise<AddSessionUserActionsResponse> => {
+    return await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, null, successCallback, errorCallback)
+  }
 }
 
 export function debugUserActionSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
@@ -37,29 +48,25 @@ export async function sendSessionUserActions(
   sessionActions: SessionUserAction[],
   source: string | null = null,
   successCallback: (payload: any) => void = nop,
-  errorCallback: (error: number) => void = nop,
+  errorCallback: (statusCode: number, reason: AddSessionUserActionsError) => void = nop,
   fetch = crossfetch,
-): Promise<any> {
-  try {
-    const headers: any = {
-      'Content-Type': 'application/json',
-    }
-    if (source !== null) {
-      headers.Origin = source
-    }
-    const response = await fetch(buildGravityTrackingPublishApiUrl(authKey, gravityServerUrl), {
-      method: 'POST',
-      body: JSON.stringify(sessionActions),
-      headers,
-    })
-    const responseJson = await response.json()
-    if (response.status === 200) {
-      successCallback(responseJson)
-    } else {
-      errorCallback(response.status)
-    }
-    return await response.json()
-  } catch (err: any) {
-    errorCallback(err.message)
+): Promise<AddSessionUserActionsResponse> {
+  const headers: any = {
+    'Content-Type': 'application/json',
   }
+  if (source !== null) {
+    headers.Origin = source
+  }
+  const response = await fetch(buildGravityTrackingPublishApiUrl(authKey, gravityServerUrl), {
+    method: 'POST',
+    body: JSON.stringify(sessionActions),
+    headers,
+  })
+  const addSessionUserActionsResponse = await response.json()
+  if (response.status === 200) {
+    successCallback(addSessionUserActionsResponse)
+  } else {
+    errorCallback(response.status, addSessionUserActionsResponse.error)
+  }
+  return addSessionUserActionsResponse
 }
