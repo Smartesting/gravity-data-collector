@@ -5,34 +5,46 @@ import {
   GRAVITY_SERVER_ADDRESS,
 } from '../gravityEndPoints'
 import { v4 as uuidv4 } from 'uuid'
-import { IdentifySessionError } from '../session-trait/sessionTraitSender'
 import { isUUID } from '../test-utils/isUUID'
-import { AddSessionUserActionsError } from '../user-action/userActionSessionSender'
+import { AddSessionUserActionsError } from '../user-action/sessionUserActionSender'
+import { IdentifySessionError } from '../session-trait/sessionTraitSender'
+import { getHostname } from '../test-utils/getHostname'
 
-export const VALID_AUTH_KEY = 'VALID_AUTH_KEY'
+export const VALID_AUTH_KEY = uuidv4()
+export const ANOTHER_VALID_AUTH_KEY = uuidv4()
 export const VALID_SESSION_ID = uuidv4()
 export const VALID_SOURCE = 'https://my-domain.com'
 export const DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR = 'DUMMY_AUTH_KEY_CAUSING_ERROR'
+
+export const AUTH_KEY_BY_SESSION_ID: Map<string, string> = new Map<string, string>()
 
 export const handlers = [
   rest.post(buildGravityTrackingPublishApiUrl(':authKey', GRAVITY_SERVER_ADDRESS), async (req, res, ctx) => {
     const { authKey } = req.params
     if (authKey === DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR) throw new Error('Network Error')
-    if (authKey !== VALID_AUTH_KEY) return await res(ctx.status(404), ctx.json({ error: null }))
-    const payload = await req.json()
-    if (!Array.isArray(payload)) return await res(ctx.status(422), ctx.json({}))
+    if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
+      return await res(ctx.status(404), ctx.json({ error: AddSessionUserActionsError.noCollection }))
+    }
 
     const origin = req.headers.get('Origin')
     if (origin !== null && getHostname(origin) !== VALID_SOURCE) {
-      return await res(ctx.status(403), ctx.json({ error: IdentifySessionError.incorrectSource }))
+      return await res(ctx.status(403), ctx.json({ error: AddSessionUserActionsError.incorrectSource }))
     }
 
+    const payload = await req.json()
+    if (!Array.isArray(payload)) {
+      return await res(ctx.status(422), ctx.json({ error: AddSessionUserActionsError.invalidFormat }))
+    }
     for (const action of payload) {
       if (!isUUID(action.sessionId)) {
         return await res(ctx.status(422), ctx.json({ error: AddSessionUserActionsError.notUUID }))
       }
+      const associatedAuthKey = AUTH_KEY_BY_SESSION_ID.get(action.sessionId)
+      if (associatedAuthKey !== undefined && associatedAuthKey !== authKey) {
+        return await res(ctx.status(409), ctx.json({ error: AddSessionUserActionsError.conflict }))
+      }
+      AUTH_KEY_BY_SESSION_ID.set(action.sessionId, authKey)
     }
-
     return await res(ctx.status(200), ctx.json({ error: null }))
   }),
 
@@ -48,7 +60,7 @@ export const handlers = [
       if (origin !== null && getHostname(origin) !== VALID_SOURCE) {
         return await res(ctx.status(403), ctx.json({ error: IdentifySessionError.incorrectSource }))
       }
-      if (authKey !== VALID_AUTH_KEY) {
+      if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
         return await res(ctx.status(404), ctx.json({ error: IdentifySessionError.noCollection }))
       }
       const payload = await req.json()
@@ -65,9 +77,3 @@ export const handlers = [
     },
   ),
 ]
-
-function getHostname(source: string) {
-  try {
-    return new URL(source).hostname
-  } catch (_) {}
-}

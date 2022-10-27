@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
-import { debugUserActionSessionSender, defaultUserActionSessionSender } from '../user-action/userActionSessionSender'
+import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import SessionIdHandler from '../session-id-handler/SessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
@@ -34,8 +34,8 @@ class CollectorWrapper {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
     const userActionOutput = options.debug
-      ? debugUserActionSessionSender(options.maxDelay)
-      : defaultUserActionSessionSender(
+      ? debugSessionUserActionSender(options.maxDelay)
+      : defaultSessionUserActionSender(
           options.authKey,
           options.gravityServerUrl,
           nop,

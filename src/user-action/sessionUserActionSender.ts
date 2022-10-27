@@ -11,9 +11,11 @@ export enum AddSessionUserActionsError {
   incorrectSource = 'incorrect_source',
   conflict = 'conflict',
   notUUID = 'not_a_uuid',
+  noCollection = 'no_collection',
+  invalidFormat = 'invalid_format',
 }
 
-export function defaultUserActionSessionSender(
+export function defaultSessionUserActionSender(
   authKey: string,
   gravityServerUrl: string,
   successCallback: (payload: any) => void = nop,
@@ -24,7 +26,7 @@ export function defaultUserActionSessionSender(
   }
 }
 
-export function debugUserActionSessionSender(maxDelay: number, output: (args: any) => void = console.log) {
+export function debugSessionUserActionSender(maxDelay: number, output: (args: any) => void = console.log) {
   return (sessionActions: SessionUserAction[]) => {
     if (maxDelay === 0) {
       printSessionUserActions(sessionActions, output)

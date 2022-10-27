@@ -2,15 +2,15 @@ import { v4 as uuidv4 } from 'uuid'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   AddSessionUserActionsError,
-  debugUserActionSessionSender,
+  debugSessionUserActionSender,
   sendSessionUserActions,
-} from './userActionSessionSender'
+} from './sessionUserActionSender'
 import { SessionUserAction } from '../types'
-import { VALID_AUTH_KEY } from '../mocks/handlers'
+import { ANOTHER_VALID_AUTH_KEY, VALID_AUTH_KEY } from '../mocks/handlers'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingPublishApiUrl, GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
-describe('userActionSessionSender', () => {
+describe('sessionUserActionSender', () => {
   const action = { sessionId: uuidv4() }
   const sessionActions: SessionUserAction[] = [action as SessionUserAction, action as SessionUserAction]
 
@@ -23,12 +23,12 @@ describe('userActionSessionSender', () => {
     const spyOutput = vi.fn()
 
     it('outputs session user actions immediately if no maxDelay', () => {
-      debugUserActionSessionSender(0, spyOutput)(sessionActions)
+      debugSessionUserActionSender(0, spyOutput)(sessionActions)
       expect(spyOutput).toHaveBeenCalledTimes(3)
     })
 
     it('outputs session user actions immediately if maxDelay', () => {
-      debugUserActionSessionSender(5000, spyOutput)(sessionActions)
+      debugSessionUserActionSender(5000, spyOutput)(sessionActions)
       expect(spyOutput).toHaveBeenCalledTimes(0)
       vi.advanceTimersByTime(5000)
       expect(spyOutput).toHaveBeenCalledTimes(3)
@@ -96,7 +96,7 @@ describe('userActionSessionSender', () => {
         expect(onError).not.toHaveBeenCalled()
       })
 
-      it('with null error if authKey does not match a known session collection', async () => {
+      it('with noCollection error if authKey does not match a known session collection', async () => {
         expect(
           await sendSessionUserActions(
             'unknownAuthKey',
@@ -106,9 +106,9 @@ describe('userActionSessionSender', () => {
             onSuccess,
             onError,
           ),
-        ).toEqual({ error: null })
+        ).toEqual({ error: AddSessionUserActionsError.noCollection })
         expect(onSuccess).not.toHaveBeenCalled()
-        expect(onError).toHaveBeenCalledWith(404, null)
+        expect(onError).toHaveBeenCalledWith(404, AddSessionUserActionsError.noCollection)
       })
 
       it('with incorrectSource error if source is not allowed', async () => {
@@ -144,6 +144,63 @@ describe('userActionSessionSender', () => {
         ).toEqual({ error: AddSessionUserActionsError.notUUID })
         expect(onSuccess).not.toHaveBeenCalled()
         expect(onError).toHaveBeenCalledWith(422, AddSessionUserActionsError.notUUID)
+      })
+
+      it('with conflict error if the same sessionId are sent to two different session collections', async () => {
+        expect(await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions)).toEqual({
+          error: null,
+        })
+
+        expect(
+          await sendSessionUserActions(
+            ANOTHER_VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: AddSessionUserActionsError.conflict })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(409, AddSessionUserActionsError.conflict)
+      })
+
+      it('2with conflict error if the same sessionId are sent to two different session collections', async () => {
+        expect(await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions)).toEqual({
+          error: null,
+        })
+
+        expect(
+          await sendSessionUserActions(
+            ANOTHER_VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: AddSessionUserActionsError.conflict })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(409, AddSessionUserActionsError.conflict)
+      })
+
+      it('3with conflict error if the same sessionId are sent to two different session collections', async () => {
+        expect(await sendSessionUserActions(VALID_AUTH_KEY, GRAVITY_SERVER_ADDRESS, sessionActions)).toEqual({
+          error: null,
+        })
+
+        expect(
+          await sendSessionUserActions(
+            ANOTHER_VALID_AUTH_KEY,
+            GRAVITY_SERVER_ADDRESS,
+            sessionActions,
+            null,
+            onSuccess,
+            onError,
+          ),
+        ).toEqual({ error: AddSessionUserActionsError.conflict })
+        expect(onSuccess).not.toHaveBeenCalled()
+        expect(onError).toHaveBeenCalledWith(409, AddSessionUserActionsError.conflict)
       })
     })
   })

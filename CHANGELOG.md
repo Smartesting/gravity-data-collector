@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Type `Traits` renamed more precisely to `SessionTraits` and moved to `types.ts` file
 - Type `TraitValue` renamed more precisely to `SessionTraitValue`
 - Method `sendSessionTraits` now returns a response typed `IdentifySessionResponse` with well-typed error
+- Method `sendSessionUserActions` now returns a response typed `AddSessionUserActionsResponse` with well-typed error
 
 ### Deprecated
 
