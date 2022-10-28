@@ -9,6 +9,7 @@ import { isUUID } from '../test-utils/isUUID'
 import { AddSessionUserActionsError } from '../user-action/sessionUserActionSender'
 import { IdentifySessionError } from '../session-trait/sessionTraitSender'
 import { getHostname } from '../test-utils/getHostname'
+import { checkSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 
 export const VALID_AUTH_KEY = uuidv4()
 export const ANOTHER_VALID_AUTH_KEY = uuidv4()
@@ -65,11 +66,7 @@ export const handlers = [
       }
       const payload = await req.json()
       for (const value of Object.values(payload)) {
-        const type = typeof value
-        if (!['string', 'boolean', 'number'].includes(type)) {
-          return await res(ctx.status(422), ctx.json({ error: IdentifySessionError.invalidField }))
-        }
-        if (type === 'string' && (value as string).length > 255) {
+        if (!checkSessionTraitValue(value)) {
           return await res(ctx.status(422), ctx.json({ error: IdentifySessionError.invalidField }))
         }
       }

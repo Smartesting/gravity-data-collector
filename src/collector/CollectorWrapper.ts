@@ -17,6 +17,7 @@ import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
+import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -86,7 +87,8 @@ class CollectorWrapper {
   }
 
   identifySession(traitName: string, traitValue: SessionTraitValue) {
-    if (this.trackingHandler.isTracking()) this.sessionTraitHandler.handle(traitName, traitValue)
+    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue))
+      this.sessionTraitHandler.handle(traitName, traitValue)
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {

@@ -132,5 +132,22 @@ describe('CollectorWrapper', () => {
       collectorWrapper.identifySession('connected', true)
       expect(mock).toHaveBeenCalledWith('connected', true)
     })
+
+    it('prevents bad format of session trait value', () => {
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true }),
+        global.window,
+        new MemorySessionIdHandler(),
+        new SessionStorageTestNameHandler(),
+      )
+      const mockConsoleWarn = vi.spyOn(global.console, 'warn').mockImplementation(nop)
+      const spyOnHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+      collectorWrapper.identifySession('connected', { badFormat: true } as unknown as string)
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        '[Gravity Data Collector] The following session trait value is not allowed: ',
+        { badFormat: true },
+      )
+      expect(spyOnHandle).not.toHaveBeenCalled()
+    })
   })
 })

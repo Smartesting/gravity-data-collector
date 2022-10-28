@@ -101,3 +101,5 @@ export interface CollectorOptions {
 export type SessionTraits = Record<string, SessionTraitValue>
 
 export type SessionTraitValue = string | number | boolean
+
+export const ALLOWED_SESSION_TRAIT_VALUE_TYPES = ['string', 'boolean', 'number']
