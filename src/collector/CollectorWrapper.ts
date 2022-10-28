@@ -87,8 +87,9 @@ class CollectorWrapper {
   }
 
   identifySession(traitName: string, traitValue: SessionTraitValue) {
-    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue))
+    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue)) {
       this.sessionTraitHandler.handle(traitName, traitValue)
+    }
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {
