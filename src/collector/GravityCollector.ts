@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 const TIMEOUT = 1000 * 60 * 30
 
-
 export default class GravityCollector {
   collectorWrapper: CollectorWrapper | undefined
 
