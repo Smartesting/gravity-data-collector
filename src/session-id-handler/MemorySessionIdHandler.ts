@@ -1,20 +1,22 @@
-import ISessionIdHandler from './ISessionIdHandler'
+import ISessionIdHandler, { BaseSessionIdHandler } from './ISessionIdHandler'
 
-export default class MemorySessionIdHandler implements ISessionIdHandler {
+export default class MemorySessionIdHandler extends BaseSessionIdHandler implements ISessionIdHandler {
   private sessionId?: string
+  private sessionTimeout: number = new Date().getTime() - 1
 
-  get(): string {
-    if (this.sessionId !== undefined) {
-      return this.sessionId
-    }
-    throw new Error('Set session id before using it')
+  protected getSessionId(): string | undefined {
+    return this.sessionId
   }
 
-  isSet(): boolean {
-    return this.sessionId !== undefined
-  }
-
-  set(sessionId: string): void {
+  protected setSessionId(sessionId: string): void {
     this.sessionId = sessionId
+  }
+
+  protected getTimeout(): number {
+    return this.sessionTimeout
+  }
+
+  protected setTimeout(timeout: number) {
+    this.sessionTimeout = timeout
   }
 }

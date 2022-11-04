@@ -16,6 +16,7 @@ import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 import completeOptions from '../utils/completeOptions'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('CollectorWrapper', () => {
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('CollectorWrapper', () => {
     let options: CollectorOptions
 
     function createCollectorWrapper(
-      sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(),
+      sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000),
       testNameHandler: TestNameHandler = new SessionStorageTestNameHandler(),
     ) {
       // We are testing the side effects of the constructor, so we wrap
@@ -55,7 +56,7 @@ describe('CollectorWrapper', () => {
       })
 
       it('does not send "sessionStarted" action if session id exists', () => {
-        const sessionIdHandler = new MemorySessionIdHandler()
+        const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
         const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper(sessionIdHandler)
@@ -69,7 +70,7 @@ describe('CollectorWrapper', () => {
       })
 
       it('a "sessionStarted" action is sent if session id exists but this is a new test', () => {
-        const sessionIdHandler = new MemorySessionIdHandler()
+        const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
         const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper(sessionIdHandler)
@@ -125,7 +126,7 @@ describe('CollectorWrapper', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({ debug: true }),
         global.window,
-        new MemorySessionIdHandler(),
+        new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
       const mock = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
@@ -137,7 +138,7 @@ describe('CollectorWrapper', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({ debug: true }),
         global.window,
-        new MemorySessionIdHandler(),
+        new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
       const mockConsoleWarn = vi.spyOn(global.console, 'warn').mockImplementation(nop)
