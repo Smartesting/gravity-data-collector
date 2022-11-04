@@ -1,4 +1,4 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
@@ -10,6 +10,6 @@ export default defineConfig({
   hosts: {
     'my-site.com': '127.0.0.1',
     'app.my-site.com': '127.0.0.1',
-    'auth.another-site.com': '127.0.0.1'
-  }
-});
+    'auth.another-site.com': '127.0.0.1',
+  },
+})
