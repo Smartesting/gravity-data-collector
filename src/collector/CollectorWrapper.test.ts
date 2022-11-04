@@ -10,7 +10,7 @@ import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import SessionIdHandler from '../session-id-handler/SessionIdHandler'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import { nop } from '../utils/nop'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
@@ -29,7 +29,7 @@ describe('CollectorWrapper', () => {
     let options: CollectorOptions
 
     function createCollectorWrapper(
-      sessionIdHandler: SessionIdHandler = new MemorySessionIdHandler(),
+      sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(),
       testNameHandler: TestNameHandler = new SessionStorageTestNameHandler(),
     ) {
       // We are testing the side effects of the constructor, so we wrap

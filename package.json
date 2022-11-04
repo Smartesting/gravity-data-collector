@@ -43,6 +43,7 @@
     "@testing-library/dom": "^8.13.0",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.0.0",
+    "@types/psl": "^1.1.0",
     "@types/sinon": "^10.0.12",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "babelify": "^10.0.0",
@@ -71,6 +72,7 @@
     "@cypress/unique-selector": "^0.4.4",
     "@types/uuid": "^8.3.4",
     "cross-fetch": "^3.1.5",
+    "psl": "^1.9.0",
     "regenerator-runtime": "^0.13.9",
     "uuid": "^8.3.2"
   },

@@ -3,7 +3,7 @@ import { createSessionStartedUserAction } from '../user-action/createSessionStar
 import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
-import SessionIdHandler from '../session-id-handler/SessionIdHandler'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
@@ -29,7 +29,7 @@ class CollectorWrapper {
   constructor(
     private readonly options: CollectorOptions,
     private readonly window: Window,
-    private readonly sessionIdHandler: SessionIdHandler,
+    private readonly sessionIdHandler: ISessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)

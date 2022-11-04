@@ -1,4 +1,4 @@
-export default interface SessionIdHandler {
+export default interface ISessionIdHandler {
   isSet: () => boolean
 
   get: () => string

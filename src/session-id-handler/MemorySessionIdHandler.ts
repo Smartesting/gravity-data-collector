@@ -1,13 +1,13 @@
-import SessionIdHandler from './SessionIdHandler'
+import ISessionIdHandler from './ISessionIdHandler'
 
-export default class MemorySessionIdHandler implements SessionIdHandler {
+export default class MemorySessionIdHandler implements ISessionIdHandler {
   private sessionId?: string
 
   get(): string {
     if (this.sessionId !== undefined) {
       return this.sessionId
     }
-    throw new Error('Set session id before to use it')
+    throw new Error('Set session id before using it')
   }
 
   isSet(): boolean {

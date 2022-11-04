@@ -1,12 +1,12 @@
-import SessionIdHandler from './SessionIdHandler'
+import ISessionIdHandler from './ISessionIdHandler'
 
 const GRAVITY_SESSION_STORAGE_KEY_SESSION_ID = 'gravity-session-id'
 
-export default class SessionStorageSessionIdHandler implements SessionIdHandler {
+export default class SessionStorageSessionIdHandler implements ISessionIdHandler {
   get(): string {
     const sessionId = window.sessionStorage.getItem(GRAVITY_SESSION_STORAGE_KEY_SESSION_ID)
     if (sessionId !== null) return sessionId
-    throw new Error('Set session id before to use it')
+    throw new Error('Set session id before using it')
   }
 
   isSet(): boolean {
