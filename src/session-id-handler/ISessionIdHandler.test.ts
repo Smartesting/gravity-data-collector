@@ -23,17 +23,18 @@ function iSessionIdHandlerContractTest(
   describe(implementationName, () => {
     let sessionIdHandler: ISessionIdHandler
     beforeEach(() => {
+      i = 0
       cleanup()
       sessionIdHandler = makeSessionIdHandler()
     })
 
     describe('isSet', () => {
-      it('returns false when no session id has been set', () => {
+      it('returns false when no session id has been generated', () => {
         assert.strictEqual(sessionIdHandler.isSet(), false)
       })
 
-      it('returns true when a session id has been set', () => {
-        sessionIdHandler.set('abcd')
+      it('returns true when a session id has been generated', () => {
+        sessionIdHandler.get()
         assert.strictEqual(sessionIdHandler.isSet(), true)
       })
     })
@@ -42,7 +43,6 @@ function iSessionIdHandlerContractTest(
       let clock: sinon.SinonFakeTimers
 
       beforeEach(() => {
-        i = 0
         clock = sinon.useFakeTimers()
       })
 
@@ -71,6 +71,14 @@ function iSessionIdHandlerContractTest(
 
         assert.strictEqual(sessionId, 'session-1')
         assert.strictEqual(newSessionId, 'session-2')
+      })
+    })
+
+    describe('generateNewSessionId', () => {
+      it('generates a new session id', () => {
+        assert.strictEqual(sessionIdHandler.get(), 'session-1')
+        sessionIdHandler.generateNewSessionId()
+        assert.strictEqual(sessionIdHandler.get(), 'session-2')
       })
     })
   })

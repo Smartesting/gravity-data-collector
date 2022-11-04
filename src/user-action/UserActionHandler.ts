@@ -1,12 +1,13 @@
 import { SessionUserAction, UserAction } from '../types'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 export default class UserActionHandler {
   private readonly buffer: SessionUserAction[] = []
   private readonly timer?: NodeJS.Timer
 
   constructor(
-    private readonly sessionId: string,
+    private readonly sessionIdHandler: ISessionIdHandler,
     private readonly requestInterval: number,
     private readonly output: (sessionActions: SessionUserAction[]) => void,
     private readonly onPublish?: (sessionActions: SessionUserAction[]) => void,
@@ -40,7 +41,7 @@ export default class UserActionHandler {
 
   private toSessionUserAction(action: UserAction): SessionUserAction {
     return {
-      sessionId: this.sessionId,
+      sessionId: this.sessionIdHandler.get(),
       ...action,
     }
   }

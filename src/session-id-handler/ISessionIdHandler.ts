@@ -3,7 +3,7 @@ export default interface ISessionIdHandler {
 
   get: () => string
 
-  set: (sessionId: string) => void
+  generateNewSessionId: () => void
 }
 
 export class BaseSessionIdHandler implements ISessionIdHandler {
@@ -24,8 +24,8 @@ export class BaseSessionIdHandler implements ISessionIdHandler {
     return this.getSessionId() !== undefined
   }
 
-  set(sessionId: string): void {
-    this.setSessionId(sessionId)
+  generateNewSessionId(): void {
+    this.setSessionId(this.makeSessionId())
   }
 
   protected getSessionId(): string | undefined {

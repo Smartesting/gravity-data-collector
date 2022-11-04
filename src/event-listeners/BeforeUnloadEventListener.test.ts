@@ -4,10 +4,12 @@ import { waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('BeforeUnloadEventListener', () => {
   describe('listener', () => {
-    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+    const userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
     const flushSpy = vitest.spyOn(userActionHandler, 'flush')
 
     beforeEach(() => {

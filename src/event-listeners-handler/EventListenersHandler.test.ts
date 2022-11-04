@@ -6,6 +6,7 @@ import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsH
 import UserActionHandler from '../user-action/UserActionHandler'
 import { nop } from '../utils/nop'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('EventListenersHandler', () => {
   let eventListenersHandler: EventListenersHandler
@@ -16,7 +17,8 @@ describe('EventListenersHandler', () => {
 
   beforeEach(() => {
     userActionsHistory = new MemoryUserActionsHistory()
-    userActionHandler = new UserActionHandler('aaa-111', 0, nop, nop, userActionsHistory)
+    const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionsHistory)
 
     clickEventListener = new ClickEventListener(userActionHandler, window)
     beforeUnloadEventListener = new BeforeUnloadEventListener(userActionHandler, window)

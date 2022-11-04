@@ -4,10 +4,12 @@ import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('ChangeEventListener', () => {
   describe('listener', () => {
-    const userActionHandler = new UserActionHandler('aaa-111', 0, nop)
+    const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+    const userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
     const runSpy = vitest.spyOn(userActionHandler, 'handle')
 
     beforeEach(() => {

@@ -5,6 +5,7 @@ import { nop } from '../utils/nop'
 import EventListener from '../event-listeners/EventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { UserActionType } from '../types'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('EventListener', () => {
   const userActionType = UserActionType.Click
@@ -12,7 +13,8 @@ describe('EventListener', () => {
 
   class TestEventListener extends EventListener {
     constructor(window: Window) {
-      super(new UserActionHandler('aaa-111', 0, nop), userActionType, window)
+      const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+      super(new UserActionHandler(sessionIdHandler, 0, nop), userActionType, window)
     }
 
     protected listener(event: Event): void {

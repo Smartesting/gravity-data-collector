@@ -1,11 +1,12 @@
 import { SessionTraits, SessionTraitValue } from '../types'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 export default class SessionTraitHandler {
   private buffer: SessionTraits = {}
   private readonly timer?: NodeJS.Timer
 
   constructor(
-    private readonly sessionId: string,
+    private readonly sessionIdHandler: ISessionIdHandler,
     private readonly requestInterval: number,
     private readonly output: (sessionId: string, traits: SessionTraits) => void,
   ) {
@@ -27,7 +28,7 @@ export default class SessionTraitHandler {
     if (Object.keys(this.buffer).length === 0) {
       return
     }
-    this.output(this.sessionId, this.buffer)
+    this.output(this.sessionIdHandler.get(), this.buffer)
     this.buffer = {}
   }
 }

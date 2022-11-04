@@ -6,6 +6,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('KeyDownEventListener', () => {
   describe('listener', () => {
@@ -16,7 +17,8 @@ describe('KeyDownEventListener', () => {
     beforeEach(() => {
       vitest.restoreAllMocks()
       userActionHistory = new MemoryUserActionsHistory()
-      userActionHandler = new UserActionHandler('aaa-111', 0, nop, nop, userActionHistory)
+      const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+      userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
     })
 

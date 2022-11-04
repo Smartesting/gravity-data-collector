@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
@@ -56,22 +55,18 @@ class CollectorWrapper {
     testNameHandler.refresh()
 
     if (isNewSession) {
-      sessionIdHandler.set(uuidv4())
+      sessionIdHandler.generateNewSessionId()
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
 
     this.userActionHandler = new UserActionHandler(
-      sessionIdHandler.get(),
+      sessionIdHandler,
       options.requestInterval,
       userActionOutput,
       options.onPublish,
       this.userActionsHistory,
     )
-    this.sessionTraitHandler = new SessionTraitHandler(
-      sessionIdHandler.get(),
-      options.requestInterval,
-      sessionTraitOutput,
-    )
+    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 

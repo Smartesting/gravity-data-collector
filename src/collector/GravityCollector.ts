@@ -2,9 +2,9 @@ import CollectorWrapper from './CollectorWrapper'
 import { CollectorOptions, SessionTraitValue } from '../types'
 import windowExists from '../utils/windowExists'
 import completeOptions from '../utils/completeOptions'
-import SessionStorageSessionIdHandler from '../session-id-handler/SessionStorageSessionIdHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 import { v4 as uuidv4 } from 'uuid'
+import CookieSessionIdHandler from '../session-id-handler/CookieSessionIdHandler'
 
 const TIMEOUT = 1000 * 60 * 30
 
@@ -27,7 +27,7 @@ export default class GravityCollector {
       new CollectorWrapper(
         completeOptions(options),
         window,
-        new SessionStorageSessionIdHandler(uuidv4, TIMEOUT),
+        new CookieSessionIdHandler(uuidv4, TIMEOUT),
         new SessionStorageTestNameHandler(),
       ),
     )
