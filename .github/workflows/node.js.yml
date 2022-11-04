@@ -32,6 +32,6 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           browser: chrome
-          start: start-e2e-test-site
+          start: npm run start-e2e-test-site
       - run: npm run lint
       - run: ./node_modules/.bin/prettier --check .
