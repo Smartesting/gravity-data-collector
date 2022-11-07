@@ -11,12 +11,18 @@
         window.GravityCollector.init({
           authKey: '1234',
           gravityServerUrl: 'https://gravityserverstaging.herokuapp.com',
-          requestInterval: 1000,
+          requestInterval: 1,
         })
       })
+
+      function identifySession() {
+        window.GravityCollector.identifySession('href', window.location.href)
+      }
     </script>
     <body>
       <a class="simple-link">A simple link which does nothing</a>
+      <a class="identify-link" onclick="identifySession()">A link to identify the session</a>
+
       <a class="go-to-app" href="http://app.my-site.com:3000">Go to application</a>
       <a class="go-to-another-site" href="http://auth.another-site.com:3000">Go to other site</a>
     </body>

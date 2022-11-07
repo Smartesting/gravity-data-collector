@@ -35,3 +35,76 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('interceptGravityPublish', () => {
+  return cy.intercept(
+    {
+      method: 'POST',
+      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/publish`,
+    },
+    {
+      statusCode: 200,
+      body: { error: null },
+    }
+  ).as('sendGravityRequest')
+})
+
+Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void ) => {
+  cy.intercept(
+    {
+      method: 'POST',
+      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/identify/*`
+    },
+    (req) => {
+      onReq(req)
+      req.reply({
+        statusCode: 200,
+        body: { error: null },
+      })
+    }
+  ).as('sendGravityIdentify')
+})
+
+Cypress.Commands.add('openBaseSite', () => {
+  return cy.visit('http://my-site.com:3000/')
+})
+
+Cypress.Commands.add('identifySession', () => {
+  return cy.get('a.identify-link').click()
+})
+
+Cypress.Commands.add('goToApp', () => {
+  cy.get('a.go-to-app').click()
+  return cy.url().should('eq', 'http://app.my-site.com:3000/')
+})
+
+Cypress.Commands.add('goToOtherSite', () => {
+  cy.get('a.go-to-another-site').click()
+  return cy.url().should('eq', 'http://auth.another-site.com:3000/')
+})
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Intercepts publish requests to Gravity
+       * @example cy.interceptGravityPublish()
+       */
+       interceptGravityPublish(): Chainable
+
+       interceptGravityIdentify(onReq: (req: any) => void): Chainable
+
+       openBaseSite(): Chainable
+
+       identifySession(): Chainable
+
+       goToApp(): Chainable
+
+       goToOtherSite(): Chainable
+    }
+  }
+}
+
+// We can not declare global without having an export, so why not a function
+// which logs plop ?
+export default function plop() { console.log ('plop')}
