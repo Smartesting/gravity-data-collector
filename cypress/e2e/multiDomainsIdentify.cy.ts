@@ -3,27 +3,6 @@ describe('Handling sessions identification on multi-domain', () => {
     cy.clearCookies()
   })
 
-  it('uses the same session ID on a sub-domains', () => {
-    const requests: {sessionId: string, href: string}[] = []
-
-    cy.interceptGravityPublish()
-    cy.interceptGravityIdentify((req) => {
-      requests.push(extractSessionIdAndHref(req))
-    })
-
-    cy.openBaseSite()
-    cy.identifySession()
-    cy.goToApp()
-    cy.identifySession()
-
-    cy.wait('@sendGravityIdentify').then(() => {
-      expect(requests.length).to.eq(2)
-
-      const sessionIds = requests.map(request => request.sessionId)
-      expect(sessionIds[0]).to.eq(sessionIds[1])
-    })
-  })
-
   it('uses another sessions ID when navigating to another domain', () => {
     const requests: {sessionId: string, href: string}[] = []
 
