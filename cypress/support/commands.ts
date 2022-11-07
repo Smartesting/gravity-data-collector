@@ -73,6 +73,10 @@ Cypress.Commands.add('identifySession', () => {
   return cy.get('a.identify-link').click()
 })
 
+Cypress.Commands.add('publishUserEvent', () => {
+  return cy.get('a.simple-link').click()
+})
+
 Cypress.Commands.add('goToApp', () => {
   cy.get('a.go-to-app').click()
   return cy.url().should('eq', 'http://app.my-site.com:3000/')
@@ -97,6 +101,8 @@ declare global {
        openBaseSite(): Chainable
 
        identifySession(): Chainable
+
+       publishUserEvent(): Chainable
 
        goToApp(): Chainable
 
