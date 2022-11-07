@@ -20,6 +20,8 @@ describe('Handling sessions on multi-domain', () => {
     ).as('sendGravityRequest')
 
     cy.visit('http://my-site.com:3000/')
+    cy.get('button.activate-logger').click()
+
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       mySiteSessionId = interception.request.body[0].sessionId
@@ -27,6 +29,7 @@ describe('Handling sessions on multi-domain', () => {
 
     cy.get('a.go-to-app').click()
     cy.url().should('eq', 'http://app.my-site.com:3000/')
+    cy.get('button.activate-logger').click()
 
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
@@ -50,6 +53,7 @@ describe('Handling sessions on multi-domain', () => {
     ).as('sendGravityRequest')
 
     cy.visit('http://my-site.com:3000/')
+    cy.get('button.activate-logger').click()
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       mySiteSessionId = interception.request.body[0].sessionId
@@ -58,6 +62,7 @@ describe('Handling sessions on multi-domain', () => {
     cy.get('a.go-to-another-site').click()
     cy.url().should('eq', 'http://auth.another-site.com:3000/')
 
+    cy.get('button.activate-logger').click()
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       const sessionId = interception.request.body[0].sessionId
@@ -80,6 +85,7 @@ describe('Handling sessions on multi-domain', () => {
     ).as('sendGravityRequest')
 
     cy.visit('http://my-site.com:3000/')
+    cy.get('button.activate-logger').click()
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       mySiteSessionId = interception.request.body[0].sessionId
@@ -88,6 +94,7 @@ describe('Handling sessions on multi-domain', () => {
     cy.get('a.go-to-another-site').click()
     cy.url().should('eq', 'http://auth.another-site.com:3000/')
 
+    cy.get('button.activate-logger').click()
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       const sessionId = interception.request.body[0].sessionId
@@ -97,6 +104,7 @@ describe('Handling sessions on multi-domain', () => {
     cy.get('a.go-to-app').click()
     cy.url().should('eq', 'http://app.my-site.com:3000/')
 
+    cy.get('button.activate-logger').click()
     cy.get('a.simple-link').click()
     cy.wait('@sendGravityRequest').then((interception) => {
       const sessionId = interception.request.body[0].sessionId
