@@ -6,18 +6,16 @@ describe('Handling sessions on multi-domain', () => {
   })
 
   it('uses the same session ID on a sub-domains', () => {
-    ;-cy
-      .intercept(
-        {
-          method: 'POST',
-          url: `https://gravityserverstaging.herokuapp.com/api/tracking/${collectionAuthKey}/publish`,
-        },
-        {
-          statusCode: 200,
-          body: { error: null },
-        },
-      )
-      .as('sendGravityRequest')
+    cy.intercept(
+      {
+        method: 'POST',
+        url: `https://gravityserverstaging.herokuapp.com/api/tracking/${collectionAuthKey}/publish`,
+      },
+      {
+        statusCode: 200,
+        body: { error: null },
+      },
+    ).as('sendGravityRequest')
 
     cy.visit('http://my-site.com:3000/')
     cy.wait('@sendGravityRequest').then((interception) => {
