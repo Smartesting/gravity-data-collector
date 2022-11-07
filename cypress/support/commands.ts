@@ -37,23 +37,25 @@
 // }
 
 Cypress.Commands.add('interceptGravityPublish', () => {
-  return cy.intercept(
-    {
-      method: 'POST',
-      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/publish`,
-    },
-    {
-      statusCode: 200,
-      body: { error: null },
-    }
-  ).as('sendGravityRequest')
+  return cy
+    .intercept(
+      {
+        method: 'POST',
+        url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/publish`,
+      },
+      {
+        statusCode: 200,
+        body: { error: null },
+      },
+    )
+    .as('sendGravityRequest')
 })
 
-Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void ) => {
+Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => {
   cy.intercept(
     {
       method: 'POST',
-      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/identify/*`
+      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/identify/*`,
     },
     (req) => {
       onReq(req)
@@ -61,7 +63,7 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void ) =>
         statusCode: 200,
         body: { error: null },
       })
-    }
+    },
   ).as('sendGravityIdentify')
 })
 
@@ -94,23 +96,25 @@ declare global {
        * Intercepts publish requests to Gravity
        * @example cy.interceptGravityPublish()
        */
-       interceptGravityPublish(): Chainable
+      interceptGravityPublish(): Chainable
 
-       interceptGravityIdentify(onReq: (req: any) => void): Chainable
+      interceptGravityIdentify(onReq: (req: any) => void): Chainable
 
-       openBaseSite(): Chainable
+      openBaseSite(): Chainable
 
-       identifySession(): Chainable
+      identifySession(): Chainable
 
-       publishUserEvent(): Chainable
+      publishUserEvent(): Chainable
 
-       goToApp(): Chainable
+      goToApp(): Chainable
 
-       goToOtherSite(): Chainable
+      goToOtherSite(): Chainable
     }
   }
 }
 
 // We can not declare global without having an export, so why not a function
 // which logs plop ?
-export default function plop() { console.log ('plop')}
+export default function plop() {
+  console.log('plop')
+}

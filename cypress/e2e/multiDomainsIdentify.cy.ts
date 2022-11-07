@@ -4,7 +4,7 @@ describe('Handling sessions identification on multi-domain', () => {
   })
 
   it('uses another sessions ID when navigating to another domain', () => {
-    const requests: {sessionId: string, href: string}[] = []
+    const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
     cy.interceptGravityIdentify((req) => {
@@ -20,14 +20,14 @@ describe('Handling sessions identification on multi-domain', () => {
       cy.wait('@sendGravityIdentify').then(() => {
         expect(requests.length).to.eq(2)
 
-        const sessionIds = requests.map(request => request.sessionId)
+        const sessionIds = requests.map((request) => request.sessionId)
         expect(sessionIds[0]).not.to.eq(sessionIds[1])
       })
     })
   })
 
   it('finds back the original session ID when coming back to the source site', () => {
-    const requests: {sessionId: string, href: string}[] = []
+    const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
     cy.interceptGravityIdentify((req) => {
@@ -47,7 +47,7 @@ describe('Handling sessions identification on multi-domain', () => {
         cy.wait('@sendGravityIdentify').then(() => {
           expect(requests.length).to.eq(3)
 
-          const sessionIds = requests.map(request => request.sessionId)
+          const sessionIds = requests.map((request) => request.sessionId)
           expect(sessionIds[0]).to.eq(sessionIds[2])
           expect(sessionIds[0]).not.to.eq(sessionIds[1])
         })
@@ -57,9 +57,9 @@ describe('Handling sessions identification on multi-domain', () => {
 })
 
 function extractSessionIdAndHref(req: any) {
-  const {url, body} = req
+  const { url, body } = req
   const urlSegments = url.split('/')
   const sessionId = urlSegments.pop()!
 
-  return {sessionId, href: body.href}
+  return { sessionId, href: body.href }
 }
