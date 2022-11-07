@@ -13,14 +13,16 @@ describe('Handling sessions identification on multi-domain', () => {
 
     cy.openBaseSite()
     cy.identifySession()
-    cy.goToOtherSite()
-    cy.identifySession()
-
     cy.wait('@sendGravityIdentify').then(() => {
-      expect(requests.length).to.eq(2)
+      cy.goToOtherSite()
+      cy.identifySession()
 
-      const sessionIds = requests.map(request => request.sessionId)
-      expect(sessionIds[0]).not.to.eq(sessionIds[1])
+      cy.wait('@sendGravityIdentify').then(() => {
+        expect(requests.length).to.eq(2)
+
+        const sessionIds = requests.map(request => request.sessionId)
+        expect(sessionIds[0]).not.to.eq(sessionIds[1])
+      })
     })
   })
 
@@ -34,19 +36,23 @@ describe('Handling sessions identification on multi-domain', () => {
 
     cy.openBaseSite()
     cy.identifySession()
-    cy.goToOtherSite()
-    cy.identifySession()
-    cy.goToApp()
-    cy.identifySession()
-
     cy.wait('@sendGravityIdentify').then(() => {
-      expect(requests.length).to.eq(3)
+      cy.goToOtherSite()
+      cy.identifySession()
 
-      const sessionIds = requests.map(request => request.sessionId)
-      expect(sessionIds[0]).to.eq(sessionIds[2])
-      expect(sessionIds[0]).not.to.eq(sessionIds[1])
+      cy.wait('@sendGravityIdentify').then(() => {
+        cy.goToApp()
+        cy.identifySession()
+
+        cy.wait('@sendGravityIdentify').then(() => {
+          expect(requests.length).to.eq(3)
+
+          const sessionIds = requests.map(request => request.sessionId)
+          expect(sessionIds[0]).to.eq(sessionIds[2])
+          expect(sessionIds[0]).not.to.eq(sessionIds[1])
+        })
+      })
     })
-
   })
 })
 
