@@ -13,8 +13,6 @@ describe('Handling sessions on multi-domain', () => {
 
       cy.goToApp()
       cy.wait('@sendGravityRequest').then((_) => {
-        cy.url().should('eq', 'http://app.my-site.com:3000/')
-
         cy.publishUserEvent()
         cy.wait('@sendGravityRequest').then((interception2) => {
           expect(interception2.request.body[0].sessionId).to.eq(mySiteSessionId)
@@ -31,8 +29,6 @@ describe('Handling sessions on multi-domain', () => {
 
       cy.get('a.go-to-another-site').click()
       cy.wait('@sendGravityRequest').then((_) => {
-        cy.url().should('eq', 'http://auth.another-site.com:3000/')
-
         cy.wait('@sendGravityRequest').then((interception2) => {
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
         })
@@ -48,15 +44,10 @@ describe('Handling sessions on multi-domain', () => {
 
       cy.get('a.go-to-another-site').click()
       cy.wait('@sendGravityRequest').then((_) => {
-        cy.url().should('eq', 'http://auth.another-site.com:3000/')
-
         cy.wait('@sendGravityRequest').then((interception2) => {
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
-
           cy.goToApp()
           cy.wait('@sendGravityRequest').then((_) => {
-            cy.url().should('eq', 'http://app.my-site.com:3000/')
-
             cy.publishUserEvent()
             cy.wait('@sendGravityRequest').then((interception3) => {
               expect(interception3.request.body[0].sessionId).to.eq(mySiteSessionId)
