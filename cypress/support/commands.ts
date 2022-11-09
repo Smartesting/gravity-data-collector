@@ -67,8 +67,8 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => 
   ).as('sendGravityIdentify')
 })
 
-Cypress.Commands.add('openBaseSite', () => {
-  return cy.visit('http://my-site.com:3000/')
+Cypress.Commands.add('openBaseSite', (path?: string) => {
+  return cy.visit(`http://my-site.com:3000/${path ?? ''}`)
 })
 
 Cypress.Commands.add('identifySession', () => {
@@ -82,6 +82,11 @@ Cypress.Commands.add('publishUserEvent', () => {
 Cypress.Commands.add('goToApp', () => {
   cy.get('a.go-to-app').click()
   return cy.url().should('eq', 'http://app.my-site.com:3000/')
+})
+
+Cypress.Commands.add('goToHome', () => {
+  cy.get('a.go-to-home').click()
+  return cy.url().should('eq', 'http://my-site.com:3000/')
 })
 
 Cypress.Commands.add('goToOtherSite', () => {
@@ -100,13 +105,15 @@ declare global {
 
       interceptGravityIdentify(onReq: (req: any) => void): Chainable
 
-      openBaseSite(): Chainable
+      openBaseSite(path?: string): Chainable
 
       identifySession(): Chainable
 
       publishUserEvent(): Chainable
 
       goToApp(): Chainable
+
+      goToHome(): Chainable
 
       goToOtherSite(): Chainable
     }

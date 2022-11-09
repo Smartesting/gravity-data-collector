@@ -24,7 +24,7 @@ export default class CookieSessionIdHandler extends BaseSessionIdHandler impleme
   }
 
   private setCookie(key: string, value: string) {
-    let cookie = `${key}=${value}`
+    let cookie = `${key}=${value}; path=/`
     const parsedDomain = psl.parse(document.location.hostname)
     if (isParsedDomain(parsedDomain) && parsedDomain.domain !== null) {
       const domain: string = parsedDomain.domain

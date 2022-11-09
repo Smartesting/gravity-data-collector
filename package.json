@@ -12,7 +12,7 @@
     "lint": "eslint --ext ts --max-warnings 0 src",
     "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
     "test": "vitest",
-    "start-e2e-test-site": "npm run build-sandbox && cp cypress/test-site/index.html dist-sandbox && ./node_modules/.bin/serve dist-sandbox",
+    "start-e2e-test-site": "npm run build && npm run build-sandbox && cp -R cypress/test-site/ dist-sandbox/ && ./node_modules/.bin/serve dist-sandbox",
     "cypress": "cypress open --e2e --browser=electron",
     "cypress-run": "cypress run",
     "coverage": "vitest run --coverage",

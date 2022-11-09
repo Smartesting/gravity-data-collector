@@ -5,13 +5,29 @@ describe('Handling sessions on multi-domain', () => {
     cy.clearCookies()
   })
 
-  it('uses another sessions ID when navigating to another domain', () => {
+  it('uses the same session ID when navigating through different paths of the same domain', () => {
+    cy.interceptGravityPublish()
+    cy.openBaseSite('contact/')
+    cy.wait('@sendGravityRequest').then((interception) => {
+      const mySiteSessionId = interception.request.body[0].sessionId
+
+      cy.goToHome()
+      cy.publishUserEvent()
+      cy.wait('@sendGravityRequest').then((_) => {
+        cy.wait('@sendGravityRequest').then((interception2) => {
+          expect(interception2.request.body[0].sessionId).to.eq(mySiteSessionId)
+        })
+      })
+    })
+  })
+
+  it('uses another session ID when navigating to another domain', () => {
     cy.interceptGravityPublish()
     cy.openBaseSite()
     cy.wait('@sendGravityRequest').then((interception) => {
       const mySiteSessionId = interception.request.body[0].sessionId
 
-      cy.get('a.go-to-another-site').click()
+      cy.goToOtherSite()
       cy.wait('@sendGravityRequest').then((_) => {
         cy.wait('@sendGravityRequest').then((interception2) => {
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
@@ -26,7 +42,7 @@ describe('Handling sessions on multi-domain', () => {
     cy.wait('@sendGravityRequest').then((interception) => {
       const mySiteSessionId = interception.request.body[0].sessionId
 
-      cy.get('a.go-to-another-site').click()
+      cy.goToOtherSite()
       cy.wait('@sendGravityRequest').then((_) => {
         cy.wait('@sendGravityRequest').then((interception2) => {
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
