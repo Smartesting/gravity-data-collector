@@ -5,17 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.1...main)
+
+### Info
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
 ## [3.1.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.0...v3.1.1)
 
 ### Fixed
 
-- Session cookies are now saved at the `root` of the website. This prevents some bugs due to a change of session id between two different pathnames
+- Session cookies are now saved at the `root` of the website. This prevents some bugs due to a change of session id
+  between two different pathnames
 
 ## [3.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.0.0...v3.1.0)
 
 ### Added
 
-- New storage for session identifiers: `session cookies`. This ensures that the same session is maintained when browsing different subdomains of a superdomain
+- New storage for session identifiers: `session cookies`. This ensures that the same session is maintained when browsing
+  different subdomains of a superdomain
 - A session now expires after `30 minutes` without user action
 
 ## [3.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v2.2.0...v3.0.0)
