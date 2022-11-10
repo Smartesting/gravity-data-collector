@@ -33,8 +33,6 @@ jobs:
         with:
           browser: chrome
           start: npm run start-e2e-test-site
-      - run: npm run lint
-      - run: ./node_modules/.bin/prettier --check .
       - name: Store Cypress videos
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
@@ -42,3 +40,6 @@ jobs:
           name: cypress-videos
           path: |
             cypress/videos/
+      - run: npm run lint
+      - run: ./node_modules/.bin/prettier --check .
+
