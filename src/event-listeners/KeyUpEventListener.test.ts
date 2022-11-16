@@ -1,19 +1,46 @@
-import { beforeEach, describe, expect, it, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
+import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 
 describe('KeyUpEventListener', () => {
+  let handleSpy: SpyInstance
+  let createTargetedUserActionSpy: SpyInstance
+
   describe('listener', () => {
     const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
     const userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
-    const runSpy = vitest.spyOn(userActionHandler, 'handle')
+    handleSpy = vitest.spyOn(userActionHandler, 'handle')
+    createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
 
     beforeEach(() => {
       vitest.restoreAllMocks()
+    })
+
+    it('it calls createTargetedUserAction with the excludeRegex option', async () => {
+      const { element, domWindow } = createElementInJSDOM(
+        `
+            <div>
+                <input id="text-5" type="search" />
+            </div>`,
+        'div',
+      )
+
+      new KeyUpEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
+
+      const search = await waitFor(() => getByRole(element, 'searchbox'))
+
+      fireEvent.keyUp(search)
+
+      await waitFor(() => {}, { timeout: 500 })
+
+      await waitFor(() => {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), /.*/)
+      })
     })
 
     it('calls handler when space key up event been fired', async () => {
@@ -26,12 +53,12 @@ describe('KeyUpEventListener', () => {
       )
 
       new KeyUpEventListener(userActionHandler, domWindow).init()
-      const button = await waitFor(() => getByRole(element, 'checkbox'))
+      const checkbox = await waitFor(() => getByRole(element, 'checkbox'))
 
-      fireEvent.keyUp(button, { code: 'Space' })
+      fireEvent.keyUp(checkbox, { code: 'Space' })
 
       await waitFor(() => {
-        expect(runSpy).toHaveBeenCalledOnce()
+        expect(handleSpy).toHaveBeenCalledOnce()
       })
     })
 
@@ -50,7 +77,7 @@ describe('KeyUpEventListener', () => {
       fireEvent.keyUp(div)
 
       await waitFor(() => {
-        expect(runSpy).toHaveBeenCalledOnce()
+        expect(handleSpy).toHaveBeenCalledOnce()
       })
     })
 
@@ -78,7 +105,7 @@ describe('KeyUpEventListener', () => {
       await waitFor(() => {}, { timeout: 500 })
 
       await waitFor(() => {
-        expect(runSpy).toHaveBeenCalledTimes(0)
+        expect(handleSpy).toHaveBeenCalledTimes(0)
       })
     })
 
@@ -117,7 +144,7 @@ describe('KeyUpEventListener', () => {
         fireEvent.keyUp(search, { code })
 
         await waitFor(() => {
-          expect(runSpy).toHaveBeenCalledTimes(3)
+          expect(handleSpy).toHaveBeenCalledTimes(3)
         })
       }
     })

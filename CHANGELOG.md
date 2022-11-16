@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- New option `excludeRegex`: regular expression to define ID and class names to ignore in selector computation.
+
 ### Changed
 
 ### Deprecated

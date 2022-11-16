@@ -95,6 +95,7 @@ export interface CollectorOptions {
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
+  excludeRegex: RegExp | null
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 

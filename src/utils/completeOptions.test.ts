@@ -21,6 +21,7 @@ describe('completeOptions', () => {
         debug: true,
         maxDelay: 500,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        excludeRegex: null,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -36,6 +37,7 @@ describe('completeOptions', () => {
         debug: true,
         maxDelay: 15,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        excludeRegex: null,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -58,6 +60,7 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          excludeRegex: null,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -74,6 +77,7 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          excludeRegex: null,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -90,6 +94,24 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
+          excludeRegex: null,
+        }
+        expect(completed).toStrictEqual(expected)
+      })
+
+      it('does not override user input for excludeRegex', () => {
+        const completed = completeOptions({
+          debug: false,
+          authKey: '123-456-789',
+          excludeRegex: /^#my-id-.*$/,
+        })
+        const expected: CollectorOptions = {
+          authKey: '123-456-789',
+          requestInterval: 5000,
+          debug: false,
+          maxDelay: 0,
+          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          excludeRegex: /^#my-id-.*$/,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -106,6 +128,7 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
+          excludeRegex: null,
         }
         expect(completed).toStrictEqual(expected)
       })

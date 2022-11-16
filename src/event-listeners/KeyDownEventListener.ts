@@ -1,21 +1,22 @@
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
-import EventListener from '../event-listeners/EventListener'
 import { KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
 import UserActionHandler from '../user-action/UserActionHandler'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
+import TargetedEventListener, { TargetedEventListenerOptions } from './TargetedEventListener'
 
-class KeyDownEventListener extends EventListener {
+class KeyDownEventListener extends TargetedEventListener {
   constructor(
     userActionHandler: UserActionHandler,
     window: Window,
     private readonly userActionHistory: UserActionsHistory,
+    options: TargetedEventListenerOptions = {},
   ) {
-    super(userActionHandler, UserActionType.KeyDown, window)
+    super(userActionHandler, UserActionType.KeyDown, window, options)
   }
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(event, this.userActionType)
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options.excludeRegex)
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
 
     if (isKeyAllowedByKeyListeners(event.code)) {

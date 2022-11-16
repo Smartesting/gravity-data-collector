@@ -3,16 +3,18 @@ import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
+import KeyDownEventListener from './KeyDownEventListener'
+import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 
 describe('KeyDownEventListener', () => {
   describe('listener', () => {
     let userActionHistory: UserActionsHistory
     let userActionHandler: UserActionHandler
     let handleSpy: SpyInstance
+    let createTargetedUserActionSpy: SpyInstance
 
     beforeEach(() => {
       vitest.restoreAllMocks()
@@ -20,6 +22,29 @@ describe('KeyDownEventListener', () => {
       const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
       userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
+      createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
+    })
+
+    it('it calls createTargetedUserAction with the excludeRegex option', async () => {
+      const { element, domWindow } = createElementInJSDOM(
+        `
+            <div>
+                <input id="text-5" type="search" />
+            </div>`,
+        'div',
+      )
+
+      new KeyDownEventListener(userActionHandler, domWindow, userActionHistory, { excludeRegex: /.*/ }).init()
+
+      const search = await waitFor(() => getByRole(element, 'searchbox'))
+
+      fireEvent.keyDown(search)
+
+      await waitFor(() => {}, { timeout: 500 })
+
+      await waitFor(() => {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), /.*/)
+      })
     })
 
     it('calls handler when key down event been fired', async () => {

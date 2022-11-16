@@ -1,4 +1,4 @@
-import unique from '@cypress/unique-selector'
+import unique from 'unique-selector'
 import {
   ClickUserActionData,
   KeyUserActionData,
@@ -17,6 +17,7 @@ import getDocument from '../utils/getDocument'
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
+  excludeRegex: RegExp | null = null,
   document: Document = getDocument(),
 ): TargetedUserAction | null {
   const target = event.target as HTMLElement
@@ -24,7 +25,7 @@ export function createTargetedUserAction(
 
   const userAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, document),
+    target: createActionTarget(target, excludeRegex, document),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -75,7 +76,11 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement, document: Document = getDocument()): UserActionTarget {
+function createActionTarget(
+  target: HTMLElement,
+  excludeRegex: RegExp | null = null,
+  document: Document = getDocument(),
+): UserActionTarget {
   const actionTarget: UserActionTarget = {
     element: target.tagName.toLocaleLowerCase(),
   }
@@ -88,7 +93,7 @@ function createActionTarget(target: HTMLElement, document: Document = getDocumen
   }
 
   try {
-    actionTarget.selector = unique(target)
+    actionTarget.selector = unique(target, { excludeRegex })
   } catch {
     // ignore
   }
