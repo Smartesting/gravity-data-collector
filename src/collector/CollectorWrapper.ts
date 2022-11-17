@@ -17,7 +17,7 @@ import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
-import { TargetedEventListenerOptions } from '../event-listeners/TargetedEventListener'
+import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -71,8 +71,9 @@ class CollectorWrapper {
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
-    const targetedEventListenerOptions: TargetedEventListenerOptions = {
+    const targetedEventListenerOptions: TargetEventListenerOptions = {
       excludeRegex: options.excludeRegex,
+      customSelector: options.customSelector,
     }
 
     this.eventListenerHandler = new EventListenersHandler([

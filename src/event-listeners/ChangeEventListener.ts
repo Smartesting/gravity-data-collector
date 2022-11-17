@@ -2,10 +2,10 @@ import UserActionHandler from '../user-action/UserActionHandler'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { HTMLInputWithValue, TargetedUserAction, UserActionType } from '../types'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
-import TargetedEventListener, { TargetedEventListenerOptions } from './TargetedEventListener'
+import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
 
 class ChangeEventListener extends TargetedEventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window, options: TargetedEventListenerOptions = {}) {
+  constructor(userActionHandler: UserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
     super(userActionHandler, UserActionType.Change, window, options)
   }
 
@@ -15,6 +15,7 @@ class ChangeEventListener extends TargetedEventListener {
       event,
       this.userActionType,
       this.options.excludeRegex,
+      this.options.customSelector,
     )
     if (userAction != null) {
       userAction.target.value = sanitizeHTMLElementValue(elementTarget)

@@ -96,6 +96,7 @@ export interface CollectorOptions {
   debug: boolean
   maxDelay: number
   excludeRegex: RegExp | null
+  customSelector?: string
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 

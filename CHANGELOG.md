@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - New option `excludeRegex`: regular expression to define ID and class names to ignore in selector computation.
+- New option `customSelector`: string indicates the attribute to use as a selector if defined on an HTML element targeted by a user action.
 
 ### Changed
 

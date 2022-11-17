@@ -2,15 +2,20 @@ import UserActionHandler from '../user-action/UserActionHandler'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
-import TargetedEventListener, { TargetedEventListenerOptions } from './TargetedEventListener'
+import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
 
 class KeyUpEventListener extends TargetedEventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window, options: TargetedEventListenerOptions = {}) {
+  constructor(userActionHandler: UserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
     super(userActionHandler, UserActionType.KeyUp, window, options)
   }
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options.excludeRegex)
+    const userAction = createTargetedUserAction(
+      event,
+      this.userActionType,
+      this.options.excludeRegex,
+      this.options.customSelector,
+    )
     if (userAction === null) return
     if (isKeyAllowedByKeyListeners(event.code)) {
       return this.userActionHandler.handle(userAction)

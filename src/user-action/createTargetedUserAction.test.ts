@@ -111,10 +111,28 @@ describe('createTargetedUserAction', () => {
         mockClick(element, 0, 0),
         UserActionType.Click,
         /^#id-input-.*$/,
+        undefined,
         domWindow.document,
       )
 
       expect(action?.target?.selector).toEqual('.size-lg')
+    })
+
+    it('returns custom selector if it is defined', () => {
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
+        'input',
+      )
+
+      const action = createTargetedUserAction(
+        mockClick(element, 0, 0),
+        UserActionType.Click,
+        null,
+        'data-testid',
+        domWindow.document,
+      )
+
+      expect(action?.target?.selector).toEqual('[data-testid=userName]')
     })
 
     it('returns class selector if ID is unavailable', () => {

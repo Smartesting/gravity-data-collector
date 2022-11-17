@@ -18,6 +18,7 @@ export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
   excludeRegex: RegExp | null = null,
+  customSelector?: string,
   document: Document = getDocument(),
 ): TargetedUserAction | null {
   const target = event.target as HTMLElement
@@ -25,7 +26,7 @@ export function createTargetedUserAction(
 
   const userAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, excludeRegex, document),
+    target: createActionTarget(target, excludeRegex, customSelector, document),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -79,6 +80,7 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
 function createActionTarget(
   target: HTMLElement,
   excludeRegex: RegExp | null = null,
+  customSelector?: string,
   document: Document = getDocument(),
 ): UserActionTarget {
   const actionTarget: UserActionTarget = {
@@ -92,10 +94,17 @@ function createActionTarget(
     actionTarget.value = (target as HTMLInputElement).checked.toString()
   }
 
-  try {
-    actionTarget.selector = unique(target, { excludeRegex })
-  } catch {
-    // ignore
+  const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
+
+  if (customSelectorAttribute !== null) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    actionTarget.selector = `[${customSelector}=${customSelectorAttribute}]`
+  } else {
+    try {
+      actionTarget.selector = unique(target, { excludeRegex })
+    } catch {
+      // ignore
+    }
   }
 
   const displayInfo = createTargetDisplayInfo(target, document)

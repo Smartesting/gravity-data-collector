@@ -8,17 +8,18 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 
 describe('KeyUpEventListener', () => {
+  let sessionIdHandler: MemorySessionIdHandler
+  let userActionHandler: UserActionHandler
   let handleSpy: SpyInstance
   let createTargetedUserActionSpy: SpyInstance
 
   describe('listener', () => {
-    const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    const userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
-    handleSpy = vitest.spyOn(userActionHandler, 'handle')
-    createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
-
     beforeEach(() => {
       vitest.restoreAllMocks()
+      sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+      userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
+      handleSpy = vitest.spyOn(userActionHandler, 'handle')
+      createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
     })
 
     it('it calls createTargetedUserAction with the excludeRegex option', async () => {
@@ -31,15 +32,36 @@ describe('KeyUpEventListener', () => {
       )
 
       new KeyUpEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
-
       const search = await waitFor(() => getByRole(element, 'searchbox'))
 
       fireEvent.keyUp(search)
 
-      await waitFor(() => {}, { timeout: 500 })
+      await waitFor(() => {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keyup'), 'keyup', /.*/, undefined)
+      })
+    })
+
+    it('it calls createTargetedUserAction with the customSelector option', async () => {
+      const { element, domWindow } = createElementInJSDOM(
+        `
+            <div>
+                <input id="text-5" type="search" />
+            </div>`,
+        'div',
+      )
+
+      new KeyUpEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
+      const search = await waitFor(() => getByRole(element, 'searchbox'))
+
+      fireEvent.keyUp(search)
 
       await waitFor(() => {
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(expect.anything(), expect.anything(), /.*/)
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new KeyboardEvent('keyup'),
+          'keyup',
+          undefined,
+          'data-testid',
+        )
       })
     })
 
