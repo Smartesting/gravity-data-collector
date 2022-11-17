@@ -76,9 +76,60 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 ## Features
 
+### Work with selectors
+
+In the Gravity Data Collector, when a user action targets an HTML element, a selector is computed in order to 1) obtain
+the coverage of a usage in Gravity, and 2) to replay the session as a Cypress test.
+
+The collector use the following priority to compute a unique selector:
+
+1. A specific attribute if a custom selector is specified at the collector initialization (
+   e.g., `[my-custom-data=register-button]`)
+2. The ID attribute of the element if it's unique on the page (e.g., `#register-button`)
+3. The class attribute of the element if it's unique on the page (e.g., `.cls-btn-register`)
+4. Full path CSS selector (e.g., `:nth-child(3) > div > button`)
+
+#### Use custom selectors
+
+If an application uses dynamic elements' IDs, it may be necessarily to use custom selectors to identify properly each
+element. By using the `customSelector` option:
+
+```typescript
+GravityCollector.init({ customSelector: 'data-testid' })
+```
+
+If an element defines the `data-testid` attribute, it will be used to compute the selector of the element. For instance,
+a click on the following button:
+
+```html
+<button id="#button-1" data-testid="register-button">Register</button>
+```
+
+Will produces the selector `[data-testid=register-button]`, without the `customSelector` option, the selector would
+be `#button-1`
+
+#### Exclude ID or class from selector
+
+By their changeable nature, dynamic HTML IDs can be irrelevant to compute usage coverage or to turn a session into an
+executable test. It is possible to exclude an ID or a class pattern from the selector computation. By using
+the `excludeRegex` option:
+
+```typescript
+GravityCollector.init({ excludeRegex: /^#button-.*$/ })
+```
+
+A click on the following button:
+
+```html
+<button id="#button-1" class=".button-register">Register</button>
+```
+
+Will produces the selector `.button-register` if the class attribute is unique on the page. Note that it's also possible
+to exclude class from the selector calculation by using the regex `/^.button-.*$/`
+
 ### Identify sessions with _traits_
 
-A sessions trait allows you to add context to the collected sessions so you can easily segment them in Gravity.
+A sessions trait allows you to add context to the collected sessions, so you can easily segment them in Gravity.
 It is done by calling the `identifySession` method.
 
 For instance, you can identify the sessions of users connected to your app:
