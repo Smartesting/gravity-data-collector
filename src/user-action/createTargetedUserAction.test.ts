@@ -135,6 +135,20 @@ describe('createTargetedUserAction', () => {
       expect(action?.target?.selector).toEqual('[data-testid=userName]')
     })
 
+    it('falls back to classic matching if the custom selector is not available', () => {
+      const { element, domWindow } = createElementInJSDOM('<input type="text" class="size-lg"/>', 'input')
+
+      const action = createTargetedUserAction(
+        mockClick(element, 0, 0),
+        UserActionType.Click,
+        null,
+        'data-testid',
+        domWindow.document,
+      )
+
+      expect(action?.target?.selector).toEqual('.size-lg')
+    })
+
     it('returns class selector if ID is unavailable', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" data-testid="userName" class="size-lg"/>',
