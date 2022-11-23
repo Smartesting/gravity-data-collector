@@ -5,14 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.1...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.2.0...main)
 
 ### Info
 
 ### Added
-
-- New option `excludeRegex`: regular expression to define ID and class names to ignore in selector computation.
-- New option `customSelector`: string indicates the attribute to use as a selector if defined on an HTML element targeted by a user action.
 
 ### Changed
 
@@ -21,6 +18,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.1...v3.2.0)
+
+### Added
+
+- New option `excludeRegex`: regular expression to define ID and class names to ignore in selector computation.
+- New option `customSelector`: string indicates the attribute to use as a selector if defined on an HTML element targeted by a user action.
 
 ## [3.1.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.0...v3.1.1)
 
