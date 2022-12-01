@@ -16,6 +16,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     requestInterval: 5000,
     gravityServerUrl: GRAVITY_SERVER_ADDRESS,
     excludeRegex: null,
+    sessionsPercentageKept: 100,
   }
 
   const debugDefaultOptions = {
@@ -27,6 +28,8 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     ...(debug ? debugDefaultOptions : defaultOptions),
     ...sanitizeOptions(options),
   }
+
+  checkPropertyPercentage(completedOptions, 'sessionsPercentageKept')
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError
@@ -40,4 +43,11 @@ function sanitizeOptions(options: Partial<CollectorOptions>): Partial<CollectorO
     sanitized.gravityServerUrl = options.gravityServerUrl.replace(/\/$/, '')
   }
   return sanitized
+}
+
+function checkPropertyPercentage<T extends Object>(options: T, property: string & keyof T) {
+  const percentage = options[property] as unknown as number
+  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+    throw new Error(`option "${property}": ${percentage} is not a valid percentage (should be in range 0..100)`)
+  }
 }

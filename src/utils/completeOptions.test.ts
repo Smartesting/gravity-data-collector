@@ -12,6 +12,18 @@ describe('completeOptions', () => {
     expect(() => completeOptions({})).toThrow('No AuthKey provided')
   })
 
+  it('throws an error when provided an invalid "sessionsPercentageKept"', () => {
+    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: NaN })).toThrow(
+      'option "sessionsPercentageKept": NaN is not a valid percentage (should be in range 0..100)',
+    )
+    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: -1 })).toThrow(
+      'option "sessionsPercentageKept": -1 is not a valid percentage (should be in range 0..100)',
+    )
+    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: 101 })).toThrow(
+      'option "sessionsPercentageKept": 101 is not a valid percentage (should be in range 0..100)',
+    )
+  })
+
   describe('when debug is set to true', () => {
     it('sets maxDelay to 500', () => {
       const completed = completeOptions({ debug: true })
@@ -22,6 +34,7 @@ describe('completeOptions', () => {
         maxDelay: 500,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         excludeRegex: null,
+        sessionsPercentageKept: 100,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -30,6 +43,7 @@ describe('completeOptions', () => {
       const completed = completeOptions({
         debug: true,
         maxDelay: 15,
+        sessionsPercentageKept: 33.3,
       })
       const expected: CollectorOptions = {
         authKey: '',
@@ -38,6 +52,7 @@ describe('completeOptions', () => {
         maxDelay: 15,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         excludeRegex: null,
+        sessionsPercentageKept: 33.3,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -61,6 +76,7 @@ describe('completeOptions', () => {
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: null,
+          sessionsPercentageKept: 100,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -78,6 +94,7 @@ describe('completeOptions', () => {
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: null,
+          sessionsPercentageKept: 100,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -95,6 +112,7 @@ describe('completeOptions', () => {
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
           excludeRegex: null,
+          sessionsPercentageKept: 100,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -112,6 +130,7 @@ describe('completeOptions', () => {
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: /^#my-id-.*$/,
+          sessionsPercentageKept: 100,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -129,6 +148,7 @@ describe('completeOptions', () => {
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
           excludeRegex: null,
+          sessionsPercentageKept: 100,
         }
         expect(completed).toStrictEqual(expected)
       })

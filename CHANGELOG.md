@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- New option `sessionsPercentageKept`: probability (in 0..100) to track the current session _(default is 100)_.
+
 ### Changed
 
 ### Deprecated

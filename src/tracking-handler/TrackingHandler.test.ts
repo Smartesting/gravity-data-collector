@@ -67,4 +67,18 @@ describe('TrackingHandler', () => {
       trackingHandler.deactivateTracking()
     }).toThrowError()
   })
+
+  it('does not track if no active', async () => {
+    expect(trackingHandler.isTracking()).toBeTruthy()
+    trackingHandler.init(eventListenersHandler)
+
+    trackingHandler.setActive(false)
+    expect(trackingHandler.isTracking()).toBeFalsy()
+
+    trackingHandler.activateTracking()
+    expect(trackingHandler.isTracking()).toBeFalsy()
+
+    trackingHandler.setActive(true)
+    expect(trackingHandler.isTracking()).toBeTruthy()
+  })
 })

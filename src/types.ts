@@ -97,6 +97,7 @@ export interface CollectorOptions {
   maxDelay: number
   excludeRegex: RegExp | null
   customSelector?: string
+  sessionsPercentageKept: number
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 

@@ -4,8 +4,13 @@ export const GRAVITY_SESSION_TRACKING_SUSPENDED = 'gravity-session-tracking-susp
 
 export default class TrackingHandler {
   private eventListenerHandler: EventListenersHandler | undefined
+  private active: boolean = true
 
   constructor(private readonly errorTerminateTracking: number[]) {}
+
+  setActive(active: boolean) {
+    this.active = active
+  }
 
   activateTracking(): void {
     if (this.eventListenerHandler === undefined) {
@@ -23,7 +28,7 @@ export default class TrackingHandler {
   }
 
   isTracking(): boolean {
-    return window.sessionStorage.getItem(GRAVITY_SESSION_TRACKING_SUSPENDED) !== '1'
+    return this.active && window.sessionStorage.getItem(GRAVITY_SESSION_TRACKING_SUSPENDED) !== '1'
   }
 
   deactivateTracking(): void {

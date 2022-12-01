@@ -2,8 +2,8 @@
 
 # Gravity Data Collector - README
 
-This repo contains the browser implementation of the Gravity Data Collector.
-Learn more about Gravity [on our website](https://gravity-testing.com)
+This repo contains the browser implementation of the Gravity Data Collector. Learn more about
+Gravity [on our website](https://gravity-testing.com)
 
 ## Setup
 
@@ -63,16 +63,17 @@ GravityCollector.init(/*options*/)
 
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
-| key              | type     | use                                                                                                 | default value                                  |
-| ---------------- | -------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| authKey          | String   | The authentication key provided by Gravity to select the correct collection                         |                                                |
-| requestInterval  | Integer  | Time (in ms) between two sends to Gravity server (buffering)                                        | 5000                                           |
-| gravityServerUrl | String   | Gravity server URL                                                                                  | https://smartestinggravityserver.herokuapp.com |
-| debug            | Boolean  | Logs user action in the console instead of sending them to Gravity                                  | false                                          |
-| maxDelay         | Integer  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action. | 500                                            |
-| excludeRegex     | RegExp   | Regular expression of ID and class names to ignore in selector computation.                         | none                                           |
-| customSelector   | String   | The attribute to use as a selector if defined on an HTML element targeted by a user action.         | none                                           |
-| onPublish        | function | Adds a function called after each publish to the gravity server.                                    | none                                           |
+| key                    | type     | use                                                                                                 | default value                                  |
+| ---------------------- | -------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| authKey                | String   | The authentication key provided by Gravity to select the correct collection                         |                                                |
+| requestInterval        | Integer  | Time (in ms) between two sends to Gravity server (buffering)                                        | 5000                                           |
+| gravityServerUrl       | String   | Gravity server URL                                                                                  | https://smartestinggravityserver.herokuapp.com |
+| debug                  | Boolean  | Logs user action in the console instead of sending them to Gravity                                  | false                                          |
+| maxDelay               | Integer  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action. | 500                                            |
+| excludeRegex           | RegExp   | Regular expression of ID and class names to ignore in selector computation.                         | none                                           |
+| customSelector         | String   | The attribute to use as a selector if defined on an HTML element targeted by a user action.         | none                                           |
+| sessionsPercentageKept | [0..100] | Probability to track the current session                                                            | 100                                            |
+| onPublish              | function | Adds a function called after each publish to the gravity server.                                    | none                                           |
 
 ## Features
 
@@ -129,8 +130,8 @@ to exclude class from the selector calculation by using the regex `/^.button-.*$
 
 ### Identify sessions with _traits_
 
-A sessions trait allows you to add context to the collected sessions, so you can easily segment them in Gravity.
-It is done by calling the `identifySession` method.
+A sessions trait allows you to add context to the collected sessions, so you can easily segment them in Gravity. It is
+done by calling the `identifySession` method.
 
 For instance, you can identify the sessions of users connected to your app:
 
@@ -159,9 +160,7 @@ npm run watch-sandbox
 ```
 
 Finally, open [index.html](sample/index.html) with a browser, display the console (F12 with most browsers) and interact
-with
-the page to see collected user actions.
+with the page to see collected user actions.
 
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by
-your
-developer tool.
+your developer tool.

@@ -1,10 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions } from '../types'
+import { CollectorOptions, SessionTraitValue, UserAction } from '../types'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
@@ -19,11 +19,20 @@ import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 
 describe('CollectorWrapper', () => {
+  let spyOnUserActionHandle: SpyInstance<[UserAction], void>
+  let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
+
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
     mockWindowDocument()
-    vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+    spyOnUserActionHandle = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+    spyOnTraitHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+  })
+
+  afterEach(() => {
+    spyOnUserActionHandle.mockReset()
+    spyOnTraitHandle.mockReset()
   })
 
   describe('constructor', () => {
@@ -41,7 +50,7 @@ describe('CollectorWrapper', () => {
     describe('when debug option is set to true', () => {
       beforeEach(() => {
         // @ts-expect-error
-        options = { debug: true }
+        options = { debug: true, sessionsPercentageKept: 100 }
       })
 
       it('a "sessionStarted" action is sent when initialized', () => {
@@ -49,23 +58,21 @@ describe('CollectorWrapper', () => {
         vi.setSystemTime(Date.parse('2022-05-12'))
 
         const expectedAction = createSessionStartedUserAction()
-        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper()
-        expect(mock).toHaveBeenCalledWith(expectedAction)
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith(expectedAction)
       })
 
       it('does not send "sessionStarted" action if session id exists', () => {
         const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
-        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper(sessionIdHandler)
-        expect(mock).toHaveBeenCalledOnce()
+        expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
         const sessionId = sessionIdHandler.get()
 
         vi.clearAllMocks()
         createCollectorWrapper(sessionIdHandler)
-        expect(mock).not.toHaveBeenCalled()
+        expect(spyOnUserActionHandle).not.toHaveBeenCalled()
         expect(sessionIdHandler.get()).toEqual(sessionId)
       })
 
@@ -142,13 +149,60 @@ describe('CollectorWrapper', () => {
         new SessionStorageTestNameHandler(),
       )
       const mockConsoleWarn = vi.spyOn(global.console, 'warn').mockImplementation(nop)
-      const spyOnHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
       collectorWrapper.identifySession('connected', { badFormat: true } as unknown as string)
       expect(mockConsoleWarn).toHaveBeenCalledWith(
         '[Gravity Data Collector] The following session trait value is not allowed: ',
         { badFormat: true },
       )
-      expect(spyOnHandle).not.toHaveBeenCalled()
+      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('tracking is active for the current session according option "sessionsPercentageKept"', () => {
+    it('should always track if percentage is 100', () => {
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true, sessionsPercentageKept: 100 }),
+        global.window,
+        new MemorySessionIdHandler(uuidv4, 1000),
+        new SessionStorageTestNameHandler(),
+      )
+      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+      collectorWrapper.identifySession('logged', true)
+      expect(spyOnTraitHandle).toHaveBeenCalledOnce()
+    })
+
+    it('should never track if percentage is 0', () => {
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true, sessionsPercentageKept: 0 }),
+        global.window,
+        new MemorySessionIdHandler(uuidv4, 1000),
+        new SessionStorageTestNameHandler(),
+      )
+      expect(spyOnUserActionHandle).not.toHaveBeenCalled()
+      collectorWrapper.identifySession('logged', true)
+      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+    })
+
+    it('should continue tracking if collector is reset while the same session', () => {
+      const memorySessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
+
+      function createCollector(sessionsPercentageKept: number) {
+        return new CollectorWrapper(
+          completeOptions({ debug: true, sessionsPercentageKept }),
+          global.window,
+          memorySessionIdHandler,
+          new SessionStorageTestNameHandler(),
+        )
+      }
+
+      createCollector(100)
+      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+
+      const collectorWrapper = createCollector(0)
+      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+
+      collectorWrapper.identifySession('logged', true)
+      expect(spyOnTraitHandle).toHaveBeenCalledOnce()
     })
   })
 })

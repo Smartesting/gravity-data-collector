@@ -56,6 +56,9 @@ class CollectorWrapper {
     testNameHandler.refresh()
 
     if (isNewSession) {
+      const trackerIsActive = options.sessionsPercentageKept > 100 * Math.random()
+      this.trackingHandler.setActive(trackerIsActive)
+      if (!trackerIsActive) console.warn('The collector is inactive (option "sessionKeptPercentage" is set)')
       sessionIdHandler.generateNewSessionId()
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
@@ -99,7 +102,7 @@ class CollectorWrapper {
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {
-    return this.userActionHandler.handle(sessionStartedUserAction)
+    if (this.trackingHandler.isTracking()) this.userActionHandler.handle(sessionStartedUserAction)
   }
 }
 
