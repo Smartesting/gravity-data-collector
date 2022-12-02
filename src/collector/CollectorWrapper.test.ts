@@ -227,7 +227,7 @@ describe('CollectorWrapper', () => {
         countCollectedSessions = spyOnUserActionHandle.mock.calls.length
         const percentage = (100 * countCollectedSessions) / i
         if (i >= 100) {
-          //console.log(countCollectedSessions, i, percentage)
+          // console.log(countCollectedSessions, i, percentage)
           if (isApproximation(percentage, sessionsPercentageKept, 1)) {
             assert(true)
             return
