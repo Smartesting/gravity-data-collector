@@ -56,7 +56,7 @@ class CollectorWrapper {
     testNameHandler.refresh()
 
     if (isNewSession) {
-      this.trackingHandler.setActive(options.sessionsPercentageKept > 100 * Math.random())
+      this.trackingHandler.setActive(keepSession(options))
       sessionIdHandler.generateNewSessionId()
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
@@ -105,3 +105,9 @@ class CollectorWrapper {
 }
 
 export default CollectorWrapper
+
+function keepSession(options: CollectorOptions): boolean {
+  const keepSession = options.sessionsPercentageKept >= 100 * Math.random()
+  const rejectSession = options.rejectSession()
+  return keepSession && !rejectSession
+}

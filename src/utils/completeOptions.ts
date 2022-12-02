@@ -1,6 +1,8 @@
 import { CollectorOptions } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
+export const DEFAULT_SESSION_REJECTION = () => false
+
 export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
   const authKeyError = new Error('No AuthKey provided')
   if (options == null) {
@@ -17,6 +19,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     gravityServerUrl: GRAVITY_SERVER_ADDRESS,
     excludeRegex: null,
     sessionsPercentageKept: 100,
+    rejectSession: DEFAULT_SESSION_REJECTION,
   }
 
   const debugDefaultOptions = {

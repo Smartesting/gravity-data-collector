@@ -98,6 +98,7 @@ export interface CollectorOptions {
   excludeRegex: RegExp | null
   customSelector?: string
   sessionsPercentageKept: number
+  rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 

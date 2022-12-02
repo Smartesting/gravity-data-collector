@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { CollectorOptions } from '../types'
-import completeOptions from './completeOptions'
+import completeOptions, { DEFAULT_SESSION_REJECTION } from './completeOptions'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 describe('completeOptions', () => {
@@ -35,15 +35,18 @@ describe('completeOptions', () => {
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         excludeRegex: null,
         sessionsPercentageKept: 100,
+        rejectSession: DEFAULT_SESSION_REJECTION,
       }
       expect(completed).toStrictEqual(expected)
     })
 
     it('keeps values provided by the user', () => {
+      const customSessionRejection = () => true
       const completed = completeOptions({
         debug: true,
         maxDelay: 15,
         sessionsPercentageKept: 33.3,
+        rejectSession: customSessionRejection,
       })
       const expected: CollectorOptions = {
         authKey: '',
@@ -53,6 +56,7 @@ describe('completeOptions', () => {
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         excludeRegex: null,
         sessionsPercentageKept: 33.3,
+        rejectSession: customSessionRejection,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -77,6 +81,7 @@ describe('completeOptions', () => {
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: null,
           sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -95,6 +100,7 @@ describe('completeOptions', () => {
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: null,
           sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -113,6 +119,7 @@ describe('completeOptions', () => {
           gravityServerUrl: 'http://localhost:3000',
           excludeRegex: null,
           sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -131,6 +138,7 @@ describe('completeOptions', () => {
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           excludeRegex: /^#my-id-.*$/,
           sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -149,6 +157,7 @@ describe('completeOptions', () => {
           gravityServerUrl: 'http://localhost:3000',
           excludeRegex: null,
           sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
         }
         expect(completed).toStrictEqual(expected)
       })

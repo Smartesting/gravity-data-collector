@@ -14,10 +14,10 @@ import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import { nop } from '../utils/nop'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
-import completeOptions from '../utils/completeOptions'
+import completeOptions, { DEFAULT_SESSION_REJECTION } from '../utils/completeOptions'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
-import assert from 'assert'
+import { AssertionError } from 'assert'
 
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
@@ -51,7 +51,7 @@ describe('CollectorWrapper', () => {
     describe('when debug option is set to true', () => {
       beforeEach(() => {
         // @ts-expect-error
-        options = { debug: true, sessionsPercentageKept: 100 }
+        options = { debug: true, sessionsPercentageKept: 100, rejectSession: DEFAULT_SESSION_REJECTION }
       })
 
       it('a "sessionStarted" action is sent when initialized', () => {
@@ -208,6 +208,7 @@ describe('CollectorWrapper', () => {
       expect(spyOnTraitHandle).toHaveBeenCalledOnce()
     })
 
+    // flaky test ??
     it('should collect percentage/100 from N sessions (if N is large enough...) ', () => {
       const sessionsPercentageKept = 12.3
 
@@ -220,6 +221,10 @@ describe('CollectorWrapper', () => {
         )
       }
 
+      function isApproximation(candidate: number, target: number, tolerance: number) {
+        return candidate >= target - tolerance && candidate <= target + tolerance
+      }
+
       const max = 1000
       let countCollectedSessions: number = 0
       for (let i = 1; i <= max; i++) {
@@ -228,17 +233,40 @@ describe('CollectorWrapper', () => {
         const percentage = (100 * countCollectedSessions) / i
         if (i >= 100) {
           // console.log(countCollectedSessions, i, percentage)
-          if (isApproximation(percentage, sessionsPercentageKept, 1)) {
-            assert(true)
-            return
-          }
+          if (isApproximation(percentage, sessionsPercentageKept, 1.5)) return
         }
       }
-      assert(false, `Expected ${sessionsPercentageKept}% to be kept but get ${(100 * countCollectedSessions) / max}%`)
+      throw new AssertionError({
+        message: `Expected ${sessionsPercentageKept}% sessions to be kept but get ${
+          (100 * countCollectedSessions) / max
+        }%`,
+      })
+    })
+  })
+
+  describe('option "rejectSession" allows to reject a session', () => {
+    it('should not track session if rejectSession is positive', () => {
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true, rejectSession: () => true }),
+        global.window,
+        new MemorySessionIdHandler(uuidv4, 1000),
+        new SessionStorageTestNameHandler(),
+      )
+      expect(spyOnUserActionHandle).not.toHaveBeenCalled()
+      collectorWrapper.identifySession('logged', true)
+      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+    })
+
+    it('should keep session tracking if rejectSession is negative', () => {
+      const collectorWrapper = new CollectorWrapper(
+        completeOptions({ debug: true, rejectSession: () => false }),
+        global.window,
+        new MemorySessionIdHandler(uuidv4, 1000),
+        new SessionStorageTestNameHandler(),
+      )
+      expect(spyOnUserActionHandle).toHaveBeenCalled()
+      collectorWrapper.identifySession('logged', true)
+      expect(spyOnTraitHandle).toHaveBeenCalled()
     })
   })
 })
-
-function isApproximation(candidate: number, target: number, tolerance: number) {
-  return candidate >= target - tolerance && candidate <= target + tolerance
-}
