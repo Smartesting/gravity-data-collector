@@ -17,6 +17,7 @@ import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTe
 import completeOptions from '../utils/completeOptions'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
+import assert from 'assert'
 
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
@@ -197,12 +198,47 @@ describe('CollectorWrapper', () => {
 
       createCollector(100)
       expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+      expect(spyOnTraitHandle).not.toHaveBeenCalled()
 
-      const collectorWrapper = createCollector(0)
+      const collectorWrapper = createCollector(0) // act as a new random choice causing tracker disabling
       expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+      expect(spyOnTraitHandle).not.toHaveBeenCalled()
 
       collectorWrapper.identifySession('logged', true)
       expect(spyOnTraitHandle).toHaveBeenCalledOnce()
     })
+
+    it('should collect percentage/100 from N sessions (if N is large enough...) ', () => {
+      const sessionsPercentageKept = 12.3
+
+      function createCollector() {
+        return new CollectorWrapper(
+          completeOptions({ debug: true, sessionsPercentageKept }),
+          global.window,
+          new MemorySessionIdHandler(uuidv4, 1000),
+          new SessionStorageTestNameHandler(),
+        )
+      }
+
+      const max = 1000
+      let countCollectedSessions: number = 0
+      for (let i = 1; i <= max; i++) {
+        createCollector()
+        countCollectedSessions = spyOnUserActionHandle.mock.calls.length
+        const percentage = (100 * countCollectedSessions) / i
+        if (i >= 100) {
+          //console.log(countCollectedSessions, i, percentage)
+          if (isApproximation(percentage, sessionsPercentageKept, 1)) {
+            assert(true)
+            return
+          }
+        }
+      }
+      assert(false, `Expected ${sessionsPercentageKept}% to be kept but get ${(100 * countCollectedSessions) / max}%`)
+    })
   })
 })
+
+function isApproximation(candidate: number, target: number, tolerance: number) {
+  return candidate >= target - tolerance && candidate <= target + tolerance
+}

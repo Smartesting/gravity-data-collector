@@ -56,9 +56,7 @@ class CollectorWrapper {
     testNameHandler.refresh()
 
     if (isNewSession) {
-      const trackerIsActive = options.sessionsPercentageKept > 100 * Math.random()
-      this.trackingHandler.setActive(trackerIsActive)
-      if (!trackerIsActive) console.warn('The collector is inactive (option "sessionKeptPercentage" is set)')
+      this.trackingHandler.setActive(options.sessionsPercentageKept > 100 * Math.random())
       sessionIdHandler.generateNewSessionId()
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
