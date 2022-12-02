@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - New option `sessionsPercentageKept`: rate (in 0..100) of sessions to be collected _(default is 100)_.
 - New option `rejectSession`: boolean function to disable session tracking
+- New option `minimumUserActions`: minimum number of user actions of the sessions to be collected
 
 ### Changed
 

@@ -5,11 +5,12 @@ import { nop } from '../utils/nop'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
+import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 
 describe('BeforeUnloadEventListener', () => {
   describe('listener', () => {
     const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    const userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
+    const userActionHandler = new UserActionHandler(sessionIdHandler, 0, new MemorySessionSizeController(1), nop)
     const flushSpy = vitest.spyOn(userActionHandler, 'flush')
 
     beforeEach(() => {

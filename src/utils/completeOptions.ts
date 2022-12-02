@@ -20,6 +20,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     excludeRegex: null,
     sessionsPercentageKept: 100,
     rejectSession: DEFAULT_SESSION_REJECTION,
+    minimumUserActions: 1,
   }
 
   const debugDefaultOptions = {

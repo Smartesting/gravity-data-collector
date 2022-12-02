@@ -6,7 +6,7 @@ export default interface ISessionIdHandler {
   generateNewSessionId: () => void
 }
 
-export class BaseSessionIdHandler implements ISessionIdHandler {
+export abstract class BaseSessionIdHandler implements ISessionIdHandler {
   constructor(private readonly makeSessionId: () => string, private readonly sessionDuration: number) {}
 
   get(): string {
@@ -28,19 +28,11 @@ export class BaseSessionIdHandler implements ISessionIdHandler {
     this.setSessionId(this.makeSessionId())
   }
 
-  protected getSessionId(): string | undefined {
-    throw new Error('To be implemented')
-  }
+  protected abstract getSessionId(): string | undefined
 
-  protected setSessionId(sessionId: string): void {
-    throw new Error('To be implemented')
-  }
+  protected abstract setSessionId(sessionId: string): void
 
-  protected getTimeout(): number {
-    throw new Error('To be implemented')
-  }
+  protected abstract getTimeout(): number
 
-  protected setTimeout(timeout: number) {
-    throw new Error('To be implemented')
-  }
+  protected abstract setTimeout(timeout: number): void
 }

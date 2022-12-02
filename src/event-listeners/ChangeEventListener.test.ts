@@ -7,6 +7,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 
 describe('ChangeEventListener', () => {
   let sessionIdHandler: ISessionIdHandler
@@ -17,7 +18,7 @@ describe('ChangeEventListener', () => {
   beforeEach(() => {
     vitest.restoreAllMocks()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 600)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
+    userActionHandler = new UserActionHandler(sessionIdHandler, 0, new MemorySessionSizeController(1), nop)
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
@@ -26,7 +27,7 @@ describe('ChangeEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -45,7 +46,7 @@ describe('ChangeEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -64,7 +65,7 @@ describe('ChangeEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
         <div>
-          <input type="checkbox" id="checkbox1" name="checkbox1">
+          <input type='checkbox' id='checkbox1' name='checkbox1'>
         </div>`,
       'div',
     )

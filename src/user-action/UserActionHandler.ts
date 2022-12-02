@@ -1,6 +1,7 @@
 import { SessionUserAction, UserAction } from '../types'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import ISessionSizeController from '../session-size-controller/ISessionSizeController'
 
 export default class UserActionHandler {
   private readonly buffer: SessionUserAction[] = []
@@ -9,6 +10,7 @@ export default class UserActionHandler {
   constructor(
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly requestInterval: number,
+    private readonly sessionSizeController: ISessionSizeController,
     private readonly output: (sessionActions: SessionUserAction[]) => void,
     private readonly onPublish?: (sessionActions: SessionUserAction[]) => void,
     private readonly userActionHistory?: UserActionsHistory,
@@ -29,9 +31,8 @@ export default class UserActionHandler {
   }
 
   flush() {
-    if (this.buffer.length === 0) {
-      return
-    }
+    if (this.buffer.length === 0 || !this.sessionSizeController.checkThreshold(this.buffer.length)) return
+
     const sessionUserActions = this.buffer.splice(0)
     this.output(sessionUserActions)
     if (this.onPublish !== undefined) {

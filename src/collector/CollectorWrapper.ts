@@ -18,6 +18,7 @@ import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
+import { CookieSessionSizeController } from '../session-size-controller/CookieSessionSizeController'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -64,6 +65,7 @@ class CollectorWrapper {
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
       options.requestInterval,
+      new CookieSessionSizeController(options.minimumUserActions),
       userActionOutput,
       options.onPublish,
       this.userActionsHistory,
