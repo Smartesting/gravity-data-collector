@@ -72,7 +72,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | maxDelay               | Integer  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action. | 500                                            |
 | excludeRegex           | RegExp   | Regular expression of ID and class names to ignore in selector computation.                         | none                                           |
 | customSelector         | String   | The attribute to use as a selector if defined on an HTML element targeted by a user action.         | none                                           |
-| sessionsPercentageKept | [0..100] | Probability to track the current session                                                            | 100                                            |
+| sessionsPercentageKept | [0..100] | Rate of sessions to be collected                                                                    | 100                                            |
 | onPublish              | function | Adds a function called after each publish to the gravity server.                                    | none                                           |
 
 ## Features
