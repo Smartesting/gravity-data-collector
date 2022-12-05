@@ -4,7 +4,7 @@ import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ISessionSizeController from '../session-size-controller/ISessionSizeController'
 
 export default class UserActionHandler {
-  private readonly buffer: SessionUserAction[] = []
+  private readonly buffer: UserAction[] = []
   private readonly timer?: NodeJS.Timer
 
   constructor(
@@ -23,7 +23,7 @@ export default class UserActionHandler {
   }
 
   handle(action: UserAction) {
-    this.buffer.push(this.toSessionUserAction(action))
+    this.buffer.push(action)
     if (this.userActionHistory !== undefined) this.userActionHistory.push(action)
     if (this.timer == null) {
       this.flush()
@@ -31,9 +31,12 @@ export default class UserActionHandler {
   }
 
   flush() {
-    if (this.buffer.length === 0 || !this.sessionSizeController.checkThreshold(this.buffer.length)) return
-
-    const sessionUserActions = this.buffer.splice(0)
+    if (this.buffer.length === 0) return
+    const newUserActions = this.buffer.splice(0)
+    const sessionUserActions = this.sessionSizeController
+      .checkThreshold(newUserActions)
+      .map((userAction) => this.toSessionUserAction(userAction))
+    if (sessionUserActions.length === 0) return
     this.output(sessionUserActions)
     if (this.onPublish !== undefined) {
       this.onPublish(sessionUserActions)

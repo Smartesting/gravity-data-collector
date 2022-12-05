@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
-import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import { mockClickUserAction, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionTraitValue, UserAction } from '../types'
+import { CollectorOptions, SessionTraitValue, SessionUserAction, UserAction } from '../types'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
@@ -18,6 +18,8 @@ import completeOptions, { DEFAULT_SESSION_REJECTION } from '../utils/completeOpt
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
+import * as sessionUserActionSender from '../user-action/sessionUserActionSender'
+import * as documentCookies from '../utils/documentCookie'
 
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
@@ -268,5 +270,83 @@ describe('CollectorWrapper', () => {
       collectorWrapper.identifySession('logged', true)
       expect(spyOnTraitHandle).toHaveBeenCalled()
     })
+  })
+})
+
+describe('option "minimumUserActions" allows to ignore too short sessions', () => {
+  const outputFn = vi.fn()
+
+  beforeEach(() => {
+    const cookies = new Map()
+    vi.spyOn(documentCookies, 'readCookie').mockImplementation((key: string) => cookies.get(key))
+    vi.spyOn(documentCookies, 'setCookie').mockImplementation((key: string, value: string) => cookies.set(key, value))
+    vi.spyOn(sessionUserActionSender, 'debugSessionUserActionSender').mockImplementation(
+      () => (sessionActions: SessionUserAction[]) => {
+        outputFn(sessionActions.length)
+      },
+    )
+  })
+
+  it('should not publish session as long as "minimumUserActions" is not reached', () => {
+    const minimumUserActions = 3
+    const collectorWrapper = new CollectorWrapper(
+      completeOptions({
+        debug: true,
+        minimumUserActions,
+        requestInterval: 0,
+        maxDelay: 0,
+      }),
+      global.window,
+      new MemorySessionIdHandler(uuidv4, 1000),
+      new SessionStorageTestNameHandler(),
+    )
+    expect(outputFn).toHaveBeenCalledTimes(0)
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(0)
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(1)
+    expect(outputFn).toHaveBeenLastCalledWith(minimumUserActions)
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(2)
+    expect(outputFn).toHaveBeenLastCalledWith(1)
+  })
+
+  it('should publish whole session if minimumUserActions is reached and collector has been reset', () => {
+    const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
+    const minimumUserActions = 3
+    const options = completeOptions({
+      debug: true,
+      minimumUserActions,
+      requestInterval: 0,
+      maxDelay: 0,
+    })
+    let collectorWrapper = new CollectorWrapper(
+      options,
+      global.window,
+      sessionIdHandler,
+      new SessionStorageTestNameHandler(),
+    )
+    expect(outputFn).toHaveBeenCalledTimes(0)
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(0)
+
+    collectorWrapper = new CollectorWrapper(
+      options,
+      global.window,
+      sessionIdHandler,
+      new SessionStorageTestNameHandler(),
+    )
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(1)
+    expect(outputFn).toHaveBeenCalledWith(minimumUserActions)
+
+    collectorWrapper.userActionHandler.handle(mockClickUserAction())
+    expect(outputFn).toHaveBeenCalledTimes(2)
+    expect(outputFn).toHaveBeenCalledWith(1)
   })
 })

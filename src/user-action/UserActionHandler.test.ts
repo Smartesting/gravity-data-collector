@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, SpyInstanceFn, vi, vitest } from 'vitest'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { createSessionStartedUserAction } from './createSessionStartedUserAction'
-import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import { createClickUserAction } from '../test-utils/userActions'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 import { SessionUserAction } from '../types'
 import assert from 'assert'
+import { mockClickUserAction } from '../test-utils/mocks'
 
 describe('UserActionHandler', () => {
   describe('handle', () => {
@@ -23,15 +22,15 @@ describe('UserActionHandler', () => {
     it('outputs actions if requestInterval=0', async () => {
       const userActionHandler = new UserActionHandler(sessionIdHandler, 0, sessionSizeController, output)
       userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
       expect(output).toHaveBeenCalledTimes(2)
     })
 
     it('outputs actions if requestInterval>0', async () => {
       const userActionHandler = new UserActionHandler(sessionIdHandler, 5000, sessionSizeController, output)
       userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockGravityClickEvent())
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
+      userActionHandler.handle(mockClickUserAction())
       expect(output).toHaveBeenCalledTimes(0)
       vitest.advanceTimersByTime(5000)
       expect(output).toHaveBeenCalledTimes(1)
@@ -41,8 +40,8 @@ describe('UserActionHandler', () => {
     it('flush actions on demand (unload case)', async () => {
       const userActionHandler = new UserActionHandler(sessionIdHandler, 5000, sessionSizeController, output)
       userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockGravityClickEvent())
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
+      userActionHandler.handle(mockClickUserAction())
       userActionHandler.flush()
       expect(output).toHaveBeenCalledTimes(1)
       expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
@@ -60,7 +59,7 @@ describe('UserActionHandler', () => {
     it('calls onPublish if it is defined', async () => {
       const userActionHandler = new UserActionHandler(sessionIdHandler, 0, sessionSizeController, output, onPublish)
       userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
       expect(onPublish).toHaveBeenCalledTimes(2)
     })
 
@@ -69,22 +68,17 @@ describe('UserActionHandler', () => {
       const sizeController = new MemorySessionSizeController(threshold)
       const userActionHandler = new UserActionHandler(sessionIdHandler, 0, sizeController, output)
       for (let i = 1; i < threshold; i++) {
-        userActionHandler.handle(mockGravityClickEvent())
+        userActionHandler.handle(mockClickUserAction())
         expect(output).toHaveBeenCalledTimes(0)
       }
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
       expect(output).toHaveBeenCalledTimes(1)
       assert(output.mock.lastCall)
       expect(output.mock.lastCall[0]).toHaveLength(threshold)
-      userActionHandler.handle(mockGravityClickEvent())
+      userActionHandler.handle(mockClickUserAction())
       expect(output).toHaveBeenCalledTimes(2)
       assert(output.mock.lastCall)
       expect(output.mock.lastCall[0]).toHaveLength(1)
     })
   })
 })
-
-function mockGravityClickEvent() {
-  const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
-  return createClickUserAction(element)
-}
