@@ -99,7 +99,6 @@ export interface CollectorOptions {
   customSelector?: string
   sessionsPercentageKept: number
   rejectSession: () => boolean
-  minimumUserActions: number
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 

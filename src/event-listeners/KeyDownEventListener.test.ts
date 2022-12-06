@@ -9,7 +9,6 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 
 describe('KeyDownEventListener', () => {
   let userActionHistory: UserActionsHistory
@@ -22,14 +21,7 @@ describe('KeyDownEventListener', () => {
     vitest.restoreAllMocks()
     userActionHistory = new MemoryUserActionsHistory()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    userActionHandler = new UserActionHandler(
-      sessionIdHandler,
-      0,
-      new MemorySessionSizeController(1),
-      nop,
-      nop,
-      userActionHistory,
-    )
+    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
@@ -38,7 +30,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -57,7 +49,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -81,7 +73,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <input type="checkbox" id="checkbox1" name="checkbox1"/>
+                    <input type='checkbox' id='checkbox1' name='checkbox1'/>
                 </div>`,
       'div',
     )
@@ -100,7 +92,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <div role="cell"/>
+                    <div role='cell'/>
                 </div>`,
       'div',
     )
@@ -119,7 +111,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <div role="cell"/>
+                    <div role='cell'/>
                 </div>`,
       'div',
     )
@@ -140,9 +132,9 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-1" type="text"/>
-                <textarea id="text-2"></textarea>
-                <input id="text-5" type="search" />
+                <input id='text-1' type='text'/>
+                <textarea id='text-2'></textarea>
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -181,9 +173,9 @@ describe('KeyDownEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
             <div>
-                <input id="text-1" type="text"/>
-                <textarea id="text-2"></textarea>
-                <input id="text-5" type="search" />
+                <input id='text-1' type='text'/>
+                <textarea id='text-2'></textarea>
+                <input id='text-5' type='search' />
             </div>`,
         'div',
       )

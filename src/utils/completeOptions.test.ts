@@ -36,7 +36,6 @@ describe('completeOptions', () => {
         excludeRegex: null,
         sessionsPercentageKept: 100,
         rejectSession: DEFAULT_SESSION_REJECTION,
-        minimumUserActions: 1,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -48,7 +47,6 @@ describe('completeOptions', () => {
         maxDelay: 15,
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
-        minimumUserActions: 42,
       })
       const expected: CollectorOptions = {
         authKey: '',
@@ -59,7 +57,6 @@ describe('completeOptions', () => {
         excludeRegex: null,
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
-        minimumUserActions: 42,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -85,7 +82,6 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
-          minimumUserActions: 1,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -105,7 +101,6 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
-          minimumUserActions: 1,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -125,7 +120,6 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
-          minimumUserActions: 1,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -145,7 +139,6 @@ describe('completeOptions', () => {
           excludeRegex: /^#my-id-.*$/,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
-          minimumUserActions: 1,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -165,7 +158,6 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
-          minimumUserActions: 1,
         }
         expect(completed).toStrictEqual(expected)
       })

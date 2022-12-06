@@ -7,7 +7,6 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 
 describe('ClickEventListener', () => {
   let sessionIdHandler: ISessionIdHandler
@@ -18,7 +17,7 @@ describe('ClickEventListener', () => {
   beforeEach(() => {
     vitest.restoreAllMocks()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 700)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, new MemorySessionSizeController(1), nop)
+    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })

@@ -6,7 +6,6 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import { MemorySessionSizeController } from '../session-size-controller/MemorySessionSizeController'
 
 describe('KeyUpEventListener', () => {
   let sessionIdHandler: MemorySessionIdHandler
@@ -18,7 +17,7 @@ describe('KeyUpEventListener', () => {
     beforeEach(() => {
       vitest.restoreAllMocks()
       sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-      userActionHandler = new UserActionHandler(sessionIdHandler, 0, new MemorySessionSizeController(1), nop)
+      userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
       createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
     })
