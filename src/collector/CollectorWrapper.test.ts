@@ -210,7 +210,7 @@ describe('CollectorWrapper', () => {
 
     // flaky test ??
     it('should collect percentage/100 from N sessions (if N is large enough...) ', () => {
-      const sessionsPercentageKept = 12.3
+      const sessionsPercentageKept = 10
 
       function createCollector() {
         return new CollectorWrapper(
@@ -233,7 +233,7 @@ describe('CollectorWrapper', () => {
         const percentage = (100 * countCollectedSessions) / i
         if (i >= 100) {
           // console.log(countCollectedSessions, i, percentage)
-          if (isApproximation(percentage, sessionsPercentageKept, 1.5)) return
+          if (isApproximation(percentage, sessionsPercentageKept, 2)) return
         }
       }
       throw new AssertionError({
