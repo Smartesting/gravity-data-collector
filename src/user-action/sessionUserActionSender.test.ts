@@ -106,9 +106,9 @@ describe('sessionUserActionSender', () => {
             onSuccess,
             onError,
           ),
-        ).toEqual({ error: AddSessionUserActionsError.noCollection })
+        ).toEqual({ error: AddSessionUserActionsError.collectionNotFound })
         expect(onSuccess).not.toHaveBeenCalled()
-        expect(onError).toHaveBeenCalledWith(404, AddSessionUserActionsError.noCollection)
+        expect(onError).toHaveBeenCalledWith(404, AddSessionUserActionsError.collectionNotFound)
       })
 
       it('with incorrectSource error if source is not allowed', async () => {

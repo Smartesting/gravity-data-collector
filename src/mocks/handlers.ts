@@ -24,7 +24,7 @@ export const handlers = [
     const { authKey } = req.params
     if (authKey === DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR) throw new Error('Network Error')
     if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
-      return await res(ctx.status(404), ctx.json({ error: AddSessionUserActionsError.noCollection }))
+      return await res(ctx.status(404), ctx.json({ error: AddSessionUserActionsError.collectionNotFound }))
     }
 
     const origin = req.headers.get('Origin')

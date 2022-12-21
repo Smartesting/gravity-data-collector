@@ -11,7 +11,9 @@ export enum AddSessionUserActionsError {
   incorrectSource = 'incorrect_source',
   conflict = 'conflict',
   notUUID = 'not_a_uuid',
-  noCollection = 'no_collection',
+  collectionNotFound = 'collection_not_found',
+  domainNotFound = 'domain_not_found',
+  domainExpired = 'domain_expired',
   invalidFormat = 'invalid_format',
 }
 
