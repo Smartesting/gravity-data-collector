@@ -131,9 +131,9 @@ describe('sessionTraitSender', () => {
             onSuccess,
             onError,
           ),
-        ).toEqual({ error: IdentifySessionError.noCollection })
+        ).toEqual({ error: IdentifySessionError.collectionNotFound })
         expect(onSuccess).not.toHaveBeenCalled()
-        expect(onError).toHaveBeenCalledWith(404, IdentifySessionError.noCollection)
+        expect(onError).toHaveBeenCalledWith(404, IdentifySessionError.collectionNotFound)
       })
 
       it('with invalidField error if the trait value has invalid format', async () => {

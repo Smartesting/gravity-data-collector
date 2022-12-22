@@ -9,9 +9,13 @@ export interface IdentifySessionResponse {
 
 export enum IdentifySessionError {
   accessDenied = 'no_access',
-  noCollection = 'no_collection',
+  collectionNotFound = 'collection_not_found',
+  sessionNotFound = 'session_not_found',
+  domainNotFound = 'domain_not_found',
+  domainExpired = 'domain_expired',
   invalidField = 'invalid_field',
   incorrectSource = 'incorrect_source',
+  notUUID = 'not_a_uuid',
 }
 
 export function defaultSessionTraitSender(

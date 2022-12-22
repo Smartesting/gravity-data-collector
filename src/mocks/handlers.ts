@@ -62,7 +62,7 @@ export const handlers = [
         return await res(ctx.status(403), ctx.json({ error: IdentifySessionError.incorrectSource }))
       }
       if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
-        return await res(ctx.status(404), ctx.json({ error: IdentifySessionError.noCollection }))
+        return await res(ctx.status(404), ctx.json({ error: IdentifySessionError.collectionNotFound }))
       }
       const payload = await req.json()
       for (const value of Object.values(payload)) {
