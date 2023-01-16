@@ -14,6 +14,7 @@ export type SessionStartedUserAction = {
   test?: string
   version: string
   agent: string
+  buildId?: string
 } & UserActionProperties
 
 export type TargetedUserAction = {
