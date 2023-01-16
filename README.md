@@ -143,6 +143,17 @@ window.GravityCollector.identifySession('connected', true)
 **Note**: Please, keep in mind that each trait can only have a single value. It means if you set the trait `connected`
 to `true` and then to `false`, the first value will be overwritten.
 
+### Send build information to Gravity
+
+In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity:
+
+| environment variable name  | Gravity data |
+| -------------------------- | ------------ |
+| GRAVITY_BUILD_ID           | buildId      |
+| REACT_APP_GRAVITY_BUILD_ID | buildId      |
+
+Those variables can be easily exposed in `process.env`.
+
 ## Sandbox
 
 In order to test modifications on the library, a sandbox is accessible in [index.html](sample/index.html) file

@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Send `buildId` in SessionStartedUserAction when `GRAVITY_BUILD_ID` or `REACT_APP_GRAVITY_BUILD_ID` is set.
+
 ### Changed
 
 ### Deprecated
@@ -43,7 +45,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - New option `excludeRegex`: regular expression to define ID and class names to ignore in selector computation.
-- New option `customSelector`: string indicates the attribute to use as a selector if defined on an HTML element targeted by a user action.
+- New option `customSelector`: string indicates the attribute to use as a selector if defined on an HTML element
+  targeted by a user action.
 
 ## [3.1.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.1.0...v3.1.1)
 

@@ -41,6 +41,32 @@ describe('action', () => {
       expect(createSessionStartedUserAction().recordedAt).toEqual(now)
     })
 
+    it('sets buildId field when GRAVITY_BUILD_ID env var is set', () => {
+      process.env.GRAVITY_BUILD_ID = '51'
+      expect(createSessionStartedUserAction().buildId).toEqual('51')
+    })
+
+    it('does not set buildId field when GRAVITY_BUILD_ID is empty', () => {
+      process.env.GRAVITY_BUILD_ID = ''
+      expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+    })
+
+    it('sets buildId field when REACT_APP_GRAVITY_BUILD_ID env var is set', () => {
+      process.env.REACT_APP_GRAVITY_BUILD_ID = '42'
+      expect(createSessionStartedUserAction().buildId).toEqual('42')
+    })
+
+    it('does not set buildId field when REACT_APP_GRAVITY_BUILD_ID is empty', () => {
+      process.env.REACT_APP_GRAVITY_BUILD_ID = ''
+      expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+    })
+
+    it('sets buildId field from GRAVITY_BUILD_ID when GRAVITY_BUILD_ID and REACT_APP_GRAVITY_BUILD_ID are set', () => {
+      process.env.GRAVITY_BUILD_ID = '12'
+      process.env.REACT_APP_GRAVITY_BUILD_ID = '13'
+      expect(createSessionStartedUserAction().buildId).toEqual('12')
+    })
+
     it('returns Cypress current test if any', () => {
       expect(createSessionStartedUserAction().test).toBeUndefined()
 

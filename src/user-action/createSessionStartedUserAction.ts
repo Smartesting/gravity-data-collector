@@ -4,6 +4,19 @@ import { SessionStartedUserAction, UserActionType } from '../types'
 import { config } from '../config'
 import gravityDocument from '../utils/gravityDocument'
 
+function buildId() {
+  return (
+    rejectBlankString(process.env.GRAVITY_BUILD_ID) ??
+    rejectBlankString(process.env.REACT_APP_GRAVITY_BUILD_ID) ??
+    undefined
+  )
+}
+
+function rejectBlankString(value: string | undefined): string | null {
+  if (value !== undefined && value !== '') return value
+  return null
+}
+
 export function createSessionStartedUserAction(): SessionStartedUserAction {
   const action: SessionStartedUserAction = {
     type: UserActionType.SessionStarted,
@@ -13,6 +26,7 @@ export function createSessionStartedUserAction(): SessionStartedUserAction {
     viewportData: viewport(),
     version: config.COLLECTOR_VERSION,
     agent: navigator.userAgent,
+    buildId: buildId(),
   }
 
   const cypress = (window as any).Cypress
