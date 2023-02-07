@@ -147,7 +147,7 @@ describe('user action', () => {
       expect(displayInfo).toBeUndefined()
     })
 
-    it('does not returns label if not exists', () => {
+    it('does not return label if not exists', () => {
       const { element, domWindow } = createElementInJSDOM(`<input type="text" placeholder="${placeholder}"/>`, 'input')
 
       const displayInfo = createTargetDisplayInfo(element, domWindow.document)
@@ -158,8 +158,17 @@ describe('user action', () => {
       expect(displayInfo?.placeholder).toEqual(placeholder)
     })
 
-    it('does not returns empty label', () => {
+    it('does not return empty label', () => {
       const { element, domWindow } = createElementInJSDOM('<label for="id"/><input id="id" type="text"/>', 'input')
+
+      const displayInfo = createTargetDisplayInfo(element, domWindow.document)
+
+      expect(displayInfo).toBeDefined()
+      expect(displayInfo?.label).toBeUndefined()
+    })
+
+    it('does not return a label if `for` attribute does not match an input ID', () => {
+      const { element, domWindow } = createElementInJSDOM(`<label>${label}</label><input type="text"/>`, 'input')
 
       const displayInfo = createTargetDisplayInfo(element, domWindow.document)
 
