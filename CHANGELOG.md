@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix the search for the label associated with an element
+
 ## [3.4.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.3.2...v3.4.0)
 
 ### Added
