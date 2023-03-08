@@ -22,7 +22,7 @@ export function createTargetedUserAction(
   document: Document = getDocument(),
 ): TargetedUserAction | null {
   const target = event.target as HTMLElement
-  if (target === null || target === undefined) return null
+  if (target === null || target === undefined || event.target === document) return null
 
   const userAction: TargetedUserAction = {
     type,
