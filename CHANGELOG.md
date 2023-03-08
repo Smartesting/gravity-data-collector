@@ -19,7 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [3.4.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.4.1...3.4.2)
+## [3.4.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.4.1...v3.4.2)
 
 ### Fixed
 
@@ -37,7 +37,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Send `buildId` in SessionStartedUserAction when `GRAVITY_BUILD_ID` or `REACT_APP_GRAVITY_BUILD_ID` is set.
 
-## [3.3.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.3.1...3.3.2)
+## [3.3.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.3.1...v3.3.2)
 
 ### Changed
 
