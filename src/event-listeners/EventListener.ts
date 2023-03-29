@@ -1,7 +1,8 @@
 import UserActionHandler from '../user-action/UserActionHandler'
 import { UserActionType } from '../types'
+import { IEventListener } from '../event-listeners-handler/IEventListener'
 
-export default abstract class EventListener {
+export default abstract class EventListener implements IEventListener {
   private readonly listenerBind
 
   protected constructor(

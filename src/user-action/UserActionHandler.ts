@@ -1,6 +1,13 @@
-import { SessionUserAction, UserAction } from '../types'
+import { IEventHandler, EventProvider, EventProviderKey, SessionUserAction, UserAction } from '../types'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import { config } from '../config'
+import NopEventHandler from '../event-handlers/NopEventHandler'
+
+const GRAVITY_EVENT_PROVIDER: EventProvider = {
+  id: EventProviderKey.GRAVITY,
+  version: config.COLLECTOR_VERSION,
+}
 
 export default class UserActionHandler {
   private readonly buffer: UserAction[] = []
@@ -12,6 +19,7 @@ export default class UserActionHandler {
     private readonly output: (sessionActions: SessionUserAction[]) => void,
     private readonly onPublish?: (sessionActions: SessionUserAction[]) => void,
     private readonly userActionHistory?: UserActionsHistory,
+    private readonly eventHandler: IEventHandler = new NopEventHandler(),
   ) {
     if (requestInterval > 0) {
       this.timer = setInterval(() => {
@@ -21,6 +29,7 @@ export default class UserActionHandler {
   }
 
   handle(action: UserAction) {
+    this.eventHandler.handle(GRAVITY_EVENT_PROVIDER, action.type, action)
     this.buffer.push(action)
     if (this.userActionHistory !== undefined) this.userActionHistory.push(action)
     if (this.timer == null) {

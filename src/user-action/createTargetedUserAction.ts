@@ -13,6 +13,14 @@ import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
+import { CHANGE_EVENT_INITIATOR } from '../event-listeners/ChangeEventInitiatorHandler'
+
+function getCypressSelector(target: HTMLElement): string | undefined {
+  const cypress: Cypress.Cypress & CyEventEmitter = (window as any).Cypress ?? undefined
+  if (cypress === undefined) return undefined
+  const el = cypress.$(target)
+  return cypress.SelectorPlayground.getSelector(el)
+}
 
 export function createTargetedUserAction(
   event: Event,
@@ -21,21 +29,24 @@ export function createTargetedUserAction(
   customSelector?: string,
   document: Document = getDocument(),
 ): TargetedUserAction | null {
+  const recordedDate = new Date()
   const target = event.target as HTMLElement
   if (target === null || target === undefined || event.target === document) return null
-
+  const cypressSelector = getCypressSelector(target)
   const userAction: TargetedUserAction = {
     type,
     target: createActionTarget(target, excludeRegex, customSelector, document),
     location: location(),
     document: gravityDocument(),
-    recordedAt: new Date().toISOString(),
+    recordedAt: recordedDate.toISOString(),
     viewportData: viewport(),
+    cypressSelector,
   }
   const userActionData = createActionData(event, type)
   if (userActionData !== null) {
     userAction.userActionData = userActionData
   }
+  CHANGE_EVENT_INITIATOR.handle(userAction)
   return userAction
 }
 

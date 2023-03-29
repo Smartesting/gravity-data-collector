@@ -1,3 +1,5 @@
+import Cypress from 'cypress'
+
 export { sendSessionUserActions } from './user-action/sessionUserActionSender'
 
 export enum UserActionType {
@@ -20,6 +22,7 @@ export type SessionStartedUserAction = {
 export type TargetedUserAction = {
   target: UserActionTarget
   userActionData?: UserActionData
+  cypressSelector?: string
 } & UserActionProperties
 
 export interface UserActionProperties {
@@ -27,6 +30,7 @@ export interface UserActionProperties {
   location: GravityLocation
   document: GravityDocument
   recordedAt?: string
+  initiatedAt?: string
   viewportData: ViewportData
 }
 
@@ -101,6 +105,7 @@ export interface CollectorOptions {
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
+  cypressEventReporterFilename?: string
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>
@@ -108,3 +113,49 @@ export type SessionTraits = Record<string, SessionTraitValue>
 export type SessionTraitValue = string | number | boolean
 
 export const ALLOWED_SESSION_TRAIT_VALUE_TYPES = ['string', 'boolean', 'number']
+
+export enum EventProviderKey {
+  GRAVITY = 'gravity',
+  CYPRESS = 'cypress',
+  MOCHA = 'mocha',
+}
+
+export interface EventProvider {
+  id: EventProviderKey
+  version: string
+}
+
+export interface EventData {
+  sessionId: string
+  provider: EventProvider
+  type: string
+  data: any
+  recordedAt: Date
+  initiatedAt?: Date
+}
+
+export interface CypressCommand {
+  name: string
+  args: readonly any[]
+  id: string
+  chainerId: string
+  type: string
+  code: string
+  testPath: readonly string[]
+  prevId: string
+  nextId: string
+  userInvocationStack: string
+  testStep?: TestStep
+}
+
+export interface TestStep {
+  displayName: string
+  message: string
+  state: string
+}
+
+export interface IEventHandler {
+  handle: (provider: EventProvider, eventType: string, event: any) => void
+}
+
+export type CypressObject = Cypress.Cypress & CyEventEmitter

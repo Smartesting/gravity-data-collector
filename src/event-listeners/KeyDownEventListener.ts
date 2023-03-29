@@ -22,15 +22,12 @@ class KeyDownEventListener extends TargetedEventListener {
       this.options.excludeRegex,
       this.options.customSelector,
     )
-    if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
-
-    if (isKeyAllowedByKeyListeners(event.code)) {
-      return this.userActionHandler.handle(userAction)
+    if (userAction === null) return
+    if (this.actionIsTheSameThanLast(userAction)) return
+    if (!isKeyAllowedByKeyListeners(event.code) || !isTargetAllowedByKeyListeners(event.target)) {
+      return
     }
-
-    if (isTargetAllowedByKeyListeners(event.target)) {
-      this.userActionHandler.handle(userAction)
-    }
+    this.userActionHandler.handle(userAction)
   }
 
   actionIsTheSameThanLast(userAction: TargetedUserAction): boolean {

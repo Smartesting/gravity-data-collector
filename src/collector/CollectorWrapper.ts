@@ -1,5 +1,5 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
+import { CollectorOptions, CypressObject, IEventHandler, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -18,6 +18,10 @@ import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
+import { IEventListener } from '../event-listeners-handler/IEventListener'
+import { makeCypressListeners } from './makeCypressListeners'
+import NopEventHandler from '../event-handlers/NopEventHandler'
+import CypressTestEventReporter from '../event-handlers/CypressTestEventReporter'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -61,12 +65,23 @@ class CollectorWrapper {
     }
     this.userActionsHistory = new MemoryUserActionsHistory()
 
+    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
+    const reporterFilename = options.cypressEventReporterFilename
+    if (reporterFilename !== undefined) {
+      if (cypress === undefined) throw new Error(`No Cypress context to report events in file '${reporterFilename}'`)
+    }
+    const eventHandler: IEventHandler =
+      reporterFilename !== undefined
+        ? new CypressTestEventReporter(cypress, reporterFilename, sessionIdHandler)
+        : new NopEventHandler()
+
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
       options.requestInterval,
       userActionOutput,
       options.onPublish,
       this.userActionsHistory,
+      eventHandler,
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
 
@@ -77,7 +92,7 @@ class CollectorWrapper {
       customSelector: options.customSelector,
     }
 
-    this.eventListenerHandler = new EventListenersHandler([
+    const gravityListeners: IEventListener[] = [
       new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new KeyDownEventListener(
@@ -88,7 +103,10 @@ class CollectorWrapper {
       ),
       new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new BeforeUnloadEventListener(this.userActionHandler, this.window),
-    ])
+    ]
+    this.eventListenerHandler = new EventListenersHandler(
+      gravityListeners.concat(makeCypressListeners(cypress, this.sessionIdHandler, eventHandler)),
+    )
 
     this.trackingHandler.init(this.eventListenerHandler)
   }
