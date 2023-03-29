@@ -48,3 +48,40 @@ the:
 - `MAJOR` version when you make incompatible API changes.
 - `MINOR` version when you add functionality in a backwards compatible manner.
 - `PATCH` version when you make backwards compatible bug fixes.
+
+## Making test releases
+
+We use GitHub pages an as host for temporary/test releases and automatically provide `.tgz`and minified JS for every commit on branches `main` and `canary`.
+
+In order to publish from another branch, update the workflow [pages-publish](./.github/workflows/pages-publish.yml) so your branch trigger the publication of the package on pages:
+
+```yaml
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['main', 'canary', 'your-branch']
+```
+
+Then edit the script [publish_pages](./scripts/publish_pages) to take your branch into account by adding a line:
+
+```shell
+clone_and_build your_branch
+```
+
+**Note:** those changes should be done on all branches deploying temporary releases, so `main`, `canary` and `your-branch`.
+
+You can now use your draft release. In your `package.json` file:
+
+```json
+  "dependencies": {
+    "@smartesting/gravity-data-collector": "https://smartesting.github.io/gravity-data-collector/your-branch/smartesting-gravity-data-collector.tgz",
+  }
+```
+
+Or direclty as an HTML script tag:
+
+```html
+<script async id='logger' src='https://smartesting.github.io/gravity-data-collector/your-branch/gravity-logger-min.js' type='text/javascript'></script>
+```
+
+**Warning:** do not remove the `main` and `canary` branches from the script and workflow trigger.
