@@ -33,7 +33,7 @@ export default class CypressTestEventReporter implements IEventHandler {
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
       console.log(`write ${this.lines.length}  lines in file ${this.reporterFilename}`)
-      ;(this.cypress as any).cy.writeFile(this.reporterFilename, '\n'+this.lines.join('\n')+'\n', {
+      ;(this.cypress as any).cy.writeFile(this.reporterFilename, '\n' + this.lines.join('\n') + '\n', {
         flag: 'a+',
       })
       this.lines = []
