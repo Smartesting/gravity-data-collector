@@ -81,7 +81,12 @@ You can now use your draft release. In your `package.json` file:
 Or direclty as an HTML script tag:
 
 ```html
-<script async id='logger' src='https://smartesting.github.io/gravity-data-collector/your-branch/gravity-logger-min.js' type='text/javascript'></script>
+<script
+  async
+  id="logger"
+  src="https://smartesting.github.io/gravity-data-collector/your-branch/gravity-logger-min.js"
+  type="text/javascript"
+></script>
 ```
 
 **Warning:** do not remove the `main` and `canary` branches from the script and workflow trigger.
