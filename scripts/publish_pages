@@ -24,4 +24,5 @@ cd pages
 
 clone_and_build main
 clone_and_build canary
+clone_and_build spike_report_cypress_events
 
