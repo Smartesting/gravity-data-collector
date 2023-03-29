@@ -1,0 +1,27 @@
+#!/bin/sh
+
+clone_and_build() {
+  local branch=$1
+  local tmp_dir="$1-tmp"
+
+  git clone https://github.com/Smartesting/gravity-data-collector.git --branch $branch $tmp_dir
+  cd $tmp_dir
+  npm i
+  npm run build
+  npm run build-minified
+  npm pack
+  cd ..
+  mkdir $branch
+  cp $tmp_dir/dist/gravity-logger-min.js $branch
+  cp $tmp_dir/smartesting-gravity-data-collector-*.tgz $branch/smartesting-gravity-data-collector.tgz
+  cp -r $tmp_dir/dist $branch/dist
+  rm -rf $tmp_dir
+}
+
+rm -rf pages
+mkdir pages
+cd pages
+
+clone_and_build main
+clone_and_build canary
+
