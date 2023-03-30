@@ -72,7 +72,7 @@ class CollectorWrapper {
     }
     const eventHandler: IEventHandler =
       cypress !== undefined && reporterFilename !== undefined
-        ? new CypressTestEventReporter(cypress, reporterFilename, sessionIdHandler)
+        ? new CypressTestEventReporter(cypress, reporterFilename, sessionIdHandler.get())
         : new NopEventHandler()
 
     this.userActionHandler = new UserActionHandler(

@@ -8,7 +8,6 @@ import {
   TestStep,
   UserAction,
 } from '../types'
-import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 export default class CypressTestEventReporter implements IEventHandler {
   private lines: string[] = []
@@ -16,7 +15,7 @@ export default class CypressTestEventReporter implements IEventHandler {
   constructor(
     private readonly cypress: CypressObject,
     private readonly reporterFilename: string,
-    private readonly sessionIdHandler: ISessionIdHandler,
+    private readonly sessionId: string,
   ) {}
 
   handle(provider: EventProvider, eventType: string, event: any): void {
@@ -32,7 +31,7 @@ export default class CypressTestEventReporter implements IEventHandler {
 
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
-      console.log(`write ${this.lines.length}  lines in file ${this.reporterFilename}`)
+      console.log(`writing ${this.lines.length} lines in file ${this.reporterFilename}`)
       ;(this.cypress as any).cy.writeFile(this.reporterFilename, '\n' + this.lines.join('\n') + '\n', {
         flag: 'a+',
       })
@@ -45,7 +44,7 @@ export default class CypressTestEventReporter implements IEventHandler {
     const testStep: TestStep | undefined = lookupTestStep(this.cypress)
     const data = extractCypressCommand(event, this.cypress.currentTest.titlePath, testStep)
     const reporterData: EventData = {
-      sessionId: this.sessionIdHandler.get(),
+      sessionId: this.sessionId,
       provider,
       type: eventType,
       data,
@@ -61,7 +60,7 @@ export default class CypressTestEventReporter implements IEventHandler {
       data: action,
       recordedAt: new Date(action.recordedAt ?? new Date()),
       initiatedAt: action.initiatedAt === undefined ? undefined : new Date(action.initiatedAt),
-      sessionId: this.sessionIdHandler.get(),
+      sessionId: this.sessionId,
     }
     this.lines.push(JSON.stringify(reporterData))
   }
