@@ -68,10 +68,10 @@ class CollectorWrapper {
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
     const reporterFilename = options.cypressEventReporterFilename
     if (reporterFilename !== undefined) {
-      if (cypress === undefined) throw new Error(`No Cypress context to report events in file '${reporterFilename}'`)
+      if (cypress === undefined) console.warn(`No Cypress context to report events in file '${reporterFilename}'`)
     }
     const eventHandler: IEventHandler =
-      reporterFilename !== undefined
+      cypress !== undefined && reporterFilename !== undefined
         ? new CypressTestEventReporter(cypress, reporterFilename, sessionIdHandler)
         : new NopEventHandler()
 
