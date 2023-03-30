@@ -51,24 +51,15 @@ the:
 
 ## Making test releases
 
-We use GitHub pages an as host for temporary/test releases and automatically provide `.tgz`and minified JS for every commit on branches `main` and `canary`.
+We use GitHub pages an as host for temporary/test releases and automatically provide `.tgz` and minified JS for the latest commits on branches `main` and `canary`.
 
-In order to publish from another branch, update the workflow [pages-publish](./.github/workflows/pages-publish.yml) so your branch trigger the publication of the package on pages:
-
-```yaml
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ['main', 'canary', 'your-branch']
-```
-
-Then edit the script [publish_pages](./scripts/publish_pages) to take your branch into account by adding a line:
+To publish from another branch, edit the script [publish_pages](./scripts/publish_pages) on the `main` branch to take your branch into account by adding a line:
 
 ```shell
 clone_and_build your_branch
 ```
 
-**Note:** those changes should be done on all branches deploying temporary releases, so `main`, `canary` and `your-branch`.
+Then run the workflow `Deploy static content to Pages` on the [workflow page](https://github.com/Smartesting/gravity-data-collector/actions/workflows/pages-publish.yml) (chose `main` as the source branch when running the workflow). 
 
 You can now use your draft release. In your `package.json` file:
 
