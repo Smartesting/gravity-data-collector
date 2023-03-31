@@ -21,9 +21,11 @@ export default class CypressTestEventReporter implements IEventHandler {
   handle(provider: EventProvider, eventType: string, event: any): void {
     switch (provider.id) {
       case EventProviderKey.GRAVITY:
+        //console.log('[Gravity] ', eventType, event)
         this.registerGravityEvent(provider, event as UserAction)
         break
       case EventProviderKey.CYPRESS:
+        //console.log('[Cypress] ', eventType, event)
         this.registerCypressEvent(provider, eventType, event)
         break
     }
@@ -31,8 +33,11 @@ export default class CypressTestEventReporter implements IEventHandler {
 
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
+      const cy = (this.cypress as any).cy
       console.log(`writing ${this.lines.length} lines in file ${this.reporterFilename}`)
-      ;(this.cypress as any).cy.writeFile(this.reporterFilename, '\n' + this.lines.join('\n') + '\n', {
+      const content = '\n' + this.lines.join('\n') + '\n'
+      console.log(content)
+      cy.writeFile(this.reporterFilename, content, {
         flag: 'a+',
       })
       this.lines = []
