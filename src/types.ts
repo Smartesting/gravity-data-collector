@@ -105,7 +105,6 @@ export interface CollectorOptions {
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
-  cypressEventReporterFilename?: string
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>
@@ -125,7 +124,7 @@ export interface EventProvider {
   version: string
 }
 
-export interface EventData {
+export interface SessionEvent {
   sessionId: string
   provider: EventProvider
   type: string
@@ -140,7 +139,6 @@ export interface CypressCommand {
   id: string
   chainerId: string
   type: string
-  code: string
   testPath: readonly string[]
   prevId: string
   nextId: string
@@ -159,3 +157,18 @@ export interface IEventHandler {
 }
 
 export type CypressObject = Cypress.Cypress & CyEventEmitter
+
+export interface AddSessionEventsResponse {
+  error: AddSessionEventsError | null
+}
+
+// noinspection JSUnusedGlobalSymbols //used by deendencies
+export enum AddSessionEventsError {
+  incorrectSource = 'incorrect_source',
+  conflict = 'conflict',
+  notUUID = 'not_a_uuid',
+  collectionNotFound = 'collection_not_found',
+  domainNotFound = 'domain_not_found',
+  domainExpired = 'domain_expired',
+  invalidFormat = 'invalid_format',
+}

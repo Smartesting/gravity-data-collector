@@ -22,6 +22,7 @@ import { IEventListener } from '../event-listeners-handler/IEventListener'
 import { makeCypressListeners } from './makeCypressListeners'
 import NopEventHandler from '../event-handlers/NopEventHandler'
 import CypressTestEventReporter from '../event-handlers/CypressTestEventReporter'
+import { debugSessionEventSender, defaultSessionEventSender } from '../user-action/sessionEventSender'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -56,6 +57,15 @@ class CollectorWrapper {
           this.trackingHandler.getSenderErrorCallback(),
         )
 
+    const eventOutput = options.debug
+      ? debugSessionEventSender()
+      : defaultSessionEventSender(
+        options.authKey,
+        options.gravityServerUrl,
+        nop,
+        this.trackingHandler.getSenderErrorCallback(),
+      )
+
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
     testNameHandler.refresh()
 
@@ -66,14 +76,8 @@ class CollectorWrapper {
     this.userActionsHistory = new MemoryUserActionsHistory()
 
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
-    const reporterFilename = options.cypressEventReporterFilename
-    if (reporterFilename !== undefined) {
-      if (cypress === undefined) console.warn(`No Cypress context to report events in file '${reporterFilename}'`)
-    }
     const eventHandler: IEventHandler =
-      cypress !== undefined && reporterFilename !== undefined
-        ? new CypressTestEventReporter(cypress, reporterFilename, sessionIdHandler.get())
-        : new NopEventHandler()
+      cypress === undefined ? new NopEventHandler() : new CypressTestEventReporter(cypress, sessionIdHandler.get(), eventOutput)
 
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,

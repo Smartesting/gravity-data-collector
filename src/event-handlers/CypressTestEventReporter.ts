@@ -1,7 +1,7 @@
 import {
   CypressCommand,
   CypressObject,
-  EventData,
+  SessionEvent,
   EventProvider,
   EventProviderKey,
   IEventHandler,
@@ -10,22 +10,22 @@ import {
 } from '../types'
 
 export default class CypressTestEventReporter implements IEventHandler {
-  private lines: string[] = []
+  private eventBuffer: SessionEvent[] = []
 
   constructor(
     private readonly cypress: CypressObject,
-    private readonly reporterFilename: string,
     private readonly sessionId: string,
+    private readonly eventOutput: (sessionEvents: readonly SessionEvent[]) => void,
   ) {}
 
   handle(provider: EventProvider, eventType: string, event: any): void {
     switch (provider.id) {
       case EventProviderKey.GRAVITY:
-        //console.log('[Gravity] ', eventType, event)
+        // console.log('[Gravity] ', eventType, event)
         this.registerGravityEvent(provider, event as UserAction)
         break
       case EventProviderKey.CYPRESS:
-        //console.log('[Cypress] ', eventType, event)
+        // console.log('[Cypress] ', eventType, event)
         this.registerCypressEvent(provider, eventType, event)
         break
     }
@@ -33,14 +33,20 @@ export default class CypressTestEventReporter implements IEventHandler {
 
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
+      let count = this.eventBuffer.length;
+      if (count === 0) {
+        return
+      }
       const cy = (this.cypress as any).cy
-      console.log(`writing ${this.lines.length} lines in file ${this.reporterFilename}`)
-      const content = '\n' + this.lines.join('\n') + '\n'
-      console.log(content)
-      cy.writeFile(this.reporterFilename, content, {
-        flag: 'a+',
+      const filename = (this.eventBuffer[count-1].data as CypressCommand).testPath.join('__')
+      console.log(`writing ${count} lines in file ${filename}`)
+      batch(this.eventBuffer, 20, events => {
+        const content = '\n' + events.map((e) => JSON.stringify(e)).join('\n') + '\n'
+        cy.writeFile(filename, content, { flag: 'a+' })
+        this.eventOutput(events)
       })
-      this.lines = []
+
+      this.eventBuffer = []
       return
     }
 
@@ -48,18 +54,18 @@ export default class CypressTestEventReporter implements IEventHandler {
 
     const testStep: TestStep | undefined = lookupTestStep(this.cypress)
     const data = extractCypressCommand(event, this.cypress.currentTest.titlePath, testStep)
-    const reporterData: EventData = {
+    const reporterData: SessionEvent = {
       sessionId: this.sessionId,
       provider,
       type: eventType,
       data,
       recordedAt: new Date(),
     }
-    this.lines.push(JSON.stringify(reporterData))
+    this.eventBuffer.push(reporterData)
   }
 
   private registerGravityEvent(provider: EventProvider, action: UserAction) {
-    const reporterData: EventData = {
+    const reporterData: SessionEvent = {
       provider,
       type: action.type,
       data: action,
@@ -67,7 +73,7 @@ export default class CypressTestEventReporter implements IEventHandler {
       initiatedAt: action.initiatedAt === undefined ? undefined : new Date(action.initiatedAt),
       sessionId: this.sessionId,
     }
-    this.lines.push(JSON.stringify(reporterData))
+    this.eventBuffer.push(reporterData)
   }
 }
 
@@ -84,14 +90,13 @@ function extractCypressCommand(
   testPath: readonly string[],
   testStep: TestStep | undefined,
 ): CypressCommand {
-  const { name, args, id, chainerId, type, fn, prev, next, userInvocationStack } = event.attributes
+  const { name, args, id, chainerId, type, prev, next, userInvocationStack } = event.attributes
   return {
     name,
     args,
     id,
     chainerId,
     type,
-    code: fn.toString(),
     prevId: prev?.attributes?.id,
     nextId: next?.attributes?.id,
     testPath,
@@ -116,4 +121,13 @@ function lookupTestStep(cypress: CypressObject): TestStep | undefined {
     }
   }
   return undefined
+}
+
+function batch(eventBuffer: SessionEvent[], batchSize: number, callback: (events: readonly SessionEvent[]) => void) {
+  if (batchSize < 1) throw new Error('batch size cannot be lower than 1')
+  let counter = 0
+  while (counter < eventBuffer.length) {
+    callback(eventBuffer.slice(counter, counter + batchSize))
+    counter += batchSize
+  }
 }
