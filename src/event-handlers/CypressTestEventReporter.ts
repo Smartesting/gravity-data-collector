@@ -33,14 +33,14 @@ export default class CypressTestEventReporter implements IEventHandler {
 
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
-      let count = this.eventBuffer.length;
+      const count = this.eventBuffer.length
       if (count === 0) {
         return
       }
       const cy = (this.cypress as any).cy
-      const filename = (this.eventBuffer[count-1].data as CypressCommand).testPath.join('__')
+      const filename = (this.eventBuffer[count - 1].data as CypressCommand).testPath.join('__')
       console.log(`writing ${count} lines in file ${filename}`)
-      batch(this.eventBuffer, 20, events => {
+      batch(this.eventBuffer, 20, (events) => {
         const content = '\n' + events.map((e) => JSON.stringify(e)).join('\n') + '\n'
         cy.writeFile(filename, content, { flag: 'a+' })
         this.eventOutput(events)

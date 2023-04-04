@@ -60,11 +60,11 @@ class CollectorWrapper {
     const eventOutput = options.debug
       ? debugSessionEventSender()
       : defaultSessionEventSender(
-        options.authKey,
-        options.gravityServerUrl,
-        nop,
-        this.trackingHandler.getSenderErrorCallback(),
-      )
+          options.authKey,
+          options.gravityServerUrl,
+          nop,
+          this.trackingHandler.getSenderErrorCallback(),
+        )
 
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
     testNameHandler.refresh()
@@ -77,7 +77,9 @@ class CollectorWrapper {
 
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
     const eventHandler: IEventHandler =
-      cypress === undefined ? new NopEventHandler() : new CypressTestEventReporter(cypress, sessionIdHandler.get(), eventOutput)
+      cypress === undefined
+        ? new NopEventHandler()
+        : new CypressTestEventReporter(cypress, sessionIdHandler.get(), eventOutput)
 
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
