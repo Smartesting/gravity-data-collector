@@ -108,16 +108,16 @@ function extractCypressCommand(
 function lookupTestStep(cypress: CypressObject): TestStep | undefined {
   // @ts-expect-error
   const mocha = cypress.mocha
-  console.log({mocha})
+  console.log({ mocha })
   if (mocha === undefined) return undefined
   const runner = mocha.getRunner()
-  console.log({runner})
+  console.log({ runner })
   if (runner === undefined) return undefined
   const currentRunnable = runner.currentRunnable
-  console.log({currentRunnable})
+  console.log({ currentRunnable })
   if (currentRunnable === undefined) return undefined
   const currentRunnerCommands = currentRunnable.commands ?? []
-  console.log({currentRunnerCommands})
+  console.log({ currentRunnerCommands })
   for (let i = currentRunnerCommands.length - 1; i >= 0; i--) {
     const { name, displayName, message, state } = currentRunnerCommands[i]
     if (name === 'step') {
