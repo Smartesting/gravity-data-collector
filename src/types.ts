@@ -116,11 +116,19 @@ export const ALLOWED_SESSION_TRAIT_VALUE_TYPES = ['string', 'boolean', 'number']
 export enum EventProviderKey {
   GRAVITY = 'gravity',
   CYPRESS = 'cypress',
-  MOCHA = 'mocha',
+}
+
+export enum TestStepProviderKey {
+  CUCUMBER = 'cucumber',
 }
 
 export interface EventProvider {
   id: EventProviderKey
+  version: string
+}
+
+export interface TestStepProvider {
+  key: TestStepProviderKey
   version: string
 }
 
@@ -147,9 +155,9 @@ export interface CypressCommand {
 }
 
 export interface TestStep {
-  displayName: string
-  message: string
-  state: string
+  provider: TestStepProvider
+  name: string
+  extra?: any
 }
 
 export interface IEventHandler {

@@ -1,22 +1,30 @@
 import {
   CypressCommand,
   CypressObject,
-  SessionEvent,
   EventProvider,
   EventProviderKey,
   IEventHandler,
+  SessionEvent,
   TestStep,
   UserAction,
 } from '../types'
+import { TestStepFinder } from './TestStepFinder'
+import { buildCucumberTestStepFinder } from './cucumberTestStepFinder'
 
 export default class CypressTestEventReporter implements IEventHandler {
   private eventBuffer: SessionEvent[] = []
+  private readonly testStepFinders: TestStepFinder[] = []
 
   constructor(
     private readonly cypress: CypressObject,
     private readonly sessionId: string,
     private readonly eventOutput: (sessionEvents: readonly SessionEvent[]) => void,
-  ) {}
+  ) {
+    const cucumberFinder = buildCucumberTestStepFinder(cypress)
+    if (cucumberFinder != null) {
+      this.testStepFinders.push(cucumberFinder)
+    }
+  }
 
   handle(provider: EventProvider, eventType: string, event: any): void {
     switch (provider.id) {
@@ -34,15 +42,14 @@ export default class CypressTestEventReporter implements IEventHandler {
   private registerCypressEvent(provider: EventProvider, eventType: string, event: any) {
     if (eventType === 'test:after:run') {
       const count = this.eventBuffer.length
-      if (count === 0) {
-        return
-      }
-      const cy = (this.cypress as any).cy
-      const filename = (this.eventBuffer[count - 1].data as CypressCommand).testPath.join('__')
-      console.log(`writing ${count} lines in file ${filename}`)
+      if (count === 0) return
+
+      // const filename = (this.eventBuffer[count - 1].data as CypressCommand).testPath.join('__')
+      // console.log(`writing ${count} lines in file ${filename}`)
       batch(this.eventBuffer, 20, (events) => {
-        const content = '\n' + events.map((e) => JSON.stringify(e)).join('\n') + '\n'
-        cy.writeFile(filename, content, { flag: 'a+' })
+        // const content = '\n' + events.map((e) => JSON.stringify(e)).join('\n') + '\n'
+        // const cy = (this.cypress as any).cy
+        // cy.writeFile(filename, content, { flag: 'a+' })
         this.eventOutput(events)
       })
 
@@ -52,7 +59,7 @@ export default class CypressTestEventReporter implements IEventHandler {
 
     if (skipEvent(event)) return
 
-    const testStep: TestStep | undefined = lookupTestStep(this.cypress)
+    const testStep: TestStep | undefined = this.lookupTestStep(event)
     const data = extractCypressCommand(event, this.cypress.currentTest.titlePath, testStep)
     const reporterData: SessionEvent = {
       sessionId: this.sessionId,
@@ -74,6 +81,14 @@ export default class CypressTestEventReporter implements IEventHandler {
       sessionId: this.sessionId,
     }
     this.eventBuffer.push(reporterData)
+  }
+
+  private lookupTestStep(event: any): TestStep | undefined {
+    for (const testStepFinder of this.testStepFinders) {
+      const testStep = testStepFinder(event)
+      if (testStep != null) return testStep
+    }
+    return undefined
   }
 }
 
@@ -103,28 +118,6 @@ function extractCypressCommand(
     userInvocationStack,
     testStep,
   }
-}
-
-function lookupTestStep(cypress: CypressObject): TestStep | undefined {
-  // @ts-expect-error
-  const mocha = cypress.mocha
-  console.log({ mocha })
-  if (mocha === undefined) return undefined
-  const runner = mocha.getRunner()
-  console.log({ runner })
-  if (runner === undefined) return undefined
-  const currentRunnable = runner.currentRunnable
-  console.log({ currentRunnable })
-  if (currentRunnable === undefined) return undefined
-  const currentRunnerCommands = currentRunnable.commands ?? []
-  console.log({ currentRunnerCommands })
-  for (let i = currentRunnerCommands.length - 1; i >= 0; i--) {
-    const { name, displayName, message, state } = currentRunnerCommands[i]
-    if (name === 'step') {
-      return { displayName, message, state }
-    }
-  }
-  return undefined
 }
 
 function batch(eventBuffer: SessionEvent[], batchSize: number, callback: (events: readonly SessionEvent[]) => void) {
