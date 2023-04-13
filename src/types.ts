@@ -54,7 +54,8 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
-  selector?: string
+  selector?: string[]
+  xpath: string
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo

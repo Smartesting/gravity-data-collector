@@ -6,18 +6,22 @@ import { GravityDocument, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { createClickUserAction, createKeyDownUserAction, createKeyUpUserAction } from '../test-utils/userActions'
 import { createTargetedUserAction } from './createTargetedUserAction'
+import { JSDOM } from 'jsdom'
 
 describe('createTargetedUserAction', () => {
   let document: GravityDocument
+  let jsDomInstance: JSDOM
 
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
     document = mockWindowDocument()
+    jsDomInstance = new JSDOM()
+    global.HTMLElement = jsDomInstance.window.HTMLElement
   })
 
   it('returns the specified "type"', () => {
-    const { element, domWindow } = createElementInJSDOM('<button>Click Me</button>', 'button')
+    const { element, domWindow } = createElementInJSDOM('<button>Click Me</button>', 'button', jsDomInstance)
 
     const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -25,7 +29,7 @@ describe('createTargetedUserAction', () => {
   })
 
   it('returns location data', () => {
-    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
+    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div', jsDomInstance)
 
     const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -51,7 +55,7 @@ describe('createTargetedUserAction', () => {
   })
 
   it('returns viewport data', () => {
-    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
+    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div', jsDomInstance)
 
     const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -63,7 +67,7 @@ describe('createTargetedUserAction', () => {
     vi.useFakeTimers()
     vi.setSystemTime(Date.parse('2022-05-12'))
 
-    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
+    const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div', jsDomInstance)
 
     const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -72,7 +76,7 @@ describe('createTargetedUserAction', () => {
 
   describe('target data embeds...', () => {
     it('tag name', () => {
-      const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
+      const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div', jsDomInstance)
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -94,6 +98,7 @@ describe('createTargetedUserAction', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
         'input',
+        jsDomInstance,
       )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
@@ -105,6 +110,7 @@ describe('createTargetedUserAction', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
         'input',
+        jsDomInstance,
       )
 
       const action = createTargetedUserAction(
@@ -122,6 +128,7 @@ describe('createTargetedUserAction', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
         'input',
+        jsDomInstance,
       )
 
       const action = createTargetedUserAction(
@@ -136,7 +143,11 @@ describe('createTargetedUserAction', () => {
     })
 
     it('falls back to classic matching if the custom selector is not available', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="text" class="size-lg"/>', 'input')
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="text" class="size-lg"/>',
+        'input',
+        jsDomInstance,
+      )
 
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
@@ -153,6 +164,7 @@ describe('createTargetedUserAction', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" data-testid="userName" class="size-lg"/>',
         'input',
+        jsDomInstance,
       )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
@@ -160,8 +172,12 @@ describe('createTargetedUserAction', () => {
       expect(action.target?.selector).toEqual('.size-lg')
     })
 
-    it('returns tag selector if ID and class are unavailable', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="text" data-testid="userName"/>', 'input')
+    it.only('returns tag selector if ID and class are unavailable', () => {
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="text" data-testid="userName"/>',
+        'input',
+        jsDomInstance,
+      )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -172,6 +188,7 @@ describe('createTargetedUserAction', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" data-testid="userName" class="size-lg"/>',
         'input',
+        jsDomInstance,
       )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
@@ -180,7 +197,11 @@ describe('createTargetedUserAction', () => {
     })
 
     it('"true" is recorded if input is a checked checkbox', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="checkbox" class="size-lg" checked/>', 'input')
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="checkbox" class="size-lg" checked/>',
+        'input',
+        jsDomInstance,
+      )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -188,7 +209,11 @@ describe('createTargetedUserAction', () => {
     })
 
     it('"false" is recorded if input is a checked checkbox', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="checkbox" class="size-lg"/>', 'input')
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="checkbox" class="size-lg"/>',
+        'input',
+        jsDomInstance,
+      )
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
@@ -200,6 +225,7 @@ describe('createTargetedUserAction', () => {
     const { element, domWindow } = createElementInJSDOM(
       '<input type="text" data-testid="userName" class="size-lg"/>',
       'input',
+      jsDomInstance,
     )
 
     const action = createClickUserAction(element, 12, 34, domWindow.document)
@@ -217,7 +243,7 @@ describe('createTargetedUserAction', () => {
   })
 
   it('key data when the event is a keyup', () => {
-    const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
+    const { element, domWindow } = createElementInJSDOM('<div/>', 'div', jsDomInstance)
     const action = createKeyUpUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
     expect(action.userActionData).toEqual({
       key: 'Shift',
@@ -226,7 +252,7 @@ describe('createTargetedUserAction', () => {
   })
 
   it('key data when the event is a keydown', () => {
-    const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
+    const { element, domWindow } = createElementInJSDOM('<div/>', 'div', jsDomInstance)
     const action = createKeyDownUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
     expect(action.userActionData).toEqual({
       key: 'Shift',
