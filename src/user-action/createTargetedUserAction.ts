@@ -2,13 +2,14 @@ import { getCssSelector } from 'css-selector-generator'
 import unique from 'unique-selector'
 import {
   ClickUserActionData,
+  HTMLFormExtra,
   KeyUserActionData,
   TargetedUserAction,
   UserActionData,
   UserActionTarget,
   UserActionType,
 } from '../types'
-import { isCheckableElement } from '../utils/dom'
+import { isCheckableElement, isFormRelated } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
@@ -175,17 +176,38 @@ function createActionTarget(
     actionTarget.value = (target as HTMLInputElement).checked.toString()
   }
 
-  actionTarget.selector = []
+  if (isFormRelated(target)) {
+    actionTarget.extra = createHTMLFormExtra(target)
+  }
+
+  actionTarget.selector = createSelectors(target)
+  const displayInfo = createTargetDisplayInfo(target, document)
+  if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
+
+  return actionTarget
+}
+function createHTMLFormExtra(target: any): HTMLFormExtra {
+  const formExtra: HTMLFormExtra = {
+    parentForm: createSelectors(target.form),
+    formAction: target.formAction,
+    formMethod: target.formMethod,
+    formTarget: target.formTarget,
+  }
+  return formExtra
+}
+
+function createSelectors(target: HTMLElement, excludeRegex: RegExp | null = null, customSelector?: string): string[] {
+  const selectors: string[] = []
 
   const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
 
   if (customSelectorAttribute !== null) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    actionTarget.selector.push(`[${customSelector}=${customSelectorAttribute}]`)
+    selectors.push(`[${customSelector}=${customSelectorAttribute}]`)
   }
 
   try {
-    actionTarget.selector.push(
+    selectors.push(
       getCssSelector(<Element>target, {
         selectors: ['id', 'class', 'tag', 'attribute'],
         blacklist: BLACKLIST,
@@ -195,7 +217,7 @@ function createActionTarget(
       }),
     )
 
-    actionTarget.selector.push(
+    selectors.push(
       getCssSelector(<Element>target, {
         selectors: ['class', 'tag', 'attribute'],
         blacklist: BLACKLIST,
@@ -205,7 +227,7 @@ function createActionTarget(
       }),
     )
 
-    actionTarget.selector.push(
+    selectors.push(
       getCssSelector(<Element>target, {
         selectors: ['tag'],
         blacklist: BLACKLIST,
@@ -216,13 +238,7 @@ function createActionTarget(
       }),
     )
 
-    actionTarget.selector.push(unique(target, { excludeRegex }))
-  } catch (error) {
-    console.error(error)
-  }
-
-  const displayInfo = createTargetDisplayInfo(target, document)
-  if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
-
-  return actionTarget
+    selectors.push(unique(target, { excludeRegex }))
+  } catch {}
+  return selectors
 }

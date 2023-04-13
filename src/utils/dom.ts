@@ -7,3 +7,7 @@ export function isCheckableElement(element: HTMLElement) {
       return false
   }
 }
+
+export function isFormRelated(element: any) {
+  return element.form !== undefined
+}

@@ -59,12 +59,27 @@ export interface UserActionTarget {
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo
+  extra?: HTMLFormExtra
 }
 
 export interface TargetDisplayInfo {
   placeholder?: string
   label?: string
   text?: string
+}
+
+export interface HTMLFormExtra {
+  parentForm: string[]
+  formAction: string
+  formMethod: string
+  formTarget: string
+}
+
+export interface HTMLSubmitExtra {
+  parentForm: string[]
+  formAction: string
+  formMethod: string
+  formTarget: string
 }
 
 export interface GravityLocation {
