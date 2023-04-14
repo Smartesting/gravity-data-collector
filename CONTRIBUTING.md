@@ -59,7 +59,7 @@ To publish from another branch, edit the script [publish_pages](./scripts/publis
 clone_and_build your_branch
 ```
 
-Then run the workflow `Deploy static content to Pages` on the [workflow page](https://github.com/Smartesting/gravity-data-collector/actions/workflows/pages-publish.yml) (chose `main` as the source branch when running the workflow). 
+Then run the workflow `Deploy static content to Pages` on the [workflow page](https://github.com/Smartesting/gravity-data-collector/actions/workflows/pages-publish.yml) (chose `main` as the source branch when running the workflow).
 
 You can now use your draft release. In your `package.json` file:
 
