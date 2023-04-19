@@ -53,6 +53,9 @@ export interface DomMutation {
   removedElements: string[][]
   type: 'attributes' | 'childList' | 'characterData'
   attributeName?: string
+  location: GravityLocation
+  document: GravityDocument
+  recordedAt?: string
 }
 
 export interface KeyUserActionData {

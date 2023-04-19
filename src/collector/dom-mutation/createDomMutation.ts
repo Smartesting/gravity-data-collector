@@ -1,5 +1,7 @@
 import { DomMutation } from '../../types'
 import { createSelectors, getXPath } from '../../utils/dom'
+import location from '../../utils/location'
+import gravityDocument from '../../utils/gravityDocument'
 
 function createDomMutations(mutationRecord: MutationRecord[]): DomMutation[] {
   return mutationRecord.map(createDomMutation)
@@ -11,6 +13,9 @@ function createDomMutation(mutationRecord: MutationRecord): DomMutation {
     addedElements: Array.from(mutationRecord.addedNodes).map((node) => createSelectorsAndXpath(node)),
     removedElements: Array.from(mutationRecord.removedNodes).map((node) => createSelectorsAndXpath(node)),
     type: mutationRecord.type,
+    location: location(),
+    document: gravityDocument(),
+    recordedAt: new Date().toISOString(),
   }
 }
 
