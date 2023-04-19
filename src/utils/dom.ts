@@ -94,7 +94,7 @@ export function createSelectors(
   target: HTMLElement,
   excludeRegex: RegExp | null = null,
   customSelector?: string,
-  document: Document = null
+  document: Document | null = null,
 ): string[] {
   const selectors: string[] = []
 
@@ -113,7 +113,7 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root:document?.body || null
+        root: document?.body || null,
       }),
       selectors,
     )
@@ -125,7 +125,7 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: document?.body || null
+        root: document?.body || null,
       }),
       selectors,
     )
@@ -137,7 +137,7 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root:document?.body || null
+        root: document?.body || null,
       }),
       selectors,
     )
