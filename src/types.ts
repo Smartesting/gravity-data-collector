@@ -1,4 +1,4 @@
-export { sendSessionUserActions } from './user-action/sessionUserActionSender'
+export { sendMovements as sendSessionUserActions } from './movement/sessionMovementSender'
 
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
@@ -6,6 +6,12 @@ export enum UserActionType {
   Change = 'change',
   KeyUp = 'keyup',
   KeyDown = 'keydown',
+}
+
+export type Movement = UserAction | DomMutation
+
+export type SessionMovement = Movement & {
+  sessionId: string
 }
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction
@@ -41,13 +47,17 @@ export interface ClickUserActionData {
   elementOffsetY?: number
 }
 
+export interface DomMutation {
+  target: string[]
+  addedElements: string[][]
+  removedElements: string[][]
+  type: 'attributes' | 'childList' | 'characterData'
+  attributeName?: string
+}
+
 export interface KeyUserActionData {
   key: string
   code: string
-}
-
-export type SessionUserAction = UserAction & {
-  sessionId: string
 }
 
 export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
@@ -116,7 +126,7 @@ export interface CollectorOptions {
   customSelector?: string
   sessionsPercentageKept: number
   rejectSession: () => boolean
-  onPublish?: (userActions: SessionUserAction[]) => void
+  onPublish?: (movements: Movement[]) => void
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>

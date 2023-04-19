@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MovementHandler from '../movement/MovementHandler'
 import { waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import EventListener from '../event-listeners/EventListener'
@@ -14,7 +14,7 @@ describe('EventListener', () => {
   class TestEventListener extends EventListener {
     constructor(window: Window) {
       const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-      super(new UserActionHandler(sessionIdHandler, 0, nop), userActionType, window)
+      super(new MovementHandler(sessionIdHandler, 0, nop), userActionType, window)
     }
 
     protected listener(event: Event): void {

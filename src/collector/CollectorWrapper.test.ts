@@ -3,10 +3,10 @@ import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../tes
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
-import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionTraitValue, UserAction } from '../types'
+import { createSessionStartedUserAction } from '../movement/createSessionStartedUserAction'
+import { CollectorOptions, SessionTraitValue, Movement } from '../types'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MovementHandler from '../movement/MovementHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
@@ -20,14 +20,14 @@ import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 
 describe('CollectorWrapper', () => {
-  let spyOnUserActionHandle: SpyInstance<[UserAction], void>
+  let spyOnUserActionHandle: SpyInstance<[Movement], void>
   let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
 
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
     mockWindowDocument()
-    spyOnUserActionHandle = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+    spyOnUserActionHandle = vi.spyOn(MovementHandler.prototype, 'handle').mockImplementation(nop)
     spyOnTraitHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
   })
 
@@ -79,12 +79,12 @@ describe('CollectorWrapper', () => {
 
       it('a "sessionStarted" action is sent if session id exists but this is a new test', () => {
         const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
-        const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
+        const mock = vi.spyOn(MovementHandler.prototype, 'handle').mockImplementation(nop)
 
         createCollectorWrapper(sessionIdHandler)
 
         const testNameHandler = new SessionStorageTestNameHandler()
-        vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(() => {
+        vi.spyOn(MovementHandler.prototype, 'handle').mockImplementation(() => {
           return 'test'
         })
 

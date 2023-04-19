@@ -1,5 +1,5 @@
 import { TargetedUserAction, UserActionType } from '../types'
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
+import { createTargetedUserAction } from '../movement/createTargetedUserAction'
 import { mockClick, mockKeyDown, mockKeyUp } from './mocks'
 import { AssertionError } from 'assert'
 import getDocument from '../utils/getDocument'

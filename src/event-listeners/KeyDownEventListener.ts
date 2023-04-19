@@ -1,15 +1,15 @@
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
+import { createTargetedUserAction } from '../movement/createTargetedUserAction'
 import { KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
-import UserActionHandler from '../user-action/UserActionHandler'
-import UserActionsHistory from '../user-actions-history/UserActionsHistory'
+import MovementHandler from '../movement/MovementHandler'
+import MovementsHistory from '../movement-history/MovementsHistory'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
 
 class KeyDownEventListener extends TargetedEventListener {
   constructor(
-    userActionHandler: UserActionHandler,
+    userActionHandler: MovementHandler,
     window: Window,
-    private readonly userActionHistory: UserActionsHistory,
+    private readonly userActionHistory: MovementsHistory,
     options: TargetEventListenerOptions = {},
   ) {
     super(userActionHandler, UserActionType.KeyDown, window, options)

@@ -1,9 +1,9 @@
-import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
+import { createSessionStartedUserAction } from '../movement/createSessionStartedUserAction'
 import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
-import UserActionHandler from '../user-action/UserActionHandler'
-import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
+import MovementHandler from '../movement/MovementHandler'
+import { debugMovements, defaultMovementSender } from '../movement/sessionMovementSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
+import MemoryMovementsHistory from '../movement-history/MemoryMovementsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
@@ -18,12 +18,15 @@ import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
+import MutationObserverHandler from '../mutation-observer-handler/MutationObserverHandler'
+import { createDomMutations } from './dom-mutation/createDomMutation'
 
 class CollectorWrapper {
-  readonly userActionHandler: UserActionHandler
-  readonly userActionsHistory: MemoryUserActionsHistory
+  readonly userActionHandler: MovementHandler
+  readonly movementsHistory: MemoryMovementsHistory
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
+  readonly mutationObserverHandler: MutationObserverHandler
   readonly trackingHandler: TrackingHandler
 
   constructor(
@@ -34,9 +37,9 @@ class CollectorWrapper {
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
-    const userActionOutput = options.debug
-      ? debugSessionUserActionSender(options.maxDelay)
-      : defaultSessionUserActionSender(
+    const movementOutput = options.debug
+      ? debugMovements(options.maxDelay)
+      : defaultMovementSender(
           options.authKey,
           options.gravityServerUrl,
           nop,
@@ -59,15 +62,16 @@ class CollectorWrapper {
       this.trackingHandler.setActive(keepSession(options))
       sessionIdHandler.generateNewSessionId()
     }
-    this.userActionsHistory = new MemoryUserActionsHistory()
+    this.movementsHistory = new MemoryMovementsHistory()
 
-    this.userActionHandler = new UserActionHandler(
+    this.userActionHandler = new MovementHandler(
       sessionIdHandler,
       options.requestInterval,
-      userActionOutput,
+      movementOutput,
       options.onPublish,
-      this.userActionsHistory,
+      this.movementsHistory,
     )
+
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
@@ -83,14 +87,68 @@ class CollectorWrapper {
       new KeyDownEventListener(
         this.userActionHandler,
         this.window,
-        this.userActionsHistory,
+        this.movementsHistory,
         targetedEventListenerOptions,
       ),
       new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new BeforeUnloadEventListener(this.userActionHandler, this.window),
     ])
 
-    this.trackingHandler.init(this.eventListenerHandler)
+    const mutOptions: MutationObserverInit = {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true,
+    }
+
+    this.mutationObserverHandler = new MutationObserverHandler(
+      new MutationObserver((muts) =>
+        createDomMutations(muts).map(this.userActionHandler.handle.bind(this.userActionHandler)),
+      ),
+      mutOptions,
+    )
+
+    this.trackingHandler.init(this.eventListenerHandler, this.mutationObserverHandler)
+
+    // // create a new MutationObserver object
+
+    // var observer = new MutationObserver(function (mutations: MutationRecord[]) {
+    //   // handle the mutations here
+    //   for(let mutation of mutations) {
+    //       console.log(mutation)
+    //   }
+    //   mutations.forEach(function(mutation) {
+    //     if (mutation.type === "attributes" && mutation.attributeName === "value") {
+    //       // loop through added nodes to find form fields
+    //       mutation.addedNodes.forEach((node) => {
+    //         if (
+    //           node instanceof HTMLInputElement ||
+    //           node instanceof HTMLSelectElement ||
+    //           node instanceof HTMLTextAreaElement
+    //         ) {
+    //           // handle changes to form fields here
+    //           console.log("Form field value changed: ", (node as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement).value);
+    //         }
+    //       });
+    //     }
+    //   });
+    // })
+
+    // // start observing changes to the DOM body
+    // observer.observe(this.window.document.body, mutOptions)
+
+    // const intObserver = new IntersectionObserver(entries => {
+    //   entries.forEach(entry => {
+    //     console.log(entry)
+    //   })
+    // })
+
+    // intObserver.observe(this.window.document.body)
+
+    // Listen for fetch requests
+    // window.addEventListener('fetch', (event:FetchEvent) => {
+    //   console.log('Fetch request:', event.request)
+    // });
   }
 
   identifySession(traitName: string, traitValue: SessionTraitValue) {

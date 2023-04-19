@@ -1,27 +1,27 @@
 import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MovementHandler from '../movement/MovementHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import UserActionsHistory from '../user-actions-history/UserActionsHistory'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
+import MovementsHistory from '../movement-history/MovementsHistory'
+import MemoryMovementsHistory from '../movement-history/MemoryMovementsHistory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import KeyDownEventListener from './KeyDownEventListener'
-import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
+import * as createTargetedUserActionModule from '../movement/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 describe('KeyDownEventListener', () => {
-  let userActionHistory: UserActionsHistory
-  let userActionHandler: UserActionHandler
+  let userActionHistory: MovementsHistory
+  let userActionHandler: MovementHandler
   let sessionIdHandler: ISessionIdHandler
   let handleSpy: SpyInstance
   let createTargetedUserActionSpy: SpyInstance
 
   beforeEach(() => {
     vitest.restoreAllMocks()
-    userActionHistory = new MemoryUserActionsHistory()
+    userActionHistory = new MemoryMovementsHistory()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
+    userActionHandler = new MovementHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })

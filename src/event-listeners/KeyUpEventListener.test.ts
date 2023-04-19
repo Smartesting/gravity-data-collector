@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MovementHandler from '../movement/MovementHandler'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
+import * as createTargetedUserActionModule from '../movement/createTargetedUserAction'
 
 describe('KeyUpEventListener', () => {
   let sessionIdHandler: MemorySessionIdHandler
-  let userActionHandler: UserActionHandler
+  let userActionHandler: MovementHandler
   let handleSpy: SpyInstance
   let createTargetedUserActionSpy: SpyInstance
 
@@ -17,7 +17,7 @@ describe('KeyUpEventListener', () => {
     beforeEach(() => {
       vitest.restoreAllMocks()
       sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-      userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
+      userActionHandler = new MovementHandler(sessionIdHandler, 0, nop)
       handleSpy = vitest.spyOn(userActionHandler, 'handle')
       createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
     })

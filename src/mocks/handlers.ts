@@ -6,7 +6,7 @@ import {
 } from '../gravityEndPoints'
 import { v4 as uuidv4 } from 'uuid'
 import { isUUID } from '../test-utils/isUUID'
-import { AddSessionUserActionsError } from '../user-action/sessionUserActionSender'
+import { AddMovementsError } from '../movement/sessionMovementSender'
 import { IdentifySessionError } from '../session-trait/sessionTraitSender'
 import { getHostname } from '../test-utils/getHostname'
 import { checkSessionTraitValue } from '../session-trait/checkSessionTraitValue'
@@ -24,25 +24,25 @@ export const handlers = [
     const { authKey } = req.params
     if (authKey === DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR) throw new Error('Network Error')
     if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
-      return await res(ctx.status(404), ctx.json({ error: AddSessionUserActionsError.collectionNotFound }))
+      return await res(ctx.status(404), ctx.json({ error: AddMovementsError.collectionNotFound }))
     }
 
     const origin = req.headers.get('Origin')
     if (origin !== null && getHostname(origin) !== VALID_SOURCE) {
-      return await res(ctx.status(403), ctx.json({ error: AddSessionUserActionsError.incorrectSource }))
+      return await res(ctx.status(403), ctx.json({ error: AddMovementsError.incorrectSource }))
     }
 
     const payload = await req.json()
     if (!Array.isArray(payload)) {
-      return await res(ctx.status(422), ctx.json({ error: AddSessionUserActionsError.invalidFormat }))
+      return await res(ctx.status(422), ctx.json({ error: AddMovementsError.invalidFormat }))
     }
     for (const action of payload) {
       if (!isUUID(action.sessionId)) {
-        return await res(ctx.status(422), ctx.json({ error: AddSessionUserActionsError.notUUID }))
+        return await res(ctx.status(422), ctx.json({ error: AddMovementsError.notUUID }))
       }
       const associatedAuthKey = AUTH_KEY_BY_SESSION_ID.get(action.sessionId)
       if (associatedAuthKey !== undefined && associatedAuthKey !== authKey) {
-        return await res(ctx.status(409), ctx.json({ error: AddSessionUserActionsError.conflict }))
+        return await res(ctx.status(409), ctx.json({ error: AddMovementsError.conflict }))
       }
       AUTH_KEY_BY_SESSION_ID.set(action.sessionId, authKey)
     }

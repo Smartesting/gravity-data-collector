@@ -1,11 +1,11 @@
-import UserActionHandler from '../user-action/UserActionHandler'
+import MovementHandler from '../movement/MovementHandler'
 import { UserActionType } from '../types'
 
 export default abstract class EventListener {
   private readonly listenerBind
 
   protected constructor(
-    protected readonly userActionHandler: UserActionHandler,
+    protected readonly userActionHandler: MovementHandler,
     protected readonly userActionType: UserActionType,
     protected readonly window: Window,
   ) {

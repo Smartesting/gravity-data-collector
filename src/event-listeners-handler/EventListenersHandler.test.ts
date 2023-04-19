@@ -2,23 +2,23 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import EventListenersHandler from './EventListenersHandler'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
-import UserActionHandler from '../user-action/UserActionHandler'
+import MemoryMovementsHistory from '../movement-history/MemoryMovementsHistory'
+import MovementHandler from '../movement/MovementHandler'
 import { nop } from '../utils/nop'
-import UserActionsHistory from '../user-actions-history/UserActionsHistory'
+import MovementsHistory from '../movement-history/MovementsHistory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('EventListenersHandler', () => {
   let eventListenersHandler: EventListenersHandler
   let clickEventListener: ClickEventListener
   let beforeUnloadEventListener: BeforeUnloadEventListener
-  let userActionsHistory: UserActionsHistory
-  let userActionHandler: UserActionHandler
+  let userActionsHistory: MovementsHistory
+  let userActionHandler: MovementHandler
 
   beforeEach(() => {
-    userActionsHistory = new MemoryUserActionsHistory()
+    userActionsHistory = new MemoryMovementsHistory()
     const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionsHistory)
+    userActionHandler = new MovementHandler(sessionIdHandler, 0, nop, nop, userActionsHistory)
     clickEventListener = new ClickEventListener(userActionHandler, window)
     beforeUnloadEventListener = new BeforeUnloadEventListener(userActionHandler, window)
     eventListenersHandler = new EventListenersHandler([clickEventListener, beforeUnloadEventListener])
