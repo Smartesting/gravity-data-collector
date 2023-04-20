@@ -99,7 +99,7 @@ function createActionTarget(
     actionTarget.extra = createHTMLFormExtra(target)
   }
 
-  actionTarget.selector = createSelectors(target, excludeRegex, customSelector, document)
+  actionTarget.selector = createSelectors(target, excludeRegex, customSelector)
   const displayInfo = createTargetDisplayInfo(target, document)
   if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
 
