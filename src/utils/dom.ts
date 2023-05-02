@@ -80,12 +80,12 @@ export function getXPath(element: Element | null): string {
       }
       sibling = sibling.nextSibling
     }
-    const prefix: string = (element.prefix !== null && element.prefix !== undefined ? element.prefix + ':' : '')
+    const prefix: string = element.prefix !== null && element.prefix !== undefined ? element.prefix + ':' : ''
     const nth: string = nbOfPreviousSiblings > 0 || hasNextSiblings ? '[' + String(nbOfPreviousSiblings + 1) + ']' : ''
     parts.push(prefix + element.localName + nth)
     element = element.parentNode as Element
   }
-  return (parts.length > 0) ? '/' + parts.reverse().join('/') : ''
+  return parts.length > 0 ? '/' + parts.reverse().join('/') : ''
 }
 
 export function createSelectors(
@@ -144,7 +144,7 @@ export function createSelectors(
     )
 
     addSelector(unique(target, { excludeRegex }), selectors)
-  } catch { }
+  } catch {}
   return selectors
 }
 
