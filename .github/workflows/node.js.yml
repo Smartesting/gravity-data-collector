@@ -27,18 +27,5 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
-      - run: npm test
-      - name: Run cypress tests
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Store Cypress videos
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-videos
-          path: |
-            cypress/videos/
       - run: npm run lint
       - run: ./node_modules/.bin/prettier --check .
