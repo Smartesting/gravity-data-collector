@@ -1,6 +1,5 @@
 import { getCssSelector } from 'css-selector-generator'
 import unique from 'unique-selector'
-import getDocument from './getDocument'
 
 export function isCheckableElement(element: HTMLElement) {
   switch ((element as HTMLInputElement).type) {
@@ -37,7 +36,7 @@ const BLACKLIST = [
 ]
 /*
   Slightly modified getXPath function, initially from https://github.com/thiagodp/get-xpath
-  
+
   MIT License
 
   Copyright (c) 2020 Thiago Delgado Pinto
@@ -62,32 +61,32 @@ const BLACKLIST = [
  */
 
 export function getXPath(element: any): string {
-  let nodeElem = element
-  let parts: string[] = []
-  while (nodeElem && Node.ELEMENT_NODE === nodeElem.nodeType) {
-    let nbOfPreviousSiblings = 0
-    let hasNextSiblings = false
+  let nodeElem: Element | null = element
+  const parts: string[] = []
+  while (nodeElem !== null && nodeElem !== undefined && Node.ELEMENT_NODE === nodeElem.nodeType) {
+    let nbOfPreviousSiblings: number = 0
+    let hasNextSiblings: boolean = false
     let sibling = nodeElem.previousSibling
-    while (sibling) {
+    while (sibling !== null && sibling !== undefined) {
       if (sibling.nodeType !== Node.DOCUMENT_TYPE_NODE && sibling.nodeName === nodeElem.nodeName) {
         nbOfPreviousSiblings++
       }
       sibling = sibling.previousSibling
     }
     sibling = nodeElem.nextSibling
-    while (sibling) {
+    while (sibling !== null && sibling !== undefined) {
       if (sibling.nodeName === nodeElem.nodeName) {
         hasNextSiblings = true
         break
       }
       sibling = sibling.nextSibling
     }
-    let prefix = nodeElem.prefix ? nodeElem.prefix + ':' : ''
-    let nth = nbOfPreviousSiblings || hasNextSiblings ? '[' + (nbOfPreviousSiblings + 1) + ']' : ''
+    const prefix: string = (nodeElem.prefix !== null && nodeElem.prefix !== undefined ? nodeElem.prefix + ':' : '')
+    const nth: string = nbOfPreviousSiblings > 0 || hasNextSiblings ? '[' + String(nbOfPreviousSiblings + 1) + ']' : ''
     parts.push(prefix + nodeElem.localName + nth)
-    nodeElem = nodeElem.parentNode
+    nodeElem = nodeElem.parentNode as Element
   }
-  return parts.length ? '/' + parts.reverse().join('/') : ''
+  return (parts.length > 0) ? '/' + parts.reverse().join('/') : ''
 }
 
 export function createSelectors(
@@ -107,46 +106,46 @@ export function createSelectors(
 
   try {
     addSelector(
-      getCssSelector(<Element>target, {
+      getCssSelector(target as Element, {
         selectors: ['id', 'class', 'tag', 'attribute'],
         blacklist: BLACKLIST,
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: document?.body || null,
+        root: ((document?.body) != null) || null,
       }),
       selectors,
     )
 
     addSelector(
-      getCssSelector(<Element>target, {
+      getCssSelector(target as Element, {
         selectors: ['class', 'attribute', 'tag'],
         blacklist: BLACKLIST,
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: document?.body || null,
+        root: ((document?.body) != null) || null,
       }),
       selectors,
     )
 
     addSelector(
-      getCssSelector(<Element>target, {
+      getCssSelector(target as Element, {
         selectors: ['tag'],
         blacklist: BLACKLIST,
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: document?.body || null,
+        root: ((document?.body) != null) || null,
       }),
       selectors,
     )
 
     addSelector(unique(target, { excludeRegex }), selectors)
-  } catch {}
+  } catch { }
   return selectors
 }
 
 function addSelector(selector: string, selectors: string[]) {
-  if (selectors.indexOf(selector) === -1) selectors.push(selector)
+  if (!selectors.includes(selector)) selectors.push(selector)
 }

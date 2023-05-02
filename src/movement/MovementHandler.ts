@@ -1,4 +1,4 @@
-import { DomMutation, Movement, SessionMovement, UserAction } from '../types'
+import { Movement, SessionMovement } from '../types'
 import MovementsHistory from '../movement-history/MovementsHistory'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
