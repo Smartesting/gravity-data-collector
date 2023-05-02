@@ -60,31 +60,30 @@ const BLACKLIST = [
   SOFTWARE.
  */
 
-export function getXPath(element: any): string {
-  let nodeElem: Element | null = element
+export function getXPath(element: Element | null): string {
   const parts: string[] = []
-  while (nodeElem !== null && nodeElem !== undefined && Node.ELEMENT_NODE === nodeElem.nodeType) {
+  while (element !== null && element !== undefined && Node.ELEMENT_NODE === element.nodeType) {
     let nbOfPreviousSiblings: number = 0
     let hasNextSiblings: boolean = false
-    let sibling = nodeElem.previousSibling
+    let sibling = element.previousSibling
     while (sibling !== null && sibling !== undefined) {
-      if (sibling.nodeType !== Node.DOCUMENT_TYPE_NODE && sibling.nodeName === nodeElem.nodeName) {
+      if (sibling.nodeType !== Node.DOCUMENT_TYPE_NODE && sibling.nodeName === element.nodeName) {
         nbOfPreviousSiblings++
       }
       sibling = sibling.previousSibling
     }
-    sibling = nodeElem.nextSibling
+    sibling = element.nextSibling
     while (sibling !== null && sibling !== undefined) {
-      if (sibling.nodeName === nodeElem.nodeName) {
+      if (sibling.nodeName === element.nodeName) {
         hasNextSiblings = true
         break
       }
       sibling = sibling.nextSibling
     }
-    const prefix: string = (nodeElem.prefix !== null && nodeElem.prefix !== undefined ? nodeElem.prefix + ':' : '')
+    const prefix: string = (element.prefix !== null && element.prefix !== undefined ? element.prefix + ':' : '')
     const nth: string = nbOfPreviousSiblings > 0 || hasNextSiblings ? '[' + String(nbOfPreviousSiblings + 1) + ']' : ''
-    parts.push(prefix + nodeElem.localName + nth)
-    nodeElem = nodeElem.parentNode as Element
+    parts.push(prefix + element.localName + nth)
+    element = element.parentNode as Element
   }
   return (parts.length > 0) ? '/' + parts.reverse().join('/') : ''
 }
@@ -105,6 +104,7 @@ export function createSelectors(
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     addSelector(
       getCssSelector(target as Element, {
         selectors: ['id', 'class', 'tag', 'attribute'],
@@ -112,11 +112,12 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: ((document?.body) != null) || null,
+        root: document?.body ?? null,
       }),
       selectors,
     )
 
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     addSelector(
       getCssSelector(target as Element, {
         selectors: ['class', 'attribute', 'tag'],
@@ -124,11 +125,12 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: ((document?.body) != null) || null,
+        root: document?.body ?? null,
       }),
       selectors,
     )
 
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     addSelector(
       getCssSelector(target as Element, {
         selectors: ['tag'],
@@ -136,7 +138,7 @@ export function createSelectors(
         combineBetweenSelectors: true,
         maxCandidates: 80,
         maxCombinations: 80,
-        root: ((document?.body) != null) || null,
+        root: document?.body ?? null,
       }),
       selectors,
     )
