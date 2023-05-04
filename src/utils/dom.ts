@@ -88,20 +88,29 @@ export function getXPath(element: Element | null): string {
   return parts.length > 0 ? '/' + parts.reverse().join('/') : ''
 }
 
-export function createSelectors(
+export function createSelector(
+  target: HTMLElement,
+  excludeRegex: RegExp | null = null,
+  customSelector?: string,
+  document: Document | null = null,
+): string {
+  const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
+
+  if (customSelectorAttribute !== null) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    return `[${customSelector}=${customSelectorAttribute}]`
+  }
+
+  return unique(target, { excludeRegex })
+}
+
+export function createExtraSelectors(
   target: HTMLElement,
   excludeRegex: RegExp | null = null,
   customSelector?: string,
   document: Document | null = null,
 ): string[] {
   const selectors: string[] = []
-
-  const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
-
-  if (customSelectorAttribute !== null) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    selectors.push(`[${customSelector}=${customSelectorAttribute}]`)
-  }
 
   try {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -142,8 +151,6 @@ export function createSelectors(
       }),
       selectors,
     )
-
-    addSelector(unique(target, { excludeRegex }), selectors)
   } catch {}
   return selectors
 }

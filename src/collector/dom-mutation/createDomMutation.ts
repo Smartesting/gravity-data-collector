@@ -1,5 +1,5 @@
 import { DomMutation } from '../../types'
-import { createSelectors, getXPath } from '../../utils/dom'
+import { createExtraSelectors, getXPath } from '../../utils/dom'
 import location from '../../utils/location'
 import gravityDocument from '../../utils/gravityDocument'
 
@@ -20,7 +20,7 @@ function createDomMutation(mutationRecord: MutationRecord): DomMutation {
 }
 
 function createSelectorsAndXpath(node: Node) {
-  return [...createSelectors(node as HTMLElement), getXPath(node as HTMLElement)]
+  return [...createExtraSelectors(node as HTMLElement), getXPath(node as HTMLElement)]
 }
 
 export { createDomMutations, createDomMutation }

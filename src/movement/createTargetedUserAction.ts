@@ -4,10 +4,11 @@ import {
   KeyUserActionData,
   TargetedUserAction,
   UserActionData,
+  UserActionExtra,
   UserActionTarget,
   UserActionType,
 } from '../types'
-import { createSelectors, getXPath, isCheckableElement, isFormRelated } from '../utils/dom'
+import { createSelector, createExtraSelectors, getXPath, isCheckableElement, isFormRelated } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
@@ -85,7 +86,6 @@ function createActionTarget(
 ): UserActionTarget {
   const actionTarget: UserActionTarget = {
     element: target.tagName.toLocaleLowerCase(),
-    xpath: getXPath(target),
   }
 
   const type = target.getAttribute('type')
@@ -95,19 +95,37 @@ function createActionTarget(
     actionTarget.value = (target as HTMLInputElement).checked.toString()
   }
 
-  if (isFormRelated(target)) {
-    actionTarget.extra = createHTMLFormExtra(target)
-  }
+  actionTarget.selector = createSelector(target, excludeRegex, customSelector)
 
-  actionTarget.selector = createSelectors(target, excludeRegex, customSelector)
   const displayInfo = createTargetDisplayInfo(target, document)
   if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
 
+  actionTarget.extra = createActionTargetExtras(target, excludeRegex, customSelector)
+
   return actionTarget
 }
+
+function createActionTargetExtras(
+  target: HTMLElement,
+  excludeRegex: RegExp | null = null,
+  customSelector?: string,
+): UserActionExtra {
+  const userActionExtra: UserActionExtra = {
+    xpath: getXPath(target),
+  }
+
+  userActionExtra.selectors = createExtraSelectors(target, excludeRegex, customSelector)
+
+  if (isFormRelated(target)) {
+    userActionExtra.form = createHTMLFormExtra(target)
+  }
+
+  return userActionExtra
+}
+
 function createHTMLFormExtra(target: any): HTMLFormExtra {
   const formExtra: HTMLFormExtra = {
-    parentForm: createSelectors(target.form),
+    parentForm: createExtraSelectors(target.form),
     formAction: target.formAction,
     formMethod: target.formMethod,
     formTarget: target.formTarget,

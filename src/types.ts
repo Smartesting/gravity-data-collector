@@ -67,12 +67,17 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
-  selector?: string[]
-  xpath: string
+  selector?: string
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo
-  extra?: HTMLFormExtra
+  extra?: UserActionExtra
+}
+
+export interface UserActionExtra {
+  selectors?: string[]
+  xpath: string
+  form?: HTMLFormExtra
 }
 
 export interface TargetDisplayInfo {
@@ -82,13 +87,6 @@ export interface TargetDisplayInfo {
 }
 
 export interface HTMLFormExtra {
-  parentForm: string[]
-  formAction: string
-  formMethod: string
-  formTarget: string
-}
-
-export interface HTMLSubmitExtra {
   parentForm: string[]
   formAction: string
   formMethod: string
