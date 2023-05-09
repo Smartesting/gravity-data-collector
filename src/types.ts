@@ -8,7 +8,13 @@ export enum UserActionType {
   KeyDown = 'keydown',
 }
 
-export type UserAction = SessionStartedUserAction | TargetedUserAction
+export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
+
+export type AsyncRequest = {
+  pathname: string
+  method: string
+  status: number
+}
 
 export type SessionStartedUserAction = {
   test?: string
