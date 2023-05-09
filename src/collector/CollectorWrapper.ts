@@ -91,6 +91,24 @@ class CollectorWrapper {
     ])
 
     this.trackingHandler.init(this.eventListenerHandler)
+
+    const { fetch: originalFetch } = window
+    window.fetch = async (...args) => {
+      let [resource, config] = args
+
+      if (this.trackingHandler.isTracking()) {
+        let method = 'unknown'
+        if (config && config.method) {
+          method = config.method
+        }
+        this.userActionHandler.handle({
+          pathname: resource as string,
+          method,
+        })
+      }
+
+      return await originalFetch(resource, config)
+    }
   }
 
   identifySession(traitName: string, traitValue: SessionTraitValue) {

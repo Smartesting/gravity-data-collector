@@ -19,6 +19,8 @@ import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 
+global.fetch = vi.fn()
+
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
   let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
@@ -51,7 +53,11 @@ describe('CollectorWrapper', () => {
     describe('when debug option is set to true', () => {
       beforeEach(() => {
         // @ts-expect-error
-        options = { debug: true, sessionsPercentageKept: 100, rejectSession: DEFAULT_SESSION_REJECTION }
+        options = {
+          debug: true,
+          sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
+        }
       })
 
       it('a "sessionStarted" action is sent when initialized', () => {
@@ -126,6 +132,18 @@ describe('CollectorWrapper', () => {
 
         expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
       })
+
+      it('handles the request when a fetch is made', async () => {
+        createCollectorWrapper()
+        await fetch('https://server.com/example', {
+          method: 'GET',
+        })
+
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith({
+          pathname: 'https://server.com/example',
+          method: 'GET',
+        })
+      })
     })
   })
 
@@ -162,7 +180,10 @@ describe('CollectorWrapper', () => {
   describe('tracking is active for the current session according option "sessionsPercentageKept"', () => {
     it('should always track if percentage is 100', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, sessionsPercentageKept: 100 }),
+        completeOptions({
+          debug: true,
+          sessionsPercentageKept: 100,
+        }),
         global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -174,7 +195,10 @@ describe('CollectorWrapper', () => {
 
     it('should never track if percentage is 0', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, sessionsPercentageKept: 0 }),
+        completeOptions({
+          debug: true,
+          sessionsPercentageKept: 0,
+        }),
         global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -189,7 +213,10 @@ describe('CollectorWrapper', () => {
 
       function createCollector(sessionsPercentageKept: number) {
         return new CollectorWrapper(
-          completeOptions({ debug: true, sessionsPercentageKept }),
+          completeOptions({
+            debug: true,
+            sessionsPercentageKept,
+          }),
           global.window,
           memorySessionIdHandler,
           new SessionStorageTestNameHandler(),
@@ -214,7 +241,10 @@ describe('CollectorWrapper', () => {
 
       function createCollector() {
         return new CollectorWrapper(
-          completeOptions({ debug: true, sessionsPercentageKept }),
+          completeOptions({
+            debug: true,
+            sessionsPercentageKept,
+          }),
           global.window,
           new MemorySessionIdHandler(uuidv4, 1000),
           new SessionStorageTestNameHandler(),
@@ -247,7 +277,10 @@ describe('CollectorWrapper', () => {
   describe('option "rejectSession" allows to reject a session', () => {
     it('should not track session if rejectSession is positive', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, rejectSession: () => true }),
+        completeOptions({
+          debug: true,
+          rejectSession: () => true,
+        }),
         global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -259,7 +292,10 @@ describe('CollectorWrapper', () => {
 
     it('should keep session tracking if rejectSession is negative', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, rejectSession: () => false }),
+        completeOptions({
+          debug: true,
+          rejectSession: () => false,
+        }),
         global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
