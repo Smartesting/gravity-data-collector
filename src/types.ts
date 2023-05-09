@@ -13,7 +13,6 @@ export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRe
 export type AsyncRequest = {
   pathname: string
   method: string
-  status: number
 }
 
 export type SessionStartedUserAction = {
