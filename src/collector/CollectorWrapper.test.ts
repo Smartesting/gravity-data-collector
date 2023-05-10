@@ -18,6 +18,7 @@ import completeOptions, { DEFAULT_SESSION_REJECTION } from '../utils/completeOpt
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
+import createAsyncRequest from '../user-action/createAsyncRequest'
 
 global.fetch = vi.fn()
 
@@ -134,15 +135,15 @@ describe('CollectorWrapper', () => {
       })
 
       it('handles the request when a fetch is made', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
         createCollectorWrapper()
         await fetch('https://server.com/example', {
           method: 'GET',
         })
 
-        expect(spyOnUserActionHandle).toHaveBeenCalledWith({
-          pathname: 'https://server.com/example',
-          method: 'GET',
-        })
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
       })
     })
   })

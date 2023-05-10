@@ -18,6 +18,7 @@ import { config } from '../config'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
+import createAsyncRequest from '../user-action/createAsyncRequest'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -94,17 +95,14 @@ class CollectorWrapper {
 
     const { fetch: originalFetch } = window
     window.fetch = async (...args) => {
-      let [resource, config] = args
+      const [resource, config] = args
 
       if (this.trackingHandler.isTracking()) {
         let method = 'unknown'
-        if (config && config.method) {
+        if (config?.method != null) {
           method = config.method
         }
-        this.userActionHandler.handle({
-          pathname: resource as string,
-          method,
-        })
+        this.userActionHandler.handle(createAsyncRequest(resource as string, method))
       }
 
       return await originalFetch(resource, config)

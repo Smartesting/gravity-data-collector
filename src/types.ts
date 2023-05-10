@@ -6,6 +6,7 @@ export enum UserActionType {
   Change = 'change',
   KeyUp = 'keyup',
   KeyDown = 'keydown',
+  AsyncRequest = 'asyncRequest',
 }
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
@@ -13,7 +14,7 @@ export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRe
 export type AsyncRequest = {
   pathname: string
   method: string
-}
+} & UserActionProperties
 
 export type SessionStartedUserAction = {
   test?: string
