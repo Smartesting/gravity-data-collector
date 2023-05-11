@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Deprecated
 
+ - Deprecate field `selector` of `UserActionTarget`.
+
 ### Removed
 
 ### Fixed

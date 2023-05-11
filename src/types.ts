@@ -54,11 +54,33 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
+  /**
+   * @deprecated Use selectors instead.
+   */
   selector?: string
+  selectors?: Selectors,
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo
 }
+
+export type Selectors = {
+  xpath: string,
+  query: Query,
+  attributes: Attributes
+}
+
+export type Query = Partial<{
+  [key in QueryType]: string
+}>
+
+export enum QueryType {
+  id = 'id',
+  class = 'class',
+  tag = 'tag',
+}
+
+export type Attributes =  {[key: string]: string}
 
 export interface TargetDisplayInfo {
   placeholder?: string
@@ -101,6 +123,11 @@ export interface CollectorOptions {
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
+}
+
+export type CreateSelectorsOptions = {
+  queries: Array<QueryType>,
+  attributes: Array<string>,
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>
