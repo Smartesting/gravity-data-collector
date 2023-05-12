@@ -37,9 +37,10 @@ class KeyDownEventListener extends TargetedEventListener {
   actionIsTheSameThanLast(userAction: TargetedUserAction): boolean {
     const lastUserAction = this.userActionHistory.getLast()
     if (lastUserAction === undefined) return false
-    if (isTargetedUserAction(lastUserAction) && lastUserAction.type !== UserActionType.KeyDown) return false
+    if (!isTargetedUserAction(lastUserAction)) return false
+    if (lastUserAction.type !== UserActionType.KeyDown) return false
 
-    const targetedUserAction = lastUserAction as TargetedUserAction
+    const targetedUserAction = lastUserAction
 
     if (targetedUserAction.target.element !== userAction.target.element) return false
     if (targetedUserAction.target.selector !== userAction.target.selector) return false
