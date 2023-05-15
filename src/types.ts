@@ -72,12 +72,14 @@ export type Selectors = {
 
 export type Query = Partial<{
   [key in QueryType]: string
-}>
+} & { combined: string}>
 
 export enum QueryType {
   id = 'id',
   class = 'class',
   tag = 'tag',
+  nthChild = 'nthChild',
+  attributes = 'attributes'
 }
 
 export type Attributes =  {[key: string]: string}
@@ -118,8 +120,15 @@ export interface CollectorOptions {
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
+  /**
+   * @deprecated Use selectorsOptions instead.
+   */
   excludeRegex: RegExp | null
+   /**
+   * @deprecated Use selectorsOptions instead.
+   */
   customSelector?: string
+  selectorsOptions?: Partial<CreateSelectorsOptions>,
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
@@ -127,6 +136,7 @@ export interface CollectorOptions {
 
 export type CreateSelectorsOptions = {
   queries: Array<QueryType>,
+  excludedQueries: Array<QueryType>,
   attributes: Array<string>,
 }
 
