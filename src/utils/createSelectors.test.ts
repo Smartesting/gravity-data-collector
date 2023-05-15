@@ -100,6 +100,20 @@ describe('createSelector', () => {
     })
   })
 
+  it('excludes the selectors specified by `excludedQueries` in combined', () => {
+    element = createElementInJSDOM(html, 'input').element
+    const selectors = createSelectors(element, { excludedQueries: [QueryType.id, QueryType.attributes, QueryType.tag] })
+    expect(selectors).toEqual({
+      xpath: '/html/body/div/input',
+      query: {
+        class: '.my-container > *',
+        combined: '.my-container > :nth-child(1)',
+        nthChild: ':nth-child(2) > :nth-child(1) > :nth-child(1)',
+      },
+      attributes: {},
+    })
+  })
+
   it('provides the asked attributes', () => {
     const selectors = createSelectors(element, { queries: [], attributes: ['data-testid'] })
     expect(selectors).toEqual({

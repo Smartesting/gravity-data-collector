@@ -75,6 +75,7 @@ class CollectorWrapper {
     const targetedEventListenerOptions: TargetEventListenerOptions = {
       excludeRegex: options.excludeRegex,
       customSelector: options.customSelector,
+      selectorsOptions: options.selectorsOptions,
     }
 
     this.eventListenerHandler = new EventListenersHandler([

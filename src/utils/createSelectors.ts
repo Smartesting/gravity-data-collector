@@ -14,19 +14,19 @@ export function createSelectors(element: Element, options?: Partial<CreateSelect
     ...options,
   }
 
-  return {
+  const selectors = {
     xpath: getXPath(element, { ignoreId: true }),
     query: makeQuery(element, queries, excludedQueries),
     attributes: makeAttributes(element, attributes),
   }
+  return selectors
 }
 
 function makeQuery(element: Element, queries: QueryType[], excludedQueries: QueryType[]): Query {
   const selectors: string[] = []
+  const filteredQueries = queries.filter((query) => !excludedQueries.includes(query))
 
-  const queryMap = queries.reduce<Query>((acc, query) => {
-    if (excludedQueries.includes(query)) return acc
-
+  const queryMap = filteredQueries.reduce<Query>((acc, query) => {
     const selectorTypes: SelectorType[] = [queryTypeToSelectorType(query)]
     const selector = unique(element, { selectorTypes })
     if (selector !== null) {
@@ -36,7 +36,7 @@ function makeQuery(element: Element, queries: QueryType[], excludedQueries: Quer
     return acc
   }, {})
 
-  const combined = unique(element, { selectorTypes: queries.map(queryTypeToSelectorType) })
+  const combined = unique(element, { selectorTypes: filteredQueries.map(queryTypeToSelectorType) })
   if (combined !== null && !selectors.includes(combined)) {
     return {
       ...queryMap,

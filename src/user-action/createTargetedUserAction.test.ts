@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockClick, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { GravityDocument, UserActionType } from '../types'
+import { GravityDocument, QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { createClickUserAction, createKeyDownUserAction, createKeyUpUserAction } from '../test-utils/userActions'
 import { createTargetedUserAction } from './createTargetedUserAction'
@@ -157,6 +157,51 @@ describe('createTargetedUserAction', () => {
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
       expect(action.target?.selector).toEqual('input')
+    })
+
+    it('computes selectors', () => {
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="text" class="inline-form__input" data-testid="userName"/>',
+        'input',
+      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        document: domWindow.document,
+      })
+      expect(action?.target.selectors).toEqual({
+        attributes: {},
+        query: {
+          class: '.inline-form__input',
+          id: '* > * > *',
+          nthChild: ':nth-child(2) > :nth-child(1)',
+          tag: 'input',
+        },
+        xpath: '/html/body/input',
+      })
+    })
+
+    it('computes selectors based on user configuration', () => {
+      const { element, domWindow } = createElementInJSDOM(
+        '<input type="text" class="inline-form__input" data-testid="userName"/>',
+        'input',
+      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        document: domWindow.document,
+        selectorsOptions: {
+          excludedQueries: [QueryType.id],
+          attributes: ['data-testid'],
+        },
+      })
+      expect(action?.target.selectors).toEqual({
+        attributes: {
+          'data-testid': 'userName',
+        },
+        query: {
+          class: '.inline-form__input',
+          nthChild: ':nth-child(2) > :nth-child(1)',
+          tag: 'input',
+        },
+        xpath: '/html/body/input',
+      })
     })
 
     it('value not recorded if input is a text box', () => {
