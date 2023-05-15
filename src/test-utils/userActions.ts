@@ -13,9 +13,7 @@ export function createClickUserAction(
   const userAction = createTargetedUserAction(
     mockClick(element, clientX, clientY),
     UserActionType.Click,
-    null,
-    undefined,
-    document,
+    {document}
   )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null Click User Action' })
@@ -32,9 +30,7 @@ export function createKeyUpUserAction(
   const userAction = createTargetedUserAction(
     mockKeyUp(element, key, code),
     UserActionType.KeyUp,
-    null,
-    undefined,
-    document,
+    {document}
   )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null KeyUp User Action' })
@@ -51,9 +47,7 @@ export function createKeyDownUserAction(
   const userAction = createTargetedUserAction(
     mockKeyDown(element, key, code),
     UserActionType.KeyDown,
-    null,
-    undefined,
-    document,
+    {document}
   )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null KeyDown User Action' })

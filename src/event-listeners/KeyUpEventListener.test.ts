@@ -37,7 +37,11 @@ describe('KeyUpEventListener', () => {
       fireEvent.keyUp(search)
 
       await waitFor(() => {
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keyup'), 'keyup', /.*/, undefined)
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new KeyboardEvent('keyup'),
+          'keyup',
+          { excludeRegex: /.*/}
+        )
       })
     })
 
@@ -59,8 +63,7 @@ describe('KeyUpEventListener', () => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
           new KeyboardEvent('keyup'),
           'keyup',
-          undefined,
-          'data-testid',
+          { customSelector: "data-testid"}
         )
       })
     })

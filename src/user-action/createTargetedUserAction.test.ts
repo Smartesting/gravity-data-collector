@@ -110,9 +110,10 @@ describe('createTargetedUserAction', () => {
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
         UserActionType.Click,
-        /^#id-input-.*$/,
-        undefined,
-        domWindow.document,
+        {
+          excludeRegex: /^#id-input-.*$/,
+          document: domWindow.document
+        }
       )
 
       expect(action?.target?.selector).toEqual('.size-lg')
@@ -127,9 +128,10 @@ describe('createTargetedUserAction', () => {
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
         UserActionType.Click,
-        null,
-        'data-testid',
-        domWindow.document,
+        {
+          customSelector: 'data-testid',
+          document: domWindow.document
+        }
       )
 
       expect(action?.target?.selector).toEqual('[data-testid=userName]')
@@ -141,9 +143,10 @@ describe('createTargetedUserAction', () => {
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
         UserActionType.Click,
-        null,
-        'data-testid',
-        domWindow.document,
+        {
+          customSelector: 'data-testid',
+          document: domWindow.document
+        }
       )
 
       expect(action?.target?.selector).toEqual('.size-lg')
