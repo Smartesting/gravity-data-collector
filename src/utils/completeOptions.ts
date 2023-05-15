@@ -70,14 +70,21 @@ function checkSelectorsOptions(selectorsOptions: Partial<CreateSelectorsOptions>
     queries,
     assertQueryType,
     (value) => `option "selectorsOptions.queries": "${value}" is not a valid option. Expected a list of QueryType`,
-    (value) => `option "selectorsOptions.queries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`,
+    (value) =>
+      `option "selectorsOptions.queries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(
+        QueryType,
+      ).join(', ')}`,
   )
 
   checkArrayOf(
     excludedQueries,
     assertQueryType,
-    (value) => `option "selectorsOptions.excludedQueries": "${value}" is not a valid option. Expected a list of QueryType`,
-    (value) => `option "selectorsOptions.excludedQueries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`,
+    (value) =>
+      `option "selectorsOptions.excludedQueries": "${value}" is not a valid option. Expected a list of QueryType`,
+    (value) =>
+      `option "selectorsOptions.excludedQueries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(
+        QueryType,
+      ).join(', ')}`,
   )
 }
 
@@ -95,7 +102,7 @@ function checkArrayOf(
 }
 
 function assertString(toBeDetermined: unknown): toBeDetermined is String {
-  return typeof (toBeDetermined) === 'string'
+  return typeof toBeDetermined === 'string'
 }
 
 function assertQueryType(toBeDetermined: unknown): toBeDetermined is QueryType {

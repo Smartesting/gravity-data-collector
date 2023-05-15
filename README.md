@@ -100,13 +100,13 @@ By default, the following selectors are computed:
 When initializing the collector, you can specify which selectors are activated and custom attributes, for example:
 
 ```typescript
-GravityCollector.init({ selectorsOptions: {attributes: ['data-testid', 'role']} })
+GravityCollector.init({ selectorsOptions: { attributes: ['data-testid', 'role'] } })
 ```
 
 This configuration will collect the `data-testid` and `role` attributes of the HTML elements with which the user interacts.
 
 ```typescript
-GravityCollector.init({ selectorsOptions: {queries: ['class', 'tag']} })
+GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
 This configuration will only use CSS classes and tags to compute the selectors. Alternativelly, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
@@ -114,8 +114,8 @@ This configuration will only use CSS classes and tags to compute the selectors. 
 ```typescript
 GravityCollector.init({
   selectorsOptions: {
-    excludedQueries: ['id']
-  }
+    excludedQueries: ['id'],
+  },
 })
 ```
 
@@ -125,12 +125,10 @@ You can specify both custom attributes and which selectors are computed:
 GravityCollector.init({
   selectorsOptions: {
     queries: ['class', 'tag'],
-    attributes: ['data-testid', 'role']
-  }
+    attributes: ['data-testid', 'role'],
+  },
 })
 ```
-
-
 
 ### Identify sessions with _traits_
 

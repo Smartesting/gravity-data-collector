@@ -37,11 +37,7 @@ describe('ChangeEventListener', () => {
     fireEvent.change(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new Event('change'),
-        'change',
-        { excludeRegex: /.*/ },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', { excludeRegex: /.*/ })
     })
   })
 
@@ -60,9 +56,9 @@ describe('ChangeEventListener', () => {
     fireEvent.change(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new Event('change'),
-        'change', { customSelector: 'data-testid' })
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', {
+        customSelector: 'data-testid',
+      })
     })
   })
 

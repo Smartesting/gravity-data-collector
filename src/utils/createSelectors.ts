@@ -8,10 +8,7 @@ const defaultCreateSelectorsOptions: CreateSelectorsOptions = {
   attributes: [],
 }
 
-export function createSelectors(
-  element: Element,
-  options?: Partial<CreateSelectorsOptions>,
-): Selectors {
+export function createSelectors(element: Element, options?: Partial<CreateSelectorsOptions>): Selectors {
   const { queries, excludedQueries, attributes } = {
     ...defaultCreateSelectorsOptions,
     ...options,
@@ -41,11 +38,11 @@ function makeQuery(element: Element, queries: QueryType[], excludedQueries: Quer
 
   const combined = unique(element, { selectorTypes: queries.map(queryTypeToSelectorType) })
   if (combined !== null && !selectors.includes(combined)) {
-return {
-    ...queryMap,
-    combined,
+    return {
+      ...queryMap,
+      combined,
+    }
   }
-}
 
   return queryMap
 }
@@ -65,7 +62,9 @@ function queryTypeToSelectorType(query: QueryType): SelectorType {
 function makeAttributes(element: Element, attributes: string[]): Attributes {
   return attributes.reduce<Attributes>((acc, attribute) => {
     const value = element.getAttribute(attribute)
-    if (value !== null) { acc[attribute] = value }
+    if (value !== null) {
+      acc[attribute] = value
+    }
     return acc
   }, {})
 }

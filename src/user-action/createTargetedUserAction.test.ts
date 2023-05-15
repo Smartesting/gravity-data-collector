@@ -107,14 +107,10 @@ describe('createTargetedUserAction', () => {
         'input',
       )
 
-      const action = createTargetedUserAction(
-        mockClick(element, 0, 0),
-        UserActionType.Click,
-        {
-          excludeRegex: /^#id-input-.*$/,
-          document: domWindow.document,
-        },
-      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        excludeRegex: /^#id-input-.*$/,
+        document: domWindow.document,
+      })
 
       expect(action?.target?.selector).toEqual('.size-lg')
     })
@@ -125,14 +121,10 @@ describe('createTargetedUserAction', () => {
         'input',
       )
 
-      const action = createTargetedUserAction(
-        mockClick(element, 0, 0),
-        UserActionType.Click,
-        {
-          customSelector: 'data-testid',
-          document: domWindow.document,
-        },
-      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        customSelector: 'data-testid',
+        document: domWindow.document,
+      })
 
       expect(action?.target?.selector).toEqual('[data-testid=userName]')
     })
@@ -140,14 +132,10 @@ describe('createTargetedUserAction', () => {
     it('falls back to classic matching if the custom selector is not available', () => {
       const { element, domWindow } = createElementInJSDOM('<input type="text" class="size-lg"/>', 'input')
 
-      const action = createTargetedUserAction(
-        mockClick(element, 0, 0),
-        UserActionType.Click,
-        {
-          customSelector: 'data-testid',
-          document: domWindow.document,
-        },
-      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        customSelector: 'data-testid',
+        document: domWindow.document,
+      })
 
       expect(action?.target?.selector).toEqual('.size-lg')
     })

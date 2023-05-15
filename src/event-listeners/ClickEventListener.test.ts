@@ -37,11 +37,7 @@ describe('ClickEventListener', () => {
     fireEvent.click(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new MouseEvent('click'),
-        'click',
-        { excludeRegex: /.*/ },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', { excludeRegex: /.*/ })
     })
   })
 
@@ -60,11 +56,9 @@ describe('ClickEventListener', () => {
     fireEvent.click(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new MouseEvent('click'),
-        'click',
-        { customSelector: 'data-testid' },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
+        customSelector: 'data-testid',
+      })
     })
   })
 

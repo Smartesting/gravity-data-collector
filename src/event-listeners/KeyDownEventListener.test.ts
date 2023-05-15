@@ -41,11 +41,9 @@ describe('KeyDownEventListener', () => {
     fireEvent.keyDown(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new KeyboardEvent('keydown'),
-        'keydown',
-        { excludeRegex: /.*/ },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
+        excludeRegex: /.*/,
+      })
     })
   })
 
@@ -64,11 +62,9 @@ describe('KeyDownEventListener', () => {
     fireEvent.keyDown(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new KeyboardEvent('keydown'),
-        'keydown',
-        { customSelector: 'data-testid' },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
+        customSelector: 'data-testid',
+      })
     })
   })
 

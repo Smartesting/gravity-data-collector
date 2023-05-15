@@ -9,11 +9,7 @@ class ClickEventListener extends TargetedEventListener {
   }
 
   listener(event: MouseEvent) {
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction !== null) {
       this.userActionHandler.handle(userAction)
     }

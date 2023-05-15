@@ -6,8 +6,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 
 describe('createSelector', () => {
-  const html =
-  `
+  const html = `
   <body>
     <div id="some-id" class="my-container" data-testid="container">
       <input id='text-5' type='search' />

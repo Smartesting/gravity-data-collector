@@ -70,19 +70,23 @@ export interface Selectors {
   attributes: Attributes
 }
 
-export type Query = Partial<{
-  [key in QueryType]: string
-} & { combined: string}>
+export type Query = Partial<
+  {
+    [key in QueryType]: string
+  } & { combined: string }
+>
 
 export enum QueryType {
   id = 'id',
   class = 'class',
   tag = 'tag',
   nthChild = 'nthChild',
-  attributes = 'attributes'
+  attributes = 'attributes',
 }
 
-export interface Attributes {[key: string]: string}
+export interface Attributes {
+  [key: string]: string
+}
 
 export interface TargetDisplayInfo {
   placeholder?: string
@@ -124,7 +128,7 @@ export interface CollectorOptions {
    * @deprecated Use selectorsOptions instead.
    */
   excludeRegex: RegExp | null
-   /**
+  /**
    * @deprecated Use selectorsOptions instead.
    */
   customSelector?: string
