@@ -14,7 +14,7 @@ class ChangeEventListener extends TargetedEventListener {
     const userAction: TargetedUserAction | null = createTargetedUserAction(
       event,
       this.userActionType,
-      this.options
+      this.options,
     )
     if (userAction != null) {
       userAction.target.value = sanitizeHTMLElementValue(elementTarget)

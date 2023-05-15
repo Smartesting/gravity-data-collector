@@ -44,8 +44,7 @@ describe('KeyDownEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new KeyboardEvent('keydown'),
         'keydown',
-        {
-        excludeRegex: /.*/}
+        { excludeRegex: /.*/ },
       )
     })
   })
@@ -68,7 +67,7 @@ describe('KeyDownEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new KeyboardEvent('keydown'),
         'keydown',
-        { customSelector: 'data-testid' }
+        { customSelector: 'data-testid' },
       )
     })
   })

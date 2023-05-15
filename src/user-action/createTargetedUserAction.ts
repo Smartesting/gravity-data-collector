@@ -14,26 +14,26 @@ import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
 
-type CreateTargetedUserActionOptions = {
-  excludeRegex: RegExp | null,
-  customSelector: string | undefined,
+interface CreateTargetedUserActionOptions {
+  excludeRegex: RegExp | null
+  customSelector: string | undefined
   document: Document
 }
 
 const createTargetedUserActionDefaultOptions: CreateTargetedUserActionOptions = {
   excludeRegex: null,
   customSelector: undefined,
-  document: getDocument()
+  document: getDocument(),
 }
 
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
-  options?: Partial<CreateTargetedUserActionOptions>
+  options?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
   const { excludeRegex, customSelector, document } = {
     ...createTargetedUserActionDefaultOptions,
-    ...options
+    ...options,
   }
 
   const target = event.target as HTMLElement

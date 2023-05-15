@@ -58,15 +58,15 @@ export interface UserActionTarget {
    * @deprecated Use selectors instead.
    */
   selector?: string
-  selectors?: Selectors,
+  selectors?: Selectors
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo
 }
 
-export type Selectors = {
-  xpath: string,
-  query: Query,
+export interface Selectors {
+  xpath: string
+  query: Query
   attributes: Attributes
 }
 
@@ -82,7 +82,7 @@ export enum QueryType {
   attributes = 'attributes'
 }
 
-export type Attributes =  {[key: string]: string}
+export interface Attributes {[key: string]: string}
 
 export interface TargetDisplayInfo {
   placeholder?: string
@@ -128,16 +128,16 @@ export interface CollectorOptions {
    * @deprecated Use selectorsOptions instead.
    */
   customSelector?: string
-  selectorsOptions?: Partial<CreateSelectorsOptions>,
+  selectorsOptions?: Partial<CreateSelectorsOptions>
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
 }
 
-export type CreateSelectorsOptions = {
-  queries: Array<QueryType>,
-  excludedQueries: Array<QueryType>,
-  attributes: Array<string>,
+export interface CreateSelectorsOptions {
+  queries: QueryType[]
+  excludedQueries: QueryType[]
+  attributes: string[]
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>

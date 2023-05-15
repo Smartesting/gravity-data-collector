@@ -40,7 +40,7 @@ describe('ClickEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new MouseEvent('click'),
         'click',
-        { excludeRegex: /.*/}
+        { excludeRegex: /.*/ },
       )
     })
   })
@@ -63,7 +63,7 @@ describe('ClickEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new MouseEvent('click'),
         'click',
-        { customSelector: 'data-testid'},
+        { customSelector: 'data-testid' },
       )
     })
   })

@@ -112,8 +112,8 @@ describe('createTargetedUserAction', () => {
         UserActionType.Click,
         {
           excludeRegex: /^#id-input-.*$/,
-          document: domWindow.document
-        }
+          document: domWindow.document,
+        },
       )
 
       expect(action?.target?.selector).toEqual('.size-lg')
@@ -130,8 +130,8 @@ describe('createTargetedUserAction', () => {
         UserActionType.Click,
         {
           customSelector: 'data-testid',
-          document: domWindow.document
-        }
+          document: domWindow.document,
+        },
       )
 
       expect(action?.target?.selector).toEqual('[data-testid=userName]')
@@ -145,8 +145,8 @@ describe('createTargetedUserAction', () => {
         UserActionType.Click,
         {
           customSelector: 'data-testid',
-          document: domWindow.document
-        }
+          document: domWindow.document,
+        },
       )
 
       expect(action?.target?.selector).toEqual('.size-lg')

@@ -1,9 +1,9 @@
 import { describe, beforeEach, expect, it } from 'vitest'
-import {  QueryType } from "../types";
-import createElementInJSDOM from '../test-utils/createElementInJSDOM';
-import { createSelectors } from './createSelectors';
-import { readFileSync } from 'fs';
-import path from 'path';
+import { QueryType } from '../types'
+import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import { createSelectors } from './createSelectors'
+import { readFileSync } from 'fs'
+import path from 'path'
 
 describe('createSelector', () => {
   const html =
@@ -17,7 +17,7 @@ describe('createSelector', () => {
   let element: Element
 
   beforeEach(() => {
-    element = createElementInJSDOM(html,  'div').element
+    element = createElementInJSDOM(html, 'div').element
   })
 
   it('returns the selectors for the element', () => {
@@ -28,9 +28,9 @@ describe('createSelector', () => {
         id: '#some-id',
         class: '.my-container',
         tag: 'div',
-        nthChild: ':nth-child(2) > :nth-child(1)'
+        nthChild: ':nth-child(2) > :nth-child(1)',
       },
-      attributes: {}
+      attributes: {},
     })
   })
 
@@ -50,75 +50,74 @@ describe('createSelector', () => {
       xpath: '/html/body/div',
       query: {
         tag: 'div',
-        nthChild: ':nth-child(2) > :nth-child(1)'
+        nthChild: ':nth-child(2) > :nth-child(1)',
       },
-      attributes: {}
+      attributes: {},
     })
   })
 
   it('only provide asked selectors', () => {
-    const selectors = createSelectors(element, {queries: [QueryType.class]})
+    const selectors = createSelectors(element, { queries: [QueryType.class] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {
         class: '.my-container',
       },
-      attributes: {}
+      attributes: {},
     })
   })
 
   it('only provide asked selectors', () => {
-    const input = createElementInJSDOM(html,  'input').element
-    const selectors = createSelectors(input, {queries: [QueryType.class, QueryType.attributes]})
+    const input = createElementInJSDOM(html, 'input').element
+    const selectors = createSelectors(input, { queries: [QueryType.class, QueryType.attributes] })
     expect(selectors).toEqual({
       xpath: '/html/body/div/input',
       query: {
         class: '.my-container > *',
-        attributes: '[type="search"]'
+        attributes: '[type="search"]',
       },
-      attributes: {}
+      attributes: {},
     })
   })
 
-
   it('does not provide any selector if none are asked', () => {
-    const selectors = createSelectors(element, {queries: []})
+    const selectors = createSelectors(element, { queries: [] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},
-      attributes: {}
+      attributes: {},
     })
   })
 
   it('excludes the selectors specified by `excludedQueries`', () => {
-    const selectors = createSelectors(element, {excludedQueries: [QueryType.nthChild, QueryType.tag]})
+    const selectors = createSelectors(element, { excludedQueries: [QueryType.nthChild, QueryType.tag] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {
         id: '#some-id',
-        class: '.my-container'
+        class: '.my-container',
       },
-      attributes: {}
+      attributes: {},
     })
   })
 
   it('provides the asked attributes', () => {
-    const selectors = createSelectors(element, {queries: [], attributes: ['data-testid']})
+    const selectors = createSelectors(element, { queries: [], attributes: ['data-testid'] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},
       attributes: {
-        'data-testid': 'container'
-      }
+        'data-testid': 'container',
+      },
     })
   })
 
   it('does not provide missing attributes', () => {
-    const selectors = createSelectors(element, {queries: [], attributes: ['role']})
+    const selectors = createSelectors(element, { queries: [], attributes: ['role'] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},
-      attributes: {}
+      attributes: {},
     })
   })
 
@@ -131,8 +130,8 @@ describe('createSelector', () => {
       attributes: {},
       query: {
         nthChild: ':nth-child(2) > :nth-child(4)',
-        combined: '#pet-select > :nth-child(4)'
-      }
+        combined: '#pet-select > :nth-child(4)',
+      },
     })
   })
 })

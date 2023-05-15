@@ -63,29 +63,29 @@ function checkSelectorsOptions(selectorsOptions: Partial<CreateSelectorsOptions>
     attributes,
     assertString,
     (value) => `option "selectorsOptions.attributes": "${value}" is not a valid option. Expected a list of strings`,
-    (value) => `option "selectorsOptions.attributes": "${value}" is not a valid string`
+    (value) => `option "selectorsOptions.attributes": "${value}" is not a valid string`,
   )
 
   checkArrayOf(
     queries,
     assertQueryType,
     (value) => `option "selectorsOptions.queries": "${value}" is not a valid option. Expected a list of QueryType`,
-    (value) => `option "selectorsOptions.queries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`
+    (value) => `option "selectorsOptions.queries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`,
   )
 
   checkArrayOf(
     excludedQueries,
     assertQueryType,
     (value) => `option "selectorsOptions.excludedQueries": "${value}" is not a valid option. Expected a list of QueryType`,
-    (value) => `option "selectorsOptions.excludedQueries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`
+    (value) => `option "selectorsOptions.excludedQueries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(QueryType).join(', ')}`,
   )
 }
 
 function checkArrayOf(
-  toBeChecked: unknown,
+  toBeChecked: any,
   checker: (value: unknown) => boolean,
-  makeNotArrayMessage: (value: unknown) => string,
-  makeInvalidTypeMessage: (value: unknown) => string,
+  makeNotArrayMessage: (value: string) => string,
+  makeInvalidTypeMessage: (value: string) => string,
 ): void {
   if (toBeChecked === undefined) return
   if (!Array.isArray(toBeChecked)) throw new Error(makeNotArrayMessage(toBeChecked))
@@ -95,7 +95,7 @@ function checkArrayOf(
 }
 
 function assertString(toBeDetermined: unknown): toBeDetermined is String {
-  return typeof(toBeDetermined) === 'string'
+  return typeof (toBeDetermined) === 'string'
 }
 
 function assertQueryType(toBeDetermined: unknown): toBeDetermined is QueryType {

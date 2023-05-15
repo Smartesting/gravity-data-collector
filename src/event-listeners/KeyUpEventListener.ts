@@ -13,7 +13,7 @@ class KeyUpEventListener extends TargetedEventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.options
+      this.options,
     )
     if (userAction === null) return
     if (isKeyAllowedByKeyListeners(event.code)) {

@@ -1,6 +1,6 @@
-import { Attributes, CreateSelectorsOptions, Query, QueryType, Selectors } from "../types";
+import { Attributes, CreateSelectorsOptions, Query, QueryType, Selectors } from '../types'
 import unique, { SelectorType } from 'unique-selector'
-import getXPath from './getXPath'
+import getXPath from 'get-xpath'
 
 const defaultCreateSelectorsOptions: CreateSelectorsOptions = {
   queries: [QueryType.id, QueryType.class, QueryType.tag, QueryType.nthChild],
@@ -10,40 +10,42 @@ const defaultCreateSelectorsOptions: CreateSelectorsOptions = {
 
 export function createSelectors(
   element: Element,
-  options?: Partial<CreateSelectorsOptions>
+  options?: Partial<CreateSelectorsOptions>,
 ): Selectors {
   const { queries, excludedQueries, attributes } = {
     ...defaultCreateSelectorsOptions,
-    ...options
+    ...options,
   }
 
   return {
-    xpath: getXPath(element),
+    xpath: getXPath(element, { ignoreId: true }),
     query: makeQuery(element, queries, excludedQueries),
-    attributes: makeAttributes(element, attributes)
+    attributes: makeAttributes(element, attributes),
   }
 }
 
 function makeQuery(element: Element, queries: QueryType[], excludedQueries: QueryType[]): Query {
   const selectors: string[] = []
 
-  const queryMap = queries.reduce((acc, query) => {
+  const queryMap = queries.reduce<Query>((acc, query) => {
     if (excludedQueries.includes(query)) return acc
 
     const selectorTypes: SelectorType[] = [queryTypeToSelectorType(query)]
-    const selector = unique(element, { selectorTypes})
-    if (selector) {
+    const selector = unique(element, { selectorTypes })
+    if (selector !== null) {
       selectors.push(selector)
       acc[query] = selector
     }
     return acc
-  }, {} as Query)
+  }, {})
 
-  const combined = unique(element, {selectorTypes: queries.map(queryTypeToSelectorType)})
-  if (combined && !selectors.includes(combined)) return {
+  const combined = unique(element, { selectorTypes: queries.map(queryTypeToSelectorType) })
+  if (combined !== null && !selectors.includes(combined)) {
+return {
     ...queryMap,
-    combined
+    combined,
   }
+}
 
   return queryMap
 }
@@ -54,16 +56,16 @@ function queryTypeToSelectorType(query: QueryType): SelectorType {
     [QueryType.class]: 'Class',
     [QueryType.tag]: 'Tag',
     [QueryType.nthChild]: 'NthChild',
-    [QueryType.attributes]: 'Attributes'
+    [QueryType.attributes]: 'Attributes',
   }
 
   return queryToSelector[query]
 }
 
 function makeAttributes(element: Element, attributes: string[]): Attributes {
-  return attributes.reduce((acc, attribute) => {
+  return attributes.reduce<Attributes>((acc, attribute) => {
     const value = element.getAttribute(attribute)
-    if (value) { acc[attribute] = value}
+    if (value !== null) { acc[attribute] = value }
     return acc
-  }, {} as Attributes)
+  }, {})
 }

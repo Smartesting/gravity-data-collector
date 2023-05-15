@@ -12,7 +12,7 @@ class ClickEventListener extends TargetedEventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.options
+      this.options,
     )
     if (userAction !== null) {
       this.userActionHandler.handle(userAction)

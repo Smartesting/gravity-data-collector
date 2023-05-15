@@ -40,7 +40,7 @@ describe('ChangeEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new Event('change'),
         'change',
-        { excludeRegex: /.*/ }
+        { excludeRegex: /.*/ },
       )
     })
   })
@@ -62,7 +62,7 @@ describe('ChangeEventListener', () => {
     await waitFor(() => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new Event('change'),
-        'change', {customSelector: 'data-testid'})
+        'change', { customSelector: 'data-testid' })
     })
   })
 
