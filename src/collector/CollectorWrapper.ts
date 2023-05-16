@@ -96,13 +96,14 @@ class CollectorWrapper {
     const { fetch: originalFetch } = window
     window.fetch = async (...args) => {
       const [resource, config] = args
+      const url = resource as string
 
-      if (this.trackingHandler.isTracking()) {
+      if (this.trackingHandler.isTracking() && requestCanBeRecorded(url, options.originsToRecord)) {
         let method = 'unknown'
         if (config?.method != null) {
           method = config.method
         }
-        this.userActionHandler.handle(createAsyncRequest(resource as string, method))
+        this.userActionHandler.handle(createAsyncRequest(url, method))
       }
 
       return await originalFetch(resource, config)
@@ -126,4 +127,18 @@ function keepSession(options: CollectorOptions): boolean {
   const keepSession = options.sessionsPercentageKept >= 100 * Math.random()
   const rejectSession = options.rejectSession()
   return keepSession && !rejectSession
+}
+
+function requestCanBeRecorded(url: string, originsToRecord?: string[]) {
+  if (originsToRecord === undefined) {
+    return false
+  }
+
+  for (const originToRecord of originsToRecord) {
+    if (url.startsWith(originToRecord)) {
+      return true
+    }
+  }
+
+  return false
 }

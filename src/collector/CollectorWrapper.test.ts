@@ -20,8 +20,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 
-global.fetch = vi.fn()
-
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
   let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
@@ -32,6 +30,7 @@ describe('CollectorWrapper', () => {
     mockWindowDocument()
     spyOnUserActionHandle = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
     spyOnTraitHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+    global.fetch = vi.fn()
   })
 
   afterEach(() => {
@@ -133,8 +132,41 @@ describe('CollectorWrapper', () => {
 
         expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
       })
+    })
 
-      it('handles the request when a fetch is made', async () => {
+    describe('when originsToRecord is not set', () => {
+      beforeEach(() => {
+        // @ts-expect-error
+        options = {
+          sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
+        }
+      })
+
+      it('does not record any request', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        await fetch('https://server.com/example', {
+          method: 'GET',
+        })
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+      })
+    })
+
+    describe('when originsToRecord is set', () => {
+      beforeEach(() => {
+        // @ts-expect-error
+        options = {
+          originsToRecord: ['https://server.com'],
+          sessionsPercentageKept: 100,
+          rejectSession: DEFAULT_SESSION_REJECTION,
+        }
+      })
+
+      it('records the request when a fetch is made with an origin that can be recorded', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
@@ -144,6 +176,18 @@ describe('CollectorWrapper', () => {
         })
 
         expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+      })
+
+      it('does not record the request when a fetch is made with an origin that cannot be recorded', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        await fetch('https://other.com/example', {
+          method: 'GET',
+        })
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://other.com/example', 'GET'))
       })
     })
   })
