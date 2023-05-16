@@ -12,7 +12,7 @@ export enum UserActionType {
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
 
 export type AsyncRequest = {
-  pathname: string
+  url: string
   method: string
 } & UserActionProperties
 
