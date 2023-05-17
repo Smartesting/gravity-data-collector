@@ -1,7 +1,7 @@
 export const GRAVITY_SERVER_ADDRESS = 'https://smartestinggravityserver.herokuapp.com'
 
 export function buildGravityTrackingPublishApiUrl(authKey: string, gravityServerUrl: string) {
-  return `${gravityServerUrl}/api/tracking/${authKey}/publish`
+  return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/publish`
 }
 
 export function buildGravityTrackingIdentifySessionApiUrl(
@@ -9,5 +9,9 @@ export function buildGravityTrackingIdentifySessionApiUrl(
   gravityServerUrl: string,
   sessionId: string,
 ) {
-  return `${gravityServerUrl}/api/tracking/${authKey}/identify/${sessionId}`
+  return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/identify/${sessionId}`
+}
+
+export function trackingUrlStartPart(gravityServerUrl: string) {
+  return `${gravityServerUrl}/api/tracking`
 }

@@ -19,6 +19,7 @@ import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
+import { trackingUrlStartPart } from '../gravityEndPoints'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -98,7 +99,10 @@ class CollectorWrapper {
       const [resource, config] = args
       const url = resource as string
 
-      if (this.trackingHandler.isTracking() && requestCanBeRecorded(url, options.originsToRecord)) {
+      if (
+        this.trackingHandler.isTracking() &&
+        requestCanBeRecorded(url, options.gravityServerUrl, options.originsToRecord)
+      ) {
         let method = 'unknown'
         if (config?.method != null) {
           method = config.method
@@ -129,8 +133,12 @@ function keepSession(options: CollectorOptions): boolean {
   return keepSession && !rejectSession
 }
 
-function requestCanBeRecorded(url: string, originsToRecord?: string[]) {
+function requestCanBeRecorded(url: string, gravityServerUrl: string, originsToRecord?: string[]) {
   if (originsToRecord === undefined) {
+    return false
+  }
+
+  if (url.startsWith(trackingUrlStartPart(gravityServerUrl))) {
     return false
   }
 

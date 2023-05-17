@@ -160,6 +160,7 @@ describe('CollectorWrapper', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
+          gravityServerUrl: 'https://server.com',
           originsToRecord: ['https://server.com'],
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
@@ -188,6 +189,18 @@ describe('CollectorWrapper', () => {
         })
 
         expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://other.com/example', 'GET'))
+      })
+
+      it('does not record the tracking requests from Gravity', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        await fetch('https://server.com/api/tracking/abcd-efg/publish', {
+          method: 'POST',
+        })
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://server.com/api/tracking/abcd-efg/publish', 'POST'))
       })
     })
   })
