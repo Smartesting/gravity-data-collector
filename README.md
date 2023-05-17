@@ -38,12 +38,11 @@ In your `package.json`, add the following:
 Put this tag in each page that must use Gravity Data Collector.
 
 ```html
-
 <script
   async
-  id='logger'
-  type='text/javascript'
-  src='https://unpkg.com/@smartesting/gravity-data-collector@3.4.2/dist/gravity-logger-min.js'
+  id="logger"
+  type="text/javascript"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@3.4.2/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -65,7 +64,7 @@ GravityCollector.init(/*options*/)
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
 | key                    | type                     | use                                                                                                                                                                                             | default value                                  |
-|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | authKey                | String                   | The authentication key provided by Gravity to select the correct collection                                                                                                                     |                                                |
 | requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 5000                                           |
 | gravityServerUrl       | String                   | Gravity server URL                                                                                                                                                                              | https://smartestinggravityserver.herokuapp.com |
@@ -106,8 +105,7 @@ If an element defines the `data-testid` attribute, it will be used to compute th
 a click on the following button:
 
 ```html
-
-<button id='#button-1' data-testid='register-button'>Register</button>
+<button id="#button-1" data-testid="register-button">Register</button>
 ```
 
 Will produces the selector `[data-testid=register-button]`, without the `customSelector` option, the selector would
@@ -126,8 +124,7 @@ GravityCollector.init({ excludeRegex: /^#button-.*$/ })
 A click on the following button:
 
 ```html
-
-<button id='#button-1' class='.button-register'>Register</button>
+<button id="#button-1" class=".button-register">Register</button>
 ```
 
 Will produces the selector `.button-register` if the class attribute is unique on the page. Note that it's also possible
@@ -152,7 +149,7 @@ to `true` and then to `false`, the first value will be overwritten.
 In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity:
 
 | environment variable name  | Gravity data |
-|----------------------------|--------------|
+| -------------------------- | ------------ |
 | GRAVITY_BUILD_ID           | buildId      |
 | REACT_APP_GRAVITY_BUILD_ID | buildId      |
 

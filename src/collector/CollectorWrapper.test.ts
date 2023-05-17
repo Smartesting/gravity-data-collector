@@ -200,7 +200,9 @@ describe('CollectorWrapper', () => {
           method: 'POST',
         })
 
-        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://server.com/api/tracking/abcd-efg/publish', 'POST'))
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://server.com/api/tracking/abcd-efg/publish', 'POST'),
+        )
       })
     })
   })
