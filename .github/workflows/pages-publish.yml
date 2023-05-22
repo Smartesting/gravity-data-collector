@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
+    branches: ['main', 'use-publish-on-pages-action']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,13 +29,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - run: ./scripts/publish_pages
+      - name: Create pages
+        uses: Smartesting/publish-on-pages@main
+        with:
+          branches: main canary
+          library_name: smartesting-gravity-data-collector
+          bundle: gravity-logger-min.js
+          npm_build_targets: build build-minified pack
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
           path: 'pages'
       - name: Deploy to GitHub Pages
         id: deployment
