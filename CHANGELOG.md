@@ -11,9 +11,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Track multiple selectors for targets
+- Option `selectorsOptions` allowing fine tuning of target selectors
+
 ### Changed
 
 ### Deprecated
+
+- Field `selector` of `UserActionTarget`.
+- Option `excludeRegex` and `customSelector` of `CollectorOptions`
 
 ### Removed
 

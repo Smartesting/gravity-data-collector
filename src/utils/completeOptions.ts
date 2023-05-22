@@ -1,4 +1,4 @@
-import { CollectorOptions } from '../types'
+import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 export const DEFAULT_SESSION_REJECTION = () => false
@@ -33,6 +33,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
   }
 
   checkPropertyPercentage(completedOptions, 'sessionsPercentageKept')
+  checkSelectorsOptions(completedOptions.selectorsOptions ?? {})
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError
@@ -53,4 +54,57 @@ function checkPropertyPercentage<T extends Object>(options: T, property: string 
   if (isNaN(percentage) || percentage < 0 || percentage > 100) {
     throw new Error(`option "${property}": ${percentage} is not a valid percentage (should be in range 0..100)`)
   }
+}
+
+function checkSelectorsOptions(selectorsOptions: Partial<CreateSelectorsOptions>) {
+  const { attributes, queries, excludedQueries } = selectorsOptions
+
+  checkArrayOf(
+    attributes,
+    assertString,
+    (value) => `option "selectorsOptions.attributes": "${value}" is not a valid option. Expected a list of strings`,
+    (value) => `option "selectorsOptions.attributes": "${value}" is not a valid string`,
+  )
+
+  checkArrayOf(
+    queries,
+    assertQueryType,
+    (value) => `option "selectorsOptions.queries": "${value}" is not a valid option. Expected a list of QueryType`,
+    (value) =>
+      `option "selectorsOptions.queries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(
+        QueryType,
+      ).join(', ')}`,
+  )
+
+  checkArrayOf(
+    excludedQueries,
+    assertQueryType,
+    (value) =>
+      `option "selectorsOptions.excludedQueries": "${value}" is not a valid option. Expected a list of QueryType`,
+    (value) =>
+      `option "selectorsOptions.excludedQueries": "${value}" is not a valid QueryType. Valid values are: ${Object.values(
+        QueryType,
+      ).join(', ')}`,
+  )
+}
+
+function checkArrayOf(
+  toBeChecked: any,
+  checker: (value: unknown) => boolean,
+  makeNotArrayMessage: (value: string) => string,
+  makeInvalidTypeMessage: (value: string) => string,
+): void {
+  if (toBeChecked === undefined) return
+  if (!Array.isArray(toBeChecked)) throw new Error(makeNotArrayMessage(toBeChecked))
+  for (const item of toBeChecked) {
+    if (!checker(item)) throw new Error(makeInvalidTypeMessage(item))
+  }
+}
+
+function assertString(toBeDetermined: unknown): toBeDetermined is String {
+  return typeof toBeDetermined === 'string'
+}
+
+function assertQueryType(toBeDetermined: unknown): toBeDetermined is QueryType {
+  return Object.values(QueryType).includes(toBeDetermined as QueryType)
 }

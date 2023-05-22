@@ -17,12 +17,7 @@ class KeyDownEventListener extends TargetedEventListener {
   }
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options.excludeRegex,
-      this.options.customSelector,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
 
     if (isKeyAllowedByKeyListeners(event.code)) {

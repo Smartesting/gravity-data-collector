@@ -1,6 +1,7 @@
 import unique from 'unique-selector'
 import {
   ClickUserActionData,
+  CreateSelectorsOptions,
   KeyUserActionData,
   TargetedUserAction,
   UserActionData,
@@ -13,20 +14,38 @@ import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
+import { createSelectors } from '../utils/createSelectors'
+
+interface CreateTargetedUserActionOptions {
+  selectorsOptions: Partial<CreateSelectorsOptions> | undefined
+  excludeRegex: RegExp | null
+  customSelector: string | undefined
+  document: Document
+}
+
+const createTargetedUserActionDefaultOptions: CreateTargetedUserActionOptions = {
+  selectorsOptions: undefined,
+  excludeRegex: null,
+  customSelector: undefined,
+  document: getDocument(),
+}
 
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
-  excludeRegex: RegExp | null = null,
-  customSelector?: string,
-  document: Document = getDocument(),
+  customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
+  const options = {
+    ...createTargetedUserActionDefaultOptions,
+    ...customOptions,
+  }
+
   const target = event.target as HTMLElement
-  if (target === null || target === undefined || event.target === document) return null
+  if (target === null || target === undefined || event.target === options.document) return null
 
   const userAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, excludeRegex, customSelector, document),
+    target: createActionTarget(target, options),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -77,12 +96,8 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(
-  target: HTMLElement,
-  excludeRegex: RegExp | null = null,
-  customSelector?: string,
-  document: Document = getDocument(),
-): UserActionTarget {
+function createActionTarget(target: HTMLElement, options: CreateTargetedUserActionOptions): UserActionTarget {
+  const { customSelector, document, selectorsOptions } = options
   const actionTarget: UserActionTarget = {
     element: target.tagName.toLocaleLowerCase(),
   }
@@ -94,6 +109,8 @@ function createActionTarget(
     actionTarget.value = (target as HTMLInputElement).checked.toString()
   }
 
+  actionTarget.selectors = createSelectors(target, selectorsOptions)
+
   const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
 
   if (customSelectorAttribute !== null) {
@@ -101,7 +118,7 @@ function createActionTarget(
     actionTarget.selector = `[${customSelector}=${customSelectorAttribute}]`
   } else {
     try {
-      actionTarget.selector = unique(target, { excludeRegex })
+      actionTarget.selector = unique(target, { excludeRegex: options.excludeRegex })
     } catch {
       // ignore
     }

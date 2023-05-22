@@ -81,54 +81,55 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 ### Work with selectors
 
-In the Gravity Data Collector, when a user action targets an HTML element, a selector is computed in order to 1) obtain
+In the Gravity Data Collector, when a user action targets an HTML element, selectors computed in order to 1) obtain
 the coverage of a usage in Gravity, and 2) to replay the session as a Cypress test.
 
-The collector use the following priority to compute a unique selector:
+By default, the following selectors are computed:
 
-1. A specific attribute if a custom selector is specified at the collector initialization (
-   e.g., `[my-custom-data=register-button]`)
-2. The ID attribute of the element if it's unique on the page (e.g., `#register-button`)
-3. The class attribute of the element if it's unique on the page (e.g., `.cls-btn-register`)
-4. Full path CSS selector (e.g., `:nth-child(3) > div > button`)
+- `xpath`: a XPath selector to reach the element (eg: `/html/body/div`)
+- `query`: on object describing various ways to reach the objet
+  - `id`: if available, the element's id (eg: `#my-object`)
+  - `class`: if available, selection of the object following CSS classes (eg: `.my-container .some-class`)
+  - `tag`: selection based on the tags (eg: `html body div ul li`)
+  - `nthChild`: selection based on nth-child (eg: `:nth-child(2) > :nth-child(4)`)
+  - `attributes`: if available, selection based on the nodes attributes (eg: `[name=]`)
+  - `combined`: a combination of the previous selectors (eg: `#menu nav :nth-child(2)`)
+- `attributes`: a hash of attributes provided by the suer (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
 
-#### Use custom selectors
+#### Tweaking selectors
 
-If an application uses dynamic elements' IDs, it may be necessarily to use custom selectors to identify properly each
-element. By using the `customSelector` option:
-
-```typescript
-GravityCollector.init({ customSelector: 'data-testid' })
-```
-
-If an element defines the `data-testid` attribute, it will be used to compute the selector of the element. For instance,
-a click on the following button:
-
-```html
-<button id="#button-1" data-testid="register-button">Register</button>
-```
-
-Will produces the selector `[data-testid=register-button]`, without the `customSelector` option, the selector would
-be `#button-1`
-
-#### Exclude ID or class from selector
-
-By their changeable nature, dynamic HTML IDs can be irrelevant to compute usage coverage or to turn a session into an
-executable test. It is possible to exclude an ID or a class pattern from the selector computation. By using
-the `excludeRegex` option:
+When initializing the collector, you can specify which selectors are activated and custom attributes, for example:
 
 ```typescript
-GravityCollector.init({ excludeRegex: /^#button-.*$/ })
+GravityCollector.init({ selectorsOptions: { attributes: ['data-testid', 'role'] } })
 ```
 
-A click on the following button:
+This configuration will collect the `data-testid` and `role` attributes of the HTML elements with which the user interacts.
 
-```html
-<button id="#button-1" class=".button-register">Register</button>
+```typescript
+GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-Will produces the selector `.button-register` if the class attribute is unique on the page. Note that it's also possible
-to exclude class from the selector calculation by using the regex `/^.button-.*$/`
+This configuration will only use CSS classes and tags to compute the selectors. Alternativelly, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
+
+```typescript
+GravityCollector.init({
+  selectorsOptions: {
+    excludedQueries: ['id'],
+  },
+})
+```
+
+You can specify both custom attributes and which selectors are computed:
+
+```typescript
+GravityCollector.init({
+  selectorsOptions: {
+    queries: ['class', 'tag'],
+    attributes: ['data-testid', 'role'],
+  },
+})
+```
 
 ### Identify sessions with _traits_
 

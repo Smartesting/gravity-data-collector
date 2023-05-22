@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CollectorOptions } from '../types'
+import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
 import completeOptions, { DEFAULT_SESSION_REJECTION } from './completeOptions'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
@@ -22,6 +22,67 @@ describe('completeOptions', () => {
     expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: 101 })).toThrow(
       'option "sessionsPercentageKept": 101 is not a valid percentage (should be in range 0..100)',
     )
+  })
+
+  describe('when selectorsOptions is set', () => {
+    const authKey = '123'
+    let selectorsOptions: Partial<CreateSelectorsOptions>
+
+    it('throws an error when selectorsOptions.attributes is not an array of string', () => {
+      // @ts-expect-error
+      selectorsOptions = { attributes: null }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.attributes": "null" is not a valid option. Expected a list of strings',
+      )
+
+      // @ts-expect-error
+      selectorsOptions = { attributes: 'data-testid' }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.attributes": "data-testid" is not a valid option. Expected a list of strings',
+      )
+
+      // @ts-expect-error
+      selectorsOptions = { attributes: ['data-testid', null] }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.attributes": "null" is not a valid string',
+      )
+    })
+
+    it('throws an error when selectorOptions.queries is not a list of QueryType', () => {
+      // @ts-expect-error
+      selectorsOptions = { queries: null }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.queries": "null" is not a valid option. Expected a list of QueryType',
+      )
+
+      // @ts-expect-error
+      selectorsOptions = { queries: [QueryType.id, 'doupidou'] }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.queries": "doupidou" is not a valid QueryType. Valid values are: id, class, tag',
+      )
+    })
+
+    it('throws an error when selectorOptions.excludedQueries is not a list of QueryType', () => {
+      // @ts-expect-error
+      selectorsOptions = { excludedQueries: null }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.excludedQueries": "null" is not a valid option. Expected a list of QueryType',
+      )
+
+      // @ts-expect-error
+      selectorsOptions = { excludedQueries: [QueryType.id, 'doupidou'] }
+      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+        'option "selectorsOptions.excludedQueries": "doupidou" is not a valid QueryType. Valid values are: id, class, tag',
+      )
+    })
+
+    it('does not throw error when selectorOptions are valid', () => {
+      selectorsOptions = {
+        queries: [QueryType.class, QueryType.tag],
+        attributes: ['role', 'data-testid'],
+      }
+      completeOptions({ authKey, selectorsOptions })
+    })
   })
 
   describe('when debug is set to true', () => {

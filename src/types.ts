@@ -60,10 +60,38 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
+  /**
+   * @deprecated Use selectors instead.
+   */
   selector?: string
+  selectors?: Selectors
   value?: string
   type?: string
   displayInfo?: TargetDisplayInfo
+}
+
+export interface Selectors {
+  xpath: string
+  query: Query
+  attributes: Attributes
+}
+
+export type Query = Partial<
+  {
+    [key in QueryType]: string
+  } & { combined: string }
+>
+
+export enum QueryType {
+  id = 'id',
+  class = 'class',
+  tag = 'tag',
+  nthChild = 'nthChild',
+  attributes = 'attributes',
+}
+
+export interface Attributes {
+  [key: string]: string
 }
 
 export interface TargetDisplayInfo {
@@ -102,12 +130,25 @@ export interface CollectorOptions {
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
+  /**
+   * @deprecated Use selectorsOptions instead.
+   */
   excludeRegex: RegExp | null
+  /**
+   * @deprecated Use selectorsOptions instead.
+   */
   customSelector?: string
+  selectorsOptions?: Partial<CreateSelectorsOptions>
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
   originsToRecord?: string[]
+}
+
+export interface CreateSelectorsOptions {
+  queries: QueryType[]
+  excludedQueries: QueryType[]
+  attributes: string[]
 }
 
 export type SessionTraits = Record<string, SessionTraitValue>

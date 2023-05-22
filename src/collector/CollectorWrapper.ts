@@ -29,10 +29,10 @@ class CollectorWrapper {
   readonly trackingHandler: TrackingHandler
 
   constructor(
-    private readonly options: CollectorOptions,
+    readonly options: CollectorOptions,
     private readonly window: Window,
-    private readonly sessionIdHandler: ISessionIdHandler,
-    private readonly testNameHandler: TestNameHandler,
+    readonly sessionIdHandler: ISessionIdHandler,
+    readonly testNameHandler: TestNameHandler,
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
@@ -77,6 +77,7 @@ class CollectorWrapper {
     const targetedEventListenerOptions: TargetEventListenerOptions = {
       excludeRegex: options.excludeRegex,
       customSelector: options.customSelector,
+      selectorsOptions: options.selectorsOptions,
     }
 
     this.eventListenerHandler = new EventListenersHandler([

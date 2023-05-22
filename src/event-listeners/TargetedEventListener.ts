@@ -1,10 +1,11 @@
 import UserActionHandler from '../user-action/UserActionHandler'
 import EventListener from '../event-listeners/EventListener'
-import { UserActionType } from '../types'
+import { CreateSelectorsOptions, UserActionType } from '../types'
 
 export interface TargetEventListenerOptions {
   customSelector?: string
   excludeRegex?: RegExp | null
+  selectorsOptions?: Partial<CreateSelectorsOptions>
 }
 
 export default abstract class TargetedEventListener extends EventListener {

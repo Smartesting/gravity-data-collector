@@ -53,10 +53,14 @@ the:
 
 We use GitHub pages an as host for temporary/test releases and automatically provide `.tgz` and minified JS for the latest commits on branches `main` and `canary`.
 
-To publish from another branch, edit the script [publish_pages](./scripts/publish_pages) on the `main` branch to take your branch into account by adding a line:
+To publish from another branch, edit the script [pages-publish workflow](./.github/workflows/pages-publish.yml) on the `main` branch to take your branch into account by adding it to the branches parameter:
 
-```shell
-clone_and_build your_branch
+```yaml
+steps:
+  - name: Create pages
+    uses: Smartesting/publish-on-pages@main
+    with:
+      branches: main canary your-branch
 ```
 
 Then run the workflow `Deploy static content to Pages` on the [workflow page](https://github.com/Smartesting/gravity-data-collector/actions/workflows/pages-publish.yml) (chose `main` as the source branch when running the workflow).
