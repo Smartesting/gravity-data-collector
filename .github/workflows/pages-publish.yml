@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create pages
-        uses: Smartesting/publish-on-pages
+        uses: Smartesting/publish-on-pages@main
         with:
           branches: main canary
           library_name: smartesting-gravity-data-collector
