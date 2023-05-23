@@ -102,7 +102,7 @@ class CollectorWrapper {
 
       if (
         this.trackingHandler.isTracking() &&
-        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor)
+        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor ?? options.originsToRecord)
       ) {
         let method = 'unknown'
         if (config?.method != null) {

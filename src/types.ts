@@ -142,6 +142,10 @@ export interface CollectorOptions {
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
+  /**
+   * @deprecated Use recordRequestsFor instead.
+   */
+  originsToRecord?: string[]
   recordRequestsFor?: string[]
 }
 

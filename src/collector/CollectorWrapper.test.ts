@@ -143,6 +143,24 @@ describe('CollectorWrapper', () => {
         }
       })
 
+      describe('and originsToRecord is set', () => {
+        beforeEach(() => {
+          options.originsToRecord = ['https://server.com']
+        })
+
+        it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
+          vi.useFakeTimers()
+          vi.setSystemTime(Date.parse('2022-05-12'))
+
+          createCollectorWrapper()
+          await fetch('https://server.com/example', {
+            method: 'GET',
+          })
+
+          expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+        })
+      })
+
       it('does not record any request', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
@@ -167,7 +185,33 @@ describe('CollectorWrapper', () => {
         }
       })
 
-      it('records the request when a fetch is made with an origin that can be recorded', async () => {
+      describe('and originsToRecord is set', () => {
+        beforeEach(() => {
+          options.originsToRecord = ['https://deprecated.com']
+        })
+
+        it('uses recordRequestsFor option rather than originsToRecord option to determine requests to record', async () => {
+          vi.useFakeTimers()
+          vi.setSystemTime(Date.parse('2022-05-12'))
+
+          createCollectorWrapper()
+          await fetch('https://deprecated.com/example', {
+            method: 'GET',
+          })
+
+          expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+            createAsyncRequest('https://deprecated.com/example', 'GET'),
+          )
+
+          await fetch('https://server.com/example', {
+            method: 'GET',
+          })
+
+          expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+        })
+      })
+
+      it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
@@ -179,7 +223,7 @@ describe('CollectorWrapper', () => {
         expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
       })
 
-      it('does not record the request when a fetch is made with an origin that cannot be recorded', async () => {
+      it('does not record the request when a fetch is made with a URL origin that cannot be recorded', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
