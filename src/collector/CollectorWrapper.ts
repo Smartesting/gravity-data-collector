@@ -102,7 +102,7 @@ class CollectorWrapper {
 
       if (
         this.trackingHandler.isTracking() &&
-        requestCanBeRecorded(url, options.gravityServerUrl, options.originsToRecord)
+        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor)
       ) {
         let method = 'unknown'
         if (config?.method != null) {
@@ -134,8 +134,8 @@ function keepSession(options: CollectorOptions): boolean {
   return keepSession && !rejectSession
 }
 
-function requestCanBeRecorded(url: string, gravityServerUrl: string, originsToRecord?: string[]) {
-  if (originsToRecord === undefined) {
+function requestCanBeRecorded(url: string, gravityServerUrl: string, recordRequestsFor?: string[]) {
+  if (recordRequestsFor === undefined) {
     return false
   }
 
@@ -143,8 +143,8 @@ function requestCanBeRecorded(url: string, gravityServerUrl: string, originsToRe
     return false
   }
 
-  for (const originToRecord of originsToRecord) {
-    if (url.startsWith(originToRecord)) {
+  for (const urlOrigin of recordRequestsFor) {
+    if (url.startsWith(urlOrigin)) {
       return true
     }
   }

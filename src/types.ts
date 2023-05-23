@@ -142,7 +142,7 @@ export interface CollectorOptions {
   sessionsPercentageKept: number
   rejectSession: () => boolean
   onPublish?: (userActions: SessionUserAction[]) => void
-  originsToRecord?: string[]
+  recordRequestsFor?: string[]
 }
 
 export interface CreateSelectorsOptions {

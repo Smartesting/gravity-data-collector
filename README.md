@@ -64,7 +64,7 @@ GravityCollector.init(/*options*/)
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
 | key                    | type                     | use                                                                                                                                                                                             | default value                                  |
-| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
 | authKey                | String                   | The authentication key provided by Gravity to select the correct collection                                                                                                                     |                                                |
 | requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 5000                                           |
 | gravityServerUrl       | String                   | Gravity server URL                                                                                                                                                                              | https://smartestinggravityserver.herokuapp.com |
@@ -75,7 +75,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | sessionsPercentageKept | [0..100]                 | Rate of sessions to be collected                                                                                                                                                                | 100                                            |
 | rejectSession          | function `() => boolean` | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code> | `() => false`                                  |
 | onPublish              | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                                      |
-| originsToRecord        | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the origin(s) of the requests to record. For example: "https://myserver.com/"                             | undefined                                      |
+| recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                                      |
 
 ## Features
 

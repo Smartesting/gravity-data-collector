@@ -134,7 +134,7 @@ describe('CollectorWrapper', () => {
       })
     })
 
-    describe('when originsToRecord is not set', () => {
+    describe('when recordRequestsFor is not set', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
@@ -156,12 +156,12 @@ describe('CollectorWrapper', () => {
       })
     })
 
-    describe('when originsToRecord is set', () => {
+    describe('when recordRequestsFor is set', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
           gravityServerUrl: 'https://server.com',
-          originsToRecord: ['https://server.com'],
+          recordRequestsFor: ['https://server.com'],
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
         }
