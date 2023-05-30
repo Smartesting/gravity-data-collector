@@ -134,34 +134,17 @@ describe('CollectorWrapper', () => {
       })
     })
 
-    describe('when recordRequestsFor is not set', () => {
+    describe('when recordRequestsFor is not set and originsToRecord is set', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          originsToRecord: ['https://server.com'],
         }
       })
 
-      describe('and originsToRecord is set', () => {
-        beforeEach(() => {
-          options.originsToRecord = ['https://server.com']
-        })
-
-        it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
-          vi.useFakeTimers()
-          vi.setSystemTime(Date.parse('2022-05-12'))
-
-          createCollectorWrapper()
-          await fetch('https://server.com/example', {
-            method: 'GET',
-          })
-
-          expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
-        })
-      })
-
-      it('does not record any request', async () => {
+      it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
@@ -170,7 +153,32 @@ describe('CollectorWrapper', () => {
           method: 'GET',
         })
 
-        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+
+        await fetch('https://notrecorded.com/example', {
+          method: 'GET',
+        })
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://notrecorded.com/example', 'GET'),
+        )
+      })
+
+      it('records the request when a XHR is made with a URL origin that can be recorded', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', 'https://server.com/example')
+
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+
+        xhr.open('GET', 'https://notrecorded.com/example')
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://notrecorded.com/example', 'GET'),
+        )
       })
     })
 
@@ -178,8 +186,8 @@ describe('CollectorWrapper', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
-          gravityServerUrl: 'https://server.com',
-          recordRequestsFor: ['https://server.com'],
+          gravityServerUrl: 'https://gravity-server.com',
+          recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
         }
@@ -190,7 +198,7 @@ describe('CollectorWrapper', () => {
           options.originsToRecord = ['https://deprecated.com']
         })
 
-        it('uses recordRequestsFor option rather than originsToRecord option to determine requests to record', async () => {
+        it('uses recordRequestsFor option rather than originsToRecord option to determine if the request should be recorded when a fetch is made', async () => {
           vi.useFakeTimers()
           vi.setSystemTime(Date.parse('2022-05-12'))
 
@@ -209,6 +217,23 @@ describe('CollectorWrapper', () => {
 
           expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
         })
+
+        it('uses recordRequestsFor option rather than originsToRecord option to determine if the request should be recorded when a XHR is made', async () => {
+          vi.useFakeTimers()
+          vi.setSystemTime(Date.parse('2022-05-12'))
+
+          createCollectorWrapper()
+          const xhr = new XMLHttpRequest()
+          xhr.open('GET', 'https://deprecated.com/example')
+
+          expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+            createAsyncRequest('https://deprecated.com/example', 'GET'),
+          )
+
+          xhr.open('GET', 'https://server.com/example')
+
+          expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+        })
       })
 
       it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
@@ -221,31 +246,57 @@ describe('CollectorWrapper', () => {
         })
 
         expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
-      })
 
-      it('does not record the request when a fetch is made with a URL origin that cannot be recorded', async () => {
-        vi.useFakeTimers()
-        vi.setSystemTime(Date.parse('2022-05-12'))
-
-        createCollectorWrapper()
-        await fetch('https://other.com/example', {
+        await fetch('https://notrecorded.com/example', {
           method: 'GET',
         })
 
-        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(createAsyncRequest('https://other.com/example', 'GET'))
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://notrecorded.com/example', 'GET'),
+        )
       })
 
-      it('does not record the tracking requests from Gravity', async () => {
+      it('records the request when a XHR is made with a URL origin that can be recorded', async () => {
         vi.useFakeTimers()
         vi.setSystemTime(Date.parse('2022-05-12'))
 
         createCollectorWrapper()
-        await fetch('https://server.com/api/tracking/abcd-efg/publish', {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', 'https://server.com/example')
+
+        expect(spyOnUserActionHandle).toHaveBeenCalledWith(createAsyncRequest('https://server.com/example', 'GET'))
+
+        xhr.open('GET', 'https://notrecorded.com/example')
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://notrecorded.com/example', 'GET'),
+        )
+      })
+
+      it('does not record a tracking request from Gravity when a fetch is made', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        await fetch('https://gravity-server.com/api/tracking/abcd-efg/publish', {
           method: 'POST',
         })
 
         expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
-          createAsyncRequest('https://server.com/api/tracking/abcd-efg/publish', 'POST'),
+          createAsyncRequest('https://gravity-server.com/api/tracking/abcd-efg/publish', 'POST'),
+        )
+      })
+
+      it('does not record a tracking request from Gravity when a XHR is made', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(Date.parse('2022-05-12'))
+
+        createCollectorWrapper()
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', 'https://gravity-server.com/api/tracking/abcd-efg/publish')
+
+        expect(spyOnUserActionHandle).not.toHaveBeenCalledWith(
+          createAsyncRequest('https://gravity-server.com/api/tracking/abcd-efg/publish', 'POST'),
         )
       })
     })

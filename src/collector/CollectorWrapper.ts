@@ -113,6 +113,22 @@ class CollectorWrapper {
 
       return await originalFetch(resource, config)
     }
+
+    const collectorWrapper = this
+    const originalXHROpen = XMLHttpRequest.prototype.open
+    XMLHttpRequest.prototype.open = function () {
+      const method = arguments[0]
+      const url = arguments[1]
+
+      if (
+        collectorWrapper.trackingHandler.isTracking() &&
+        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor ?? options.originsToRecord)
+      ) {
+        collectorWrapper.userActionHandler.handle(createAsyncRequest(url, method))
+      }
+
+      return originalXHROpen.apply(this, Array.prototype.slice.call(arguments) as any)
+    }
   }
 
   identifySession(traitName: string, traitValue: SessionTraitValue) {

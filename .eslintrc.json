@@ -22,6 +22,12 @@
         "named": "never",
         "asyncArrow": "always"
       }
+    ],
+    "@typescript-eslint/no-this-alias": [
+      "error",
+      {
+        "allowedNames": ["collectorWrapper"]
+      }
     ]
   }
 }
