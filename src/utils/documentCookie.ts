@@ -14,7 +14,7 @@ export function setCookie(key: string, value: string) {
 export function readCookie(key: string): string | undefined {
   const match = document.cookie.match(new RegExp(`(^| )${key}=([^;]+)`))
   // TODO: remove this once the one-action sessions bug has been solved.
-  console.log({cookie: document.cookie, key, match})
+  console.log({ cookie: document.cookie, key, match })
   return match !== null ? decodeURIComponent(match[2]) : undefined
 }
 
