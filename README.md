@@ -96,7 +96,7 @@ By default, the following selectors are computed:
   - `nthChild`: selection based on nth-child (eg: `:nth-child(2) > :nth-child(4)`)
   - `attributes`: if available, selection based on the nodes attributes (eg: `[name=]`)
   - `combined`: a combination of the previous selectors (eg: `#menu nav :nth-child(2)`)
-- `attributes`: a hash of attributes provided by the suer (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
+- `attributes`: a hash of attributes provided by the user (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
 
 #### Tweaking selectors
 
@@ -112,7 +112,7 @@ This configuration will collect the `data-testid` and `role` attributes of the H
 GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-This configuration will only use CSS classes and tags to compute the selectors. Alternativelly, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
+This configuration will only use CSS classes and tags to compute the selectors. Alternatively, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
 GravityCollector.init({
