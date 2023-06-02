@@ -144,9 +144,9 @@ describe('KeyDownEventListener', () => {
     const search = await waitFor(() => getByRole(element, 'searchbox'))
 
     for (const input of inputs) {
-      fireEvent.keyDown(input)
+      fireEvent.keyDown(input, {code: 'KeyA'})
     }
-    fireEvent.keyDown(search)
+    fireEvent.keyDown(search, {code: 'KeyA'})
 
     await waitFor(() => {}, { timeout: 500 })
 
@@ -156,41 +156,36 @@ describe('KeyDownEventListener', () => {
   })
 
   describe('When press on allowed key', () => {
-    it('calls handler when the key is Tab', async () => {
-      await assertHandleUserActionIsCalled('Tab')
-    })
+    const inputs = [
+      {query: (element: HTMLElement) => getByRole(element, 'textbox'), inputType: 'text', html: "<input id='text-1' type='text'/>"},
+      {query: (element: HTMLElement) => getByRole(element, 'textbox'), inputType: 'textarea', html: "<textarea id='text-2'></textarea>"},
+      {query: (element: HTMLElement) => getByRole(element, 'searchbox'), inputType: 'search', html: "<input id='text-5' type='search' />"}
+    ]
 
-    it('calls handler when the key is Enter', async () => {
-      await assertHandleUserActionIsCalled('Enter')
-    })
+    for (const {html, inputType, query} of inputs) {
+      it(`calls handler when the key is Tab on ${inputType}`, async () => {
+        await assertHandleUserActionIsCalled('Tab', html, query)
+      })
 
-    it('calls handler when the key is NumpadEnter', async () => {
-      await assertHandleUserActionIsCalled('NumpadEnter')
-    })
+      it(`calls handler when the key is Enter on ${inputType}`, async () => {
+        await assertHandleUserActionIsCalled('Enter', html, query)
+      })
 
-    async function assertHandleUserActionIsCalled(code: string) {
-      const { element, domWindow } = createElementInJSDOM(
-        `
-            <div>
-                <input id='text-1' type='text'/>
-                <textarea id='text-2'></textarea>
-                <input id='text-5' type='search' />
-            </div>`,
-        'div',
-      )
+      it(`calls handler when the key is NumpadEnter on ${inputType}`, async () => {
+        await assertHandleUserActionIsCalled('NumpadEnter', html, query)
+      })
+    }
+
+    async function assertHandleUserActionIsCalled(code: string, domContent: string, query: (element: HTMLElement) => HTMLElement) {
+      const { element, domWindow } = createElementInJSDOM(`<div>${domContent}</div>`, 'div')
 
       new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
 
-      const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
-      const search = await waitFor(() => getByRole(element, 'searchbox'))
-
-      for (const input of inputs) {
-        fireEvent.keyDown(input, { code })
-      }
-      fireEvent.keyDown(search, { code })
+      const input = await waitFor(() => query(element))
+      fireEvent.keyDown(input, { code })
 
       await waitFor(() => {
-        expect(handleSpy).toHaveBeenCalledTimes(3)
+        expect(handleSpy).toHaveBeenCalledOnce()
       })
     }
   })
