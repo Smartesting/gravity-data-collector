@@ -89,7 +89,7 @@ the coverage of a usage in Gravity, and 2) to replay the session as a Cypress te
 By default, the following selectors are computed:
 
 - `xpath`: a XPath selector to reach the element (eg: `/html/body/div`)
-- `query`: on object describing various ways to reach the objet
+- `queries`: on object describing various ways to reach the objet
   - `id`: if available, the element's id (eg: `#my-object`)
   - `class`: if available, selection of the object following CSS classes (eg: `.my-container .some-class`)
   - `tag`: selection based on the tags (eg: `html body div ul li`)
