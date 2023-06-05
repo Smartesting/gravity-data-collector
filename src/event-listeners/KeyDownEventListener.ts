@@ -1,6 +1,6 @@
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
-import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
+import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners, isTextAreaEnter } from '../utils/listeners'
 import UserActionHandler from '../user-action/UserActionHandler'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
@@ -19,6 +19,11 @@ class KeyDownEventListener extends TargetedEventListener {
   listener(event: KeyboardEvent) {
     const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
+
+    if (isTextAreaEnter(event.code, event.target)) {
+      const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
+      if (changeUserAction !== null) this.userActionHandler.handle(changeUserAction)
+    }
 
     if (isKeyAllowedByKeyListeners(event.code)) {
       return this.userActionHandler.handle(userAction)

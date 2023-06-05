@@ -9,6 +9,7 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import { UserAction, UserActionType } from '../types'
 
 describe('KeyDownEventListener', () => {
   let userActionHistory: UserActionsHistory
@@ -161,30 +162,33 @@ describe('KeyDownEventListener', () => {
         query: (element: HTMLElement) => getByRole(element, 'textbox'),
         inputType: 'text',
         html: "<input id='text-1' type='text'/>",
+        expectedUserActionTypes: [UserActionType.KeyDown],
       },
       {
         query: (element: HTMLElement) => getByRole(element, 'textbox'),
         inputType: 'textarea',
         html: "<textarea id='text-2'></textarea>",
+        expectedUserActionTypes: [UserActionType.KeyDown, UserActionType.Change],
       },
       {
         query: (element: HTMLElement) => getByRole(element, 'searchbox'),
         inputType: 'search',
         html: "<input id='text-5' type='search' />",
+        expectedUserActionTypes: [UserActionType.KeyDown],
       },
     ]
 
-    for (const { html, inputType, query } of inputs) {
+    for (const { html, inputType, query, expectedUserActionTypes } of inputs) {
       it(`calls handler when the key is Tab on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('Tab', html, query)
+        await assertHandleUserActionIsCalled('Tab', html, query, expectedUserActionTypes)
       })
 
       it(`calls handler when the key is Enter on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('Enter', html, query)
+        await assertHandleUserActionIsCalled('Enter', html, query, expectedUserActionTypes)
       })
 
       it(`calls handler when the key is NumpadEnter on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('NumpadEnter', html, query)
+        await assertHandleUserActionIsCalled('NumpadEnter', html, query, expectedUserActionTypes)
       })
     }
 
@@ -192,7 +196,12 @@ describe('KeyDownEventListener', () => {
       code: string,
       domContent: string,
       query: (element: HTMLElement) => HTMLElement,
+      expectedUserActionTypes: UserActionType[],
     ) {
+      const emittedUserActions: UserAction[] = []
+      const handleSpy = vitest.spyOn(userActionHandler, 'handle').mockImplementation((userAction: UserAction) => {
+        emittedUserActions.push(userAction)
+      })
       const { element, domWindow } = createElementInJSDOM(`<div>${domContent}</div>`, 'div')
 
       new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
@@ -201,7 +210,11 @@ describe('KeyDownEventListener', () => {
       fireEvent.keyDown(input, { code })
 
       await waitFor(() => {
-        expect(handleSpy).toHaveBeenCalledOnce()
+        expect(handleSpy).toHaveBeenCalledTimes(expectedUserActionTypes.length)
+        const userActionTypes = emittedUserActions.map(userAction => userAction.type)
+        for (const expectedUserActionType of expectedUserActionTypes) {
+          expect(userActionTypes).toContain(expectedUserActionType)
+        }
       })
     }
   })
