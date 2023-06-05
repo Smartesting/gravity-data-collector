@@ -8,7 +8,9 @@ export function isTextAreaEnter(keyCode: string, target: EventTarget | null): bo
   if (target === null) return false
 
   const elementTarget = target as HTMLElement
-  return elementTarget.tagName.toLowerCase() === 'textarea' && KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
+  return (
+    elementTarget.tagName.toLowerCase() === 'textarea' && KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
+  )
 }
 
 export function isKeyAllowedByKeyListeners(keyCode: string): boolean {

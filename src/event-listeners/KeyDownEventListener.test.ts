@@ -211,7 +211,7 @@ describe('KeyDownEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledTimes(expectedUserActionTypes.length)
-        const userActionTypes = emittedUserActions.map(userAction => userAction.type)
+        const userActionTypes = emittedUserActions.map((userAction) => userAction.type)
         for (const expectedUserActionType of expectedUserActionTypes) {
           expect(userActionTypes).toContain(expectedUserActionType)
         }
