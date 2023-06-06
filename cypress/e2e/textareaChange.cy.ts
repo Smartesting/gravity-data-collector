@@ -3,7 +3,7 @@ describe('Handling textarea enter as a change', () => {
     cy.clearCookies()
   })
 
-  it('when enter is typed in a textarea, it is considered as a change', () => {
+  it('when enter is typed in a textarea, it is not considered as a change', () => {
     const sessionUserActions: any[] = []
     cy.interceptGravityPublish((req) => {
       const { body } = req
@@ -17,12 +17,12 @@ describe('Handling textarea enter as a change', () => {
     cy.get('textarea').type('Ok, this is my first line\n and this is the second one')
 
     cy.wait('@sendGravityRequest').then(() => {
-      expect(sessionUserActions.length).to.eq(5)
+      expect(sessionUserActions.length).to.eq(4)
 
       const sessionUserActionTypes = sessionUserActions.map((sessionUserAction) => {
         return sessionUserAction.type
       })
-      expect(sessionUserActionTypes).to.contain('change')
+      expect(sessionUserActionTypes).not.to.contain('change')
     })
   })
 

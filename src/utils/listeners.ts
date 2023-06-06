@@ -4,15 +4,6 @@ const TAG_NAME_DISALLOWED_BY_KEY_LISTENERS: string[] = ['textarea']
 const INPUT_ALLOWED_BY_KEY_LISTENERS = ['radio', 'select', 'checkbox', 'button']
 const KEYS_ALLOWED_BY_KEY_LISTENERS = ['tab', 'enter', 'numpadenter']
 
-export function isTextAreaEnter(keyCode: string, target: EventTarget | null): boolean {
-  if (target === null) return false
-
-  const elementTarget = target as HTMLElement
-  return (
-    elementTarget.tagName.toLowerCase() === 'textarea' && KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
-  )
-}
-
 export function isKeyAllowedByKeyListeners(keyCode: string): boolean {
   return keyCode !== undefined && KEYS_ALLOWED_BY_KEY_LISTENERS.includes(keyCode.toLowerCase())
 }

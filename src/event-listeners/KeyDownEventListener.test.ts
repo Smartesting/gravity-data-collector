@@ -168,7 +168,7 @@ describe('KeyDownEventListener', () => {
         query: (element: HTMLElement) => getByRole(element, 'textbox'),
         inputType: 'textarea',
         html: "<textarea id='text-2'></textarea>",
-        expectedUserActionTypes: [UserActionType.KeyDown, UserActionType.Change],
+        expectedUserActionTypes: [UserActionType.KeyDown],
       },
       {
         query: (element: HTMLElement) => getByRole(element, 'searchbox'),
