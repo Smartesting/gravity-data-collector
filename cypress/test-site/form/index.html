@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Gravity Data Collector - Sandbox</title>
-    <script async id="logger" src="./bundle.js" type="text/javascript"></script>
+    <script async id="logger" src="../bundle.js" type="text/javascript"></script>
     <script>
       const script = document.querySelector('#logger')
       script.addEventListener('load', function () {
@@ -14,17 +14,19 @@
           requestInterval: 1,
         })
       })
-
-      function identifySession() {
-        window.GravityCollector.identifySession('href', window.location.href)
-      }
     </script>
     <body>
-      <a class="simple-link">A simple link which does nothing</a>
-      <a class="identify-link" onclick="identifySession()">A link to identify the session</a>
+      <h1>Some form</h1>
+      <form>
+        <label for="text-input">Some text input</label>
+        <input id="text-input" type="text" />
 
-      <a class="go-to-app" href="http://app.my-site.com:3000">Go to application</a>
-      <a class="go-to-another-site" href="http://auth.another-site.com:3000">Go to other site</a>
+        <label for="search-input">Some search input</label>
+        <input id="search-input" type="search" />
+
+        <label for="textarea">A textarea</label>
+        <textarea id="textarea"></textarea>
+      </form>
     </body>
   </head>
 </html>
