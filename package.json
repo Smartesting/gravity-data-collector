@@ -45,6 +45,7 @@
     "@babel/core": "^7.17.12",
     "@babel/preset-env": "^7.17.12",
     "@testing-library/dom": "^8.13.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.0.0",
     "@types/psl": "^1.1.0",

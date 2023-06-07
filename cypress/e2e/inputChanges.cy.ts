@@ -21,7 +21,9 @@ describe('Handling Keydown as Changes', () => {
       cy.get(`#${inputId}`).type('Some content')
 
       cy.wait('@sendGravityRequest').then(() => {
-        expect(sessionUserActionTypes).to.contain('change')
+        const changes = sessionUserActionTypes.filter((type) => type === 'change')
+
+        expect(changes.length).to.eq(1)
       })
     })
 
@@ -31,12 +33,10 @@ describe('Handling Keydown as Changes', () => {
       cy.get('h1').click()
 
       cy.wait('@sendGravityRequest').then(() => {
-        const changes = sessionUserActionTypes.filter(type => type === 'change')
+        const changes = sessionUserActionTypes.filter((type) => type === 'change')
 
         expect(changes.length).to.eq(1)
       })
     })
   }
 })
-
-

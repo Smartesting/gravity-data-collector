@@ -5,16 +5,21 @@ const INPUT_ALLOWED_BY_KEY_LISTENERS = ['radio', 'select', 'checkbox', 'button']
 const KEYS_ALLOWED_BY_KEY_LISTENERS = ['tab', 'enter', 'numpadenter']
 const NON_TEXT_KEYS = ['tab', 'enter', 'numpadenter', 'esc']
 
-export function recordChangeEvent(keyCode: string, target: EventTarget | null): boolean {
+export function isTextField(target: EventTarget | null): boolean {
   if (target === null) return false
+  const elementTarget = target as HTMLElement
 
   const inputElementTarget = target as HTMLInputWithValue
   if (INPUT_ALLOWED_BY_KEY_LISTENERS.includes(inputElementTarget.type)) return false
 
-  const elementTarget = target as HTMLElement
-  const isTextInput = (elementTarget.tagName.toLowerCase() === 'input' || elementTarget.tagName.toLowerCase() === 'textarea')
+  return (elementTarget.tagName.toLowerCase() === 'input' || elementTarget.tagName.toLowerCase() === 'textarea')
+}
 
-  return isTextInput && !NON_TEXT_KEYS.includes(keyCode.toLowerCase())
+export function recordChangeEvent(keyCode: string, target: EventTarget | null): boolean {
+  if (target === null) return false
+  if (!isTextField(target)) return false
+
+  return !NON_TEXT_KEYS.includes(keyCode.toLowerCase())
 }
 
 export function isKeyAllowedByKeyListeners(keyCode: string): boolean {

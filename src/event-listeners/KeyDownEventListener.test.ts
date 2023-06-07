@@ -181,9 +181,7 @@ describe('KeyDownEventListener', () => {
       await waitFor(() => {
         const userActions = userActionHistory.getUserActionsHistory()
         expect(handleSpy).toHaveBeenCalledOnce()
-
-        const userActionTypes = userActions.map((userAction) => userAction.type)
-        expect(userActionTypes).to.eq([expectedUserActionType])
+        expect(userActions[0].type).to.eq(expectedUserActionType)
       })
     }
   })

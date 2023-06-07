@@ -3,6 +3,7 @@ import { createTargetedUserAction } from '../user-action/createTargetedUserActio
 import { HTMLInputWithValue, TargetedUserAction, UserActionType } from '../types'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
+import { isTextField } from '../utils/listeners'
 
 class ChangeEventListener extends TargetedEventListener {
   constructor(userActionHandler: UserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
@@ -10,6 +11,8 @@ class ChangeEventListener extends TargetedEventListener {
   }
 
   listener(event: InputEvent) {
+    if (isTextField(event.target)) return
+
     const elementTarget = event.target as HTMLInputWithValue
     const userAction: TargetedUserAction | null = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction != null) {
