@@ -19,7 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Listen to keydown events on textarea for specific keys: 'tab', 'enter' and 'numpadenter'.
+- Trigger a `Change` event when typing in a text field (`<input type="text" />` or `<textarea />`) [#20](https://github.com/Smartesting/gravity-data-collector/pull/20)
 
 ## [3.5.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.5.1...v3.5.2)
 
