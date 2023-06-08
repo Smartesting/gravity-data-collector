@@ -22,7 +22,7 @@ class KeyDownEventListener extends TargetedEventListener {
 
     if (recordChangeEvent(event.code, event.target)) {
       const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
-      if ((changeUserAction != null) && !this.changeActionIsSame(changeUserAction)) {
+      if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
         return this.userActionHandler.handle(changeUserAction)
       }
     }
@@ -69,10 +69,7 @@ class KeyDownEventListener extends TargetedEventListener {
 }
 
 function compareTargetedUserAction(tua1: TargetedUserAction, tua2: TargetedUserAction): boolean {
-  return sameJSONObjects(
-    makeMinimalTargetedUserAction(tua1),
-    makeMinimalTargetedUserAction(tua2),
-  )
+  return sameJSONObjects(makeMinimalTargetedUserAction(tua1), makeMinimalTargetedUserAction(tua2))
 }
 
 function makeMinimalTargetedUserAction(userAction: TargetedUserAction) {

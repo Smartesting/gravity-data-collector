@@ -207,14 +207,16 @@ describe('KeyDownEventListener', () => {
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            expect(userActionHistory.getUserActionsHistory().map(userAction => userAction.type)).not.to.contain(UserActionType.Change)
+            expect(userActionHistory.getUserActionsHistory().map((userAction) => userAction.type)).not.to.contain(
+              UserActionType.Change,
+            )
           })
         })
       }
     })
 
     describe('when input is a text field', () => {
-      const fields: Array<{type: string, html: string}> = [
+      const fields = [
         { type: 'text', html: `<input type="text" data-testid="${inputTestId}" />` },
         { type: 'search', html: `<input type="search" data-testid="${inputTestId}" />` },
         { type: 'textarea', html: `<textarea data-testid="${inputTestId}"></textarea>` },
@@ -234,7 +236,9 @@ describe('KeyDownEventListener', () => {
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            const changeEvents = userActionHistory.getUserActionsHistory().filter(userAction => userAction.type === UserActionType.Change)
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
             expect(changeEvents.length).to.eq(1)
           })
         })
@@ -255,7 +259,9 @@ describe('KeyDownEventListener', () => {
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            const changeEvents = userActionHistory.getUserActionsHistory().filter(userAction => userAction.type === UserActionType.Change)
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
 
             expect(changeEvents.length).to.eq(1)
           })

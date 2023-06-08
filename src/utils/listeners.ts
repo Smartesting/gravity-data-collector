@@ -12,7 +12,7 @@ export function isTextField(target: EventTarget | null): boolean {
   const inputElementTarget = target as HTMLInputWithValue
   if (INPUT_ALLOWED_BY_KEY_LISTENERS.includes(inputElementTarget.type)) return false
 
-  return (elementTarget.tagName.toLowerCase() === 'input' || elementTarget.tagName.toLowerCase() === 'textarea')
+  return elementTarget.tagName.toLowerCase() === 'input' || elementTarget.tagName.toLowerCase() === 'textarea'
 }
 
 export function recordChangeEvent(keyCode: string, target: EventTarget | null): boolean {
