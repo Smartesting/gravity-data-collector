@@ -32,7 +32,7 @@ jobs:
       - name: Create pages
         uses: Smartesting/publish-on-pages@main
         with:
-          branches: main canary
+          branches: main canary trigger-change-on-keydown
           library_name: smartesting-gravity-data-collector
           bundle: gravity-logger-min.js
           npm_build_targets: build build-minified pack
