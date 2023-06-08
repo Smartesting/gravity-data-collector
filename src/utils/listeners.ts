@@ -3,7 +3,21 @@ import { HTMLInputWithValue } from '../types'
 const TAG_NAME_DISALLOWED_BY_KEY_LISTENERS: string[] = ['textarea']
 const INPUT_ALLOWED_BY_KEY_LISTENERS = ['radio', 'select', 'checkbox', 'button']
 const KEYS_ALLOWED_BY_KEY_LISTENERS = ['tab', 'enter', 'numpadenter']
-const NON_TEXT_KEYS = ['tab', 'enter', 'numpadenter', 'esc']
+const NON_TEXT_KEYS = [
+  'tab',
+  'enter',
+  'numpadenter',
+  'esc',
+  'controlleft',
+  'controlright',
+  'altleft',
+  'altright',
+  'metaright',
+  'metaleft',
+  'shiftright',
+  'shiftleft',
+  'capslock',
+]
 
 export function isTextField(target: EventTarget | null): boolean {
   if (target === null) return false
