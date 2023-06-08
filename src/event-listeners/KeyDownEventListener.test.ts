@@ -9,7 +9,7 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { UserActionType } from '../types'
+import { TargetedUserAction, UserActionType } from '../types'
 
 describe('KeyDownEventListener', () => {
   let userActionHistory: UserActionsHistory
@@ -264,6 +264,27 @@ describe('KeyDownEventListener', () => {
               .filter((userAction) => userAction.type === UserActionType.Change)
 
             expect(changeEvents.length).to.eq(1)
+          })
+        })
+
+        it('generates a value for the target', async () => {
+          const { element, domWindow } = createElementInJSDOM(
+            `
+              <div>${html}</div>`,
+            'div',
+          )
+
+          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          const input = await waitFor(() => getByTestId(element, inputTestId))
+          fireEvent.keyDown(input, { code: 'KeyA' })
+
+          await waitFor(() => {}, { timeout: 200 })
+          await waitFor(() => {
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
+            const targetedUserAction = changeEvents[0] as TargetedUserAction
+            expect(targetedUserAction.target.value).to.eq(`{{${type}}}`)
           })
         })
       }

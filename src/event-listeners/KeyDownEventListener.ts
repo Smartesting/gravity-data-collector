@@ -1,10 +1,11 @@
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
-import { KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
+import { HTMLInputWithValue, KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners, recordChangeEvent } from '../utils/listeners'
 import UserActionHandler from '../user-action/UserActionHandler'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
+import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 
 class KeyDownEventListener extends TargetedEventListener {
   constructor(
@@ -23,6 +24,7 @@ class KeyDownEventListener extends TargetedEventListener {
     if (recordChangeEvent(event.code, event.target)) {
       const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
+        changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue)
         return this.userActionHandler.handle(changeUserAction)
       }
     }
