@@ -27,7 +27,7 @@ describe('KeyDownEventListener', () => {
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
 
-  it('it calls createTargetedUserAction with the excludeRegex option', async () => {
+  it('calls createTargetedUserAction with the excludeRegex option', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
@@ -48,7 +48,7 @@ describe('KeyDownEventListener', () => {
     })
   })
 
-  it('it calls createTargetedUserAction with the customSelector option', async () => {
+  it('calls createTargetedUserAction with the customSelector option', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
