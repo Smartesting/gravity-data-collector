@@ -219,6 +219,8 @@ describe('KeyDownEventListener', () => {
       const fields = [
         { type: 'text', html: `<input type="text" data-testid="${inputTestId}" />` },
         { type: 'search', html: `<input type="search" data-testid="${inputTestId}" />` },
+        { type: 'email', html: `<input type="email" data-testid="${inputTestId}" />` },
+        { type: 'password', html: `<input type="password" data-testid="${inputTestId}" />` },
         { type: 'textarea', html: `<textarea data-testid="${inputTestId}"></textarea>` },
       ]
 
