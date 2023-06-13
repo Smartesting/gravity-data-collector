@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
 import UserActionHandler from '../user-action/UserActionHandler'
-import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
+import { fireEvent, getByRole, getByTestId, waitFor } from '@testing-library/dom'
 import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
@@ -9,7 +9,7 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { UserAction, UserActionType } from '../types'
+import { TargetedUserAction, UserActionType } from '../types'
 
 describe('KeyDownEventListener', () => {
   let userActionHistory: UserActionsHistory
@@ -91,9 +91,9 @@ describe('KeyDownEventListener', () => {
   it('calls handler when key down event been fired on a div', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
-                <div>
-                    <div role='cell'/>
-                </div>`,
+        <div>
+            <div role='cell'/>
+        </div>`,
       'div',
     )
 
@@ -103,6 +103,7 @@ describe('KeyDownEventListener', () => {
     fireEvent.keyDown(div)
 
     await waitFor(() => {
+      console.log()
       expect(handleSpy).toHaveBeenCalledOnce()
     })
   })
@@ -110,16 +111,16 @@ describe('KeyDownEventListener', () => {
   it('does not call listener multiple time when key down event is fired consecutively', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
-                <div>
-                    <div role='cell'/>
-                </div>`,
+        <div>
+            <div role='cell'/>
+        </div>`,
       'div',
     )
 
     new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
     const div = await waitFor(() => getByRole(element, 'cell'))
 
-    for (let i = 0; i < 10; i++) fireEvent.keyDown(div)
+    for (let i = 0; i < 10; i++) fireEvent.keyDown(div, { code: 'Enter' })
 
     await waitFor(() => {}, { timeout: 200 })
 
@@ -128,67 +129,39 @@ describe('KeyDownEventListener', () => {
     })
   })
 
-  it('does not call listener when key down event is fired on text inputs', async () => {
-    const { element, domWindow } = createElementInJSDOM(
-      `
-            <div>
-                <input id='text-1' type='text'/>
-                <textarea id='text-2'></textarea>
-                <input id='text-5' type='search' />
-            </div>`,
-      'div',
-    )
-
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
-
-    const inputs: HTMLElement[] = await waitFor(() => getAllByRole(element, 'textbox'))
-    const search = await waitFor(() => getByRole(element, 'searchbox'))
-
-    for (const input of inputs) {
-      fireEvent.keyDown(input, { code: 'KeyA' })
-    }
-    fireEvent.keyDown(search, { code: 'KeyA' })
-
-    await waitFor(() => {}, { timeout: 500 })
-
-    await waitFor(() => {
-      expect(handleSpy).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('When press on allowed key', () => {
+  describe('when a special key is typed', () => {
     const inputs = [
       {
         query: (element: HTMLElement) => getByRole(element, 'textbox'),
         inputType: 'text',
         html: "<input id='text-1' type='text'/>",
-        expectedUserActionTypes: [UserActionType.KeyDown],
+        expectedUserActionType: UserActionType.KeyDown,
       },
       {
         query: (element: HTMLElement) => getByRole(element, 'textbox'),
         inputType: 'textarea',
         html: "<textarea id='text-2'></textarea>",
-        expectedUserActionTypes: [UserActionType.KeyDown, UserActionType.Change],
+        expectedUserActionType: UserActionType.KeyDown,
       },
       {
         query: (element: HTMLElement) => getByRole(element, 'searchbox'),
         inputType: 'search',
         html: "<input id='text-5' type='search' />",
-        expectedUserActionTypes: [UserActionType.KeyDown],
+        expectedUserActionType: UserActionType.KeyDown,
       },
     ]
 
-    for (const { html, inputType, query, expectedUserActionTypes } of inputs) {
+    for (const { html, inputType, query, expectedUserActionType } of inputs) {
       it(`calls handler when the key is Tab on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('Tab', html, query, expectedUserActionTypes)
+        await assertHandleUserActionIsCalled('Tab', html, query, expectedUserActionType)
       })
 
       it(`calls handler when the key is Enter on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('Enter', html, query, expectedUserActionTypes)
+        await assertHandleUserActionIsCalled('Enter', html, query, expectedUserActionType)
       })
 
       it(`calls handler when the key is NumpadEnter on ${inputType}`, async () => {
-        await assertHandleUserActionIsCalled('NumpadEnter', html, query, expectedUserActionTypes)
+        await assertHandleUserActionIsCalled('NumpadEnter', html, query, expectedUserActionType)
       })
     }
 
@@ -196,12 +169,8 @@ describe('KeyDownEventListener', () => {
       code: string,
       domContent: string,
       query: (element: HTMLElement) => HTMLElement,
-      expectedUserActionTypes: UserActionType[],
+      expectedUserActionType: UserActionType,
     ) {
-      const emittedUserActions: UserAction[] = []
-      const handleSpy = vitest.spyOn(userActionHandler, 'handle').mockImplementation((userAction: UserAction) => {
-        emittedUserActions.push(userAction)
-      })
       const { element, domWindow } = createElementInJSDOM(`<div>${domContent}</div>`, 'div')
 
       new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
@@ -210,12 +179,117 @@ describe('KeyDownEventListener', () => {
       fireEvent.keyDown(input, { code })
 
       await waitFor(() => {
-        expect(handleSpy).toHaveBeenCalledTimes(expectedUserActionTypes.length)
-        const userActionTypes = emittedUserActions.map((userAction) => userAction.type)
-        for (const expectedUserActionType of expectedUserActionTypes) {
-          expect(userActionTypes).toContain(expectedUserActionType)
-        }
+        const userActions = userActionHistory.getUserActionsHistory()
+        expect(handleSpy).toHaveBeenCalledOnce()
+        expect(userActions[0].type).to.eq(expectedUserActionType)
       })
     }
+  })
+
+  describe('typing in an text field triggers a change event', () => {
+    const inputTestId = 'input-testid'
+
+    describe('when input is not a text field', () => {
+      const nonTextInputTypes = ['radio', 'checkbox', 'button']
+      for (const inputType of nonTextInputTypes) {
+        it(`does not trigger a Change event when type is ${inputType}`, async () => {
+          const { element, domWindow } = createElementInJSDOM(
+            `
+              <div>
+                  <input data-testid="${inputTestId}" type="${inputType}" />
+              </div>`,
+            'div',
+          )
+
+          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          const input = await waitFor(() => getByTestId(element, inputTestId))
+          fireEvent.keyDown(input, { code: 'KeyA' })
+
+          await waitFor(() => {}, { timeout: 200 })
+          await waitFor(() => {
+            expect(userActionHistory.getUserActionsHistory().map((userAction) => userAction.type)).not.to.contain(
+              UserActionType.Change,
+            )
+          })
+        })
+      }
+    })
+
+    describe('when input is a text field', () => {
+      const fields = [
+        { type: 'text', html: `<input type="text" data-testid="${inputTestId}" />` },
+        { type: 'search', html: `<input type="search" data-testid="${inputTestId}" />` },
+        { type: 'email', html: `<input type="email" data-testid="${inputTestId}" />` },
+        { type: 'password', html: `<input type="password" data-testid="${inputTestId}" />` },
+        { type: 'textarea', html: `<textarea data-testid="${inputTestId}"></textarea>` },
+      ]
+
+      for (const { type, html } of fields) {
+        it(`does triggers a Change event when typing in ${type}`, async () => {
+          const { element, domWindow } = createElementInJSDOM(
+            `
+              <div>${html}</div>`,
+            'div',
+          )
+
+          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          const input = await waitFor(() => getByTestId(element, inputTestId))
+          fireEvent.keyDown(input, { code: 'KeyA' })
+
+          await waitFor(() => {}, { timeout: 200 })
+          await waitFor(() => {
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
+            expect(changeEvents.length).to.eq(1)
+          })
+        })
+
+        it(`does not trigger multiple Change events when typing in ${type}`, async () => {
+          const { element, domWindow } = createElementInJSDOM(
+            `
+              <div>${html}</div>`,
+            'div',
+          )
+
+          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          const input = await waitFor(() => getByTestId(element, inputTestId))
+          fireEvent.keyDown(input, { code: 'KeyA' })
+          fireEvent.keyDown(input, { code: 'KeyB' })
+          fireEvent.keyDown(input, { code: 'KeyC' })
+          fireEvent.keyDown(input, { code: 'KeyD' })
+
+          await waitFor(() => {}, { timeout: 200 })
+          await waitFor(() => {
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
+
+            expect(changeEvents.length).to.eq(1)
+          })
+        })
+
+        it('generates a value for the target', async () => {
+          const { element, domWindow } = createElementInJSDOM(
+            `
+              <div>${html}</div>`,
+            'div',
+          )
+
+          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          const input = await waitFor(() => getByTestId(element, inputTestId))
+          fireEvent.keyDown(input, { code: 'KeyA' })
+
+          await waitFor(() => {}, { timeout: 200 })
+          await waitFor(() => {
+            const changeEvents = userActionHistory
+              .getUserActionsHistory()
+              .filter((userAction) => userAction.type === UserActionType.Change)
+            const targetedUserAction = changeEvents[0] as TargetedUserAction
+            expect(targetedUserAction.target.value).to.eq(`{{${type}}}`)
+          })
+        })
+      }
+    })
   })
 })
