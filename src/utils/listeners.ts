@@ -30,6 +30,7 @@ export function isTextField(target: EventTarget | null): boolean {
 }
 
 export function recordChangeEvent(keyCode: string, target: EventTarget | null): boolean {
+  if (keyCode === undefined) return false
   if (target === null) return false
   if (!isTextField(target)) return false
 
