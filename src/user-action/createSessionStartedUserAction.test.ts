@@ -74,7 +74,6 @@ describe('action', () => {
 
     it('returns Cypress current test if any', () => {
       expect(createSessionStartedUserAction().test).toBeUndefined()
-
       ;(window as any).Cypress = {
         currentTest: {
           titlePath: ['foo', 'bar', 'testing stuff'],
