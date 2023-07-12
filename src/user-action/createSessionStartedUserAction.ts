@@ -3,6 +3,7 @@ import location from '../utils/location'
 import { SessionStartedUserAction, UserActionType } from '../types'
 import { config } from '../config'
 import gravityDocument from '../utils/gravityDocument'
+import { makeCypressTestContext } from '../utils/makeCypressTestContext'
 
 function buildId() {
   return (
@@ -32,6 +33,11 @@ export function createSessionStartedUserAction(): SessionStartedUserAction {
   const cypress = (window as any).Cypress
   if (cypress?.currentTest !== undefined) {
     action.test = cypress.currentTest.titlePath.join(' > ')
+  }
+
+  const testContext = makeCypressTestContext()
+  if (testContext != null) {
+    action.testContext = testContext
   }
 
   return action
