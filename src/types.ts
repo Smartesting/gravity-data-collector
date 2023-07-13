@@ -22,9 +22,15 @@ export interface TestSuite {
   parent?: TestSuite
 }
 
+export enum TestingTool {
+  CYPRESS = 'cypress',
+  PLAYWRIGHT = 'playwright',
+}
+
 export interface TestContext {
   title: string
   titlePath: readonly string[]
+  testingTool: TestingTool
   suite?: TestSuite
 }
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, it } from 'vitest'
 import { makeCypressTestContext } from './makeCypressTestContext'
 import assert from 'assert'
-import { TestContext } from '../types'
+import { TestContext, TestingTool } from '../types'
 
 describe('makeCypressTestContext', () => {
   beforeEach(() => {
@@ -46,6 +46,7 @@ describe('makeCypressTestContext', () => {
         'Session user actions are stored in the system',
         'The user actions are grouped by session',
       ],
+      testingTool: TestingTool.CYPRESS,
       suite: {
         file: null,
         title: 'Session user actions are stored in the system',

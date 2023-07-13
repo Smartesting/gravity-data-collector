@@ -1,4 +1,4 @@
-import { TestContext, TestSuite } from '../types'
+import { TestContext, TestingTool, TestSuite } from '../types'
 
 export function makeCypressTestContext(): TestContext | null {
   const currentTest = (window as any).Cypress?.currentTest
@@ -8,6 +8,7 @@ export function makeCypressTestContext(): TestContext | null {
   const testContext: TestContext = {
     title: currentTest.title,
     titlePath: currentTest.titlePath,
+    testingTool: TestingTool.CYPRESS,
   }
   const suite = extractTestSuite()
   if (suite !== undefined) {

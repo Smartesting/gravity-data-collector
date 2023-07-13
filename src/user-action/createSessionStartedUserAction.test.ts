@@ -3,7 +3,7 @@ import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { UserActionType } from '../types'
+import { TestContext, TestingTool, UserActionType } from '../types'
 import { config } from '../config'
 import assert from 'assert'
 
@@ -104,14 +104,16 @@ describe('action', () => {
           },
         },
       })
-      assert.deepStrictEqual(createSessionStartedUserAction().testContext, {
+      const expectedTestContext: TestContext = {
         title: 'My test',
         titlePath: ['My suite', 'My test'],
+        testingTool: TestingTool.CYPRESS,
         suite: {
           file: 'my-test-file.cy.ts',
           title: 'My suite',
         },
-      })
+      }
+      assert.deepStrictEqual(createSessionStartedUserAction().testContext, expectedTestContext)
     })
   })
 })
