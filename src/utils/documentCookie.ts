@@ -1,8 +1,26 @@
+import psl from 'psl'
+
 export function setCookie(key: string, value: string) {
-  document.cookie = `${key}=${encodeURIComponent(value)}; Path=/`
+  let cookie = `${key}=${encodeURIComponent(value)}; Path=/`
+  const parsedDomain = psl.parse(document.location.hostname)
+  if (isParsedDomain(parsedDomain) && parsedDomain.domain !== null) {
+    let domain: string
+    if (psl.isValid(parsedDomain.domain)) {
+      domain = parsedDomain.domain
+    } else {
+      domain = parsedDomain.input
+    }
+    cookie += `; Domain=${domain}`
+  }
+
+  document.cookie = cookie
 }
 
 export function readCookie(key: string): string | undefined {
   const match = document.cookie.match(new RegExp(`(^| )${key}=([^;]+)`))
   return match !== null ? decodeURIComponent(match[2]) : undefined
+}
+
+function isParsedDomain(toBeDetermined: any): toBeDetermined is psl.ParsedDomain {
+  return (toBeDetermined as psl.ParsedDomain).error === undefined
 }
