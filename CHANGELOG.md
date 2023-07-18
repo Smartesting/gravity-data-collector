@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Prevent creating a new session for each action if the URL is an IP address
+
 ## [3.7.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.6.0...3.7.0)
 
 ### Added
