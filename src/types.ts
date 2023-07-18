@@ -16,8 +16,27 @@ export type AsyncRequest = {
   method: string
 } & UserActionProperties
 
+export interface TestSuite {
+  title: string
+  file: string | null
+  parent?: TestSuite
+}
+
+export enum TestingTool {
+  CYPRESS = 'cypress',
+  PLAYWRIGHT = 'playwright',
+}
+
+export interface TestContext {
+  title: string
+  titlePath: readonly string[]
+  testingTool: TestingTool
+  suite?: TestSuite
+}
+
 export type SessionStartedUserAction = {
   test?: string
+  testContext?: TestContext
   version: string
   agent: string
   buildId?: string

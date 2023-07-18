@@ -36,16 +36,21 @@
 //   }
 // }
 
-Cypress.Commands.add('interceptGravityPublish', () => {
+Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => {
   return cy
     .intercept(
       {
         method: 'POST',
         url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/publish`,
       },
-      {
-        statusCode: 200,
-        body: { error: null },
+      (req) => {
+        if (onReq) {
+          onReq(req)
+        }
+        req.reply({
+          statusCode: 200,
+          body: { error: null },
+        })
       },
     )
     .as('sendGravityRequest')
@@ -101,7 +106,7 @@ declare global {
        * Intercepts publish requests to Gravity
        * @example cy.interceptGravityPublish()
        */
-      interceptGravityPublish(): Chainable
+      interceptGravityPublish(onReq?: (req: any) => void): Chainable
 
       interceptGravityIdentify(onReq: (req: any) => void): Chainable
 

@@ -1,11 +1,11 @@
 import psl from 'psl'
 
 export function setCookie(key: string, value: string) {
-  let cookie = `${key}=${encodeURIComponent(value)}; path=/`
+  let cookie = `${key}=${encodeURIComponent(value)}; Path=/`
   const parsedDomain = psl.parse(document.location.hostname)
   if (isParsedDomain(parsedDomain) && parsedDomain.domain !== null) {
     const domain: string = parsedDomain.domain
-    cookie += `; domain=${domain}`
+    cookie += `; Domain=${domain}`
   }
 
   document.cookie = cookie

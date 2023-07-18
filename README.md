@@ -26,7 +26,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^3.5.2"
+    "@smartesting/gravity-data-collector": "^3.7.0"
   }
 }
 ```
@@ -42,7 +42,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@3.5.2/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@3.7.0/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -89,14 +89,14 @@ the coverage of a usage in Gravity, and 2) to replay the session as a Cypress te
 By default, the following selectors are computed:
 
 - `xpath`: a XPath selector to reach the element (eg: `/html/body/div`)
-- `query`: on object describing various ways to reach the objet
+- `queries`: on object describing various ways to reach the objet
   - `id`: if available, the element's id (eg: `#my-object`)
   - `class`: if available, selection of the object following CSS classes (eg: `.my-container .some-class`)
   - `tag`: selection based on the tags (eg: `html body div ul li`)
   - `nthChild`: selection based on nth-child (eg: `:nth-child(2) > :nth-child(4)`)
   - `attributes`: if available, selection based on the nodes attributes (eg: `[name=]`)
   - `combined`: a combination of the previous selectors (eg: `#menu nav :nth-child(2)`)
-- `attributes`: a hash of attributes provided by the suer (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
+- `attributes`: a hash of attributes provided by the user (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
 
 #### Tweaking selectors
 
@@ -112,7 +112,7 @@ This configuration will collect the `data-testid` and `role` attributes of the H
 GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-This configuration will only use CSS classes and tags to compute the selectors. Alternativelly, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
+This configuration will only use CSS classes and tags to compute the selectors. Alternatively, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
 GravityCollector.init({

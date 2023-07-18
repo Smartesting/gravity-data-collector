@@ -3,13 +3,18 @@ import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { UserActionType } from '../types'
+import { TestContext, TestingTool, UserActionType } from '../types'
 import { config } from '../config'
+import assert from 'assert'
 
 describe('action', () => {
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
+  })
+
+  beforeEach(() => {
+    delete (window as any).Cypress
   })
 
   describe('createSessionStartedUserAction', () => {
@@ -69,16 +74,46 @@ describe('action', () => {
 
     it('returns Cypress current test if any', () => {
       expect(createSessionStartedUserAction().test).toBeUndefined()
+      ;(window as any).Cypress = {
+        currentTest: {
+          titlePath: ['foo', 'bar', 'testing stuff'],
+        },
+      }
+
+      expect(createSessionStartedUserAction().test).toEqual('foo > bar > testing stuff')
+    })
+
+    it('returns Cypress current test context if any', () => {
+      expect(createSessionStartedUserAction().testContext).toBeUndefined()
 
       Object.defineProperty(window, 'Cypress', {
         value: {
           currentTest: {
-            titlePath: ['foo', 'bar', 'testing stuff'],
+            title: 'My test',
+            titlePath: ['My suite', 'My test'],
+          },
+          mocha: {
+            getRunner() {
+              return {
+                suite: {
+                  file: 'my-test-file.cy.ts',
+                  title: 'My suite',
+                },
+              }
+            },
           },
         },
       })
-
-      expect(createSessionStartedUserAction().test).toEqual('foo > bar > testing stuff')
+      const expectedTestContext: TestContext = {
+        title: 'My test',
+        titlePath: ['My suite', 'My test'],
+        testingTool: TestingTool.CYPRESS,
+        suite: {
+          file: 'my-test-file.cy.ts',
+          title: 'My suite',
+        },
+      }
+      assert.deepStrictEqual(createSessionStartedUserAction().testContext, expectedTestContext)
     })
   })
 })
