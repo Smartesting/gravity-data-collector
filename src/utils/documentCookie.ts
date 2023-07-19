@@ -4,7 +4,12 @@ export function setCookie(key: string, value: string) {
   let cookie = `${key}=${encodeURIComponent(value)}; Path=/`
   const parsedDomain = psl.parse(document.location.hostname)
   if (isParsedDomain(parsedDomain) && parsedDomain.domain !== null) {
-    const domain: string = parsedDomain.domain
+    let domain: string
+    if (psl.isValid(parsedDomain.domain)) {
+      domain = parsedDomain.domain
+    } else {
+      domain = parsedDomain.input
+    }
     cookie += `; Domain=${domain}`
   }
 
