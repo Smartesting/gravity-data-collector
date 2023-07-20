@@ -1,5 +1,9 @@
 ![Node workflow](https://github.com/Smartesting/gravity-data-collector/actions/workflows/node.js.yml/badge.svg)
 
+### ⚠️ YOU ARE IN AN EXPERIMENTAL BRANCH ⚠️
+
+This branch contains experimental features, changes, or updates that are not thoroughly tested and may be unstable.
+
 # Gravity Data Collector - README
 
 This repo contains the browser implementation of the Gravity Data Collector. Learn more about
@@ -106,13 +110,15 @@ When initializing the collector, you can specify which selectors are activated a
 GravityCollector.init({ selectorsOptions: { attributes: ['data-testid', 'role'] } })
 ```
 
-This configuration will collect the `data-testid` and `role` attributes of the HTML elements with which the user interacts.
+This configuration will collect the `data-testid` and `role` attributes of the HTML elements with which the user
+interacts.
 
 ```typescript
 GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-This configuration will only use CSS classes and tags to compute the selectors. Alternatively, you can also exclude some queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
+This configuration will only use CSS classes and tags to compute the selectors. Alternatively, you can also exclude some
+queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
 GravityCollector.init({
