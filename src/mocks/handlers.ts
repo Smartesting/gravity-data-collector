@@ -1,5 +1,6 @@
 import { rest } from 'msw'
 import {
+  buildGravityTrackingMonitorSessionApiUrl,
   buildGravityTrackingIdentifySessionApiUrl,
   buildGravityTrackingPublishApiUrl,
   GRAVITY_SERVER_ADDRESS,
@@ -71,6 +72,25 @@ export const handlers = [
         }
       }
       return await res(ctx.status(200), ctx.json({ error: null }))
+    },
+  ),
+  rest.post(
+    buildGravityTrackingMonitorSessionApiUrl(':authKey', GRAVITY_SERVER_ADDRESS, ':sessionId'),
+    async (req, res, ctx) => {
+      const { authKey, sessionId } = req.params
+      if (authKey === DUMMY_AUTH_KEY_CAUSING_NETWORK_ERROR) throw new Error('Network Error')
+      if (sessionId !== VALID_SESSION_ID) {
+        return await res(ctx.status(403), ctx.json({ error: IdentifySessionError.accessDenied }))
+      }
+      const origin = req.headers.get('Origin')
+      if (origin !== null && getHostname(origin) !== VALID_SOURCE) {
+        return await res(ctx.status(403), ctx.json({ error: IdentifySessionError.incorrectSource }))
+      }
+      if (authKey !== VALID_AUTH_KEY && authKey !== ANOTHER_VALID_AUTH_KEY) {
+        return await res(ctx.status(404), ctx.json({ error: IdentifySessionError.collectionNotFound }))
+      }
+      const payload = await req.json()
+      return await res(ctx.status(200), ctx.json({ metric: payload, error: null }))
     },
   ),
 ]
