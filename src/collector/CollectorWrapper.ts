@@ -20,6 +20,8 @@ import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitV
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
+import WebVitalHandler from '../web-vitals/WebVitalsHandler'
+import { debugWebVitalSender, defaultWebVitalSender } from '../web-vitals/webVitalSender'
 
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
@@ -27,6 +29,7 @@ class CollectorWrapper {
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
+  readonly webVitalsHandler: WebVitalHandler
 
   constructor(
     readonly options: CollectorOptions,
@@ -61,6 +64,7 @@ class CollectorWrapper {
       this.trackingHandler.setActive(keepSession(options))
       sessionIdHandler.generateNewSessionId()
     }
+
     this.userActionsHistory = new MemoryUserActionsHistory()
 
     this.userActionHandler = new UserActionHandler(
@@ -94,6 +98,16 @@ class CollectorWrapper {
     ])
 
     this.trackingHandler.init(this.eventListenerHandler)
+    const webVitalsOutput = options.debug
+      ? debugWebVitalSender(options.maxDelay)
+      : defaultWebVitalSender(
+          options.authKey,
+          options.gravityServerUrl,
+          nop,
+          this.trackingHandler.getSenderErrorCallback(),
+        )
+    this.webVitalsHandler = new WebVitalHandler(sessionIdHandler, this.trackingHandler, webVitalsOutput)
+    this.webVitalsHandler.init()
 
     const { fetch: originalFetch } = window
     window.fetch = async (...args) => {

@@ -19,6 +19,7 @@ import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 import createAsyncRequest from '../user-action/createAsyncRequest'
+import WebVitalsHandler from '../web-vitals/WebVitalsHandler'
 
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
@@ -131,6 +132,15 @@ describe('CollectorWrapper', () => {
         createCollectorWrapper()
 
         expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
+      })
+
+      describe('WebVitalsHandler', () => {
+        it('initialize WebVitalsHandler', () => {
+          vi.spyOn(WebVitalsHandler.prototype, 'init').mockImplementation(nop)
+          createCollectorWrapper()
+
+          expect(WebVitalsHandler.prototype.init).toHaveBeenCalledOnce()
+        })
       })
     })
 

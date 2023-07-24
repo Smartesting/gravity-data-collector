@@ -43,7 +43,7 @@ export function debugWebVitalSender(maxDelay: number, output: (args: any) => voi
 
 function printMetric(metric: Metric, output: (args: any) => void) {
   output('[Gravity Logger (debug mode)]')
-  output(`web vitals with ${JSON.stringify(metric)}`)
+  output({ metric })
 }
 
 export async function sendWebVital(

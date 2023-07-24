@@ -10,12 +10,13 @@ export default class WebVitalsHandler {
   ) {}
 
   init() {
-    onFID(this.flush)
-    onTTFB(this.flush)
-    onLCP(this.flush)
-    onCLS(this.flush)
-    onFCP(this.flush)
-    onINP(this.flush)
+    const flushBind = this.flush.bind(this)
+    onFID(flushBind)
+    onTTFB(flushBind)
+    onLCP(flushBind)
+    onCLS(flushBind)
+    onFCP(flushBind)
+    onINP(flushBind)
   }
 
   flush(metric: Metric) {
