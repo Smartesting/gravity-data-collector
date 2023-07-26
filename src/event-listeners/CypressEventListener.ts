@@ -50,13 +50,14 @@ function skipEvent(cmd: any) {
 }
 
 function extractCypressCommand(eventType: CypressEvent, event: any): CypressCommand {
-  const { name, args, id, chainerId, prev, next, userInvocationStack } = event.attributes
+  const { name, args, id, chainerId, prev, next, type, userInvocationStack } = event.attributes
   return {
     name,
     args,
     id,
     chainerId,
-    eventType,
+    event: eventType,
+    type,
     prevId: prev?.attributes?.id,
     nextId: next?.attributes?.id,
     userInvocationStack,

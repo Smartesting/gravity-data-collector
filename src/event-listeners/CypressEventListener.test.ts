@@ -15,7 +15,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_START, {
       attributes: {
         name: 'goToHome',
-        type: CypressEvent.COMMAND_START,
+        type: 'parent',
       },
     })
 
@@ -31,7 +31,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_START, {
       attributes: {
         name: 'goToHome',
-        type: CypressEvent.COMMAND_START,
+        type: 'parent',
       },
     })
 
@@ -48,7 +48,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_START, {
       attributes: {
         name: 'goToHome',
-        type: CypressEvent.COMMAND_START,
+        type: 'parent',
       },
     })
     expect(spyOnHandle).toHaveBeenCalledTimes(1)
@@ -57,7 +57,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_END, {
       attributes: {
         name: 'goToHome',
-        type: CypressEvent.COMMAND_END,
+        type: 'parent',
       },
     })
 
@@ -65,7 +65,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_START, {
       attributes: {
         name: 'then',
-        type: CypressEvent.COMMAND_START,
+        type: 'parent',
       },
     })
     expect(spyOnHandle).toHaveBeenCalledTimes(2)
@@ -74,7 +74,7 @@ describe('CypressEventListener', () => {
     cypress.emit(CypressEvent.COMMAND_START, {
       attributes: {
         name: 'task',
-        type: CypressEvent.COMMAND_START,
+        type: 'parent',
       },
     })
     expect(spyOnHandle).toHaveBeenCalledTimes(2)

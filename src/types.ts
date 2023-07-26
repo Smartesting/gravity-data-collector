@@ -23,14 +23,15 @@ export enum CypressEvent {
 }
 
 export interface CypressCommand {
+  event: CypressEvent
   name: string
   args: readonly any[]
   id: string
   chainerId: string
-  eventType: CypressEvent
   prevId: string
   nextId: string
   userInvocationStack: string
+  type: string
 }
 
 export type CypressObject = Cypress.Cypress & CyEventEmitter
