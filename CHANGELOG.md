@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- add `TestCommand` as new type of `UserAction` to track Cypress test information (if available)
+
 ### Changed
 
 ### Deprecated

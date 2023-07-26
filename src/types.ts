@@ -1,3 +1,4 @@
+import Cypress from 'cypress'
 export { sendSessionUserActions } from './user-action/sessionUserActionSender'
 
 export enum UserActionType {
@@ -7,9 +8,32 @@ export enum UserActionType {
   KeyUp = 'keyup',
   KeyDown = 'keydown',
   AsyncRequest = 'asyncRequest',
+  TestCommand = 'testCommand',
 }
 
-export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
+export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand
+
+export type TestCommand = {
+  command: CypressCommand
+} & UserActionProperties
+
+export enum CypressEvent {
+  COMMAND_START = 'command:start',
+  COMMAND_END = 'command:end',
+}
+
+export interface CypressCommand {
+  name: string
+  args: readonly any[]
+  id: string
+  chainerId: string
+  eventType: CypressEvent
+  prevId: string
+  nextId: string
+  userInvocationStack: string
+}
+
+export type CypressObject = Cypress.Cypress & CyEventEmitter
 
 export type AsyncRequest = {
   url: string

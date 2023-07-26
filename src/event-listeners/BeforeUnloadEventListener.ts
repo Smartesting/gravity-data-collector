@@ -1,9 +1,9 @@
-import UserActionHandler from '../user-action/UserActionHandler'
 import EventListener from '../event-listeners/EventListener'
 import { UserActionType } from '../types'
+import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class BeforeUnloadEventListener extends EventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window) {
+  constructor(userActionHandler: IUserActionHandler, window: Window) {
     super(userActionHandler, 'beforeunload' as UserActionType, window)
   }
 

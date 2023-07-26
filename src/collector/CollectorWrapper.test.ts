@@ -19,6 +19,7 @@ import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 import createAsyncRequest from '../user-action/createAsyncRequest'
+import CypressEventListener from '../event-listeners/CypressEventListener'
 
 describe('CollectorWrapper', () => {
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
@@ -131,6 +132,25 @@ describe('CollectorWrapper', () => {
         createCollectorWrapper()
 
         expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
+      })
+
+      describe('initializes CypressEventListener', () => {
+        afterEach(() => {
+          delete (window as any).Cypress
+        })
+
+        it('unless window.Cypress is not available', () => {
+          vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
+          createCollectorWrapper()
+          expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
+        })
+
+        it('if window.Cypress is available', () => {
+          vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
+          ;(window as any).Cypress = {}
+          createCollectorWrapper()
+          expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+        })
       })
     })
 

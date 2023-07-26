@@ -1,8 +1,9 @@
 import { SessionUserAction, UserAction } from '../types'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import IUserActionHandler from './IUserActionHandler'
 
-export default class UserActionHandler {
+export default class UserActionHandler implements IUserActionHandler {
   private readonly buffer: UserAction[] = []
   private readonly timer?: NodeJS.Timer
 

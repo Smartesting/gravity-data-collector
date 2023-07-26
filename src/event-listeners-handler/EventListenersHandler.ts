@@ -1,7 +1,7 @@
-import EventListener from '../event-listeners/EventListener'
+import { IEventListener } from '../event-listeners/IEventListener'
 
 export default class EventListenersHandler {
-  constructor(private readonly eventListeners: EventListener[]) {}
+  constructor(private readonly eventListeners: IEventListener[]) {}
 
   initializeEventListeners() {
     this.eventListeners.forEach((eventListener) => eventListener.init())
