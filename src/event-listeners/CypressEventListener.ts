@@ -37,6 +37,7 @@ export default class CypressEventListener implements IEventListener {
   private registerCypressEvent(cypressEvent: CypressEvent, event: any) {
     const command = extractCypressCommand(cypressEvent, event)
     if (command === null || skipEvent(event)) {
+      console.log('SKIP EVENT', event.attributes.name, event.attributes.type)
       console.log('- command', command === null ? '<null>' : renderCommand(command))
       return
     }
