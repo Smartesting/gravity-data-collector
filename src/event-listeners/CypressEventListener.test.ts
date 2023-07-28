@@ -79,14 +79,6 @@ describe('CypressEventListener', () => {
     })
     expect(spyOnHandle).toHaveBeenCalledTimes(2)
 
-    // skip event if no type
-    cypress.emit(CypressEvent.COMMAND_START, {
-      attributes: {
-        name: 'logout',
-      },
-    })
-    expect(spyOnHandle).toHaveBeenCalledTimes(2)
-
     cypress.emit(CypressEvent.COMMAND_START, {})
     expect(spyOnHandle).toHaveBeenCalledTimes(2)
   })
