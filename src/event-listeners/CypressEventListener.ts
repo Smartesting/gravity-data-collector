@@ -5,12 +5,6 @@ import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
-function renderCommand(command: CypressCommand) {
-  const args = (command.args ?? []).map((arg) => JSON.stringify(arg)).join(',')
-  const id = command.id
-  return `${command.event.toUpperCase()} [${id}] ${command.name}(${args}) ${command.prevId}->${command.nextId}`
-}
-
 export default class CypressEventListener implements IEventListener {
   private readonly listeners: Map<CypressEvent, any> = new Map()
 
@@ -35,16 +29,12 @@ export default class CypressEventListener implements IEventListener {
   }
 
   private registerCypressEvent(cypressEvent: CypressEvent, event: any) {
-    const command = extractCypressCommand(cypressEvent, event)
-    if (command === null || skipEvent(event)) {
-      console.log('SKIP EVENT', event.attributes)
-      console.log('- command', command === null ? '<null>' : renderCommand(command))
+    if (skipEvent(event)) {
       return
     }
-    console.log('+ command', renderCommand(command))
     this.userActionHandler.handle({
       type: UserActionType.TestCommand,
-      command,
+      command: extractCypressCommand(cypressEvent, event),
       document: gravityDocument(),
       location: location(),
       recordedAt: new Date().toISOString(),
@@ -57,12 +47,10 @@ function skipEvent(cmd: any) {
   if (cmd.attributes === undefined) return true
   const { name } = cmd.attributes
   if (name === 'task') return true
-  if (name === 'then') return true
-  return false
+  return name === 'then'
 }
 
-function extractCypressCommand(eventType: CypressEvent, event: any): CypressCommand | null {
-  if (event === null || event === undefined || event.attributes === null || event.attributes === undefined) return null
+function extractCypressCommand(eventType: CypressEvent, event: any): CypressCommand {
   const { name, args, id, chainerId, prev, next, type, userInvocationStack } = event.attributes
   return {
     name,

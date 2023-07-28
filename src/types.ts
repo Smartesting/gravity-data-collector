@@ -31,7 +31,7 @@ export interface CypressCommand {
   prevId: string
   nextId: string
   userInvocationStack: string
-  type: string
+  type?: string
 }
 
 export type CypressObject = Cypress.Cypress & CyEventEmitter

@@ -2,7 +2,6 @@ import { SessionUserAction, UserAction } from '../types'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import IUserActionHandler from './IUserActionHandler'
-import isTargetedUserAction from '../utils/isTargetedUserAction'
 
 export default class UserActionHandler implements IUserActionHandler {
   private readonly buffer: UserAction[] = []
@@ -23,10 +22,6 @@ export default class UserActionHandler implements IUserActionHandler {
   }
 
   handle(action: UserAction) {
-    if (isTargetedUserAction(action)) {
-      const info = action.target.displayInfo ?? action.target.element ?? action.target.selectors
-      console.log(`= ${action.type}[${JSON.stringify(info)}]`)
-    }
     this.buffer.push(action)
     if (this.userActionHistory !== undefined) this.userActionHistory.push(action)
     if (this.timer == null) {
