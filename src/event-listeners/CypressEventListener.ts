@@ -36,11 +36,10 @@ export default class CypressEventListener implements IEventListener {
 
   private registerCypressEvent(cypressEvent: CypressEvent, event: any) {
     const command = extractCypressCommand(cypressEvent, event)
-    if (skipEvent(event)) {
-      console.log('- command', renderCommand(command))
+    if (command === null || skipEvent(event)) {
+      console.log('- command', command === null ? '<null>' : renderCommand(command))
       return
     }
-
     console.log('+ command', renderCommand(command))
     this.userActionHandler.handle({
       type: UserActionType.TestCommand,
@@ -61,7 +60,8 @@ function skipEvent(cmd: any) {
   return type === undefined
 }
 
-function extractCypressCommand(eventType: CypressEvent, event: any): CypressCommand {
+function extractCypressCommand(eventType: CypressEvent, event: any): CypressCommand | null {
+  if (event === null || event === undefined || event.attributes === null || event.attributes === undefined) return null
   const { name, args, id, chainerId, prev, next, type, userInvocationStack } = event.attributes
   return {
     name,
