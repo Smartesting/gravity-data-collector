@@ -5,6 +5,12 @@ import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
+function renderCommand(command: CypressCommand) {
+  const args = (command.args ?? []).map((arg) => JSON.stringify(arg)).join(',')
+  const id = command.id
+  return `${command.event.toUpperCase()} [${id}] ${command.name}(${args}) ${command.prevId}->${command.nextId}`
+}
+
 export default class CypressEventListener implements IEventListener {
   private readonly listeners: Map<CypressEvent, any> = new Map()
 
@@ -29,10 +35,16 @@ export default class CypressEventListener implements IEventListener {
   }
 
   private registerCypressEvent(cypressEvent: CypressEvent, event: any) {
-    if (skipEvent(event)) return
+    const command = extractCypressCommand(cypressEvent, event)
+    if (skipEvent(event)) {
+      console.log('- command', renderCommand(command))
+      return
+    }
+
+    console.log('+ command', renderCommand(command))
     this.userActionHandler.handle({
       type: UserActionType.TestCommand,
-      command: extractCypressCommand(cypressEvent, event),
+      command,
       document: gravityDocument(),
       location: location(),
       recordedAt: new Date().toISOString(),
