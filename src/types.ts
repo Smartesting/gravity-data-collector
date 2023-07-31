@@ -28,8 +28,8 @@ export interface CypressCommand {
   args: readonly any[]
   id: string
   chainerId: string
-  prevId: string
-  nextId: string
+  prevId?: string
+  nextId?: string
   userInvocationStack: string
   type?: string
 }
