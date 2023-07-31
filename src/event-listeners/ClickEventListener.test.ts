@@ -1,23 +1,18 @@
 import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ClickEventListener from '../event-listeners/ClickEventListener'
-import { nop } from '../utils/nop'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
 
 describe('ClickEventListener', () => {
-  let sessionIdHandler: ISessionIdHandler
-  let userActionHandler: UserActionHandler
+  let userActionHandler: IUserActionHandler
   let handleSpy: SpyInstance
   let createTargetedUserActionSpy: SpyInstance
 
   beforeEach(() => {
     vitest.restoreAllMocks()
-    sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 700)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop)
+    userActionHandler = new NopUserActionHandler()
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
@@ -26,7 +21,7 @@ describe('ClickEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id='text-5' type='search' />
+                <input id="text-5" type="search" />
             </div>`,
       'div',
     )
@@ -45,7 +40,7 @@ describe('ClickEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id='text-5' type='search' />
+                <input id="text-5" type="search" />
             </div>`,
       'div',
     )
@@ -66,7 +61,7 @@ describe('ClickEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <button class='size-lg'/>
+                    <button class="size-lg"/>
                 </div>`,
       'div',
     )

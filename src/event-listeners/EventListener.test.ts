@@ -1,11 +1,9 @@
 import { beforeEach, describe, expect, it, vi, vitest } from 'vitest'
-import UserActionHandler from '../user-action/UserActionHandler'
 import { waitFor } from '@testing-library/dom'
-import { nop } from '../utils/nop'
 import EventListener from '../event-listeners/EventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { UserActionType } from '../types'
-import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
+import { NopUserActionHandler } from '../user-action/IUserActionHandler'
 
 describe('EventListener', () => {
   const userActionType = UserActionType.Click
@@ -13,8 +11,7 @@ describe('EventListener', () => {
 
   class TestEventListener extends EventListener {
     constructor(window: Window) {
-      const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-      super(new UserActionHandler(sessionIdHandler, 0, nop), userActionType, window)
+      super(new NopUserActionHandler(), userActionType, window)
     }
 
     protected listener(event: Event): void {

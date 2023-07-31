@@ -1,11 +1,11 @@
-import UserActionHandler from '../user-action/UserActionHandler'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners } from '../utils/listeners'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
+import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class KeyUpEventListener extends TargetedEventListener {
-  constructor(userActionHandler: UserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
+  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
     super(userActionHandler, UserActionType.KeyUp, window, options)
   }
 

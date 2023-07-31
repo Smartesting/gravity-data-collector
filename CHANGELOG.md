@@ -7,17 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.7.1...main)
 
-### Info
-
 ### Added
 
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
+- add `TestCommand` as new type of `UserAction` to track Cypress test information (if available)
 
 ## [3.7.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.7.0...v3.7.1)
 
