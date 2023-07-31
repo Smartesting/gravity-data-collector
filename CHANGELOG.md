@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.7.1...main)
+## [3.8.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.7.1...v3.8.0)
 
 ### Added
 
-- add `TestCommand` as new type of `UserAction` to track Cypress test information (if available)
+- track Cypress test information (if available) as a new `TestCommand` user action
 
 ## [3.7.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.7.0...v3.7.1)
 
