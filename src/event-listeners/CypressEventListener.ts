@@ -11,6 +11,9 @@ export default class CypressEventListener implements IEventListener {
   constructor(private readonly cypress: CypressObject, private readonly userActionHandler: IUserActionHandler) {
     for (const cypressEvent of Object.values(CypressEvent)) {
       this.listeners.set(cypressEvent, (event: any) => {
+        if (skipEvent(event)) {
+          return
+        }
         this.userActionHandler.handle({
           type: UserActionType.TestCommand,
           command: extractCypressCommand(cypressEvent, event),
@@ -25,7 +28,7 @@ export default class CypressEventListener implements IEventListener {
 
   init(): void {
     for (const [cypressEvent, listener] of Array.from(this.listeners.entries())) {
-      this.cypress.addListener(cypressEvent, listener)
+      if (!this.cypress.listeners(cypressEvent).includes(listener)) this.cypress.addListener(cypressEvent, listener)
     }
   }
 
@@ -49,4 +52,8 @@ function extractCypressCommand(eventType: CypressEvent, event: any): CypressComm
     nextId: next?.attributes?.id,
     userInvocationStack,
   }
+}
+
+function skipEvent(event: any): boolean {
+  return ['then', 'wrap', 'task'].includes(event.attributes.name)
 }

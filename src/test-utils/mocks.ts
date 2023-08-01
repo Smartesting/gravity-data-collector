@@ -1,6 +1,7 @@
-import { GravityDocument, TargetedUserAction } from '../types'
+import { CypressObject, GravityDocument, TargetedUserAction } from '../types'
 import createElementInJSDOM from './createElementInJSDOM'
 import { createClickUserAction } from './userActions'
+import { ListenerFn } from 'eventemitter2'
 
 export function mockWindowScreen() {
   Object.defineProperty(window, 'screen', {
@@ -70,4 +71,33 @@ export function mockKeyDown(target: HTMLElement, key: string, code: string): Key
 export function mockClickUserAction(): TargetedUserAction {
   const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
   return createClickUserAction(element)
+}
+
+export function mockCypressObject(): CypressObject {
+  const listeners: Record<string, ListenerFn[]> = {}
+  // noinspection JSUnusedGlobalSymbols
+  const cypress = {
+    listeners: (event: string): readonly ListenerFn[] => listeners[event] ?? [],
+    addListener: (event: string, listener: ListenerFn) => {
+      Array.isArray(listeners[event]) ? listeners[event].push(listener) : (listeners[event] = [listener])
+    },
+    removeListener: (event: string, listener: ListenerFn) => {
+      if (Array.isArray(listeners[event])) {
+        const index = listeners[event].indexOf(listener)
+        if (index !== -1) {
+          listeners[event].splice(index, 1)
+        }
+      }
+    },
+    emit(event: string, ...values: any[]): boolean {
+      if (Array.isArray(listeners[event])) {
+        for (const listener of listeners[event]) {
+          listener(...values)
+        }
+        return true
+      }
+      return false
+    },
+  }
+  return cypress as CypressObject
 }

@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Cypress event tracking: skip some events (named 'then', 'task' or 'wrap')
+
 ### Deprecated
 
 ### Removed
