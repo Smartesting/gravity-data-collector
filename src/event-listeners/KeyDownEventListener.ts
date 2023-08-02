@@ -1,15 +1,15 @@
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { HTMLInputWithValue, KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners, recordChangeEvent } from '../utils/listeners'
-import UserActionHandler from '../user-action/UserActionHandler'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
+import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class KeyDownEventListener extends TargetedEventListener {
   constructor(
-    userActionHandler: UserActionHandler,
+    userActionHandler: IUserActionHandler,
     window: Window,
     private readonly userActionHistory: UserActionsHistory,
     options: TargetEventListenerOptions = {},

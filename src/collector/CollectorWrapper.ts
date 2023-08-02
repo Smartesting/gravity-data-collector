@@ -1,5 +1,5 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionStartedUserAction, SessionTraitValue } from '../types'
+import { CollectorOptions, CypressObject, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -20,11 +20,14 @@ import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitV
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
+import CypressEventListener from '../event-listeners/CypressEventListener'
+import { IEventListener } from '../event-listeners/IEventListener'
+import IUserActionHandler from '../user-action/IUserActionHandler'
 import WebVitalHandler from '../web-vitals/WebVitalsHandler'
 import { debugWebVitalSender, defaultWebVitalSender } from '../web-vitals/webVitalSender'
 
 class CollectorWrapper {
-  readonly userActionHandler: UserActionHandler
+  readonly userActionHandler: IUserActionHandler
   readonly userActionsHistory: MemoryUserActionsHistory
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
@@ -84,7 +87,7 @@ class CollectorWrapper {
       selectorsOptions: options.selectorsOptions,
     }
 
-    this.eventListenerHandler = new EventListenersHandler([
+    const eventListeners: IEventListener[] = [
       new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new KeyDownEventListener(
@@ -95,7 +98,13 @@ class CollectorWrapper {
       ),
       new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
       new BeforeUnloadEventListener(this.userActionHandler, this.window),
-    ])
+    ]
+    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
+    if (cypress !== undefined) {
+      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
+    }
+
+    this.eventListenerHandler = new EventListenersHandler(eventListeners)
 
     this.trackingHandler.init(this.eventListenerHandler)
     const webVitalsOutput = options.debug
