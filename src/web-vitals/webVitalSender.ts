@@ -31,19 +31,19 @@ export function defaultWebVitalSender(
 }
 
 export function debugWebVitalSender(maxDelay: number, output: (args: any) => void = console.log) {
-  return (_sessionId: string, metric: GravityMetric) => {
+  return (_sessionId: string, gravityMetric: GravityMetric) => {
     if (maxDelay === 0) {
-      printMetric(metric, output)
+      printMetric(gravityMetric, output)
     }
     setTimeout(() => {
-      printMetric(metric, output)
+      printMetric(gravityMetric, output)
     }, Math.random() * maxDelay)
   }
 }
 
-function printMetric(metric: GravityMetric, output: (args: any) => void) {
+function printMetric(gravityMetric: GravityMetric, output: (args: any) => void) {
   output('[Gravity Logger (debug mode)]')
-  output({ metric })
+  output({ gravityMetric })
 }
 
 export async function sendWebVital(
