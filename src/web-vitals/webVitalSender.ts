@@ -1,10 +1,10 @@
 import crossfetch from 'cross-fetch'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingMonitorSessionApiUrl } from '../gravityEndPoints'
-import { Metric } from 'web-vitals'
+import { GravityMetric } from '../types'
 
 export interface AddWebVitalResponse {
-  metric: Metric | null
+  metric: GravityMetric | null
   error: AddWebVitalError | null
 }
 
@@ -25,13 +25,13 @@ export function defaultWebVitalSender(
   successCallback: () => void = nop,
   errorCallback: (statusCode: number, reason: AddWebVitalError) => void = nop,
 ) {
-  return async (sessionId: string, metric: Metric): Promise<AddWebVitalResponse> => {
+  return async (sessionId: string, metric: GravityMetric): Promise<AddWebVitalResponse> => {
     return await sendWebVital(authKey, gravityServerUrl, sessionId, metric, null, successCallback, errorCallback)
   }
 }
 
 export function debugWebVitalSender(maxDelay: number, output: (args: any) => void = console.log) {
-  return (_sessionId: string, metric: Metric) => {
+  return (_sessionId: string, metric: GravityMetric) => {
     if (maxDelay === 0) {
       printMetric(metric, output)
     }
@@ -41,7 +41,7 @@ export function debugWebVitalSender(maxDelay: number, output: (args: any) => voi
   }
 }
 
-function printMetric(metric: Metric, output: (args: any) => void) {
+function printMetric(metric: GravityMetric, output: (args: any) => void) {
   output('[Gravity Logger (debug mode)]')
   output({ metric })
 }
@@ -50,9 +50,9 @@ export async function sendWebVital(
   authKey: string,
   gravityServerUrl: string,
   sessionId: string,
-  metric: Metric,
+  metric: GravityMetric,
   source: string | null = null,
-  successCallback: (metric: Metric) => void = nop,
+  successCallback: (metric: GravityMetric) => void = nop,
   errorCallback: (statusCode: number, error: AddWebVitalError) => void = nop,
   fetch = crossfetch,
 ): Promise<AddWebVitalResponse> {

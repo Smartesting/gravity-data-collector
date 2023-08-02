@@ -1,4 +1,6 @@
 import Cypress from 'cypress'
+import { Metric } from 'web-vitals'
+
 export { sendSessionUserActions } from './user-action/sessionUserActionSender'
 
 export enum UserActionType {
@@ -148,6 +150,11 @@ export interface GravityLocation {
   href: string
   pathname: string
   search: string
+}
+
+export interface GravityMetric {
+  location: GravityLocation
+  metric: Metric
 }
 
 export interface ViewportData {
