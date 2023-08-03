@@ -21,7 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.1...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.2...main)
 
 ### Info
 
@@ -34,6 +34,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.8.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.1...v3.8.2)
+
+### Fixed
+
+- `CookieSessionIdHandler`: prevent error when `document.location` has not been defined
 
 ## [3.8.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.0...v3.8.1)
 
