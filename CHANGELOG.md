@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.4...main)
+
+### Info
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
 ## [3.8.4](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.3...v3.8.4)
 
 ### Fixed
@@ -64,7 +78,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Trigger a `Change` event when typing in a text field (`<input type="text" />` or `<textarea />`) [#20](https://github.com/Smartesting/gravity-data-collector/pull/20)
+- Trigger a `Change` event when typing in a text field (`<input type="text" />`
+  or `<textarea />`) [#20](https://github.com/Smartesting/gravity-data-collector/pull/20)
 
 ## [3.5.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.5.1...v3.5.2)
 
