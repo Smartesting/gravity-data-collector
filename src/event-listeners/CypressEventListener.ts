@@ -2,7 +2,6 @@ import { CypressCommand, CypressEvent, CypressObject, UserActionType } from '../
 import { IEventListener } from './IEventListener'
 import location from '../utils/location'
 import gravityDocument from '../utils/gravityDocument'
-import viewport from '../utils/viewport'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
 export default class CypressEventListener implements IEventListener {
@@ -11,16 +10,13 @@ export default class CypressEventListener implements IEventListener {
   constructor(private readonly cypress: CypressObject, private readonly userActionHandler: IUserActionHandler) {
     for (const cypressEvent of Object.values(CypressEvent)) {
       this.listeners.set(cypressEvent, (event: any) => {
-        if (skipEvent(event)) {
-          return
-        }
         this.userActionHandler.handle({
           type: UserActionType.TestCommand,
           command: extractCypressCommand(cypressEvent, event),
           document: gravityDocument(),
           location: location(),
           recordedAt: new Date().toISOString(),
-          viewportData: viewport(),
+          viewportData: {},
         })
       })
     }
@@ -52,8 +48,4 @@ function extractCypressCommand(eventType: CypressEvent, event: any): CypressComm
     nextId: next?.attributes?.id,
     userInvocationStack,
   }
-}
-
-function skipEvent(event: any): boolean {
-  return ['then', 'wrap', 'task'].includes(event.attributes.name)
 }

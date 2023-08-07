@@ -23,8 +23,13 @@ export function defaultSessionUserActionSender(
   successCallback: (payload: any) => void = nop,
   errorCallback: (statusCode: number, reason: AddSessionUserActionsError) => void = nop,
 ) {
-  return async (sessionActions: SessionUserAction[]): Promise<AddSessionUserActionsResponse> => {
-    return await sendSessionUserActions(authKey, gravityServerUrl, sessionActions, null, successCallback, errorCallback)
+  return async (sessionActions: SessionUserAction[]) => {
+    return await batchPromises<SessionUserAction>(
+      sessionActions,
+      50,
+      async (input) =>
+        await sendSessionUserActions(authKey, gravityServerUrl, input, null, successCallback, errorCallback),
+    )
   }
 }
 
@@ -49,7 +54,7 @@ function printSessionUserActions(sessionActions: SessionUserAction[], output: (a
 export async function sendSessionUserActions(
   authKey: string,
   gravityServerUrl: string,
-  sessionActions: SessionUserAction[],
+  sessionActions: readonly SessionUserAction[],
   source: string | null = null,
   successCallback: (payload: any) => void = nop,
   errorCallback: (statusCode: number, reason: AddSessionUserActionsError) => void = nop,
@@ -73,4 +78,17 @@ export async function sendSessionUserActions(
     errorCallback(response.status, addSessionUserActionsResponse.error)
   }
   return addSessionUserActionsResponse
+}
+
+async function batchPromises<Input>(
+  input: readonly Input[],
+  batchSize: number,
+  callBack: (input: readonly Input[]) => unknown,
+) {
+  if (batchSize < 1) throw new Error('batch size cannot be lower than 1')
+  let counter = 0
+  while (counter < input.length) {
+    await callBack(input.slice(counter, counter + batchSize))
+    counter += batchSize
+  }
 }

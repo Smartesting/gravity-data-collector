@@ -7,17 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.2...main)
 
-### Info
-
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
+
+- Cypress event tracking: send all the events to Gravity
+- batch user action sending
 
 ## [3.8.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.1...v3.8.2)
 
