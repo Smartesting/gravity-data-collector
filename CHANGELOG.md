@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- force "user actions" flushing on Cypress event "test:after:run"
+
 ## [3.8.3](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.2...v3.8.3)
 
 ### Fixed

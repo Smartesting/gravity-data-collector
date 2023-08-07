@@ -33,9 +33,7 @@ export default class UserActionHandler implements IUserActionHandler {
     if (this.buffer.length === 0) return
     const sessionUserActions = this.buffer.splice(0).map((userAction) => this.toSessionUserAction(userAction))
     this.output(sessionUserActions)
-    if (this.onPublish !== undefined) {
-      this.onPublish(sessionUserActions)
-    }
+    if (this.onPublish !== undefined) this.onPublish(sessionUserActions)
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {
