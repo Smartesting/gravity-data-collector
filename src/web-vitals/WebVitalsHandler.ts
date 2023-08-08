@@ -12,13 +12,17 @@ export default class WebVitalsHandler {
   ) {}
 
   init() {
-    const flushBind = this.flush.bind(this)
-    onFID(flushBind)
-    onTTFB(flushBind)
-    onLCP(flushBind)
-    onCLS(flushBind)
-    onFCP(flushBind)
-    onINP(flushBind)
+    try {
+      const flushBind = this.flush.bind(this)
+      onFID(flushBind)
+      onTTFB(flushBind)
+      onLCP(flushBind)
+      onCLS(flushBind)
+      onFCP(flushBind)
+      onINP(flushBind)
+    } catch (e) {
+      console.error('Unable to initialize WebVitalsHandler', { e })
+    }
   }
 
   flush(metric: Metric) {
