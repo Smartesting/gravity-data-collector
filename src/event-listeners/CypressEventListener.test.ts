@@ -37,31 +37,4 @@ describe('CypressEventListener', () => {
 
     expect(spyOnHandle).not.toHaveBeenCalled()
   })
-
-  it('does not handle an userAction when the related Cypress event is skipped', async () => {
-    const userActionHandler = new NopUserActionHandler()
-    const spyOnHandle = vi.spyOn(userActionHandler, 'handle')
-    const eventListener: CypressEventListener = new CypressEventListener(cypress, userActionHandler)
-    eventListener.init()
-    cypress.emit(CypressEvent.COMMAND_START, {
-      attributes: {
-        name: 'task',
-        type: 'dual',
-      },
-    })
-    cypress.emit(CypressEvent.COMMAND_START, {
-      attributes: {
-        name: 'then',
-        type: 'dual',
-      },
-    })
-    cypress.emit(CypressEvent.COMMAND_START, {
-      attributes: {
-        name: 'wrap',
-        type: 'dual',
-      },
-    })
-
-    expect(spyOnHandle).not.toHaveBeenCalled()
-  })
 })

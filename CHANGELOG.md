@@ -21,7 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.2...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.4...main)
 
 ### Info
 
@@ -34,6 +34,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.8.4](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.3...v3.8.4)
+
+### Fixed
+
+- force "user actions" flushing on Cypress event "test:after:run"
+
+## [3.8.3](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.2...v3.8.3)
+
+### Fixed
+
+- Cypress event tracking: send all the events to Gravity
+- batch user action sending
 
 ## [3.8.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.1...v3.8.2)
 
@@ -81,7 +94,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Trigger a `Change` event when typing in a text field (`<input type="text" />` or `<textarea />`) [#20](https://github.com/Smartesting/gravity-data-collector/pull/20)
+- Trigger a `Change` event when typing in a text field (`<input type="text" />`
+  or `<textarea />`) [#20](https://github.com/Smartesting/gravity-data-collector/pull/20)
 
 ## [3.5.2](https://github.com/Smartesting/gravity-data-collector/compare/v3.5.1...v3.5.2)
 
