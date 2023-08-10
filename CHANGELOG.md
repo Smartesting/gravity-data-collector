@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Cypress event tracking: reduce `command.args` property if too large
+
 ### Deprecated
 
 ### Removed
