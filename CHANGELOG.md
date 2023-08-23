@@ -21,7 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.4...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.6...main)
 
 ### Info
 
@@ -34,6 +34,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.8.6](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.5...3.8.6)
+
+### Changed
+
+- fetch methods now automatically follow redirects
+
+## [3.8.5](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.4...v3.8.5)
+
+### Changed
+
+- Cypress event tracking: reduce `command.args` property if too large
 
 ## [3.8.4](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.3...v3.8.4)
 

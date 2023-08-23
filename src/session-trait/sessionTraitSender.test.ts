@@ -50,6 +50,7 @@ describe('sessionTraitSender', () => {
             Origin: 'http://example.com',
           },
           method: 'POST',
+          redirect: 'follow',
         },
       )
     })
@@ -76,6 +77,7 @@ describe('sessionTraitSender', () => {
             'Content-Type': 'application/json',
           },
           method: 'POST',
+          redirect: 'follow',
         },
       )
     })

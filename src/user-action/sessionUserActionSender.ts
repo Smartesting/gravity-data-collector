@@ -69,6 +69,7 @@ export async function sendSessionUserActions(
   const response = await fetch(buildGravityTrackingPublishApiUrl(authKey, gravityServerUrl), {
     method: 'POST',
     body: JSON.stringify(sessionActions),
+    redirect: 'follow',
     headers,
   })
   const addSessionUserActionsResponse = await response.json()

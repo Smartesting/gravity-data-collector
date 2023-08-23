@@ -47,7 +47,7 @@ function extractCypressCommand(eventType: CypressEvent, event: any): CypressComm
   const { name, args, id, chainerId, prev, next, type, userInvocationStack } = event.attributes
   return {
     name,
-    args,
+    args: lightenArguments(args),
     id,
     chainerId,
     event: eventType,
@@ -56,4 +56,10 @@ function extractCypressCommand(eventType: CypressEvent, event: any): CypressComm
     nextId: next?.attributes?.id,
     userInvocationStack,
   }
+}
+
+function lightenArguments(args: any): any {
+  const length = JSON.stringify(args ?? '').length
+  if (length > 255) return [`Gravity Collector replaced these too long args (${length} chars)`]
+  return args
 }

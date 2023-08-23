@@ -64,6 +64,7 @@ export async function sendSessionTraits(
   const response = await fetch(buildGravityTrackingIdentifySessionApiUrl(authKey, gravityServerUrl, sessionId), {
     method: 'POST',
     body: JSON.stringify(sessionTraits),
+    redirect: 'follow',
     headers,
   })
   const identifySessionResponse: IdentifySessionResponse = await response.json()
