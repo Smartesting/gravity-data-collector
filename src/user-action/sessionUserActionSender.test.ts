@@ -56,6 +56,7 @@ describe('sessionUserActionSender', () => {
           Origin: 'http://example.com',
         },
         method: 'POST',
+        redirect: 'follow',
       })
     })
 
@@ -70,6 +71,7 @@ describe('sessionUserActionSender', () => {
           'Content-Type': 'application/json',
         },
         method: 'POST',
+        redirect: 'follow',
       })
     })
 
