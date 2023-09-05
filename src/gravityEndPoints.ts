@@ -1,4 +1,4 @@
-export const GRAVITY_SERVER_ADDRESS = 'https://smartestinggravityserver.herokuapp.com'
+export const GRAVITY_SERVER_ADDRESS = 'https://api.gravity.smartesting.com'
 
 export function buildGravityTrackingPublishApiUrl(authKey: string, gravityServerUrl: string) {
   return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/publish`

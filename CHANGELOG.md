@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+ - Use new API endpoint for Gravity (https://api.gravity.smartesting.com)
+
 ### Deprecated
 
 ### Removed
