@@ -191,6 +191,7 @@ export interface CollectorOptions {
    */
   originsToRecord?: string[]
   recordRequestsFor?: string[]
+  windowInstance?: Window
 }
 
 export interface CreateSelectorsOptions {
