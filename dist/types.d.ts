@@ -1,0 +1,174 @@
+export { sendSessionUserActions } from './user-action/sessionUserActionSender';
+export declare enum UserActionType {
+    SessionStarted = "sessionStarted",
+    Click = "click",
+    Change = "change",
+    KeyUp = "keyup",
+    KeyDown = "keydown",
+    AsyncRequest = "asyncRequest",
+    TestCommand = "testCommand"
+}
+export declare type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand;
+export declare type TestCommand = {
+    command: CypressCommand;
+} & UserActionProperties;
+export declare enum CypressEvent {
+    COMMAND_START = "command:start",
+    COMMAND_END = "command:end"
+}
+export interface CypressCommand {
+    event: CypressEvent;
+    name: string;
+    args: readonly any[];
+    id: string;
+    chainerId: string;
+    prevId?: string;
+    nextId?: string;
+    userInvocationStack: string;
+    type?: string;
+}
+export declare type CypressObject = Cypress.Cypress & CyEventEmitter;
+export declare type AsyncRequest = {
+    url: string;
+    method: string;
+} & UserActionProperties;
+export interface TestSuite {
+    title: string;
+    file: string | null;
+    parent?: TestSuite;
+}
+export declare enum TestingTool {
+    CYPRESS = "cypress",
+    PLAYWRIGHT = "playwright"
+}
+export interface TestContext {
+    title: string;
+    titlePath: readonly string[];
+    testingTool: TestingTool;
+    suite?: TestSuite;
+}
+export declare type SessionStartedUserAction = {
+    test?: string;
+    testContext?: TestContext;
+    version: string;
+    agent: string;
+    buildId?: string;
+} & UserActionProperties;
+export declare type TargetedUserAction = {
+    target: UserActionTarget;
+    userActionData?: UserActionData;
+} & UserActionProperties;
+export interface UserActionProperties {
+    type: UserActionType;
+    location: GravityLocation;
+    document: GravityDocument;
+    recordedAt?: string;
+    viewportData: ViewportData;
+}
+export declare type UserActionData = ClickUserActionData | KeyUserActionData;
+export interface ClickUserActionData {
+    clickOffsetX: number;
+    clickOffsetY: number;
+    elementRelOffsetX?: number;
+    elementRelOffsetY?: number;
+    elementOffsetX?: number;
+    elementOffsetY?: number;
+}
+export interface KeyUserActionData {
+    key: string;
+    code: string;
+}
+export declare type SessionUserAction = UserAction & {
+    sessionId: string;
+};
+export declare type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement;
+export interface UserActionTarget {
+    element: string;
+    /**
+     * @deprecated Use selectors instead.
+     */
+    selector?: string;
+    selectors?: Selectors;
+    value?: string;
+    type?: string;
+    displayInfo?: TargetDisplayInfo;
+}
+export interface Selectors {
+    xpath: string;
+    query: Query;
+    attributes: Attributes;
+}
+export declare type Query = Partial<{
+    [key in QueryType]: string;
+} & {
+    combined: string;
+}>;
+export declare enum QueryType {
+    id = "id",
+    class = "class",
+    tag = "tag",
+    nthChild = "nthChild",
+    attributes = "attributes"
+}
+export interface Attributes {
+    [key: string]: string;
+}
+export interface TargetDisplayInfo {
+    placeholder?: string;
+    label?: string;
+    text?: string;
+}
+export interface GravityLocation {
+    href: string;
+    pathname: string;
+    search: string;
+}
+export interface ViewportData {
+    viewportWidth?: number;
+    viewportHeight?: number;
+    windowWidth?: number;
+    windowHeight?: number;
+    screenWidth?: number;
+    screenHeight?: number;
+    availScreenWidth?: number;
+    availScreenHeight?: number;
+    orientation?: string;
+    colorDepth?: number;
+    pixelDepth?: number;
+}
+export interface GravityDocument {
+    title: string;
+}
+export interface CollectorOptions {
+    authKey: string;
+    requestInterval: number;
+    gravityServerUrl: string;
+    debug: boolean;
+    maxDelay: number;
+    /**
+     * @deprecated Use selectorsOptions instead.
+     */
+    excludeRegex: RegExp | null;
+    /**
+     * @deprecated Use selectorsOptions instead.
+     */
+    customSelector?: string;
+    selectorsOptions?: Partial<CreateSelectorsOptions>;
+    sessionsPercentageKept: number;
+    rejectSession: () => boolean;
+    onPublish?: (userActions: SessionUserAction[]) => void;
+    /**
+     * @deprecated Use recordRequestsFor instead.
+     */
+    originsToRecord?: string[];
+    recordRequestsFor?: string[];
+    windowInstance?: Window;
+}
+export interface CreateSelectorsOptions {
+    queries: QueryType[];
+    excludedQueries: QueryType[];
+    attributes: string[];
+}
+export declare type SessionTraits = Record<string, SessionTraitValue>;
+export declare type SessionTraitValue = string | number | boolean;
+export declare const ALLOWED_SESSION_TRAIT_VALUE_TYPES: string[];
