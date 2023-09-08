@@ -26,7 +26,7 @@
     "version": "npm run lint-fix && git add -A src",
     "postversion": "git push && git push --tags",
     "build-sandbox": "browserify dist/index.js -p esmify -o dist-sandbox/bundle.js",
-    "build-minified": "browserify dist/index.js -p esmify -p tinyify -o dist/gravity-logger-min.js",
+    "build-minified": "browserify dist/index.js -p esmify -o dist/gravity-logger-min.js",
     "watch-sandbox": "watchify dist/index.js -o dist/bundle.js -v",
     "webstorm-integration": "vitest --watch --reporter=dot --reporter=json --outputFile=.vitest-result.json"
   },
