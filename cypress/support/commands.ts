@@ -41,7 +41,7 @@ Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => 
     .intercept(
       {
         method: 'POST',
-        url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/publish`,
+        url: `https://api.gravity.smartesting.com/api/tracking/*/publish`,
       },
       (req) => {
         if (onReq) {
@@ -60,7 +60,7 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => 
   cy.intercept(
     {
       method: 'POST',
-      url: `https://gravityserverstaging.herokuapp.com/api/tracking/*/identify/*`,
+      url: `https://api.gravity.smartesting.com/api/tracking/*/identify/*`,
     },
     (req) => {
       onReq(req)

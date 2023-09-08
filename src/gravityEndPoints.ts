@@ -1,4 +1,4 @@
-export const GRAVITY_SERVER_ADDRESS = 'https://gravityserver-canary.herokuapp.com'
+export const GRAVITY_SERVER_ADDRESS = 'https://gravity-api-canary.osc-fr1.scalingo.io'
 
 export function buildGravityTrackingPublishApiUrl(authKey: string, gravityServerUrl: string) {
   return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/publish`
