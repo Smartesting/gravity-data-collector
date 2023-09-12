@@ -1,5 +1,11 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, CypressObject, SessionStartedUserAction, SessionTraitValue } from '../types'
+import {
+  CollectorOptions,
+  CollectorOptionsWithWindow,
+  CypressObject,
+  SessionStartedUserAction,
+  SessionTraitValue,
+} from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -32,8 +38,7 @@ class CollectorWrapper {
   readonly trackingHandler: TrackingHandler
 
   constructor(
-    readonly options: CollectorOptions,
-    private readonly window: Window,
+    readonly options: CollectorOptionsWithWindow,
     readonly sessionIdHandler: ISessionIdHandler,
     readonly testNameHandler: TestNameHandler,
   ) {
@@ -84,16 +89,16 @@ class CollectorWrapper {
     }
 
     const eventListeners: IEventListener[] = [
-      new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
-      new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
+      new ClickEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      new KeyUpEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
       new KeyDownEventListener(
         this.userActionHandler,
-        this.window,
+        this.options.window,
         this.userActionsHistory,
         targetedEventListenerOptions,
       ),
-      new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
-      new BeforeUnloadEventListener(this.userActionHandler, this.window),
+      new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      new BeforeUnloadEventListener(this.userActionHandler, this.options.window),
     ]
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
     if (cypress !== undefined) {

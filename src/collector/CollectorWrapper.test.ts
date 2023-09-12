@@ -48,7 +48,7 @@ describe('CollectorWrapper', () => {
     ) {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper(options, global.window, sessionIdHandler, testNameHandler)
+      return new CollectorWrapper({ ...options, window: global.window }, sessionIdHandler, testNameHandler)
     }
 
     describe('when debug option is set to true', () => {
@@ -325,8 +325,7 @@ describe('CollectorWrapper', () => {
   describe('identifySession', () => {
     it('delegates session trait to handler', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true }),
-        global.window,
+        completeOptions({ debug: true, window: global.window }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -337,8 +336,7 @@ describe('CollectorWrapper', () => {
 
     it('prevents bad format of session trait value', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true }),
-        global.window,
+        completeOptions({ debug: true, window: global.window }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -358,8 +356,8 @@ describe('CollectorWrapper', () => {
         completeOptions({
           debug: true,
           sessionsPercentageKept: 100,
+          window: global.window,
         }),
-        global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -373,8 +371,8 @@ describe('CollectorWrapper', () => {
         completeOptions({
           debug: true,
           sessionsPercentageKept: 0,
+          window: global.window,
         }),
-        global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -391,8 +389,8 @@ describe('CollectorWrapper', () => {
           completeOptions({
             debug: true,
             sessionsPercentageKept,
+            window: global.window,
           }),
-          global.window,
           memorySessionIdHandler,
           new SessionStorageTestNameHandler(),
         )
@@ -419,8 +417,8 @@ describe('CollectorWrapper', () => {
           completeOptions({
             debug: true,
             sessionsPercentageKept,
+            window: global.window,
           }),
-          global.window,
           new MemorySessionIdHandler(uuidv4, 1000),
           new SessionStorageTestNameHandler(),
         )
@@ -455,8 +453,8 @@ describe('CollectorWrapper', () => {
         completeOptions({
           debug: true,
           rejectSession: () => true,
+          window: global.window,
         }),
-        global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -470,8 +468,8 @@ describe('CollectorWrapper', () => {
         completeOptions({
           debug: true,
           rejectSession: () => false,
+          window: global.window,
         }),
-        global.window,
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )

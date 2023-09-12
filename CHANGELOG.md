@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 ### Changed
+ - Allow specifying window when initializing collector
 
 ### Deprecated
 

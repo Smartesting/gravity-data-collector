@@ -1,9 +1,9 @@
-import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
+import { CollectorOptions, CollectorOptionsWithWindow, CreateSelectorsOptions, QueryType } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
 export const DEFAULT_SESSION_REJECTION = () => false
 
-export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
+export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptionsWithWindow {
   const authKeyError = new Error('No AuthKey provided')
   if (options == null) {
     throw authKeyError
@@ -27,9 +27,10 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     maxDelay: 500,
   }
 
-  const completedOptions = {
+  const completedOptions: CollectorOptionsWithWindow = {
     ...(debug ? debugDefaultOptions : defaultOptions),
     ...sanitizeOptions(options),
+    window: options.window ?? window,
   }
 
   checkPropertyPercentage(completedOptions, 'sessionsPercentageKept')

@@ -191,6 +191,11 @@ export interface CollectorOptions {
    */
   originsToRecord?: string[]
   recordRequestsFor?: string[]
+  window?: typeof window
+}
+
+export type CollectorOptionsWithWindow = CollectorOptions & {
+  window: typeof window
 }
 
 export interface CreateSelectorsOptions {
