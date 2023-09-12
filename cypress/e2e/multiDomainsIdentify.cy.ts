@@ -4,7 +4,7 @@ describe('Handling sessions identification on multi-domain', () => {
   })
 
   it('uses another sessions ID when navigating to another domain', () => {
-    const requests: { sessionId: string; href: string }[] = []
+    const requests: { sessionId: string, href: string }[] = []
 
     cy.interceptGravityPublish()
     cy.interceptGravityIdentify((req) => {
@@ -27,7 +27,7 @@ describe('Handling sessions identification on multi-domain', () => {
   })
 
   it('finds back the original session ID when coming back to the source site', () => {
-    const requests: { sessionId: string; href: string }[] = []
+    const requests: { sessionId: string, href: string }[] = []
 
     cy.interceptGravityPublish()
     cy.interceptGravityIdentify((req) => {

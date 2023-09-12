@@ -7,7 +7,7 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "project": "./tsconfig.json"
+    "project": ["./tsconfig.json", "./cypress/tsconfig.json"]
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
@@ -28,6 +28,10 @@
       {
         "allowedNames": ["collectorWrapper"]
       }
-    ]
+    ],
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
+
   }
 }
