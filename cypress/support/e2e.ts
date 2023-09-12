@@ -15,6 +15,17 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import GravityCollector from '../../src'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.on("window:load", (win) => {
+    (win as any).GravityCollector = GravityCollector
+    GravityCollector.init({
+        authKey: "1234",
+        requestInterval: 100,
+        gravityServerUrl: 'https://api.gravity.smartesting.com',
+        window: win
+    });
+})

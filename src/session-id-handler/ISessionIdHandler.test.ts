@@ -92,13 +92,13 @@ iSessionIdHandlerContractTest(
 
 iSessionIdHandlerContractTest(
   'SessionStorageSessionIdHandler',
-  () => new SessionStorageSessionIdHandler(incrementalIds, TIMEOUT),
+  () => new SessionStorageSessionIdHandler(incrementalIds, TIMEOUT, global.window),
   () => sessionStorage.clear(),
 )
 
 iSessionIdHandlerContractTest(
   'CookieSessionIdHandler',
-  () => new CookieSessionIdHandler(incrementalIds, TIMEOUT),
+  () => new CookieSessionIdHandler(incrementalIds, TIMEOUT, global.window),
   clearCookies,
 )
 
