@@ -4,6 +4,12 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('task', {
+        log(message: any) {
+          console.log(message)
+          return null
+        }
+      })
     },
   },
   chromeWebSecurity: false,

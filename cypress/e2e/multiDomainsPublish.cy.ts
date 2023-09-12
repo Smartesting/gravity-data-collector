@@ -7,12 +7,18 @@ describe('Handling sessions on multi-domain', () => {
     cy.interceptGravityPublish()
     cy.openBaseSite('contact/')
     cy.wait('@sendGravityRequest').then((interception) => {
+      cy.task('log', '---- interception ----')
+      cy.task('log', interception.request.body)
       const mySiteSessionId = interception.request.body[0].sessionId
 
       cy.goToHome()
       cy.publishUserEvent()
-      cy.wait('@sendGravityRequest').then((_) => {
+      cy.wait('@sendGravityRequest').then((uselessIntercept) => {
+        cy.task('log', '---- uselessIntercept ----')
+        cy.task('log', uselessIntercept.request.body)
         cy.wait('@sendGravityRequest').then((interception2) => {
+          cy.task('log', '---- interception2 ----')
+          cy.task('log', interception2.request.body)
           expect(interception2.request.body[0].sessionId).to.eq(mySiteSessionId)
         })
       })
@@ -23,11 +29,17 @@ describe('Handling sessions on multi-domain', () => {
     cy.interceptGravityPublish()
     cy.openBaseSite()
     cy.wait('@sendGravityRequest').then((interception) => {
+      cy.task('log', '---- interception ----')
+      cy.task('log',interception.request.body)
       const mySiteSessionId = interception.request.body[0].sessionId
 
       cy.goToOtherSite()
-      cy.wait('@sendGravityRequest').then((_) => {
+      cy.wait('@sendGravityRequest').then((uselessIntercept) => {
+        cy.task('log', '---- uselessIntercept ----')
+        cy.task('log', uselessIntercept.request.body)
         cy.wait('@sendGravityRequest').then((interception2) => {
+          cy.task('log', '---- interception2 ----')
+          cy.task('log', interception2.request.body)
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
         })
       })
@@ -38,16 +50,26 @@ describe('Handling sessions on multi-domain', () => {
     cy.interceptGravityPublish()
     cy.openBaseSite()
     cy.wait('@sendGravityRequest').then((interception) => {
+      cy.task('log', '---- interception ----')
+      cy.task('log', interception.request.body)
       const mySiteSessionId = interception.request.body[0].sessionId
 
       cy.goToOtherSite()
-      cy.wait('@sendGravityRequest').then((_) => {
+      cy.wait('@sendGravityRequest').then((uselessIntercept) => {
+        cy.task('log', '---- uselessIntercept ----')
+        cy.task('log', uselessIntercept.request.body)
         cy.wait('@sendGravityRequest').then((interception2) => {
+          cy.task('log', '---- interception2 ----')
+          cy.task('log', interception2.request.body)
           expect(interception2.request.body[0].sessionId).not.to.eq(mySiteSessionId)
           cy.goToApp()
-          cy.wait('@sendGravityRequest').then((_) => {
+          cy.wait('@sendGravityRequest').then((uselessIntercept2) => {
+            cy.task('log', '---- uselessIntercept2 ----')
+            cy.task('log', uselessIntercept2.request.body)
             cy.publishUserEvent()
             cy.wait('@sendGravityRequest').then((interception3) => {
+              cy.task('log', '---- interception3 ----')
+              cy.task('log', interception3.request.body)
               expect(interception3.request.body[0].sessionId).to.eq(mySiteSessionId)
             })
           })
