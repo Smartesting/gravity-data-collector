@@ -61,7 +61,8 @@ class CollectorWrapper {
           this.trackingHandler.getSenderErrorCallback(),
         )
 
-    const isNewSession = trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
+    const isNewSession =
+      trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
 
     if (isNewSession) {
