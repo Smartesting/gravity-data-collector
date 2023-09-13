@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 ### Changed
- - Allow specifying window when initializing collector
+
+- Allow specifying window when initializing collector
 
 ### Deprecated
 
@@ -20,14 +21,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-
-
 ## [3.8.7](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.6...v3.8.7)
 
 ### Changed
 
- - Use new API endpoint for Gravity (https://api.gravity.smartesting.com)
-
+- Use new API endpoint for Gravity (https://api.gravity.smartesting.com)
 
 ## [3.8.6](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.5...v3.8.6)
 

@@ -22,12 +22,12 @@ import { GRAVITY_SESSION_TRACKING_SUSPENDED } from '../../src/tracking-handler/T
 // require('./commands')
 
 Cypress.on('window:load', (win) => {
-    (win as typeof window).sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
+  ;(win as typeof window).sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
 
-    GravityCollector.init({
-        authKey: "1234",
-        requestInterval: 100,
-        gravityServerUrl: 'https://api.gravity.smartesting.com',
-        window: win,
-    });
+  GravityCollector.init({
+    authKey: '1234',
+    requestInterval: 100,
+    gravityServerUrl: 'https://api.gravity.smartesting.com',
+    window: win,
+  })
 })

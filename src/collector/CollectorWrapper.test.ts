@@ -145,7 +145,7 @@ describe('CollectorWrapper', () => {
           expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
         })
 
-/*         it('if window.Cypress is available', () => {
+        /*         it('if window.Cypress is available', () => {
           vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
           ;(window as any).Cypress = {}
           createCollectorWrapper()

@@ -4,11 +4,7 @@ const GRAVITY_SESSION_STORAGE_KEY_SESSION_ID = 'gravity-session-id'
 const GRAVITY_SESSION_STORAGE_KEY_TIMEOUT = 'gravity-session-timeout'
 
 export default class SessionStorageSessionIdHandler extends BaseSessionIdHandler implements ISessionIdHandler {
-  public constructor(
-      makeSessionId: () => string,
-      sessionDuration: number,
-      private readonly win: typeof window,
-  ) {
+  public constructor(makeSessionId: () => string, sessionDuration: number, private readonly win: typeof window) {
     super(makeSessionId, sessionDuration)
   }
 

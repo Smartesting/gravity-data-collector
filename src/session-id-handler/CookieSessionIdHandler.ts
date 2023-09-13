@@ -5,11 +5,7 @@ const GRAVITY_SESSION_ID_COOKIE_KEY = 'gravity_session_id'
 const GRAVITY_SESSION_TIMEOUT_COOKIE_KEY = 'gravity_session_timeout'
 
 export default class CookieSessionIdHandler extends BaseSessionIdHandler implements ISessionIdHandler {
-  public constructor(
-      makeSessionId: () => string,
-      sessionDuration: number,
-      private readonly win: typeof window,
-  ) {
+  public constructor(makeSessionId: () => string, sessionDuration: number, private readonly win: typeof window) {
     super(makeSessionId, sessionDuration)
   }
 
