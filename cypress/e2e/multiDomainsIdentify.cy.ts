@@ -4,7 +4,7 @@ describe('Handling sessions identification on multi-domain', () => {
     cy.clearLocalStorage()
   })
 
-/*   it('uses another sessions ID when navigating to another domain', () => {
+  it('uses another sessions ID when navigating to another domain', () => {
     const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
@@ -26,7 +26,7 @@ describe('Handling sessions identification on multi-domain', () => {
         expect(sessionIds[0]).not.to.eq(sessionIds[1])
       })
     })
-  }) */
+  })
 
   it('finds back the original session ID when coming back to the source site', () => {
     const requests: { sessionId: string; href: string }[] = []

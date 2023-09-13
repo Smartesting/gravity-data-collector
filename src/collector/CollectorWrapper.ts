@@ -61,9 +61,7 @@ class CollectorWrapper {
           this.trackingHandler.getSenderErrorCallback(),
         )
 
-    const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
-    if (options.window.document.URL === 'about:blank') return
-
+    const isNewSession = (options.window.document.URL !== 'about:blank') && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
 
     if (isNewSession) {
