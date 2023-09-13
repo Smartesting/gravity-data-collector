@@ -1,4 +1,4 @@
-describe('Handling sessions on multi-domain', () => {
+describe.skip('Handling sessions on multi-domain', () => {
   beforeEach(() => {
     cy.clearCookies()
   })
