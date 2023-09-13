@@ -12,7 +12,7 @@ describe('Handling Keydown as Changes', () => {
       for (const sessionUserAction of body) {
         sessionUserActionTypes.push(sessionUserAction.type)
       }
-    })
+    }).as('sendGravityRequest')
   })
 
   for (const inputId of inputIds) {

@@ -4,14 +4,14 @@ describe('Handling sessions on multi-domain', () => {
     cy.clearCookies()
     cy.interceptGravityPublish((req) => {
       return this.uaList.push(req.body)
-    })
+    }).as('sendPublish')
   })
 
   it('uses the same session ID when navigating through different paths of the same domain', function () {
     cy.openBaseSite('contact/')
       .goToHome()
       .publishUserEvent()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         const sessionId = this.uaList[0].sessionId
         expect(this.uaList.every((ua) => ua.sessionId === sessionId))
       })
@@ -20,14 +20,15 @@ describe('Handling sessions on multi-domain', () => {
   it('uses another session ID when navigating to another domain', function () {
     let baseSiteSessionId = null
 
-    cy.openBaseSite()
+    cy.openBaseSite('contact/')
+      .goToHome()
       .publishUserEvent()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         baseSiteSessionId = this.uaList[0].sessionId
         this.uaList.length = 0
       })
       .goToOtherSite()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         expect(this.uaList.every((ua) => ua.sessionId !== baseSiteSessionId))
       })
   })
@@ -37,18 +38,18 @@ describe('Handling sessions on multi-domain', () => {
 
     cy.openBaseSite()
       .publishUserEvent()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         baseSiteSessionId = this.uaList[0].sessionId
         this.uaList.length = 0
       })
       .goToOtherSite()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         expect(this.uaList.every((ua) => ua.sessionId !== baseSiteSessionId))
         this.uaList.length = 0
       })
       .goToApp()
       .publishUserEvent()
-      .wait('@sendGravityRequest').then(() => {
+      .wait('@sendPublish').then(() => {
         expect(this.uaList.every((ua) => ua.sessionId === baseSiteSessionId))
       })
   })

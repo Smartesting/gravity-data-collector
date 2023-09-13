@@ -53,7 +53,6 @@ Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => 
         })
       },
     )
-    .as('sendGravityRequest')
 })
 
 Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => {
@@ -85,18 +84,21 @@ Cypress.Commands.add('publishUserEvent', () => {
 })
 
 Cypress.Commands.add('goToApp', () => {
+  cy.intercept('http://app.my-site.com:3000/').as('appPage')
   cy.get('a.go-to-app').click()
-  return cy.url().should('eq', 'http://app.my-site.com:3000/')
+  return cy.wait('@appPage')
 })
 
 Cypress.Commands.add('goToHome', () => {
+  cy.intercept('http://my-site.com:3000/').as('homePage')
   cy.get('a.go-to-home').click()
-  return cy.url().should('eq', 'http://my-site.com:3000/')
+  return cy.wait('@homePage')
 })
 
 Cypress.Commands.add('goToOtherSite', () => {
+  cy.intercept('http://auth.another-site.com:3000/').as('otherSitePage')
   cy.get('a.go-to-another-site').click()
-  return cy.url().should('eq', 'http://auth.another-site.com:3000/')
+  return cy.wait('@otherSitePage')
 })
 
 declare global {
