@@ -21,14 +21,13 @@ import { GRAVITY_SESSION_TRACKING_SUSPENDED } from '../../src/tracking-handler/T
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-Cypress.on("window:load", (win) => {
-    //(win as any).GravityCollector = GravityCollector
+Cypress.on('window:load', (win) => {
     (win as typeof window).sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
 
     GravityCollector.init({
         authKey: "1234",
         requestInterval: 100,
         gravityServerUrl: 'https://api.gravity.smartesting.com',
-        window: win
+        window: win,
     });
 })

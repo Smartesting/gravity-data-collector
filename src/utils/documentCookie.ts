@@ -7,12 +7,7 @@ export function setCookie(key: string, value: string, win = window) {
   if (location !== null && location !== undefined) {
     const parsedDomain = psl.parse(location.hostname)
     if (isParsedDomain(parsedDomain) && parsedDomain.domain !== null) {
-      let domain: string
-      if (psl.isValid(parsedDomain.domain)) {
-        domain = parsedDomain.domain
-      } else {
-        domain = parsedDomain.input
-      }
+      const domain = (psl.isValid(parsedDomain.domain)) ? parsedDomain.domain : parsedDomain.input
       cookie += `; Domain=${domain}`
     }
   }

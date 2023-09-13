@@ -62,6 +62,8 @@ class CollectorWrapper {
         )
 
     const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
+    if (options.window.document.URL === 'about:blank') return
+
     testNameHandler.refresh()
 
     if (isNewSession) {
@@ -99,7 +101,7 @@ class CollectorWrapper {
       new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
       new BeforeUnloadEventListener(this.userActionHandler, this.options.window),
     ]
-    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
+    const cypress = ((this.options.window as any).Cypress as CypressObject) ?? undefined
     if (cypress !== undefined) {
       // eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
     }
@@ -108,8 +110,8 @@ class CollectorWrapper {
 
     this.trackingHandler.init(this.eventListenerHandler)
 
-    const { fetch: originalFetch } = window
-    window.fetch = async (...args) => {
+    const { fetch: originalFetch } = this.options.window
+    this.options.window.fetch = async (...args) => {
       const [resource, config] = args
       const url = resource as string
 

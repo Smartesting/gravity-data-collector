@@ -22,7 +22,7 @@ export default class CookieSessionIdHandler extends BaseSessionIdHandler impleme
   }
 
   protected getTimeout(): number {
-    const stored = readCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY)
+    const stored = readCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, this.win)
     return stored !== undefined ? parseInt(stored) : new Date().getTime() - 1
   }
 
