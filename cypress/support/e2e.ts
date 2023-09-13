@@ -16,12 +16,15 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import GravityCollector from '../../src'
+import { GRAVITY_SESSION_TRACKING_SUSPENDED } from '../../src/tracking-handler/TrackingHandler'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 Cypress.on("window:load", (win) => {
-    (win as any).GravityCollector = GravityCollector
+    //(win as any).GravityCollector = GravityCollector
+    (win as typeof window).sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
+
     GravityCollector.init({
         authKey: "1234",
         requestInterval: 100,

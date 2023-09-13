@@ -26,7 +26,6 @@ import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitV
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
-import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IEventListener } from '../event-listeners/IEventListener'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
@@ -102,7 +101,7 @@ class CollectorWrapper {
     ]
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
     if (cypress !== undefined) {
-      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
+      // eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
     }
 
     this.eventListenerHandler = new EventListenersHandler(eventListeners)

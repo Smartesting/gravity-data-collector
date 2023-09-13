@@ -48,6 +48,7 @@ describe('Handling sessions identification on multi-domain', () => {
 
         cy.wait('@sendGravityIdentify').then(() => {
           expect(requests.length).to.eq(3)
+          console.log({requests})
 
           const sessionIds = requests.map((request) => request.sessionId)
           expect(sessionIds[0]).to.eq(sessionIds[2])
