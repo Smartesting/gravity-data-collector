@@ -61,8 +61,7 @@ class CollectorWrapper {
           this.trackingHandler.getSenderErrorCallback(),
         )
 
-    const isNewSession =
-      options.window.document.URL !== 'about:blank' && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
+    const isNewSession = trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
 
     if (isNewSession) {
@@ -157,6 +156,10 @@ class CollectorWrapper {
 }
 
 export default CollectorWrapper
+
+function trackingIsAllowed(url: string | undefined): boolean {
+  return url === undefined || !url.startsWith('about:')
+}
 
 function keepSession(options: CollectorOptions): boolean {
   const keepSession = options.sessionsPercentageKept >= 100 * Math.random()
