@@ -7,8 +7,8 @@ export default defineConfig({
     },
     retries: {
       openMode: 0,
-      runMode: 2
-    }
+      runMode: 2,
+    },
   },
   chromeWebSecurity: false,
   hosts: {
