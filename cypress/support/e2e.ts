@@ -17,6 +17,7 @@
 import './commands'
 import GravityCollector from '../../src'
 import { GRAVITY_SESSION_TRACKING_SUSPENDED } from '../../src/tracking-handler/TrackingHandler'
+import { Listener } from '../../src/types'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -29,5 +30,6 @@ Cypress.on('window:load', (win) => {
     requestInterval: 100,
     gravityServerUrl: 'https://api.gravity.smartesting.com',
     window: win,
+    enabledListeners: [Listener.Click, Listener.KeyUp, Listener.KeyDown, Listener.Change],
   })
 })
