@@ -159,11 +159,15 @@ class CollectorWrapper {
     const eventListeners: IEventListener[] = []
 
     if (this.isListenerEnabled(Listener.Click)) {
-      eventListeners.push(new ClickEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new ClickEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.KeyUp)) {
-      eventListeners.push(new KeyUpEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new KeyUpEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.KeyDown)) {
@@ -178,7 +182,9 @@ class CollectorWrapper {
     }
 
     if (this.isListenerEnabled(Listener.Change)) {
-      eventListeners.push(new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
