@@ -33,57 +33,6 @@ jobs:
         with:
           browser: chrome
           start: npm run start-e2e-test-site
-      - name: Run cypress tests 1
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 2
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 3
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 4
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 5
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 6
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 7
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 8
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 9
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-      - name: Run cypress tests 10
-        uses: cypress-io/github-action@v4
-        with:
-          browser: chrome
-          start: npm run start-e2e-test-site
-
       - name: Store Cypress videos
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
