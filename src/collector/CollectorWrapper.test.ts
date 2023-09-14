@@ -100,12 +100,38 @@ describe('CollectorWrapper', () => {
       })
 
       describe('event listener initializing', () => {
-        const listeners: {listenerClassName: string, listenerClass: any, listenerOption: Listener}[] = [
-          { listenerClassName: 'ClickEventListener', listenerClass: ClickEventListener, listenerOption: Listener.Click },
-          { listenerClassName: 'KeyUpEventListener', listenerClass: KeyUpEventListener, listenerOption: Listener.KeyUp },
-          { listenerClassName: 'KeyDownEventListener', listenerClass: KeyDownEventListener, listenerOption: Listener.KeyDown },
-          { listenerClassName: 'ChangeEventListener', listenerClass: ChangeEventListener, listenerOption: Listener.Change },
-          { listenerClassName: 'BeforeUnloadEventListener', listenerClass: BeforeUnloadEventListener, listenerOption: Listener.BeforeUnload },
+        interface ListenerTestData {
+          listenerClassName: string
+          listenerClass: any
+          listenerOption: Listener
+        }
+
+        const listeners: ListenerTestData[] = [
+          {
+            listenerClassName: 'ClickEventListener',
+            listenerClass: ClickEventListener,
+            listenerOption: Listener.Click,
+          },
+          {
+            listenerClassName: 'KeyUpEventListener',
+            listenerClass: KeyUpEventListener,
+            listenerOption: Listener.KeyUp,
+          },
+          {
+            listenerClassName: 'KeyDownEventListener',
+            listenerClass: KeyDownEventListener,
+            listenerOption: Listener.KeyDown,
+          },
+          {
+            listenerClassName: 'ChangeEventListener',
+            listenerClass: ChangeEventListener,
+            listenerOption: Listener.Change,
+          },
+          {
+            listenerClassName: 'BeforeUnloadEventListener',
+            listenerClass: BeforeUnloadEventListener,
+            listenerOption: Listener.BeforeUnload,
+          },
         ]
 
         for (const { listenerClassName, listenerClass, listenerOption } of listeners) {
