@@ -5,6 +5,10 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
+    retries: {
+      openMode: 0,
+      runMode: 2,
+    },
   },
   chromeWebSecurity: false,
   hosts: {

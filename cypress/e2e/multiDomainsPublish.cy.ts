@@ -1,5 +1,3 @@
-const collectionAuthKey = '1234'
-
 describe('Handling sessions on multi-domain', () => {
   beforeEach(() => {
     cy.clearCookies()

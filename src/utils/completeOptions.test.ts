@@ -97,6 +97,7 @@ describe('completeOptions', () => {
         excludeRegex: null,
         sessionsPercentageKept: 100,
         rejectSession: DEFAULT_SESSION_REJECTION,
+        window,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -118,6 +119,7 @@ describe('completeOptions', () => {
         excludeRegex: null,
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
+        window,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -143,6 +145,7 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          window,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -162,6 +165,7 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          window,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -181,6 +185,7 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          window,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -200,6 +205,7 @@ describe('completeOptions', () => {
           excludeRegex: /^#my-id-.*$/,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          window,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -219,6 +225,7 @@ describe('completeOptions', () => {
           excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
+          window,
         }
         expect(completed).toStrictEqual(expected)
       })
