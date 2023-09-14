@@ -4,7 +4,7 @@ import ClickEventListener from '../event-listeners/ClickEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, SessionTraitValue, UserAction } from '../types'
+import { CollectorOptions, Listener, SessionTraitValue, UserAction } from '../types'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import UserActionHandler from '../user-action/UserActionHandler'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
@@ -99,39 +99,71 @@ describe('CollectorWrapper', () => {
         expect(mock).toHaveBeenCalledOnce()
       })
 
-      it('initializes ClickEventListener', () => {
-        vi.spyOn(ClickEventListener.prototype, 'init').mockImplementation(nop)
-        createCollectorWrapper()
+      describe('event listener initializing', () => {
+        interface ListenerTestData {
+          listenerClassName: string
+          listenerClass: any
+          listenerOption: Listener
+        }
 
-        expect(ClickEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
+        const listeners: ListenerTestData[] = [
+          {
+            listenerClassName: 'ClickEventListener',
+            listenerClass: ClickEventListener,
+            listenerOption: Listener.Click,
+          },
+          {
+            listenerClassName: 'KeyUpEventListener',
+            listenerClass: KeyUpEventListener,
+            listenerOption: Listener.KeyUp,
+          },
+          {
+            listenerClassName: 'KeyDownEventListener',
+            listenerClass: KeyDownEventListener,
+            listenerOption: Listener.KeyDown,
+          },
+          {
+            listenerClassName: 'ChangeEventListener',
+            listenerClass: ChangeEventListener,
+            listenerOption: Listener.Change,
+          },
+          {
+            listenerClassName: 'BeforeUnloadEventListener',
+            listenerClass: BeforeUnloadEventListener,
+            listenerOption: Listener.BeforeUnload,
+          },
+        ]
 
-      it('initializes ChangeEventListener', () => {
-        vi.spyOn(ChangeEventListener.prototype, 'init').mockImplementation(nop)
-        createCollectorWrapper()
+        for (const { listenerClassName, listenerClass, listenerOption } of listeners) {
+          describe(`${listenerClassName}`, () => {
+            describe('when options.enabledListeners is not specified', () => {
+              it(`initializes ${listenerClassName}`, () => {
+                vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
+                createCollectorWrapper()
 
-        expect(ChangeEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
+                expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
+              })
+            })
 
-      it('initializes BeforeUnloadEventListener', () => {
-        vi.spyOn(BeforeUnloadEventListener.prototype, 'init').mockImplementation(nop)
-        createCollectorWrapper()
+            describe('when options.enabledListeners is specified', () => {
+              it(`does not initialize ${listenerClassName} when ${listenerOption} is not present`, () => {
+                options.enabledListeners = []
+                vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
+                createCollectorWrapper()
 
-        expect(BeforeUnloadEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
+                expect(listenerClass.prototype.init).not.toHaveBeenCalled()
+              })
 
-      it('initializes KeyUpEventListener', () => {
-        vi.spyOn(KeyUpEventListener.prototype, 'init').mockImplementation(nop)
-        createCollectorWrapper()
+              it(`initializes ${listenerClassName} when ${listenerOption} is present`, () => {
+                options.enabledListeners = [listenerOption]
+                vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
+                createCollectorWrapper()
 
-        expect(KeyUpEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-
-      it('initializes KeyDownEventListener', () => {
-        vi.spyOn(KeyDownEventListener.prototype, 'init').mockImplementation(nop)
-        createCollectorWrapper()
-
-        expect(KeyDownEventListener.prototype.init).toHaveBeenCalledOnce()
+                expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
+              })
+            })
+          })
+        }
       })
 
       describe('initializes CypressEventListener', () => {
@@ -145,11 +177,29 @@ describe('CollectorWrapper', () => {
           expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
         })
 
-        it('if window.Cypress is available', () => {
-          vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-          ;(window as any).Cypress = {}
-          createCollectorWrapper()
-          expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+        describe('window.Cypress is available', () => {
+          it('initializes if enabledListeners option is not set ', () => {
+            vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
+            ;(window as any).Cypress = {}
+            createCollectorWrapper()
+            expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+          })
+
+          it('does not initialize if enabledListeners option is set but does not include CypressCommands', () => {
+            vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
+            ;(window as any).Cypress = {}
+            options.enabledListeners = []
+            createCollectorWrapper()
+            expect(CypressEventListener.prototype.init).not.toHaveBeenCalled()
+          })
+
+          it('does not initialize if enabledListeners option is set and includes CypressCommands', () => {
+            vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
+            ;(window as any).Cypress = {}
+            options.enabledListeners = [Listener.CypressCommands]
+            createCollectorWrapper()
+            expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+          })
         })
       })
     })
