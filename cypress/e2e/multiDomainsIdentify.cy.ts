@@ -1,6 +1,7 @@
 describe('Handling sessions identification on multi-domain', () => {
   beforeEach(() => {
     cy.clearCookies()
+    cy.clearLocalStorage()
   })
 
   it('uses another sessions ID when navigating to another domain', () => {

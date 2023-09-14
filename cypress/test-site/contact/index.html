@@ -4,21 +4,6 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Gravity Data Collector - Sandbox</title>
-    <script async id="logger" src="../bundle.js" type="text/javascript"></script>
-    <script>
-      const script = document.querySelector('#logger')
-      script.addEventListener('load', function () {
-        window.GravityCollector.init({
-          authKey: '1234',
-          gravityServerUrl: 'https://api.gravity.smartesting.com',
-          requestInterval: 100,
-        })
-      })
-
-      function identifySession() {
-        window.GravityCollector.identifySession('href', window.location.href)
-      }
-    </script>
     <body>
       <a class="simple-link">A simple link which does nothing</a>
       <a class="go-to-home" href="/">Go to home</a>

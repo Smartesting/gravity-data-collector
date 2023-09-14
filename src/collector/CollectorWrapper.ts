@@ -1,5 +1,13 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, CypressObject, Listener, SessionStartedUserAction, SessionTraitValue } from '../types'
+import {
+  CollectorOptions,
+  CollectorOptionsWithWindow,
+  CypressObject,
+  Listener,
+  SessionStartedUserAction,
+  SessionTraitValue,
+} from '../types'
+
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -20,9 +28,9 @@ import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitV
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
-import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IEventListener } from '../event-listeners/IEventListener'
 import IUserActionHandler from '../user-action/IUserActionHandler'
+import CypressEventListener from '../event-listeners/CypressEventListener'
 
 class CollectorWrapper {
   readonly userActionHandler: IUserActionHandler
@@ -32,8 +40,7 @@ class CollectorWrapper {
   readonly trackingHandler: TrackingHandler
 
   constructor(
-    readonly options: CollectorOptions,
-    private readonly window: Window,
+    readonly options: CollectorOptionsWithWindow,
     readonly sessionIdHandler: ISessionIdHandler,
     readonly testNameHandler: TestNameHandler,
   ) {
@@ -57,7 +64,8 @@ class CollectorWrapper {
           this.trackingHandler.getSenderErrorCallback(),
         )
 
-    const isNewSession = !sessionIdHandler.isSet() || testNameHandler.isNewTest()
+    const isNewSession =
+      trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
 
     if (isNewSession) {
@@ -97,8 +105,8 @@ class CollectorWrapper {
   }
 
   private patchFetch() {
-    const { fetch: originalFetch } = this.window
-    this.window.fetch = async (...args) => {
+    const { fetch: originalFetch } = this.options.window
+    this.options.window.fetch = async (...args) => {
       const [resource, config] = args
       const url = resource as string
 
@@ -151,18 +159,22 @@ class CollectorWrapper {
     const eventListeners: IEventListener[] = []
 
     if (this.isListenerEnabled(Listener.Click)) {
-      eventListeners.push(new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new ClickEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.KeyUp)) {
-      eventListeners.push(new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new KeyUpEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.KeyDown)) {
       eventListeners.push(
         new KeyDownEventListener(
           this.userActionHandler,
-          this.window,
+          this.options.window,
           this.userActionsHistory,
           targetedEventListenerOptions,
         ),
@@ -170,11 +182,13 @@ class CollectorWrapper {
     }
 
     if (this.isListenerEnabled(Listener.Change)) {
-      eventListeners.push(new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+      eventListeners.push(
+        new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
+      )
     }
 
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
-      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, this.window))
+      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, this.options.window))
     }
 
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
@@ -192,6 +206,10 @@ class CollectorWrapper {
 }
 
 export default CollectorWrapper
+
+function trackingIsAllowed(url: string | undefined): boolean {
+  return url === undefined || !url.startsWith('about:')
+}
 
 function keepSession(options: CollectorOptions): boolean {
   const keepSession = options.sessionsPercentageKept >= 100 * Math.random()

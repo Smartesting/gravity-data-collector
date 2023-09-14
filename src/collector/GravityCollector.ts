@@ -20,14 +20,13 @@ export default class GravityCollector {
   }
 
   static init(options?: Partial<CollectorOptions>) {
-    if (!windowExists()) {
+    if (!windowExists() && options?.window === undefined) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
-    ;(window as any)._GravityCollector = new GravityCollector(
+    ;((options?.window ?? window) as any)._GravityCollector = new GravityCollector(
       new CollectorWrapper(
         completeOptions(options),
-        window,
-        new CookieSessionIdHandler(uuidv4, TIMEOUT),
+        new CookieSessionIdHandler(uuidv4, TIMEOUT, options?.window ?? window),
         new SessionStorageTestNameHandler(),
       ),
     )
