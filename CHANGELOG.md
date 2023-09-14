@@ -5,21 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.7...main)
-
-### Info
+## [3.9.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.7...v3.9.0)
 
 ### Added
 
-### Changed
-
-- Allow specifying window when initializing collector
-
-### Deprecated
-
-### Removed
+- Allow specifying window when initializing collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
 
 ### Fixed
+
+- Gravity Data Collector import from an HTML tag [#23](https://github.com/Smartesting/gravity-data-collector/pull/23)
 
 ## [3.8.7](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.6...v3.8.7)
 
