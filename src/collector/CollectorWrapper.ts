@@ -1,5 +1,5 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
-import { CollectorOptions, CypressObject, SessionStartedUserAction, SessionTraitValue } from '../types'
+import { CollectorOptions, CypressObject, Listener, SessionStartedUserAction, SessionTraitValue } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -77,41 +77,38 @@ class CollectorWrapper {
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
-    const targetedEventListenerOptions: TargetEventListenerOptions = {
-      excludeRegex: options.excludeRegex,
-      customSelector: options.customSelector,
-      selectorsOptions: options.selectorsOptions,
-    }
-
-    const eventListeners: IEventListener[] = [
-      new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
-      new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
-      new KeyDownEventListener(
-        this.userActionHandler,
-        this.window,
-        this.userActionsHistory,
-        targetedEventListenerOptions,
-      ),
-      new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions),
-      new BeforeUnloadEventListener(this.userActionHandler, this.window),
-    ]
-    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
-    if (cypress !== undefined) {
-      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
-    }
-
+    const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
-
     this.trackingHandler.init(this.eventListenerHandler)
 
-    const { fetch: originalFetch } = window
-    window.fetch = async (...args) => {
+    if (this.isListenerEnabled(Listener.Requests)) {
+      this.patchFetch()
+    }
+  }
+
+  identifySession(traitName: string, traitValue: SessionTraitValue) {
+    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue)) {
+      this.sessionTraitHandler.handle(traitName, traitValue)
+    }
+  }
+
+  private initSession(sessionStartedUserAction: SessionStartedUserAction) {
+    if (this.trackingHandler.isTracking()) this.userActionHandler.handle(sessionStartedUserAction)
+  }
+
+  private patchFetch() {
+    const { fetch: originalFetch } = this.window
+    this.window.fetch = async (...args) => {
       const [resource, config] = args
       const url = resource as string
 
       if (
         this.trackingHandler.isTracking() &&
-        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor ?? options.originsToRecord)
+        requestCanBeRecorded(
+          url,
+          this.options.gravityServerUrl,
+          this.options.recordRequestsFor ?? this.options.originsToRecord,
+        )
       ) {
         let method = 'unknown'
         if (config?.method != null) {
@@ -131,7 +128,11 @@ class CollectorWrapper {
 
       if (
         collectorWrapper.trackingHandler.isTracking() &&
-        requestCanBeRecorded(url, options.gravityServerUrl, options.recordRequestsFor ?? options.originsToRecord)
+        requestCanBeRecorded(
+          url,
+          collectorWrapper.options.gravityServerUrl,
+          collectorWrapper.options.recordRequestsFor ?? collectorWrapper.options.originsToRecord,
+        )
       ) {
         collectorWrapper.userActionHandler.handle(createAsyncRequest(url, method))
       }
@@ -140,14 +141,53 @@ class CollectorWrapper {
     }
   }
 
-  identifySession(traitName: string, traitValue: SessionTraitValue) {
-    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue)) {
-      this.sessionTraitHandler.handle(traitName, traitValue)
+  private makeEventListeners() {
+    const targetedEventListenerOptions: TargetEventListenerOptions = {
+      excludeRegex: this.options.excludeRegex,
+      customSelector: this.options.customSelector,
+      selectorsOptions: this.options.selectorsOptions,
     }
+
+    const eventListeners: IEventListener[] = []
+
+    if (this.isListenerEnabled(Listener.Click)) {
+      eventListeners.push(new ClickEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+    }
+
+    if (this.isListenerEnabled(Listener.KeyUp)) {
+      eventListeners.push(new KeyUpEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+    }
+
+    if (this.isListenerEnabled(Listener.KeyDown)) {
+      eventListeners.push(
+        new KeyDownEventListener(
+          this.userActionHandler,
+          this.window,
+          this.userActionsHistory,
+          targetedEventListenerOptions,
+        ),
+      )
+    }
+
+    if (this.isListenerEnabled(Listener.Change)) {
+      eventListeners.push(new ChangeEventListener(this.userActionHandler, this.window, targetedEventListenerOptions))
+    }
+
+    if (this.isListenerEnabled(Listener.BeforeUnload)) {
+      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, this.window))
+    }
+
+    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
+
+    if (cypress !== undefined && this.isListenerEnabled(Listener.CypressCommands)) {
+      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
+    }
+    return eventListeners
   }
 
-  private initSession(sessionStartedUserAction: SessionStartedUserAction) {
-    if (this.trackingHandler.isTracking()) this.userActionHandler.handle(sessionStartedUserAction)
+  private isListenerEnabled(listener: Listener): boolean {
+    const { enabledListeners } = this.options
+    return enabledListeners === undefined || enabledListeners.includes(listener)
   }
 }
 

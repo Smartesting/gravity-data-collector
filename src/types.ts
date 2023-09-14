@@ -191,6 +191,17 @@ export interface CollectorOptions {
    */
   originsToRecord?: string[]
   recordRequestsFor?: string[]
+  enabledListeners?: Listener[]
+}
+
+export enum Listener {
+  Click = 'click',
+  KeyUp = 'keyUp',
+  KeyDown = 'keyDown',
+  Change = 'change',
+  BeforeUnload = 'beforeUnload',
+  Requests = 'requests',
+  CypressCommands = 'cypressCommands',
 }
 
 export interface CreateSelectorsOptions {
