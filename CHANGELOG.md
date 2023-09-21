@@ -21,12 +21,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.10.0...main)
+
+### Info
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
 ## [3.10.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.9.0...v3.10.0)
 
 ### Added
 
 - Add request errors `project_not_found` and `project_expired` to prepare the concept renaming `domain` into `project`
-  `
 
 ## [3.9.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.7...v3.9.0)
 
