@@ -11,11 +11,16 @@ export enum IdentifySessionError {
   accessDenied = 'no_access',
   collectionNotFound = 'collection_not_found',
   sessionNotFound = 'session_not_found',
-  domainNotFound = 'domain_not_found',
-  domainExpired = 'domain_expired',
   invalidField = 'invalid_field',
   incorrectSource = 'incorrect_source',
   notUUID = 'not_a_uuid',
+  projectNotFound = 'project_not_found',
+  projectExpired = 'project_expired',
+
+  /** @deprecated Use projectNotFound instead. */
+  domainNotFound = 'domain_not_found',
+  /** @deprecated Use projectExpired instead. */
+  domainExpired = 'domain_expired',
 }
 
 export function defaultSessionTraitSender(

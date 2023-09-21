@@ -21,21 +21,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.7...main)
-
-### Info
+## [3.10.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.9.0...v3.10.0)
 
 ### Added
 
-### Changed
+- Add request errors `project_not_found` and `project_expired` to prepare the concept renaming `domain` into `project`
+  `
 
-- Allow specifying window when initializing collector
+## [3.9.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.7...v3.9.0)
 
-### Deprecated
+### Added
 
-### Removed
+- Allow specifying window when initializing collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
 
 ### Fixed
+
+- Gravity Data Collector import from an HTML tag [#23](https://github.com/Smartesting/gravity-data-collector/pull/23)
 
 ## [3.8.7](https://github.com/Smartesting/gravity-data-collector/compare/v3.8.6...v3.8.7)
 
