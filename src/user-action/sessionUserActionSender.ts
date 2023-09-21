@@ -12,9 +12,14 @@ export enum AddSessionUserActionsError {
   conflict = 'conflict',
   notUUID = 'not_a_uuid',
   collectionNotFound = 'collection_not_found',
-  domainNotFound = 'domain_not_found',
-  domainExpired = 'domain_expired',
   invalidFormat = 'invalid_format',
+  projectNotFound = 'project_not_found',
+  projectExpired = 'project_expired',
+
+  /** @deprecated Use projectNotFound instead. */
+  domainNotFound = 'domain_not_found',
+  /** @deprecated Use projectExpired instead. */
+  domainExpired = 'domain_expired',
 }
 
 export function defaultSessionUserActionSender(
