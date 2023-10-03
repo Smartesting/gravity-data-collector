@@ -31,6 +31,9 @@ import { trackingUrlStartPart } from '../gravityEndPoints'
 import { IEventListener } from '../event-listeners/IEventListener'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import CypressEventListener from '../event-listeners/CypressEventListener'
+import { IGravityClient } from '../gravity-client/IGravityClient'
+import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
+import HttpGravityClient from '../gravity-client/HttpGravityClient'
 
 class CollectorWrapper {
   readonly userActionHandler: IUserActionHandler
@@ -38,6 +41,7 @@ class CollectorWrapper {
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
+  readonly gravityClient: IGravityClient
 
   constructor(
     readonly options: CollectorOptionsWithWindow,
@@ -45,6 +49,12 @@ class CollectorWrapper {
     readonly testNameHandler: TestNameHandler,
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
+
+    this.gravityClient = options.debug
+      ? new ConsoleGravityClient(options.requestInterval)
+      : new HttpGravityClient(options.requestInterval, {
+          ...options,
+        })
 
     const userActionOutput = options.debug
       ? debugSessionUserActionSender(options.maxDelay)

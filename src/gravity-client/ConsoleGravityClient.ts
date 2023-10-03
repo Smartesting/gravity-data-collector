@@ -5,13 +5,15 @@ import { AddSessionUserActionsResponse } from '../user-action/sessionUserActionS
 import { IdentifySessionResponse } from '../session-trait/sessionTraitSender'
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
-    async handleSessionUserActions(sessionUserActions: readonly SessionUserAction[]): Promise<AddSessionUserActionsResponse> {
-        console.log({ sessionUserActions })
-        return { error: null }
-    }
+  async handleSessionUserActions(
+    sessionUserActions: readonly SessionUserAction[],
+  ): Promise<AddSessionUserActionsResponse> {
+    console.log({ sessionUserActions })
+    return { error: null }
+  }
 
-    async handleSessionTraits(sessionTraits: readonly SessionTraitsWithSessionId[]): Promise<IdentifySessionResponse> {
-        console.log({ sessionTraits })
-        return { error: null }
-    }
+  async handleSessionTraits(sessionTraits: readonly SessionTraitsWithSessionId[]): Promise<IdentifySessionResponse> {
+    console.log({ sessionTraits })
+    return { error: null }
+  }
 }
