@@ -6,7 +6,7 @@ describe('DataBuffering', () => {
   let handleData: SpyInstanceFn
 
   beforeEach(() => {
-    handleData = vitest.fn(async (data: ReadonlyArray<number>) => {})
+    handleData = vitest.fn(async () => {})
   })
 
   describe('when handleInterval is set to zero', () => {
@@ -63,10 +63,12 @@ describe('DataBuffering', () => {
       await dataBuffer.addData(1.618)
 
       vi.advanceTimersByTime(handleInterval)
+      expect(handleData).to.toHaveBeenCalledOnce()
       expect(handleData).to.toHaveBeenNthCalledWith(1, [3.14, 2.71, 1.618])
 
       await dataBuffer.addData(42)
       vi.advanceTimersByTime(handleInterval)
+      expect(handleData).to.toHaveBeenCalledTimes(2)
       expect(handleData).to.toHaveBeenNthCalledWith(2, [42])
     })
   })
