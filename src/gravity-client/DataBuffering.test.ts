@@ -1,4 +1,4 @@
-import { expect, SpyInstanceFn, vitest, vi } from 'vitest'
+import { expect, SpyInstanceFn, vi, vitest } from 'vitest'
 import { DataBuffering } from './DataBuffering'
 
 describe('DataBuffering', () => {
@@ -6,9 +6,7 @@ describe('DataBuffering', () => {
   let handleData: SpyInstanceFn
 
   beforeEach(() => {
-    handleData = vitest.fn(async (data: ReadonlyArray<number>) => {
-      console.log({ data })
-    })
+    handleData = vitest.fn(async (data: ReadonlyArray<number>) => {})
   })
 
   describe('when handleInterval is set to zero', () => {
@@ -43,7 +41,7 @@ describe('DataBuffering', () => {
       vi.restoreAllMocks()
     })
 
-    it('does not calls handleData directly after adding data', async () => {
+    it('does not call handleData directly after adding data', async () => {
       await dataBuffer.addData(3.14)
 
       expect(handleData).not.to.toHaveBeenCalled()
@@ -69,7 +67,7 @@ describe('DataBuffering', () => {
 
       await dataBuffer.addData(42)
       vi.advanceTimersByTime(handleInterval)
-      expect(handleData).to.toHaveBeenNthCalledWith(1, [42])
+      expect(handleData).to.toHaveBeenNthCalledWith(2, [42])
     })
   })
 })

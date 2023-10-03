@@ -1,25 +1,32 @@
 export interface DataBufferingOptions<Data, Response> {
   handleData: (data: ReadonlyArray<Data>) => Promise<Response>
-  handleInterval?: number
+  handleInterval: number
 }
 
 export class DataBuffering<Data, Response> {
   private readonly buffer: Data[] = []
-  constructor(private readonly options: DataBufferingOptions<Data, Response>) {}
+  private readonly interval: NodeJS.Timer | null = null
+
+  constructor(private readonly options: DataBufferingOptions<Data, Response>) {
+    if (options.handleInterval > 0) {
+      this.interval = setInterval(() => {
+        this.flush()
+      }, options.handleInterval)
+    }
+  }
 
   async addData(data: Data): Promise<void> {
-    if (this.options.handleInterval === 0) await this.options.handleData([data])
-
     this.buffer.push(data)
-    setInterval(() => {
-      if (this.buffer.length === 0) return
+    if (this.interval === null) this.flush()
+  }
 
-      this.options
-        .handleData(this.buffer)
-        .then(() => {
-          this.buffer.splice(0, this.buffer.length)
-        })
-        .catch(() => {})
-    }, this.options.handleInterval)
+  private flush() {
+    if (this.buffer.length === 0) return
+    const data = this.buffer.splice(0, this.buffer.length)
+    this.options
+      .handleData(data)
+      .then(() => {
+      })
+      .catch(() => {})
   }
 }
