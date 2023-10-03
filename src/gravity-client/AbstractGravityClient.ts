@@ -4,7 +4,7 @@ import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { AddSessionUserActionsResponse } from '../user-action/sessionUserActionSender'
 
-interface SessionTraitsWithSessionId {
+export interface SessionTraitsWithSessionId {
   sessionId: string
   sessionTraits: SessionTraits
 }
@@ -28,7 +28,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
     await this.sessionUserActionBuffer.addData(sessionUserAction)
   }
 
-  async identifySession(sessionId: string, sessionTraits: SessionTraits): Promise<void> {
+  async identifySession(sessionId: string, sessionTraits: SessionTraits) {
     await this.sessionTraitsBuffer.addData({ sessionId, sessionTraits })
   }
 
