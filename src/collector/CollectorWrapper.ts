@@ -9,7 +9,6 @@ import {
 } from '../types'
 
 import UserActionHandler from '../user-action/UserActionHandler'
-import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
@@ -56,15 +55,6 @@ class CollectorWrapper {
           ...options,
         })
 
-    const userActionOutput = options.debug
-      ? debugSessionUserActionSender(options.maxDelay)
-      : defaultSessionUserActionSender(
-          options.authKey,
-          options.gravityServerUrl,
-          nop,
-          this.trackingHandler.getSenderErrorCallback(),
-        )
-
     const sessionTraitOutput = options.debug
       ? debugSessionTraitSender(options.maxDelay)
       : defaultSessionTraitSender(
@@ -86,10 +76,7 @@ class CollectorWrapper {
 
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
-      options.requestInterval,
-      userActionOutput,
-      options.onPublish,
-      this.userActionsHistory,
+      this.gravityClient,
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
 

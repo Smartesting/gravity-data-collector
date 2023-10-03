@@ -20,7 +20,7 @@ export class DataBuffering<Data, Response> {
     if (this.interval === null) this.flush()
   }
 
-  private flush() {
+  flush() {
     if (this.buffer.length === 0) return
     const data = this.buffer.splice(0, this.buffer.length)
     this.options

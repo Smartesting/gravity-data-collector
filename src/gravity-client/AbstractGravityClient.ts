@@ -32,6 +32,15 @@ export abstract class AbstractGravityClient implements IGravityClient {
     await this.sessionTraitsBuffer.addData({ sessionId, sessionTraits })
   }
 
+  flush() {
+    this.sessionUserActionBuffer.flush()
+    this.sessionTraitsBuffer.flush()
+  }
+
+  onPublish(sessionUserActions: SessionUserAction[]) {
+    // TODO
+  }
+
   protected abstract handleSessionUserActions(
     sessionUserActions: ReadonlyArray<SessionUserAction>,
   ): Promise<AddSessionUserActionsResponse>
