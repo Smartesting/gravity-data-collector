@@ -1,6 +1,7 @@
 export interface DataBufferingOptions<Data, Response> {
   handleData: (data: ReadonlyArray<Data>) => Promise<Response>
   handleInterval: number
+  onFlush?: (buffer: ReadonlyArray<Data>) => void
 }
 
 export class DataBuffering<Data, Response> {
@@ -10,23 +11,20 @@ export class DataBuffering<Data, Response> {
   constructor(private readonly options: DataBufferingOptions<Data, Response>) {
     if (options.handleInterval > 0) {
       this.interval = setInterval(() => {
-        this.flush()
+        void this.flush()
       }, options.handleInterval)
     }
   }
 
   async addData(data: Data): Promise<void> {
     this.buffer.push(data)
-    if (this.interval === null) this.flush()
+    if (this.interval === null) await this.flush()
   }
 
-  flush() {
+  async flush() {
     if (this.buffer.length === 0) return
     const data = this.buffer.splice(0, this.buffer.length)
-    this.options
-      .handleData(data)
-      .then(() => {
-      })
-      .catch(() => {})
+    await this.options.handleData(data)
+    this.options.onFlush?.(data)
   }
 }

@@ -9,6 +9,7 @@ import { buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
 interface HttpGravityClientOptions {
   authKey: string
   gravityServerUrl: string
+  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
 }
 
 export default class HttpGravityClient extends AbstractGravityClient implements IGravityClient {
@@ -17,7 +18,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     private readonly options: HttpGravityClientOptions,
     private readonly fetch = crossfetch,
   ) {
-    super(requestInterval)
+    super(requestInterval, options.onPublish)
   }
 
   async handleSessionUserActions(
