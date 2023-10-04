@@ -51,7 +51,7 @@ class CollectorWrapper {
       ? new ConsoleGravityClient(options.requestInterval)
       : new HttpGravityClient(options.requestInterval, {
           ...options,
-          onError: this.trackingHandler.getSenderErrorCallback,
+          onError: (status) => this.trackingHandler.senderErrorCallback(status),
         }, fetch)
 
     const isNewSession =

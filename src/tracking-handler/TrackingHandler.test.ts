@@ -32,7 +32,7 @@ describe('TrackingHandler', () => {
     vi.spyOn(TrackingHandler.prototype, 'deactivateTracking')
 
     trackingHandler.init(eventListenersHandler)
-    trackingHandler.getSenderErrorCallback()(403)
+    trackingHandler.senderErrorCallback(403)
 
     expect(trackingHandler.isTracking()).toBeFalsy()
     expect(TrackingHandler.prototype.deactivateTracking).toHaveBeenCalledOnce()
@@ -42,7 +42,7 @@ describe('TrackingHandler', () => {
     vi.spyOn(EventListenersHandler.prototype, 'terminateEventListeners')
 
     trackingHandler.init(eventListenersHandler)
-    trackingHandler.getSenderErrorCallback()(409)
+    trackingHandler.senderErrorCallback(409)
 
     expect(EventListenersHandler.prototype.terminateEventListeners).toHaveBeenCalledOnce()
   })
@@ -51,7 +51,7 @@ describe('TrackingHandler', () => {
     vi.spyOn(EventListenersHandler.prototype, 'terminateEventListeners')
 
     trackingHandler.init(eventListenersHandler)
-    trackingHandler.getSenderErrorCallback()(404)
+    trackingHandler.senderErrorCallback(404)
 
     expect(EventListenersHandler.prototype.terminateEventListeners).not.toHaveBeenCalled()
   })

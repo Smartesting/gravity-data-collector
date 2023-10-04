@@ -39,13 +39,9 @@ export default class TrackingHandler {
     this.eventListenerHandler.terminateEventListeners()
   }
 
-  private senderErrorCallback(statusCode: number) {
+  senderErrorCallback(statusCode: number) {
     if (this.errorTerminateTracking.includes(statusCode)) {
       this.deactivateTracking()
     }
-  }
-
-  getSenderErrorCallback() {
-    return this.senderErrorCallback.bind(this)
   }
 }
