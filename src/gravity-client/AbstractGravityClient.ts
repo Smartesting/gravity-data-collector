@@ -1,8 +1,6 @@
-import { SessionTraits, SessionUserAction } from '../types'
-import { IdentifySessionResponse } from '../session-trait/sessionTraitSender'
+import { SessionTraits, SessionUserAction, AddSessionUserActionsResponse, IdentifySessionResponse } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
-import { AddSessionUserActionsResponse } from '../user-action/sessionUserActionSender'
 
 export interface SessionTraitsWithSessionId {
   sessionId: string

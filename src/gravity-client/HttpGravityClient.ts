@@ -1,8 +1,6 @@
-import { SessionTraits, SessionUserAction } from '../types'
+import { SessionTraits, SessionUserAction, AddSessionUserActionsResponse, IdentifySessionResponse } from '../types'
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
-import { AddSessionUserActionsResponse } from '../user-action/sessionUserActionSender'
-import { IdentifySessionResponse } from '../session-trait/sessionTraitSender'
 import crossfetch from 'cross-fetch'
 import { buildGravityTrackingIdentifySessionApiUrl, buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
 

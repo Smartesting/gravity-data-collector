@@ -30,6 +30,7 @@ import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import crossfetch from 'cross-fetch'
 
 class CollectorWrapper {
   readonly userActionHandler: IUserActionHandler
@@ -42,6 +43,7 @@ class CollectorWrapper {
     readonly options: CollectorOptionsWithWindow,
     readonly sessionIdHandler: ISessionIdHandler,
     readonly testNameHandler: TestNameHandler,
+    fetch = crossfetch,
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
@@ -50,7 +52,7 @@ class CollectorWrapper {
       : new HttpGravityClient(options.requestInterval, {
           ...options,
           onError: this.trackingHandler.getSenderErrorCallback,
-        })
+        }, fetch)
 
     const isNewSession =
       trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())

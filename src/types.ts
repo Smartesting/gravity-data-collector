@@ -1,5 +1,4 @@
 import Cypress from 'cypress'
-export { sendSessionUserActions } from './user-action/sessionUserActionSender'
 
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
@@ -220,3 +219,42 @@ export type SessionTraits = Record<string, SessionTraitValue>
 export type SessionTraitValue = string | number | boolean
 
 export const ALLOWED_SESSION_TRAIT_VALUE_TYPES = ['string', 'boolean', 'number']
+
+export interface AddSessionUserActionsResponse {
+  error: AddSessionUserActionsError | null
+}
+
+export enum AddSessionUserActionsError {
+  incorrectSource = 'incorrect_source',
+  conflict = 'conflict',
+  notUUID = 'not_a_uuid',
+  collectionNotFound = 'collection_not_found',
+  invalidFormat = 'invalid_format',
+  projectNotFound = 'project_not_found',
+  projectExpired = 'project_expired',
+
+  /** @deprecated Use projectNotFound instead. */
+  domainNotFound = 'domain_not_found',
+  /** @deprecated Use projectExpired instead. */
+  domainExpired = 'domain_expired',
+}
+
+export interface IdentifySessionResponse {
+  error: IdentifySessionError | null
+}
+
+export enum IdentifySessionError {
+  accessDenied = 'no_access',
+  collectionNotFound = 'collection_not_found',
+  sessionNotFound = 'session_not_found',
+  invalidField = 'invalid_field',
+  incorrectSource = 'incorrect_source',
+  notUUID = 'not_a_uuid',
+  projectNotFound = 'project_not_found',
+  projectExpired = 'project_expired',
+
+  /** @deprecated Use projectNotFound instead. */
+  domainNotFound = 'domain_not_found',
+  /** @deprecated Use projectExpired instead. */
+  domainExpired = 'domain_expired',
+}

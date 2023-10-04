@@ -1,9 +1,9 @@
 import HttpGravityClient from './HttpGravityClient'
-import { VALID_AUTH_KEY } from '../mocks/handlers'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { expect, vi } from 'vitest'
 import { SessionUserAction } from '../types'
 import { mockFetch } from '../test-utils/mocks'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('HttpGravityClient', () => {
   it('does not call onError when receiving 200', async () => {
@@ -11,7 +11,7 @@ describe('HttpGravityClient', () => {
     const gravityClient = new HttpGravityClient(
       0,
       {
-        authKey: VALID_AUTH_KEY,
+        authKey: uuidv4(),
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         onError,
       },
@@ -28,7 +28,7 @@ describe('HttpGravityClient', () => {
     const gravityClient = new HttpGravityClient(
       0,
       {
-        authKey: VALID_AUTH_KEY,
+        authKey: uuidv4(),
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         onError,
       },
@@ -45,7 +45,7 @@ describe('HttpGravityClient', () => {
     const gravityClient = new HttpGravityClient(
       0,
       {
-        authKey: VALID_AUTH_KEY,
+        authKey: uuidv4(),
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         onError: vi.fn(),
         onPublish,
@@ -60,11 +60,12 @@ describe('HttpGravityClient', () => {
 
   describe('handle session traits', () => {
     it('sends all traits in a request', async () => {
+      const authKey = uuidv4()
       const mockedFetch = mockFetch()
       const gravityClient = new HttpGravityClient(
         150,
         {
-          authKey: VALID_AUTH_KEY,
+          authKey,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           onError: vi.fn(),
           onPublish: vi.fn(),
@@ -81,7 +82,7 @@ describe('HttpGravityClient', () => {
       await gravityClient.flush()
       expect(mockedFetch).to.toHaveBeenCalledTimes(1)
       expect(mockedFetch).to.toHaveBeenCalledWith(
-        `${GRAVITY_SERVER_ADDRESS}/api/tracking/${VALID_AUTH_KEY}/identify/${sessionId}`,
+        `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
           method: 'POST',
           body: JSON.stringify({ admin: true, country: 'Zanzibar' }),
@@ -95,11 +96,12 @@ describe('HttpGravityClient', () => {
 
     // it should never happen
     it('only sends traits from the first session', async () => {
-      const mockedFetch = mockFetch()
+        const authKey = uuidv4()
+       const mockedFetch = mockFetch()
       const gravityClient = new HttpGravityClient(
         150,
         {
-          authKey: VALID_AUTH_KEY,
+          authKey,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           onError: vi.fn(),
           onPublish: vi.fn(),
@@ -119,7 +121,7 @@ describe('HttpGravityClient', () => {
       await gravityClient.flush()
       expect(mockedFetch).to.toHaveBeenCalledTimes(1)
       expect(mockedFetch).to.toHaveBeenCalledWith(
-        `${GRAVITY_SERVER_ADDRESS}/api/tracking/${VALID_AUTH_KEY}/identify/${sessionId}`,
+        `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
           method: 'POST',
           body: JSON.stringify({ admin: true, country: 'Zanzibar' }),
@@ -136,7 +138,7 @@ describe('HttpGravityClient', () => {
       const gravityClient = new HttpGravityClient(
         150,
         {
-          authKey: VALID_AUTH_KEY,
+          authKey: uuidv4(),
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
           onError: vi.fn(),
           onPublish: vi.fn(),
