@@ -2,6 +2,7 @@ import { CypressObject, GravityDocument, TargetedUserAction } from '../types'
 import createElementInJSDOM from './createElementInJSDOM'
 import { createClickUserAction } from './userActions'
 import { ListenerFn } from 'eventemitter2'
+import { vi } from 'vitest'
 
 export function mockWindowScreen() {
   Object.defineProperty(window, 'screen', {
@@ -100,4 +101,10 @@ export function mockCypressObject(): CypressObject {
     },
   }
   return cypress as CypressObject
+}
+
+export function mockFetch() {
+  return vi.fn().mockImplementation(() => ({
+    json: async (): Promise<any> => await Promise.resolve({}),
+  }))
 }

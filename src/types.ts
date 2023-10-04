@@ -185,7 +185,7 @@ export interface CollectorOptions {
   selectorsOptions?: Partial<CreateSelectorsOptions>
   sessionsPercentageKept: number
   rejectSession: () => boolean
-  onPublish?: (userActions: SessionUserAction[]) => void
+  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
   /**
    * @deprecated Use recordRequestsFor instead.
    */

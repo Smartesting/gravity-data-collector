@@ -13,18 +13,15 @@ export abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
 
-  constructor(
-    requestInterval: number,
-    onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void,
-  ) {
+  constructor(requestInterval: number, onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
       handleInterval: requestInterval,
-      handleData: this.handleSessionUserActions,
+      handleData: this.handleSessionUserActions.bind(this),
       onFlush: onPublish,
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
       handleInterval: requestInterval,
-      handleData: this.handleSessionTraits,
+      handleData: this.handleSessionTraits.bind(this),
     })
   }
 

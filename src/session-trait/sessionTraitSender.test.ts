@@ -3,6 +3,7 @@ import { VALID_AUTH_KEY, VALID_SESSION_ID } from '../mocks/handlers'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingIdentifySessionApiUrl, GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { debugSessionTraitSender, IdentifySessionError, sendSessionTraits } from './sessionTraitSender'
+import { mockFetch } from '../test-utils/mocks'
 
 describe('sessionTraitSender', () => {
   describe('debugSessionTraitSender', () => {
@@ -172,9 +173,3 @@ describe('sessionTraitSender', () => {
     })
   })
 })
-
-function mockFetch() {
-  return vi.fn().mockImplementation(() => ({
-    json: async (): Promise<any> => await Promise.resolve({}),
-  }))
-}

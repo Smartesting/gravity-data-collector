@@ -9,6 +9,7 @@ import { SessionUserAction } from '../types'
 import { ANOTHER_VALID_AUTH_KEY, VALID_AUTH_KEY } from '../mocks/handlers'
 import { nop } from '../utils/nop'
 import { buildGravityTrackingPublishApiUrl, GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
+import { mockFetch } from '../test-utils/mocks'
 
 describe('sessionUserActionSender', () => {
   const action = { sessionId: uuidv4() }
@@ -207,9 +208,3 @@ describe('sessionUserActionSender', () => {
     })
   })
 })
-
-function mockFetch() {
-  return vi.fn().mockImplementation(() => ({
-    json: async (): Promise<any> => await Promise.resolve({}),
-  }))
-}
