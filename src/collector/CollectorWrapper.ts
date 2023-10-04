@@ -13,8 +13,6 @@ import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
-import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
-import { nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
@@ -55,15 +53,6 @@ class CollectorWrapper {
           ...options,
         })
 
-    const sessionTraitOutput = options.debug
-      ? debugSessionTraitSender(options.maxDelay)
-      : defaultSessionTraitSender(
-          options.authKey,
-          options.gravityServerUrl,
-          nop,
-          this.trackingHandler.getSenderErrorCallback(),
-        )
-
     const isNewSession =
       trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
@@ -78,7 +67,7 @@ class CollectorWrapper {
       sessionIdHandler,
       this.gravityClient,
     )
-    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
+    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
