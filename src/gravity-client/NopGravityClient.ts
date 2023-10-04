@@ -1,5 +1,5 @@
-import { SessionUserAction } from '../types'
-import { AbstractGravityClient, SessionTraitsWithSessionId } from './AbstractGravityClient'
+import { SessionTraits, SessionUserAction } from '../types'
+import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { AddSessionUserActionsResponse } from '../user-action/sessionUserActionSender'
 import { IdentifySessionResponse } from '../session-trait/sessionTraitSender'
@@ -11,7 +11,7 @@ export default class NopGravityClient extends AbstractGravityClient implements I
         return { error: null }
     }
 
-    async handleSessionTraits(sessionTraits: readonly SessionTraitsWithSessionId[]): Promise<IdentifySessionResponse> {
+    async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
         return { error: null }
     }
 }

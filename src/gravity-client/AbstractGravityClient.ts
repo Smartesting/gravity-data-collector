@@ -21,7 +21,10 @@ export abstract class AbstractGravityClient implements IGravityClient {
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
       handleInterval: requestInterval,
-      handleData: this.handleSessionTraits.bind(this),
+      handleData: async (sessionTraitsWithSessionIds) => {
+        const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
+        return await this.handleSessionTraits(sessionId, sessionTraits)
+      },
     })
   }
 
@@ -30,7 +33,10 @@ export abstract class AbstractGravityClient implements IGravityClient {
   }
 
   async identifySession(sessionId: string, sessionTraits: SessionTraits) {
-    await this.sessionTraitsBuffer.addData({ sessionId, sessionTraits })
+    await this.sessionTraitsBuffer.addData({
+      sessionId,
+      sessionTraits,
+    })
   }
 
   async flush() {
@@ -43,6 +49,22 @@ export abstract class AbstractGravityClient implements IGravityClient {
   ): Promise<AddSessionUserActionsResponse>
 
   protected abstract handleSessionTraits(
-    sessionTraits: ReadonlyArray<SessionTraitsWithSessionId>,
+    sessionId: string,
+    sessionTraits: SessionTraits,
   ): Promise<IdentifySessionResponse>
+
+  private extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>): SessionTraitsWithSessionId {
+    const sessionId = sessionTraitsWithSessionIds[0]?.sessionId
+    if (sessionId === undefined) {
+      throw new Error('No session id')
+    }
+
+    let sessionTraits: SessionTraits = {}
+    for (const sessionTraitWithSessionId of sessionTraitsWithSessionIds) {
+      if (sessionId === sessionTraitWithSessionId.sessionId) {
+        sessionTraits = { ...sessionTraits, ...sessionTraitWithSessionId.sessionTraits }
+      }
+    }
+    return { sessionId, sessionTraits }
+  }
 }
