@@ -1,4 +1,4 @@
-import { SessionTraits, SessionUserAction, AddSessionUserActionsResponse, IdentifySessionResponse } from '../types'
+import { AddSessionUserActionsResponse, IdentifySessionResponse, SessionTraits, SessionUserAction } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 
@@ -10,6 +10,7 @@ export interface SessionTraitsWithSessionId {
 export abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
+  private readonly screenRecordBuffer: DataBuffering<unknown, void>
 
   constructor(requestInterval: number, onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
@@ -24,10 +25,18 @@ export abstract class AbstractGravityClient implements IGravityClient {
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
     })
+    this.screenRecordBuffer = new DataBuffering<unknown, void>({
+      handleInterval: requestInterval,
+      handleData: this.handleScreenRecords.bind(this),
+    })
   }
 
   async addSessionUserAction(sessionUserAction: SessionUserAction) {
     await this.sessionUserActionBuffer.addData(sessionUserAction)
+  }
+
+  async addScreenRecord(screenRecord: unknown) {
+    await this.screenRecordBuffer.addData(screenRecord)
   }
 
   async identifySession(sessionId: string, sessionTraits: SessionTraits) {
@@ -51,7 +60,11 @@ export abstract class AbstractGravityClient implements IGravityClient {
     sessionTraits: SessionTraits,
   ): Promise<IdentifySessionResponse>
 
-  private extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>): SessionTraitsWithSessionId {
+  protected abstract handleScreenRecords(screenRecordings: ReadonlyArray<unknown>): Promise<void>
+
+  private extractSessionIdAndSessionTraits(
+    sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>,
+  ): SessionTraitsWithSessionId {
     const sessionId = sessionTraitsWithSessionIds[0]?.sessionId
     if (sessionId === undefined) {
       throw new Error('No session id')

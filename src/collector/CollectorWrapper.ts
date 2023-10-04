@@ -31,9 +31,12 @@ import { IGravityClient } from '../gravity-client/IGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import crossfetch from 'cross-fetch'
+import IScreenRecordHandler from '../screen-record/IScreenRecordHandler'
+import ScreenRecordHandler from '../screen-record/ScreenRecordHandler'
 
 class CollectorWrapper {
   readonly userActionHandler: IUserActionHandler
+  readonly screenRecordHandler: IScreenRecordHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
@@ -65,6 +68,7 @@ class CollectorWrapper {
 
     this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
+    this.screenRecordHandler = new ScreenRecordHandler(this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 

@@ -1,4 +1,4 @@
-import { SessionTraits, SessionUserAction, AddSessionUserActionsResponse, IdentifySessionResponse } from '../types'
+import { AddSessionUserActionsResponse, IdentifySessionResponse, SessionTraits, SessionUserAction } from '../types'
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
@@ -34,6 +34,10 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       buildGravityTrackingIdentifySessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
       sessionTraits,
     )
+  }
+
+  async handleScreenRecords(screenRecordings: readonly unknown[]): Promise<void> {
+    console.log(screenRecordings)
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {

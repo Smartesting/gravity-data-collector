@@ -16,4 +16,8 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     console.log({ sessionId, sessionTraits })
     return { error: null }
   }
+
+  async handleScreenRecords(screenRecordings: readonly unknown[]): Promise<void> {
+    console.log(screenRecordings)
+  }
 }
