@@ -3,21 +3,38 @@ import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
+  constructor(
+      requestInterval: number,
+      private readonly maxDelay: number = 0,
+  ) {
+    super(requestInterval)
+  }
+
   async handleSessionUserActions(
     sessionUserActions: ReadonlyArray<SessionUserAction>,
   ): Promise<AddSessionUserActionsResponse> {
-    console.log({ sessionUserActions })
+    this.log({ sessionUserActions })
     return { error: null }
   }
 
   async handleSessionTraits(
       sessionId: string,
       sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
-    console.log({ sessionId, sessionTraits })
+    this.log({ sessionId, sessionTraits })
     return { error: null }
   }
 
   async handleScreenRecords(screenRecordings: readonly unknown[]): Promise<void> {
-    console.log(screenRecordings)
+    this.log({ screenRecordings })
+  }
+
+  private log(data: unknown) {
+    if (this.maxDelay > 0) {
+      setTimeout(() => {
+        console.log(data)
+      }, this.maxDelay * Math.random())
+    } else {
+      console.log(data)
+    }
   }
 }

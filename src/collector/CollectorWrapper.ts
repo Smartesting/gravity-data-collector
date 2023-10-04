@@ -51,7 +51,7 @@ class CollectorWrapper {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
     this.gravityClient = options.debug
-      ? new ConsoleGravityClient(options.requestInterval)
+      ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
       : new HttpGravityClient(options.requestInterval, {
           ...options,
           onError: (status) => this.trackingHandler.senderErrorCallback(status),
