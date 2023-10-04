@@ -6,12 +6,13 @@ import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEve
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 import IUserActionHandler from '../user-action/IUserActionHandler'
+import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 
 class KeyDownEventListener extends TargetedEventListener {
+  private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
   constructor(
     userActionHandler: IUserActionHandler,
     window: Window,
-    private readonly userActionHistory: UserActionsHistory,
     options: TargetEventListenerOptions = {},
   ) {
     super(userActionHandler, UserActionType.KeyDown, window, options)
@@ -25,15 +26,13 @@ class KeyDownEventListener extends TargetedEventListener {
       const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
         changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue)
+        this.userActionHistory.push(changeUserAction)
         return this.userActionHandler.handle(changeUserAction)
       }
     }
 
-    if (isKeyAllowedByKeyListeners(event.code)) {
-      return this.userActionHandler.handle(userAction)
-    }
-
-    if (isTargetAllowedByKeyListeners(event.target)) {
+    if (isKeyAllowedByKeyListeners(event.code) || isTargetAllowedByKeyListeners(event.target)) {
+      this.userActionHistory.push(userAction)
       this.userActionHandler.handle(userAction)
     }
   }

@@ -10,7 +10,6 @@ import {
 
 import UserActionHandler from '../user-action/UserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
@@ -34,7 +33,6 @@ import HttpGravityClient from '../gravity-client/HttpGravityClient'
 
 class CollectorWrapper {
   readonly userActionHandler: IUserActionHandler
-  readonly userActionsHistory: MemoryUserActionsHistory
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
@@ -61,7 +59,6 @@ class CollectorWrapper {
       this.trackingHandler.setActive(keepSession(options))
       sessionIdHandler.generateNewSessionId()
     }
-    this.userActionsHistory = new MemoryUserActionsHistory()
 
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
@@ -161,7 +158,6 @@ class CollectorWrapper {
         new KeyDownEventListener(
           this.userActionHandler,
           this.options.window,
-          this.userActionsHistory,
           targetedEventListenerOptions,
         ),
       )
