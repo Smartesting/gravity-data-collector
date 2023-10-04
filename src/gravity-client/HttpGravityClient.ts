@@ -9,8 +9,8 @@ import { buildGravityTrackingIdentifySessionApiUrl, buildGravityTrackingPublishA
 interface HttpGravityClientOptions {
   authKey: string
   gravityServerUrl: string
+  onError: (status: number, error: string | null) => void
   onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
-  onError?: (status: number, message: string) => void
 }
 
 export default class HttpGravityClient extends AbstractGravityClient implements IGravityClient {
@@ -25,44 +25,33 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
   async handleSessionUserActions(
     sessionUserActions: readonly SessionUserAction[],
   ): Promise<AddSessionUserActionsResponse> {
-      const { responseBody: addSessionUserActionsResponse, status } = await this.sendRequest<AddSessionUserActionsResponse>(
-          buildGravityTrackingPublishApiUrl(this.options.authKey, this.options.gravityServerUrl),
-          sessionUserActions,
-      )
-
-    if (status !== 200) {
-      // TODO: handle error case
-    }
-    return addSessionUserActionsResponse
+    return await this.sendRequest<AddSessionUserActionsResponse>(
+      buildGravityTrackingPublishApiUrl(this.options.authKey, this.options.gravityServerUrl),
+      sessionUserActions,
+    )
   }
 
-  async handleSessionTraits(
-      sessionId: string,
-      sessionTraits: SessionTraits,
-  ): Promise<IdentifySessionResponse> {
-      const { responseBody: identifySessionResponse, status } = await this.sendRequest<IdentifySessionResponse>(
-          buildGravityTrackingIdentifySessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
-          sessionTraits,
-      )
-    if (status !== 200) {
-      // TODO: handle error case
-    }
-    return identifySessionResponse
+  async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
+    return await this.sendRequest<IdentifySessionResponse>(
+      buildGravityTrackingIdentifySessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
+      sessionTraits,
+    )
   }
 
-  private async sendRequest<T>(url: string, body: unknown): Promise<{responseBody: T, status: number}> {
-      const response = await this.fetch(
-          url,
-          {
-              method: 'POST',
-              body: JSON.stringify(body),
-              redirect: 'follow',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          },
-      )
-      const responseBody: T = await response.json()
-      return { responseBody, status: response.status }
+  private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {
+    const response = await this.fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const responseBody: T = await response.json()
+    if (response.status !== 200) {
+      this.options.onError(response.status, responseBody.error)
+    }
+
+    return responseBody
   }
 }

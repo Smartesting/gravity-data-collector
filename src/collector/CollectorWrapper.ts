@@ -49,6 +49,7 @@ class CollectorWrapper {
       ? new ConsoleGravityClient(options.requestInterval)
       : new HttpGravityClient(options.requestInterval, {
           ...options,
+          onError: this.trackingHandler.getSenderErrorCallback,
         })
 
     const isNewSession =
@@ -60,10 +61,7 @@ class CollectorWrapper {
       sessionIdHandler.generateNewSessionId()
     }
 
-    this.userActionHandler = new UserActionHandler(
-      sessionIdHandler,
-      this.gravityClient,
-    )
+    this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
@@ -155,11 +153,7 @@ class CollectorWrapper {
 
     if (this.isListenerEnabled(Listener.KeyDown)) {
       eventListeners.push(
-        new KeyDownEventListener(
-          this.userActionHandler,
-          this.options.window,
-          targetedEventListenerOptions,
-        ),
+        new KeyDownEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
       )
     }
 

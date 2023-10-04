@@ -103,8 +103,11 @@ export function mockCypressObject(): CypressObject {
   return cypress as CypressObject
 }
 
-export function mockFetch() {
+export function mockFetch<T>(params?: Partial<{status: number, responseBody: T}>) {
+  const status = params?.status ?? 200
+  const responseBody = params?.responseBody ?? {}
   return vi.fn().mockImplementation(() => ({
-    json: async (): Promise<any> => await Promise.resolve({}),
+    status,
+    json: async (): Promise<any> => await Promise.resolve(responseBody),
   }))
 }

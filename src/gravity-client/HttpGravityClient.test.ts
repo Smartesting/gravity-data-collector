@@ -6,6 +6,40 @@ import { SessionUserAction } from '../types'
 import { mockFetch } from '../test-utils/mocks'
 
 describe('HttpGravityClient', () => {
+  it('does not call onError when receiving 200', async () => {
+    const onError = vi.fn()
+    const gravityClient = new HttpGravityClient(
+      0,
+      {
+        authKey: VALID_AUTH_KEY,
+        gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        onError,
+      },
+      mockFetch(),
+    )
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
+    await gravityClient.flush()
+    expect(onError).not.toHaveBeenCalled()
+  })
+
+  it('calls onError when receiving other than 200', async () => {
+    const onError = vi.fn()
+    const gravityClient = new HttpGravityClient(
+      0,
+      {
+        authKey: VALID_AUTH_KEY,
+        gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        onError,
+      },
+      mockFetch({ status: 401, responseBody: { error: 'access_denied' } }),
+    )
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
+    await gravityClient.flush()
+    expect(onError).toHaveBeenCalledWith(401, 'access_denied')
+  })
+
   it('calls onPublish if it is defined', async () => {
     const onPublish = vi.fn()
     const gravityClient = new HttpGravityClient(
@@ -13,6 +47,7 @@ describe('HttpGravityClient', () => {
       {
         authKey: VALID_AUTH_KEY,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        onError: vi.fn(),
         onPublish,
       },
       mockFetch(),
@@ -31,6 +66,7 @@ describe('HttpGravityClient', () => {
         {
           authKey: VALID_AUTH_KEY,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          onError: vi.fn(),
           onPublish: vi.fn(),
         },
         mockedFetch,
@@ -65,6 +101,7 @@ describe('HttpGravityClient', () => {
         {
           authKey: VALID_AUTH_KEY,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          onError: vi.fn(),
           onPublish: vi.fn(),
         },
         mockedFetch,
@@ -101,6 +138,7 @@ describe('HttpGravityClient', () => {
         {
           authKey: VALID_AUTH_KEY,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          onError: vi.fn(),
           onPublish: vi.fn(),
         },
         mockedFetch,
