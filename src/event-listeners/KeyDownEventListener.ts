@@ -10,11 +10,7 @@ import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsH
 
 class KeyDownEventListener extends TargetedEventListener {
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
-  constructor(
-    userActionHandler: IUserActionHandler,
-    window: Window,
-    options: TargetEventListenerOptions = {},
-  ) {
+  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
     super(userActionHandler, UserActionType.KeyDown, window, options)
   }
 

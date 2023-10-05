@@ -4,10 +4,7 @@ import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
-  constructor(
-      requestInterval: number,
-      private readonly maxDelay: number = 0,
-  ) {
+  constructor(requestInterval: number, private readonly maxDelay: number = 0) {
     super(requestInterval)
   }
 
@@ -18,9 +15,7 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     return { error: null }
   }
 
-  async handleSessionTraits(
-      sessionId: string,
-      sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
+  async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
     this.log({ sessionId, sessionTraits })
     return { error: null }
   }

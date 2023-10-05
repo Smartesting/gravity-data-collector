@@ -25,11 +25,11 @@ describe('KeyDownEventListener', () => {
   })
 
   function listHandledUserActions(): UserAction[] {
-    return handleSpy.mock.calls.map(args => args[0])
+    return handleSpy.mock.calls.map((args) => args[0])
   }
 
   function listHandledUserActionsByType(expectedType: UserActionType): UserAction[] {
-    return listHandledUserActions().filter(userAction => userAction.type === expectedType)
+    return listHandledUserActions().filter((userAction) => userAction.type === expectedType)
   }
 
   it('calls createTargetedUserAction with the excludeRegex option', async () => {
@@ -212,9 +212,7 @@ describe('KeyDownEventListener', () => {
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
             const handledUserActionTypes = listHandledUserActionsByType(UserActionType.Change)
-            expect(handledUserActionTypes).not.to.contain(
-              UserActionType.Change,
-            )
+            expect(handledUserActionTypes).not.to.contain(UserActionType.Change)
           })
         })
       }

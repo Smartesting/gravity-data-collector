@@ -96,8 +96,8 @@ describe('HttpGravityClient', () => {
 
     // it should never happen
     it('only sends traits from the first session', async () => {
-        const authKey = uuidv4()
-       const mockedFetch = mockFetch()
+      const authKey = uuidv4()
+      const mockedFetch = mockFetch()
       const gravityClient = new HttpGravityClient(
         150,
         {
