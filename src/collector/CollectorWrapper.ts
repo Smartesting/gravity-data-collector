@@ -25,18 +25,16 @@ import { TargetEventListenerOptions } from '../event-listeners/TargetedEventList
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
 import { IEventListener } from '../event-listeners/IEventListener'
-import IUserActionHandler from '../user-action/IUserActionHandler'
 import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import crossfetch from 'cross-fetch'
-import IScreenRecordHandler from '../screen-record/IScreenRecordHandler'
-import ScreenRecordHandler from '../screen-record/ScreenRecordHandler'
+import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 
 class CollectorWrapper {
-  readonly userActionHandler: IUserActionHandler
-  readonly screenRecordHandler: IScreenRecordHandler
+  readonly userActionHandler: UserActionHandler
+  readonly screenRecorderHandler: ScreenRecorderHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
@@ -52,10 +50,14 @@ class CollectorWrapper {
 
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
-      : new HttpGravityClient(options.requestInterval, {
-          ...options,
-          onError: (status) => this.trackingHandler.senderErrorCallback(status),
-        }, fetch)
+      : new HttpGravityClient(
+          options.requestInterval,
+          {
+            ...options,
+            onError: (status) => this.trackingHandler.senderErrorCallback(status),
+          },
+          fetch,
+        )
 
     const isNewSession =
       trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
@@ -68,13 +70,13 @@ class CollectorWrapper {
 
     this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
-    this.screenRecordHandler = new ScreenRecordHandler(this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
-    this.trackingHandler.init(this.eventListenerHandler)
+    this.screenRecorderHandler = new ScreenRecorderHandler(this.gravityClient)
+    this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
 
     if (this.isListenerEnabled(Listener.Requests)) {
       this.patchFetch()
