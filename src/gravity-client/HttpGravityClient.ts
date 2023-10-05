@@ -3,6 +3,7 @@ import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
 import { buildGravityTrackingIdentifySessionApiUrl, buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
+import { eventWithTime } from '@rrweb/types'
 
 interface HttpGravityClientOptions {
   authKey: string
@@ -36,7 +37,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     )
   }
 
-  async handleScreenRecords(screenRecordings: readonly unknown[]): Promise<void> {
+  async handleScreenRecords(screenRecordings: ReadonlyArray<eventWithTime>): Promise<void> {
     console.log(screenRecordings)
   }
 

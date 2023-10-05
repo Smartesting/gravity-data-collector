@@ -1,6 +1,6 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import { record } from 'rrweb'
-import { listenerHandler } from '@rrweb/types'
+import { eventWithTime, listenerHandler } from '@rrweb/types'
 
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
@@ -20,7 +20,7 @@ export default class ScreenRecorderHandler {
     this.stopRecording?.()
   }
 
-  handle(screenRecord: unknown) {
+  handle(screenRecord: eventWithTime) {
     this.gravityClient
       .addScreenRecord(screenRecord)
       .then(() => {})
