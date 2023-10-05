@@ -38,7 +38,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
   }
 
   async handleScreenRecords(screenRecordings: ReadonlyArray<eventWithTime>): Promise<void> {
-    console.log(screenRecordings)
+    console.log({ screenRecordings })
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {

@@ -1,6 +1,7 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import { record } from 'rrweb'
 import { eventWithTime, listenerHandler } from '@rrweb/types'
+import RECORDING_SETTINGS from './recordingSettings'
 
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
@@ -9,10 +10,12 @@ export default class ScreenRecorderHandler {
 
   initializeRecording() {
     const handleRecord = this.handle.bind(this)
+    // @ts-expect-error
     this.stopRecording = record({
       emit(event) {
         handleRecord(event)
       },
+      ...RECORDING_SETTINGS,
     })
   }
 
