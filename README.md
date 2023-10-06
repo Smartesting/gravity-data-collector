@@ -64,7 +64,7 @@ GravityCollector.init(/*options*/)
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
 | key                    | type                     | use                                                                                                                                                                                             | default value                       |
-| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+|------------------------|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 | authKey                | String                   | The authentication key provided by Gravity to select the correct collection                                                                                                                     |                                     |
 | requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 5000                                |
 | gravityServerUrl       | String                   | Gravity server URL                                                                                                                                                                              | https://api.gravity.smartesting.com |
@@ -78,6 +78,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | onPublish              | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                           |
 | originsToRecord        | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
+| buildId                | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
 
 ## Features
 
@@ -151,14 +152,22 @@ to `true` and then to `false`, the first value will be overwritten.
 
 ### Send build information to Gravity
 
-In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity:
+In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity.
+
+The build ID can be specified in multiple way. You can set the following properties on `process.env` (for example when using React)
 
 | environment variable name  | Gravity data |
 | -------------------------- | ------------ |
 | GRAVITY_BUILD_ID           | buildId      |
 | REACT_APP_GRAVITY_BUILD_ID | buildId      |
 
-Those variables can be easily exposed in `process.env`.
+You can also declare `window.GRAVITY_BUILD_ID` (or simply declare a global variable `GRAVITY_BUILD_ID` which should be assigned to the window object).
+
+Another solution is to pass the `buildId`parameter when initializing gravity data collector:
+
+```javascript
+GravityCollector.init({authKey: '...', buildId: '1234'})
+```
 
 ## Sandbox
 

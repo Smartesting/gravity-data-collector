@@ -5,7 +5,7 @@ import { config } from '../config'
 import gravityDocument from '../utils/gravityDocument'
 import { makeCypressTestContext } from '../utils/makeCypressTestContext'
 
-function buildId() {
+function discoverBuildId() {
   return (
     rejectBlankString((window as {GRAVITY_BUILD_ID?: string}).GRAVITY_BUILD_ID) ??
     rejectBlankString(process.env.GRAVITY_BUILD_ID) ??
@@ -19,7 +19,7 @@ function rejectBlankString(value: string | undefined): string | null {
   return null
 }
 
-export function createSessionStartedUserAction(): SessionStartedUserAction {
+export function createSessionStartedUserAction(buildId?: string): SessionStartedUserAction {
   const action: SessionStartedUserAction = {
     type: UserActionType.SessionStarted,
     recordedAt: new Date().toISOString(),
@@ -28,7 +28,7 @@ export function createSessionStartedUserAction(): SessionStartedUserAction {
     viewportData: viewport(),
     version: config.COLLECTOR_VERSION,
     agent: navigator.userAgent,
-    buildId: buildId(),
+    buildId: buildId ?? discoverBuildId(),
   }
 
   const cypress = (window as any).Cypress

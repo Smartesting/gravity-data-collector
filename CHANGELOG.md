@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add option `buildId` to ease specifying the buildId instead of relying on global variables.
+
 ### Changed
 
 ### Deprecated

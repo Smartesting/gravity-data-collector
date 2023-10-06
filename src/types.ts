@@ -193,6 +193,7 @@ export interface CollectorOptions {
   recordRequestsFor?: string[]
   window?: typeof window
   enabledListeners?: Listener[]
+  buildId?: string
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
