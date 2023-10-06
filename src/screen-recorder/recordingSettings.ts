@@ -28,10 +28,10 @@ const RECORDING_SETTINGS = {
     tel: true,
     text: true,
     time: false,
-    url: false,
+    url: true,
     week: false,
     textarea: true,
-    select: false,
+    select: true,
     password: true,
   },
   maskInputFn: (text: string) => {
