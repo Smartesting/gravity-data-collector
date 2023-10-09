@@ -1,4 +1,10 @@
-import { AddSessionUserActionsResponse, IdentifySessionResponse, SessionTraits, SessionUserAction } from '../types'
+import {
+  AddSessionRecordingResponse,
+  AddSessionUserActionsResponse,
+  IdentifySessionResponse,
+  SessionTraits,
+  SessionUserAction,
+} from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { eventWithTime } from '@rrweb/types'
@@ -8,10 +14,20 @@ export interface SessionTraitsWithSessionId {
   sessionTraits: SessionTraits
 }
 
+export interface ScreenRecordWithSessionId {
+  sessionId: string
+  screenRecord: eventWithTime
+}
+
+export interface ScreenRecordsWithSessionId {
+  sessionId: string
+  screenRecords: ReadonlyArray<eventWithTime>
+}
+
 export abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
-  private readonly screenRecordBuffer: DataBuffering<eventWithTime, void>
+  private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
 
   constructor(requestInterval: number, onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
@@ -26,9 +42,12 @@ export abstract class AbstractGravityClient implements IGravityClient {
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
     })
-    this.screenRecordBuffer = new DataBuffering<eventWithTime, void>({
+    this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
       handleInterval: requestInterval,
-      handleData: this.handleScreenRecords.bind(this),
+      handleData: async (screenRecordsWithSessionIds) => {
+        const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
+        return await this.handleScreenRecords(sessionId, screenRecords)
+      },
     })
   }
 
@@ -36,8 +55,11 @@ export abstract class AbstractGravityClient implements IGravityClient {
     await this.sessionUserActionBuffer.addData(sessionUserAction)
   }
 
-  async addScreenRecord(screenRecord: eventWithTime) {
-    await this.screenRecordBuffer.addData(screenRecord)
+  async addScreenRecord(sessionId: string, screenRecord: eventWithTime) {
+    await this.screenRecordBuffer.addData({
+      sessionId,
+      screenRecord,
+    })
   }
 
   async identifySession(sessionId: string, sessionTraits: SessionTraits) {
@@ -50,6 +72,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
   async flush() {
     await this.sessionUserActionBuffer.flush()
     await this.sessionTraitsBuffer.flush()
+    await this.screenRecordBuffer.flush()
   }
 
   protected abstract handleSessionUserActions(
@@ -61,7 +84,10 @@ export abstract class AbstractGravityClient implements IGravityClient {
     sessionTraits: SessionTraits,
   ): Promise<IdentifySessionResponse>
 
-  protected abstract handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void>
+  protected abstract handleScreenRecords(
+    sessionId: string,
+    screenRecords: ReadonlyArray<eventWithTime>,
+  ): Promise<AddSessionRecordingResponse>
 
   private extractSessionIdAndSessionTraits(
     sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>,
@@ -77,6 +103,29 @@ export abstract class AbstractGravityClient implements IGravityClient {
         sessionTraits = { ...sessionTraits, ...sessionTraitWithSessionId.sessionTraits }
       }
     }
-    return { sessionId, sessionTraits }
+    return {
+      sessionId,
+      sessionTraits,
+    }
+  }
+
+  private extractSessionIdAndScreenRecords(
+    screenRecordsWithSessionIds: ReadonlyArray<ScreenRecordWithSessionId>,
+  ): ScreenRecordsWithSessionId {
+    const sessionId = screenRecordsWithSessionIds[0]?.sessionId
+    if (sessionId === undefined) {
+      throw new Error('No session id')
+    }
+
+    const screenRecords: eventWithTime[] = []
+    for (const screenRecordWithSessionId of screenRecordsWithSessionIds) {
+      if (sessionId === screenRecordWithSessionId.sessionId) {
+        screenRecords.push(screenRecordWithSessionId.screenRecord)
+      }
+    }
+    return {
+      sessionId,
+      screenRecords,
+    }
   }
 }

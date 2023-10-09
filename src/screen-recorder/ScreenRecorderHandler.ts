@@ -2,11 +2,12 @@ import { IGravityClient } from '../gravity-client/IGravityClient'
 import { record } from 'rrweb'
 import { eventWithTime, listenerHandler } from '@rrweb/types'
 import RECORDING_SETTINGS from './recordingSettings'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
-  constructor(private readonly gravityClient: IGravityClient) {}
+  constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
 
   initializeRecording() {
     const handleRecord = this.handle.bind(this)
@@ -25,7 +26,7 @@ export default class ScreenRecorderHandler {
 
   handle(screenRecord: eventWithTime) {
     this.gravityClient
-      .addScreenRecord(screenRecord)
+      .addScreenRecord(this.sessionIdHandler.get(), screenRecord)
       .then(() => {})
       .catch(() => {})
   }

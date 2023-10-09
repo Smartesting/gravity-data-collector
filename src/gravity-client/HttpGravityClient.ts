@@ -1,4 +1,10 @@
-import { AddSessionUserActionsResponse, IdentifySessionResponse, SessionTraits, SessionUserAction } from '../types'
+import {
+  AddSessionRecordingResponse,
+  AddSessionUserActionsResponse,
+  IdentifySessionResponse,
+  SessionTraits,
+  SessionUserAction,
+} from '../types'
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
@@ -37,8 +43,12 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     )
   }
 
-  async handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void> {
-    console.log({ screenRecords })
+  async handleScreenRecords(
+    sessionId: string,
+    screenRecords: ReadonlyArray<eventWithTime>,
+  ): Promise<AddSessionRecordingResponse> {
+    console.log({ sessionId, screenRecords })
+    return { error: null }
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {

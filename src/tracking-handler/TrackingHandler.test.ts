@@ -3,6 +3,7 @@ import EventListenersHandler from '../event-listeners-handler/EventListenersHand
 import TrackingHandler, { GRAVITY_SESSION_TRACKING_SUSPENDED } from './TrackingHandler'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
+import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 
 describe('TrackingHandler', () => {
   let trackingHandler: TrackingHandler
@@ -12,7 +13,8 @@ describe('TrackingHandler', () => {
   beforeEach(() => {
     eventListenersHandler = new EventListenersHandler([])
     const gravityClient = new NopGravityClient(0)
-    screenRecorderHandler = new ScreenRecorderHandler(gravityClient)
+    const sessionIdHandler = new MemorySessionIdHandler(() => '123', 4)
+    screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, gravityClient)
     trackingHandler = new TrackingHandler([403, 409])
 
     window.sessionStorage.clear()

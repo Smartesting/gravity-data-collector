@@ -70,12 +70,12 @@ class CollectorWrapper {
 
     this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
+    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction())
 
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
-    this.screenRecorderHandler = new ScreenRecorderHandler(this.gravityClient)
     this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
 
     if (this.isListenerEnabled(Listener.Requests)) {

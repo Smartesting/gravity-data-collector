@@ -1,4 +1,10 @@
-import { SessionTraits, SessionUserAction, AddSessionUserActionsResponse, IdentifySessionResponse } from '../types'
+import {
+  AddSessionRecordingResponse,
+  AddSessionUserActionsResponse,
+  IdentifySessionResponse,
+  SessionTraits,
+  SessionUserAction,
+} from '../types'
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
@@ -16,12 +22,22 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
   }
 
   async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
-    this.log({ sessionId, sessionTraits })
+    this.log({
+      sessionId,
+      sessionTraits,
+    })
     return { error: null }
   }
 
-  async handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void> {
-    this.log({ screenRecords })
+  async handleScreenRecords(
+    sessionId: string,
+    screenRecords: ReadonlyArray<eventWithTime>,
+  ): Promise<AddSessionRecordingResponse> {
+    this.log({
+      sessionId,
+      screenRecords,
+    })
+    return { error: null }
   }
 
   private log(data: unknown) {
