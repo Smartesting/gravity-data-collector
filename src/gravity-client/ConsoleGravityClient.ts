@@ -20,8 +20,8 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     return { error: null }
   }
 
-  async handleScreenRecords(screenRecordings: ReadonlyArray<eventWithTime>): Promise<void> {
-    this.log({ screenRecordings })
+  async handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void> {
+    this.log({ screenRecords })
   }
 
   private log(data: unknown) {

@@ -14,5 +14,5 @@ export default class NopGravityClient extends AbstractGravityClient implements I
     return { error: null }
   }
 
-  async handleScreenRecords(screenRecordings: ReadonlyArray<eventWithTime>): Promise<void> {}
+  async handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void> {}
 }

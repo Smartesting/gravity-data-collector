@@ -61,7 +61,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
     sessionTraits: SessionTraits,
   ): Promise<IdentifySessionResponse>
 
-  protected abstract handleScreenRecords(screenRecordings: ReadonlyArray<eventWithTime>): Promise<void>
+  protected abstract handleScreenRecords(screenRecords: ReadonlyArray<eventWithTime>): Promise<void>
 
   private extractSessionIdAndSessionTraits(
     sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>,
