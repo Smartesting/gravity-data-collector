@@ -76,7 +76,9 @@ class CollectorWrapper {
 
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
-    this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
+    if (trackingIsAllowed(options.window.document.URL)) {
+      this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
+    }
 
     if (this.isListenerEnabled(Listener.Requests)) {
       this.patchFetch()
