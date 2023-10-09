@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add option `buildId` to ease specifying the buildId instead of relying on global variables.
+
 ## [3.10.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.9.0...v3.10.0)
 
 ### Added
