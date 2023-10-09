@@ -47,7 +47,14 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    console.log({ sessionId, screenRecords })
+    /* return await this.sendRequest<AddSessionRecordingResponse>(
+      buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
+      screenRecords,
+    ) */
+    console.log({
+      sessionId,
+      screenRecords,
+    })
     return { error: null }
   }
 
