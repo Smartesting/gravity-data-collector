@@ -33,7 +33,12 @@ export abstract class AbstractGravityClient implements IGravityClient {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
       handleInterval: requestInterval,
       handleData: this.handleSessionUserActions.bind(this),
-      onFlush: onPublish,
+      onFlush: (buffer, response) => {
+        onPublish?.(buffer)
+        if (!this.screenRecordBuffer.getIsFlushingAllowed() && response.error === null) {
+          this.screenRecordBuffer.setIsFlushingAllowed(true)
+        }
+      },
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
       handleInterval: requestInterval,
@@ -48,6 +53,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
         const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
         return await this.handleScreenRecords(sessionId, screenRecords)
       },
+      isFlushingAllowed: false,
     })
   }
 

@@ -4,6 +4,7 @@ import { expect, vi } from 'vitest'
 import { SessionUserAction } from '../types'
 import { mockFetch } from '../test-utils/mocks'
 import { v4 as uuidv4 } from 'uuid'
+import { EventType, eventWithTime } from '@rrweb/types'
 
 describe('HttpGravityClient', () => {
   it('does not call onError when receiving 200', async () => {
@@ -32,7 +33,10 @@ describe('HttpGravityClient', () => {
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
         onError,
       },
-      mockFetch({ status: 401, responseBody: { error: 'access_denied' } }),
+      mockFetch({
+        status: 401,
+        responseBody: { error: 'access_denied' },
+      }),
     )
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
@@ -56,6 +60,59 @@ describe('HttpGravityClient', () => {
     await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
     await gravityClient.flush()
     expect(onPublish).toHaveBeenCalledTimes(1)
+  })
+
+  // this prevents screen records from being sent when the session has not yet been created on the Gravity side
+  describe('send screen records after user actions', () => {
+    const sessionId = 'whatever'
+    const screenRecord: eventWithTime = {
+      timestamp: 42,
+      data: {
+        href: '',
+        width: 42,
+        height: 42,
+      },
+      type: EventType.Meta,
+    }
+
+    it('does not handle screen records until user actions are sent', async () => {
+      const gravityClient = new HttpGravityClient(
+        0,
+        {
+          authKey: uuidv4(),
+          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          onError: vi.fn(),
+        },
+        mockFetch({ responseBody: { error: null } }),
+      )
+      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await gravityClient.addScreenRecord(sessionId, screenRecord)
+      await gravityClient.flush()
+      expect(spyHandleScreenRecords).not.toHaveBeenCalled()
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await gravityClient.addSessionUserAction({ sessionId } as SessionUserAction)
+      await gravityClient.flush()
+      expect(spyHandleScreenRecords).toHaveBeenCalled()
+    })
+
+    it('does not handle screen records when user actions are sent with error', async () => {
+      const gravityClient = new HttpGravityClient(
+        0,
+        {
+          authKey: uuidv4(),
+          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+          onError: vi.fn(),
+        },
+        mockFetch({ responseBody: { error: 'aïe aïe aïe' } }),
+      )
+      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      await gravityClient.addSessionUserAction({ sessionId } as SessionUserAction)
+      await gravityClient.addScreenRecord(sessionId, screenRecord)
+      await gravityClient.flush()
+      expect(spyHandleScreenRecords).not.toHaveBeenCalled()
+    })
   })
 
   describe('handle session traits', () => {
@@ -85,7 +142,10 @@ describe('HttpGravityClient', () => {
         `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
           method: 'POST',
-          body: JSON.stringify({ admin: true, country: 'Zanzibar' }),
+          body: JSON.stringify({
+            admin: true,
+            country: 'Zanzibar',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -124,7 +184,10 @@ describe('HttpGravityClient', () => {
         `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
           method: 'POST',
-          body: JSON.stringify({ admin: true, country: 'Zanzibar' }),
+          body: JSON.stringify({
+            admin: true,
+            country: 'Zanzibar',
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
