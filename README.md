@@ -26,7 +26,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^3.10.0"
+    "@smartesting/gravity-data-collector": "^3.11.0"
   }
 }
 ```
@@ -42,7 +42,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@3.10.0/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@3.11.0/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -78,6 +78,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | onPublish              | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                           |
 | originsToRecord        | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
+| buildId                | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
 
 ## Features
 
@@ -151,14 +152,22 @@ to `true` and then to `false`, the first value will be overwritten.
 
 ### Send build information to Gravity
 
-In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity:
+In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity.
+
+The build ID can be specified in multiple way. You can set the following properties on `process.env` (for example when using React)
 
 | environment variable name  | Gravity data |
 | -------------------------- | ------------ |
 | GRAVITY_BUILD_ID           | buildId      |
 | REACT_APP_GRAVITY_BUILD_ID | buildId      |
 
-Those variables can be easily exposed in `process.env`.
+You can also declare `window.GRAVITY_BUILD_ID` (or simply declare a global variable `GRAVITY_BUILD_ID` which should be assigned to the window object).
+
+Another solution is to pass the `buildId`parameter when initializing gravity data collector:
+
+```javascript
+GravityCollector.init({ authKey: '...', buildId: '1234' })
+```
 
 ## Sandbox
 
