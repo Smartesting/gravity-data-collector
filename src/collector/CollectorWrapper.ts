@@ -87,7 +87,7 @@ class CollectorWrapper {
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
 
-    if (isNewSession) this.initSession(createSessionStartedUserAction())
+    if (isNewSession) this.initSession(createSessionStartedUserAction(options.buildId))
 
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)

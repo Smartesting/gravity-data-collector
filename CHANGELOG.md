@@ -21,7 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.10.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.11.0...main)
 
 ### Info
 
@@ -34,6 +34,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.11.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.10.0...v3.11.0)
+
+### Added
+
+- Add option `buildId` to ease specifying the buildId instead of relying on global variables.
 
 ## [3.10.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.9.0...v3.10.0)
 
