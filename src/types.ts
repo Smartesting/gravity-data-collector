@@ -266,16 +266,10 @@ export interface AddSessionRecordingResponse {
 
 export enum AddSessionRecordingError {
   accessDenied = 'no_access',
+  projectExpired = 'project_expired',
+  projectNotFound = 'project_not_found',
   collectionNotFound = 'collection_not_found',
   sessionNotFound = 'session_not_found',
-  invalidField = 'invalid_field',
-  incorrectSource = 'incorrect_source',
   notUUID = 'not_a_uuid',
-  projectNotFound = 'project_not_found',
-  projectExpired = 'project_expired',
-
-  /** @deprecated Use projectNotFound instead. */
-  domainNotFound = 'domain_not_found',
-  /** @deprecated Use projectExpired instead. */
-  domainExpired = 'domain_expired',
+  invalidFormat = 'invalid_format',
 }
