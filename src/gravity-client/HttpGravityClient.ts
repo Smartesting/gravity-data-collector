@@ -8,7 +8,11 @@ import {
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
-import { buildGravityTrackingIdentifySessionApiUrl, buildGravityTrackingPublishApiUrl } from '../gravityEndPoints'
+import {
+  buildGravityTrackingIdentifySessionApiUrl,
+  buildGravityTrackingPublishApiUrl,
+  buildGravityTrackingSessionRecordingApiUrl,
+} from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
 
 interface HttpGravityClientOptions {
@@ -47,15 +51,10 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    /* return await this.sendRequest<AddSessionRecordingResponse>(
+    return await this.sendRequest<AddSessionRecordingResponse>(
       buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
       screenRecords,
-    ) */
-    console.log({
-      sessionId,
-      screenRecords,
-    })
-    return { error: null }
+    )
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {
