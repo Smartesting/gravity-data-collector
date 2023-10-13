@@ -51,10 +51,24 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    return await this.sendRequest<AddSessionRecordingResponse>(
+    const screenRecordsNdjson = screenRecords.map((screenRecord) => JSON.stringify(screenRecord)).join('\n') + '\n'
+    const response = await this.fetch(
       buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
-      screenRecords,
+      {
+        method: 'POST',
+        redirect: 'follow',
+        body: screenRecordsNdjson,
+        headers: {
+          'Content-Type': 'application/x-ndjson',
+        },
+      },
     )
+    const responseBody: AddSessionRecordingResponse = await response.json()
+    if (response.status !== 200) {
+      this.options.onError(response.status, responseBody.error)
+    }
+
+    return responseBody
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {
