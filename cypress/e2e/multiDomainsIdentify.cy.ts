@@ -8,6 +8,7 @@ describe('Handling sessions identification on multi-domain', () => {
     const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
+    cy.interceptGravityRecord()
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })
@@ -31,6 +32,7 @@ describe('Handling sessions identification on multi-domain', () => {
     const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
+    cy.interceptGravityRecord()
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })

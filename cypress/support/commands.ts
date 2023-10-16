@@ -72,6 +72,22 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => 
   ).as('sendGravityIdentify')
 })
 
+Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: any) => void) => {
+  cy.intercept(
+    {
+      method: 'POST',
+      url: `https://api.gravity.smartesting.com/api/tracking/*/record/*`,
+    },
+    (req) => {
+      onReq && onReq(req)
+      req.reply({
+        statusCode: 200,
+        body: { error: null },
+      })
+    },
+  ).as('sendGravityRecord')
+})
+
 Cypress.Commands.add('openBaseSite', (path?: string) => {
   return cy.visit(`http://my-site.com:3000/${path ?? ''}`)
 })
@@ -109,6 +125,8 @@ declare global {
       interceptGravityPublish(onReq?: (req: any) => void): Chainable
 
       interceptGravityIdentify(onReq: (req: any) => void): Chainable
+
+      interceptGravityRecord(onReq?: (req: any) => void): Chainable
 
       openBaseSite(path?: string): Chainable
 
