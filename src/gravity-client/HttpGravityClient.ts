@@ -14,7 +14,6 @@ import {
   buildGravityTrackingSessionRecordingApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
-import toReadableStream from 'to-readable-stream'
 
 interface HttpGravityClientOptions {
   authKey: string
@@ -58,7 +57,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       {
         method: 'POST',
         redirect: 'follow',
-        body: toReadableStream(screenRecordsNdjson),
+        body: screenRecordsNdjson,
         headers: {
           'Content-Type': 'application/x-ndjson',
         },
