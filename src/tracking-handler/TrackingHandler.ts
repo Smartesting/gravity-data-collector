@@ -8,7 +8,7 @@ export default class TrackingHandler {
   private screenRecorderHandler: ScreenRecorderHandler | undefined
   private active: boolean = true
 
-  constructor(private readonly errorTerminateTracking: number[]) {}
+  constructor(private readonly errorTerminateTracking: number[], private readonly disableVideoRecording?: boolean) {}
 
   setActive(active: boolean) {
     this.active = active
@@ -20,7 +20,9 @@ export default class TrackingHandler {
     }
     window.sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
     this.eventListenerHandler.initializeEventListeners()
-    this.screenRecorderHandler.initializeRecording()
+    if (!this.disableVideoRecording) {
+      this.screenRecorderHandler.initializeRecording()
+    }
   }
 
   init(eventListenerHandler: EventListenersHandler, screenRecorderHandler: ScreenRecorderHandler): void {
@@ -41,7 +43,9 @@ export default class TrackingHandler {
     }
     window.sessionStorage.setItem(GRAVITY_SESSION_TRACKING_SUSPENDED, '1')
     this.eventListenerHandler.terminateEventListeners()
-    this.screenRecorderHandler.terminateRecording()
+    if (!this.disableVideoRecording) {
+      this.screenRecorderHandler.terminateRecording()
+    }
   }
 
   senderErrorCallback(statusCode: number) {

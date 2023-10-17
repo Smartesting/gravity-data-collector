@@ -22,8 +22,10 @@ describe('TrackingHandler', () => {
 
   it('activates tracking if enabled', async () => {
     vi.spyOn(TrackingHandler.prototype, 'activateTracking')
+    vi.spyOn(ScreenRecorderHandler.prototype, 'initializeRecording')
     trackingHandler.init(eventListenersHandler, screenRecorderHandler)
     expect(TrackingHandler.prototype.activateTracking).toHaveBeenCalledOnce()
+    expect(ScreenRecorderHandler.prototype.initializeRecording).toHaveBeenCalledOnce()
   })
 
   it('does not activate tracking if disabled', async () => {
@@ -91,5 +93,19 @@ describe('TrackingHandler', () => {
 
     trackingHandler.setActive(true)
     expect(trackingHandler.isTracking()).toBeTruthy()
+  })
+
+  describe('when "disableVideoRecording" is set to true', () => {
+    beforeEach(() => {
+      trackingHandler = new TrackingHandler([403, 409], true)
+    })
+
+    it('does not initialize the video recording', () => {
+      vi.spyOn(TrackingHandler.prototype, 'activateTracking')
+      vi.spyOn(ScreenRecorderHandler.prototype, 'initializeRecording')
+      trackingHandler.init(eventListenersHandler, screenRecorderHandler)
+      expect(TrackingHandler.prototype.activateTracking).toHaveBeenCalledOnce()
+      expect(ScreenRecorderHandler.prototype.initializeRecording).not.toHaveBeenCalledOnce()
+    })
   })
 })

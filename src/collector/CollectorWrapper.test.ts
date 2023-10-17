@@ -22,6 +22,7 @@ import createAsyncRequest from '../user-action/createAsyncRequest'
 import CypressEventListener from '../event-listeners/CypressEventListener'
 
 describe('CollectorWrapper', () => {
+  const DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS = { debug: true, window: global.window, disableVideoRecording: true }
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
   let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
 
@@ -48,14 +49,18 @@ describe('CollectorWrapper', () => {
     ) {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper({ ...options, window: global.window }, sessionIdHandler, testNameHandler, mockFetch())
+      return new CollectorWrapper(
+        { ...options, ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS },
+        sessionIdHandler,
+        testNameHandler,
+        mockFetch(),
+      )
     }
 
     describe('when debug option is set to true', () => {
       beforeEach(() => {
         // @ts-expect-error
         options = {
-          debug: true,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
         }
@@ -375,7 +380,7 @@ describe('CollectorWrapper', () => {
   describe('identifySession', () => {
     it('delegates session trait to handler', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, window: global.window }),
+        completeOptions(DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -386,7 +391,7 @@ describe('CollectorWrapper', () => {
 
     it('prevents bad format of session trait value', () => {
       const collectorWrapper = new CollectorWrapper(
-        completeOptions({ debug: true, window: global.window }),
+        completeOptions(DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
@@ -404,9 +409,8 @@ describe('CollectorWrapper', () => {
     it('should always track if percentage is 100', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
-          debug: true,
+          ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
           sessionsPercentageKept: 100,
-          window: global.window,
         }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -419,9 +423,8 @@ describe('CollectorWrapper', () => {
     it('should never track if percentage is 0', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
-          debug: true,
+          ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
           sessionsPercentageKept: 0,
-          window: global.window,
         }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -437,9 +440,8 @@ describe('CollectorWrapper', () => {
       function createCollector(sessionsPercentageKept: number) {
         return new CollectorWrapper(
           completeOptions({
-            debug: true,
+            ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
             sessionsPercentageKept,
-            window: global.window,
           }),
           memorySessionIdHandler,
           new SessionStorageTestNameHandler(),
@@ -465,9 +467,8 @@ describe('CollectorWrapper', () => {
       function createCollector() {
         return new CollectorWrapper(
           completeOptions({
-            debug: true,
+            ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
             sessionsPercentageKept,
-            window: global.window,
           }),
           new MemorySessionIdHandler(uuidv4, 1000),
           new SessionStorageTestNameHandler(),
@@ -501,9 +502,8 @@ describe('CollectorWrapper', () => {
     it('should not track session if rejectSession is positive', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
-          debug: true,
+          ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
           rejectSession: () => true,
-          window: global.window,
         }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
@@ -516,9 +516,8 @@ describe('CollectorWrapper', () => {
     it('should keep session tracking if rejectSession is negative', () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
-          debug: true,
+          ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
           rejectSession: () => false,
-          window: global.window,
         }),
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),

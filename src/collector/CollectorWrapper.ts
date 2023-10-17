@@ -46,7 +46,7 @@ class CollectorWrapper {
     readonly testNameHandler: TestNameHandler,
     fetch = crossfetch,
   ) {
-    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
+    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING, options.disableVideoRecording)
 
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
