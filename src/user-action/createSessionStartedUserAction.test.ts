@@ -136,6 +136,7 @@ describe('action', () => {
 function withPatchedProperties<T>(toPatch: unknown, properties: T, callBack: () => void) {
   const originalProperties = Object.fromEntries(
     Object.entries(properties).map(([key]) => {
+      // @ts-expect-error
       return [key, (toPatch as T)[key]]
     }),
   )
@@ -148,6 +149,8 @@ function withPatchedProperties<T>(toPatch: unknown, properties: T, callBack: () 
   } finally {
     Object.entries(originalProperties).forEach(([key, value]) => {
       if (value === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        // @ts-expect-error
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete (toPatch as T)[key]
       } else {
