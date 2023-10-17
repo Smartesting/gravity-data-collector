@@ -1,19 +1,16 @@
 import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
 import { fireEvent, getByRole, getByTestId, waitFor } from '@testing-library/dom'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import UserActionsHistory from '../user-actions-history/UserActionsHistory'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import { TargetedUserAction, UserActionType } from '../types'
+import { TargetedUserAction, UserAction, UserActionType } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import { nop } from '../utils/nop'
 import IUserActionHandler from '../user-action/IUserActionHandler'
+import NopGravityClient from '../gravity-client/NopGravityClient'
 
 describe('KeyDownEventListener', () => {
-  let userActionHistory: UserActionsHistory
   let userActionHandler: IUserActionHandler
   let sessionIdHandler: ISessionIdHandler
   let handleSpy: SpyInstance
@@ -21,12 +18,19 @@ describe('KeyDownEventListener', () => {
 
   beforeEach(() => {
     vitest.restoreAllMocks()
-    userActionHistory = new MemoryUserActionsHistory()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
-    userActionHandler = new UserActionHandler(sessionIdHandler, 0, nop, nop, userActionHistory)
+    userActionHandler = new UserActionHandler(sessionIdHandler, new NopGravityClient(0))
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
+
+  function listHandledUserActions(): UserAction[] {
+    return handleSpy.mock.calls.map((args) => args[0])
+  }
+
+  function listHandledUserActionsByType(expectedType: UserActionType): UserAction[] {
+    return listHandledUserActions().filter((userAction) => userAction.type === expectedType)
+  }
 
   it('calls createTargetedUserAction with the excludeRegex option', async () => {
     const { element, domWindow } = createElementInJSDOM(
@@ -37,7 +41,7 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory, { excludeRegex: /.*/ }).init()
+    new KeyDownEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
     const search = await waitFor(() => getByRole(element, 'searchbox'))
 
     fireEvent.keyDown(search)
@@ -58,7 +62,7 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory, { customSelector: 'data-testid' }).init()
+    new KeyDownEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
     const search = await waitFor(() => getByRole(element, 'searchbox'))
 
     fireEvent.keyDown(search)
@@ -79,7 +83,7 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+    new KeyDownEventListener(userActionHandler, domWindow).init()
     const button = await waitFor(() => getByRole(element, 'checkbox'))
 
     fireEvent.keyDown(button)
@@ -98,13 +102,12 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+    new KeyDownEventListener(userActionHandler, domWindow).init()
     const div = await waitFor(() => getByRole(element, 'cell'))
 
     fireEvent.keyDown(div)
 
     await waitFor(() => {
-      console.log()
       expect(handleSpy).toHaveBeenCalledOnce()
     })
   })
@@ -118,7 +121,7 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+    new KeyDownEventListener(userActionHandler, domWindow).init()
     const div = await waitFor(() => getByRole(element, 'cell'))
 
     for (let i = 0; i < 10; i++) fireEvent.keyDown(div, { code: 'Enter' })
@@ -174,15 +177,15 @@ describe('KeyDownEventListener', () => {
     ) {
       const { element, domWindow } = createElementInJSDOM(`<div>${domContent}</div>`, 'div')
 
-      new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+      new KeyDownEventListener(userActionHandler, domWindow).init()
 
       const input = await waitFor(() => query(element))
       fireEvent.keyDown(input, { code })
 
       await waitFor(() => {
-        const userActions = userActionHistory.getUserActionsHistory()
         expect(handleSpy).toHaveBeenCalledOnce()
-        expect(userActions[0].type).to.eq(expectedUserActionType)
+        const handledUserAction = listHandledUserActions()[0]
+        expect(handledUserAction.type).to.eq(expectedUserActionType)
       })
     }
   })
@@ -202,15 +205,14 @@ describe('KeyDownEventListener', () => {
             'div',
           )
 
-          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          new KeyDownEventListener(userActionHandler, domWindow).init()
           const input = await waitFor(() => getByTestId(element, inputTestId))
           fireEvent.keyDown(input, { code: 'KeyA' })
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            expect(userActionHistory.getUserActionsHistory().map((userAction) => userAction.type)).not.to.contain(
-              UserActionType.Change,
-            )
+            const handledUserActionTypes = listHandledUserActionsByType(UserActionType.Change)
+            expect(handledUserActionTypes).not.to.contain(UserActionType.Change)
           })
         })
       }
@@ -233,15 +235,13 @@ describe('KeyDownEventListener', () => {
             'div',
           )
 
-          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          new KeyDownEventListener(userActionHandler, domWindow).init()
           const input = await waitFor(() => getByTestId(element, inputTestId))
           fireEvent.keyDown(input, { code: 'KeyA' })
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            const changeEvents = userActionHistory
-              .getUserActionsHistory()
-              .filter((userAction) => userAction.type === UserActionType.Change)
+            const changeEvents = listHandledUserActionsByType(UserActionType.Change)
             expect(changeEvents.length).to.eq(1)
           })
         })
@@ -253,7 +253,7 @@ describe('KeyDownEventListener', () => {
             'div',
           )
 
-          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          new KeyDownEventListener(userActionHandler, domWindow).init()
           const input = await waitFor(() => getByTestId(element, inputTestId))
           fireEvent.keyDown(input, { code: 'KeyA' })
           fireEvent.keyDown(input, { code: 'KeyB' })
@@ -262,10 +262,7 @@ describe('KeyDownEventListener', () => {
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            const changeEvents = userActionHistory
-              .getUserActionsHistory()
-              .filter((userAction) => userAction.type === UserActionType.Change)
-
+            const changeEvents = listHandledUserActionsByType(UserActionType.Change)
             expect(changeEvents.length).to.eq(1)
           })
         })
@@ -277,15 +274,13 @@ describe('KeyDownEventListener', () => {
             'div',
           )
 
-          new KeyDownEventListener(userActionHandler, domWindow, userActionHistory).init()
+          new KeyDownEventListener(userActionHandler, domWindow).init()
           const input = await waitFor(() => getByTestId(element, inputTestId))
           fireEvent.keyDown(input, { code: 'KeyA' })
 
           await waitFor(() => {}, { timeout: 200 })
           await waitFor(() => {
-            const changeEvents = userActionHistory
-              .getUserActionsHistory()
-              .filter((userAction) => userAction.type === UserActionType.Change)
+            const changeEvents = listHandledUserActionsByType(UserActionType.Change)
             const targetedUserAction = changeEvents[0] as TargetedUserAction
             expect(targetedUserAction.target.value).to.eq(`{{${type}}}`)
           })

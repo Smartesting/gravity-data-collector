@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
-import { mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import { mockFetch, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import CollectorWrapper from './CollectorWrapper'
@@ -49,7 +49,7 @@ describe('CollectorWrapper', () => {
     ) {
       // We are testing the side effects of the constructor, so we wrap
       // it here to avoid eslint error. We will not disable this rule which as great benefits, but not here.
-      return new CollectorWrapper({ ...options, window: global.window }, sessionIdHandler, testNameHandler)
+      return new CollectorWrapper({ ...options, window: global.window }, sessionIdHandler, testNameHandler, mockFetch())
     }
 
     describe('when debug option is set to true', () => {

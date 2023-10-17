@@ -21,7 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.11.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/main...v3.13.0)
 
 ### Info
 
@@ -34,6 +34,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.13.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.12.0...v3.13.0)
+
+### Changed
+
+- Stream screen recordings
+
+## [3.12.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.11.0...v3.12.0)
+
+### Added
+
+- Add screen recording with `rrweb`
+
+### Changed
+
+- Centralize API endpoints in the `HttpGravityClient.ts` file
 
 ## [3.11.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.10.0...v3.11.0)
 

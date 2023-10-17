@@ -9,13 +9,9 @@ import {
 } from '../types'
 
 import UserActionHandler from '../user-action/UserActionHandler'
-import { debugSessionUserActionSender, defaultSessionUserActionSender } from '../user-action/sessionUserActionSender'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
-import { debugSessionTraitSender, defaultSessionTraitSender } from '../session-trait/sessionTraitSender'
-import { nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
@@ -29,44 +25,43 @@ import { TargetEventListenerOptions } from '../event-listeners/TargetedEventList
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
 import { IEventListener } from '../event-listeners/IEventListener'
-import IUserActionHandler from '../user-action/IUserActionHandler'
 import WebVitalHandler from '../web-vitals/WebVitalsHandler'
-import { debugWebVitalSender, defaultWebVitalSender } from '../web-vitals/webVitalSender'
 import CypressEventListener from '../event-listeners/CypressEventListener'
+import { IGravityClient } from '../gravity-client/IGravityClient'
+import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
+import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import crossfetch from 'cross-fetch'
+import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 
 class CollectorWrapper {
-  readonly userActionHandler: IUserActionHandler
-  readonly userActionsHistory: MemoryUserActionsHistory
+  readonly userActionHandler: UserActionHandler
+  readonly screenRecorderHandler: ScreenRecorderHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   readonly trackingHandler: TrackingHandler
   readonly webVitalsHandler: WebVitalHandler
+  readonly gravityClient: IGravityClient
 
   constructor(
     readonly options: CollectorOptionsWithWindow,
     readonly sessionIdHandler: ISessionIdHandler,
     readonly testNameHandler: TestNameHandler,
+    fetch = crossfetch,
   ) {
     this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
-    const userActionOutput = options.debug
-      ? debugSessionUserActionSender(options.maxDelay)
-      : defaultSessionUserActionSender(
-          options.authKey,
-          options.gravityServerUrl,
-          nop,
-          this.trackingHandler.getSenderErrorCallback(),
-        )
+    this.gravityClient = options.debug
+      ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
+      : new HttpGravityClient(
+        options.requestInterval,
+        {
+          ...options,
+          onError: (status) => this.trackingHandler.senderErrorCallback(status),
+        },
+        fetch,
+      )
 
-    const sessionTraitOutput = options.debug
-      ? debugSessionTraitSender(options.maxDelay)
-      : defaultSessionTraitSender(
-          options.authKey,
-          options.gravityServerUrl,
-          nop,
-          this.trackingHandler.getSenderErrorCallback(),
-        )
-
+    this.webVitalsHandler = new WebVitalHandler(sessionIdHandler, this.trackingHandler, this.gravityClient)
     const isNewSession =
       trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
@@ -76,32 +71,18 @@ class CollectorWrapper {
       sessionIdHandler.generateNewSessionId()
     }
 
-    this.userActionsHistory = new MemoryUserActionsHistory()
-
-    this.userActionHandler = new UserActionHandler(
-      sessionIdHandler,
-      options.requestInterval,
-      userActionOutput,
-      options.onPublish,
-      this.userActionsHistory,
-    )
-    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, options.requestInterval, sessionTraitOutput)
+    this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
+    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
+    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
 
     if (isNewSession) this.initSession(createSessionStartedUserAction(options.buildId))
 
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
-    this.trackingHandler.init(this.eventListenerHandler)
-    const webVitalsOutput = options.debug
-      ? debugWebVitalSender(options.maxDelay)
-      : defaultWebVitalSender(
-          options.authKey,
-          options.gravityServerUrl,
-          nop,
-          this.trackingHandler.getSenderErrorCallback(),
-        )
-    this.webVitalsHandler = new WebVitalHandler(sessionIdHandler, this.trackingHandler, webVitalsOutput)
-    this.webVitalsHandler.init()
+    if (trackingIsAllowed(options.window.document.URL)) {
+      this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
+      this.webVitalsHandler.init()
+    }
 
     if (this.isListenerEnabled(Listener.Requests)) {
       this.patchFetch()
@@ -186,12 +167,7 @@ class CollectorWrapper {
 
     if (this.isListenerEnabled(Listener.KeyDown)) {
       eventListeners.push(
-        new KeyDownEventListener(
-          this.userActionHandler,
-          this.options.window,
-          this.userActionsHistory,
-          targetedEventListenerOptions,
-        ),
+        new KeyDownEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
       )
     }
 

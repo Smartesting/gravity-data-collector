@@ -1,63 +1,32 @@
-import { beforeEach, describe, expect, it, SpyInstanceFn, vi, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, vitest } from 'vitest'
 import UserActionHandler from '../user-action/UserActionHandler'
 import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import { SessionUserAction } from '../types'
-import { mockClickUserAction } from '../test-utils/mocks'
+import { UserAction } from '../types'
+import { IGravityClient } from '../gravity-client/IGravityClient'
+import IUserActionHandler from './IUserActionHandler'
+import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import NopGravityClient from '../gravity-client/NopGravityClient'
 
 describe('UserActionHandler', () => {
   describe('handle', () => {
-    const output: SpyInstanceFn<[SessionUserAction[]], void> = vitest.fn()
-    const onPublish = vitest.fn()
-    const sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111', 500)
+    let client: IGravityClient
+    let sessionIdHandler: ISessionIdHandler
+    let userActionHandler: IUserActionHandler
+    const userAction: UserAction = createSessionStartedUserAction()
+    const sessionId = '123-456'
 
     beforeEach(() => {
-      vi.useFakeTimers()
-      vi.restoreAllMocks()
+      client = new NopGravityClient(0)
+      sessionIdHandler = new MemorySessionIdHandler(() => sessionId, 10)
+      userActionHandler = new UserActionHandler(sessionIdHandler, client)
     })
 
-    it('outputs actions if requestInterval=0', async () => {
-      const userActionHandler = new UserActionHandler(sessionIdHandler, 0, output)
-      userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      expect(output).toHaveBeenCalledTimes(2)
-    })
+    it('adds a session id when  handling a user action', async () => {
+      const spy = vitest.spyOn(client, 'addSessionUserAction')
+      userActionHandler.handle(userAction)
 
-    it('outputs actions if requestInterval>0', async () => {
-      const userActionHandler = new UserActionHandler(sessionIdHandler, 5000, output)
-      userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      expect(output).toHaveBeenCalledTimes(0)
-      vitest.advanceTimersByTime(5000)
-      expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
-    })
-
-    it('flush actions on demand (unload case)', async () => {
-      const userActionHandler = new UserActionHandler(sessionIdHandler, 5000, output)
-      userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      userActionHandler.flush()
-      expect(output).toHaveBeenCalledTimes(1)
-      expect((output.mock.lastCall as any[])[0]).toHaveLength(3)
-    })
-
-    it('skips outputs if no more buffered events', async () => {
-      const userActionHandler = new UserActionHandler(sessionIdHandler, 5000, output)
-      userActionHandler.handle(createSessionStartedUserAction())
-      vitest.advanceTimersByTime(5000)
-      expect(output).toHaveBeenCalledTimes(1)
-      vitest.advanceTimersByTime(10000)
-      expect(output).toHaveBeenCalledTimes(1)
-    })
-
-    it('calls onPublish if it is defined', async () => {
-      const userActionHandler = new UserActionHandler(sessionIdHandler, 0, output, onPublish)
-      userActionHandler.handle(createSessionStartedUserAction())
-      userActionHandler.handle(mockClickUserAction())
-      expect(onPublish).toHaveBeenCalledTimes(2)
+      expect(spy).toHaveBeenCalledWith({ ...userAction, sessionId })
     })
   })
 })

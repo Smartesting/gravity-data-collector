@@ -2,14 +2,15 @@ import { Metric, onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from 'web-vitals'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import TrackingHandler from '../tracking-handler/TrackingHandler'
 import location from '../utils/location'
-import { GravityMetric } from '../types'
+import { IGravityClient } from '../gravity-client/IGravityClient'
 
 export default class WebVitalsHandler {
   constructor(
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly trackingHandler: TrackingHandler,
-    private readonly output: (sessionId: string, metric: GravityMetric) => void,
-  ) {}
+    private readonly gravityClient: IGravityClient,
+  ) {
+  }
 
   init() {
     try {
@@ -27,10 +28,15 @@ export default class WebVitalsHandler {
 
   flush(metric: Metric) {
     if (this.trackingHandler.isTracking()) {
-      this.output(this.sessionIdHandler.get(), {
-        location: location(),
-        metric,
-      })
+      this.gravityClient
+        .monitorSession(this.sessionIdHandler.get(), {
+          location: location(),
+          metric,
+        })
+        .then(() => {
+        })
+        .catch(() => {
+        })
     }
   }
 }

@@ -1,34 +1,14 @@
-import { SessionTraits, SessionTraitValue } from '../types'
+import { SessionTraitValue } from '../types'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import { IGravityClient } from '../gravity-client/IGravityClient'
 
 export default class SessionTraitHandler {
-  private buffer: SessionTraits = {}
-  private readonly timer?: NodeJS.Timer
-
-  constructor(
-    private readonly sessionIdHandler: ISessionIdHandler,
-    private readonly requestInterval: number,
-    private readonly output: (sessionId: string, traits: SessionTraits) => void,
-  ) {
-    if (requestInterval > 0) {
-      this.timer = setInterval(() => {
-        void this.flush()
-      }, requestInterval)
-    }
-  }
+  constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
 
   handle(traitName: string, traitValue: SessionTraitValue) {
-    this.buffer[traitName] = traitValue
-    if (this.timer == null) {
-      this.flush()
-    }
-  }
-
-  flush() {
-    if (Object.keys(this.buffer).length === 0) {
-      return
-    }
-    this.output(this.sessionIdHandler.get(), this.buffer)
-    this.buffer = {}
+    this.gravityClient
+      .identifySession(this.sessionIdHandler.get(), { [traitName]: traitValue })
+      .then(() => {})
+      .catch(() => {})
   }
 }

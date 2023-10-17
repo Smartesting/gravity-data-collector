@@ -2,5 +2,5 @@
   "extends": "./tsconfig.json",
   // 👇️ this may vary depending on how you
   // name your test files
-  "exclude": ["src/setupTests.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/test-utils/*.ts", "src/mocks/*.ts"]
+  "exclude": ["src/**/*.test.ts", "src/test-utils/*.ts"]
 }
