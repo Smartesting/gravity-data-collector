@@ -53,13 +53,13 @@ class CollectorWrapper {
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
       : new HttpGravityClient(
-        options.requestInterval,
-        {
-          ...options,
-          onError: (status) => this.trackingHandler.senderErrorCallback(status),
-        },
-        fetch,
-      )
+          options.requestInterval,
+          {
+            ...options,
+            onError: (status) => this.trackingHandler.senderErrorCallback(status),
+          },
+          fetch,
+        )
 
     this.webVitalsHandler = new WebVitalHandler(sessionIdHandler, this.trackingHandler, this.gravityClient)
     const isNewSession =

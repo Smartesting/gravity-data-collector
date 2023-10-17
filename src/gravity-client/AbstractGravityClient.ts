@@ -56,20 +56,14 @@ export abstract class AbstractGravityClient implements IGravityClient {
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
       handleInterval: requestInterval,
       handleData: async (sessionTraitsWithSessionIds) => {
-        const {
-          sessionId,
-          sessionTraits,
-        } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
+        const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
     })
     this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
       handleInterval: requestInterval,
       handleData: async (screenRecordsWithSessionIds) => {
-        const {
-          sessionId,
-          screenRecords,
-        } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
+        const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
         return await this.handleScreenRecords(sessionId, screenRecords)
       },
       isFlushingAllowed: false,
@@ -77,10 +71,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
     this.sessionMetricBuffer = new DataBuffering<SessionMetricWithSessionId, MonitorSessionResponse>({
       handleInterval: requestInterval,
       handleData: async (screenMetricWithSessionIds) => {
-        const {
-          sessionId,
-          metrics,
-        } = this.extractSessionIdAndMetrics(screenMetricWithSessionIds)
+        const { sessionId, metrics } = this.extractSessionIdAndMetrics(screenMetricWithSessionIds)
         return await this.handleSessionMetrics(sessionId, metrics)
       },
       isFlushingAllowed: false,

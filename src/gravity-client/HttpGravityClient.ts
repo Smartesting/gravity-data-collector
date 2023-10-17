@@ -74,7 +74,10 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     return responseBody
   }
 
-  async handleSessionMetrics(sessionId: string, metrics: ReadonlyArray<GravityMetric>): Promise<MonitorSessionResponse> {
+  async handleSessionMetrics(
+    sessionId: string,
+    metrics: ReadonlyArray<GravityMetric>,
+  ): Promise<MonitorSessionResponse> {
     return await this.sendRequest<MonitorSessionResponse>(
       buildGravityTrackingMonitorSessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
       metrics,

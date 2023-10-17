@@ -8,10 +8,10 @@ import { mockWindowLocation } from '../test-utils/mocks'
 import location from '../utils/location'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
+import { IGravityClient } from '../gravity-client/IGravityClient'
 
 describe('WebVitalsHandler', () => {
   describe('handle', () => {
-    const output = vitest.fn()
     const sessionId = 'aaa-111'
     const sessionIdHandler = new MemorySessionIdHandler(() => sessionId, 500)
     const metric: Metric = {
@@ -24,28 +24,35 @@ describe('WebVitalsHandler', () => {
       navigationType: 'navigate',
     }
     let trackingHandler: TrackingHandler
+    let gravityClient: IGravityClient
 
     beforeEach(() => {
       window.sessionStorage.clear()
       mockWindowLocation()
       vi.useFakeTimers()
       vi.restoreAllMocks()
+      gravityClient = new NopGravityClient(0)
       trackingHandler = new TrackingHandler([])
-      trackingHandler.init(new EventListenersHandler([]), new ScreenRecorderHandler(sessionIdHandler, new NopGravityClient(0)))
+      trackingHandler.init(
+        new EventListenersHandler([]),
+        new ScreenRecorderHandler(sessionIdHandler, new NopGravityClient(0)),
+      )
     })
 
     it('does not call output if tracking is disabled', async () => {
-      const webVitalsHandler = new WebVitalsHandler(sessionIdHandler, trackingHandler, output)
+      const spy = vitest.spyOn(gravityClient, 'monitorSession')
+      const webVitalsHandler = new WebVitalsHandler(sessionIdHandler, trackingHandler, gravityClient)
       trackingHandler.deactivateTracking()
       webVitalsHandler.flush(metric)
-      expect(output).toHaveBeenCalledTimes(0)
+      expect(spy).toHaveBeenCalledTimes(0)
     })
 
     it('calls output with params', async () => {
-      const webVitalsHandler = new WebVitalsHandler(sessionIdHandler, trackingHandler, output)
+      const spy = vitest.spyOn(gravityClient, 'monitorSession')
+      const webVitalsHandler = new WebVitalsHandler(sessionIdHandler, trackingHandler, gravityClient)
       webVitalsHandler.flush(metric)
-      expect(output).toHaveBeenCalledTimes(1)
-      expect(output).toHaveBeenCalledWith(sessionId, {
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith(sessionId, {
         location: location(),
         metric,
       })

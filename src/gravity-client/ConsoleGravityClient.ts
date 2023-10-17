@@ -42,7 +42,10 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     return { error: null }
   }
 
-  async handleSessionMetrics(sessionId: string, metrics: ReadonlyArray<GravityMetric>): Promise<MonitorSessionResponse> {
+  async handleSessionMetrics(
+    sessionId: string,
+    metrics: ReadonlyArray<GravityMetric>,
+  ): Promise<MonitorSessionResponse> {
     this.log({
       sessionId,
       metrics,

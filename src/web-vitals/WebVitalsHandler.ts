@@ -9,8 +9,7 @@ export default class WebVitalsHandler {
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly trackingHandler: TrackingHandler,
     private readonly gravityClient: IGravityClient,
-  ) {
-  }
+  ) {}
 
   init() {
     try {
@@ -33,10 +32,8 @@ export default class WebVitalsHandler {
           location: location(),
           metric,
         })
-        .then(() => {
-        })
-        .catch(() => {
-        })
+        .then(() => {})
+        .catch(() => {})
     }
   }
 }
