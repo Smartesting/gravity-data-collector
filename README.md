@@ -83,6 +83,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | originsToRecord        | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
 | buildId                | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
+| disableVideoRecording  | Boolean (optional)       | Disable video recording of sessions                                                                                                                                                             | false                               |
 
 ## Features
 

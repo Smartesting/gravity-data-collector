@@ -199,6 +199,7 @@ export interface CollectorOptions {
   window?: typeof window
   enabledListeners?: Listener[]
   buildId?: string
+  disableVideoRecording?: boolean
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
