@@ -21,6 +21,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Last events of video recording were not sent to Gravity
+
 ## [3.13.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.12.0...v3.13.0)
 
 ### Changed
