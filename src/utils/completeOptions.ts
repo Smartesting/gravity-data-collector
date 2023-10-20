@@ -15,7 +15,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     authKey: '',
     debug: false,
     maxDelay: 0,
-    requestInterval: 5000,
+    requestInterval: 1000,
     gravityServerUrl: GRAVITY_SERVER_ADDRESS,
     excludeRegex: null,
     sessionsPercentageKept: 100,

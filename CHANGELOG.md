@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Reducing default value of request interval to 1000
+
 ### Deprecated
 
 ### Removed
