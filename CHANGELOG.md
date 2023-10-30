@@ -23,13 +23,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/main...v3.13.0)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.14.0..main)
 
 ### Info
 
 ### Added
-
-- Option to disable video recording of sessions
 
 ### Changed
 
@@ -38,6 +36,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.14.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.13.0...v3.14.0)
+
+### Added
+
+- Option to disable video recording of sessions
+
+### Changed
+
+- Request interval option default value is reduced to 1000 (instead of 5000)
+
+### Fixed
+
+- Last events of video recording were not sent to Gravity
 
 ## [3.13.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.12.0...v3.13.0)
 

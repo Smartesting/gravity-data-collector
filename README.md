@@ -30,7 +30,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^3.13.0"
+    "@smartesting/gravity-data-collector": "^3.14.0"
   }
 }
 ```
@@ -46,7 +46,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@3.13.0/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@3.14.0/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -70,7 +70,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | key                    | type                     | use                                                                                                                                                                                             | default value                       |
 | ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
 | authKey                | String                   | The authentication key provided by Gravity to select the correct collection                                                                                                                     |                                     |
-| requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 5000                                |
+| requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 1000                                |
 | gravityServerUrl       | String                   | Gravity server URL                                                                                                                                                                              | https://api.gravity.smartesting.com |
 | debug                  | Boolean                  | Logs user action in the console instead of sending them to Gravity                                                                                                                              | false                               |
 | maxDelay               | Integer                  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                             | 500                                 |

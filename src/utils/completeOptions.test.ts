@@ -90,7 +90,7 @@ describe('completeOptions', () => {
       const completed = completeOptions({ debug: true })
       const expected: CollectorOptions = {
         authKey: '',
-        requestInterval: 5000,
+        requestInterval: 1000,
         debug: true,
         maxDelay: 500,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
@@ -114,7 +114,7 @@ describe('completeOptions', () => {
       })
       const expected: CollectorOptions = {
         authKey: '',
-        requestInterval: 5000,
+        requestInterval: 1000,
         debug: true,
         maxDelay: 15,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
@@ -141,7 +141,7 @@ describe('completeOptions', () => {
         })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
-          requestInterval: 5000,
+          requestInterval: 1000,
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
@@ -183,7 +183,7 @@ describe('completeOptions', () => {
         })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
-          requestInterval: 5000,
+          requestInterval: 1000,
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
@@ -204,7 +204,7 @@ describe('completeOptions', () => {
         })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
-          requestInterval: 5000,
+          requestInterval: 1000,
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
@@ -225,7 +225,7 @@ describe('completeOptions', () => {
         })
         const expected: CollectorOptions = {
           authKey: '123-456-789',
-          requestInterval: 5000,
+          requestInterval: 1000,
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
