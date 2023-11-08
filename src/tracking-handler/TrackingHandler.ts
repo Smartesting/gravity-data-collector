@@ -6,12 +6,17 @@ export const GRAVITY_SESSION_TRACKING_SUSPENDED = 'gravity-session-tracking-susp
 export default class TrackingHandler {
   private eventListenerHandler: EventListenersHandler | undefined
   private screenRecorderHandler: ScreenRecorderHandler | undefined
-  private active: boolean = true
+  private trackingActive: boolean = true
+  private videoRecordingActive: boolean = true
 
-  constructor(private readonly errorTerminateTracking: number[], private readonly disableVideoRecording?: boolean) {}
+  constructor(private readonly errorTerminateTracking: number[]) {}
 
-  setActive(active: boolean) {
-    this.active = active
+  setTrackingActive(active: boolean) {
+    this.trackingActive = active
+  }
+
+  setVideoRecordingActive(videoActive: boolean) {
+    this.videoRecordingActive = videoActive
   }
 
   activateTracking(): void {
@@ -20,7 +25,7 @@ export default class TrackingHandler {
     }
     window.sessionStorage.removeItem(GRAVITY_SESSION_TRACKING_SUSPENDED)
     this.eventListenerHandler.initializeEventListeners()
-    if (!this.disableVideoRecording) {
+    if (this.videoRecordingActive) {
       this.screenRecorderHandler.initializeRecording()
     }
   }
@@ -34,7 +39,7 @@ export default class TrackingHandler {
   }
 
   isTracking(): boolean {
-    return this.active && window.sessionStorage.getItem(GRAVITY_SESSION_TRACKING_SUSPENDED) !== '1'
+    return this.trackingActive && window.sessionStorage.getItem(GRAVITY_SESSION_TRACKING_SUSPENDED) !== '1'
   }
 
   deactivateTracking(): void {
@@ -43,7 +48,7 @@ export default class TrackingHandler {
     }
     window.sessionStorage.setItem(GRAVITY_SESSION_TRACKING_SUSPENDED, '1')
     this.eventListenerHandler.terminateEventListeners()
-    if (!this.disableVideoRecording) {
+    if (this.videoRecordingActive) {
       this.screenRecorderHandler.terminateRecording()
     }
   }

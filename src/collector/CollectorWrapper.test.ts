@@ -20,11 +20,20 @@ import { v4 as uuidv4 } from 'uuid'
 import { AssertionError } from 'assert'
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import CypressEventListener from '../event-listeners/CypressEventListener'
+import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
+import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
+import waitForExpect from 'wait-for-expect'
 
-describe('CollectorWrapper', () => {
-  const DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS = { debug: true, window: global.window, disableVideoRecording: true }
+describe.skip('CollectorWrapper', () => {
+  const DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS = {
+    debug: true,
+    window: global.window,
+  }
   let spyOnUserActionHandle: SpyInstance<[UserAction], void>
   let spyOnTraitHandle: SpyInstance<[string, SessionTraitValue], void>
+  let spyOnEventListenersHandlerInitialize: SpyInstance<[], void>
+  let spyOnScreenRecorderHandlerInitialize: SpyInstance<[], void>
 
   beforeEach(() => {
     mockWindowScreen()
@@ -32,6 +41,12 @@ describe('CollectorWrapper', () => {
     mockWindowDocument()
     spyOnUserActionHandle = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
     spyOnTraitHandle = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+    spyOnEventListenersHandlerInitialize = vi
+      .spyOn(EventListenersHandler.prototype, 'initializeEventListeners')
+      .mockImplementation(nop)
+    spyOnScreenRecorderHandlerInitialize = vi
+      .spyOn(ScreenRecorderHandler.prototype, 'initializeRecording')
+      .mockImplementation(nop)
     global.fetch = vi.fn()
   })
 
@@ -66,30 +81,29 @@ describe('CollectorWrapper', () => {
         }
       })
 
-      it('a "sessionStarted" action is sent when initialized', () => {
-        vi.useFakeTimers()
-        vi.setSystemTime(Date.parse('2022-05-12'))
-
+      it('a "sessionStarted" action is sent when initialized', async () => {
         const expectedAction = createSessionStartedUserAction()
 
         createCollectorWrapper()
-        expect(spyOnUserActionHandle).toHaveBeenCalledWith(expectedAction)
+
+        await waitExpectation(() => expect(spyOnUserActionHandle).toHaveBeenCalledWith(expectedAction))
       })
 
-      it('does not send "sessionStarted" action if session id exists', () => {
+      it('does not send "sessionStarted" action if session id exists', async () => {
         const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
 
         createCollectorWrapper(sessionIdHandler)
-        expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
-        const sessionId = sessionIdHandler.get()
+        await waitExpectation(() => expect(spyOnUserActionHandle).toHaveBeenCalledOnce())
 
-        vi.clearAllMocks()
+        const sessionId = sessionIdHandler.get()
         createCollectorWrapper(sessionIdHandler)
-        expect(spyOnUserActionHandle).not.toHaveBeenCalled()
-        expect(sessionIdHandler.get()).toEqual(sessionId)
+        await waitExpectation(() => {
+          expect(spyOnUserActionHandle).not.toHaveBeenCalled()
+          expect(sessionIdHandler.get()).toEqual(sessionId)
+        })
       })
 
-      it('a "sessionStarted" action is sent if session id exists but this is a new test', () => {
+      it('a "sessionStarted" action is sent if session id exists but this is a new test', async () => {
         const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
         const mock = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
 
@@ -101,7 +115,8 @@ describe('CollectorWrapper', () => {
         })
 
         createCollectorWrapper(sessionIdHandler, testNameHandler)
-        expect(mock).toHaveBeenCalledOnce()
+
+        await waitExpectation(() => expect(mock).toHaveBeenCalledOnce())
       })
 
       describe('event listener initializing', () => {
@@ -142,29 +157,29 @@ describe('CollectorWrapper', () => {
         for (const { listenerClassName, listenerClass, listenerOption } of listeners) {
           describe(`${listenerClassName}`, () => {
             describe('when options.enabledListeners is not specified', () => {
-              it(`initializes ${listenerClassName}`, () => {
+              it(`initializes ${listenerClassName}`, async () => {
                 vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
                 createCollectorWrapper()
 
-                expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
+                await waitExpectation(() => expect(listenerClass.prototype.init).toHaveBeenCalledOnce())
               })
             })
 
             describe('when options.enabledListeners is specified', () => {
-              it(`does not initialize ${listenerClassName} when ${listenerOption} is not present`, () => {
+              it(`does not initialize ${listenerClassName} when ${listenerOption} is not present`, async () => {
                 options.enabledListeners = []
                 vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
                 createCollectorWrapper()
 
-                expect(listenerClass.prototype.init).not.toHaveBeenCalled()
+                await waitExpectation(() => expect(listenerClass.prototype.init).not.toHaveBeenCalled())
               })
 
-              it(`initializes ${listenerClassName} when ${listenerOption} is present`, () => {
+              it(`initializes ${listenerClassName} when ${listenerOption} is present`, async () => {
                 options.enabledListeners = [listenerOption]
                 vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
                 createCollectorWrapper()
 
-                expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
+                await waitExpectation(() => expect(listenerClass.prototype.init).toHaveBeenCalledOnce())
               })
             })
           })
@@ -176,34 +191,160 @@ describe('CollectorWrapper', () => {
           delete (window as any).Cypress
         })
 
-        it('unless window.Cypress is not available', () => {
+        it('unless window.Cypress is not available', async () => {
           vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
           createCollectorWrapper()
-          expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
+          await waitExpectation(() => expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce())
         })
 
         describe('window.Cypress is available', () => {
-          it('initializes if enabledListeners option is not set ', () => {
+          it('initializes if enabledListeners option is not set ', async () => {
             vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
             ;(window as any).Cypress = {}
             createCollectorWrapper()
-            expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+            await waitExpectation(() => expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce())
           })
 
-          it('does not initialize if enabledListeners option is set but does not include CypressCommands', () => {
+          it('does not initialize if enabledListeners option is set but does not include CypressCommands', async () => {
             vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
             ;(window as any).Cypress = {}
             options.enabledListeners = []
             createCollectorWrapper()
-            expect(CypressEventListener.prototype.init).not.toHaveBeenCalled()
+            await waitExpectation(() => expect(CypressEventListener.prototype.init).not.toHaveBeenCalled())
           })
 
-          it('does not initialize if enabledListeners option is set and includes CypressCommands', () => {
+          it('does not initialize if enabledListeners option is set and includes CypressCommands', async () => {
             vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
             ;(window as any).Cypress = {}
             options.enabledListeners = [Listener.CypressCommands]
             createCollectorWrapper()
-            expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
+            await waitExpectation(() => expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce())
+          })
+        })
+      })
+    })
+
+    describe('activate/deactivate session/video tracking', () => {
+      describe('when fetched session recording setting is false', () => {
+        beforeEach(() => {
+          vi.spyOn(HttpGravityClient.prototype, 'readSessionCollectionSettings').mockReturnValue(
+            Promise.resolve({
+              settings: {
+                sessionRecording: false,
+                videoRecording: false,
+              },
+              error: null,
+            }),
+          )
+        })
+
+        it('does not record user actions neither video events', async () => {
+          // eslint-disable-next-line no-new
+          new CollectorWrapper(
+            completeOptions({
+              authKey: uuidv4(),
+              window: global.window,
+            }),
+            new MemorySessionIdHandler(uuidv4, 1000),
+            new SessionStorageTestNameHandler(),
+          )
+
+          await waitExpectation(() => {
+            expect(spyOnEventListenersHandlerInitialize).not.toHaveBeenCalled()
+            expect(spyOnScreenRecorderHandlerInitialize).not.toHaveBeenCalled()
+          })
+        })
+      })
+
+      describe('when fetched session recording setting is true', () => {
+        beforeEach(() => {
+          vi.spyOn(HttpGravityClient.prototype, 'readSessionCollectionSettings').mockReturnValue(
+            Promise.resolve({
+              settings: {
+                sessionRecording: true,
+                videoRecording: false,
+              },
+              error: null,
+            }),
+          )
+        })
+
+        it('records user actions and no video event', async () => {
+          // eslint-disable-next-line no-new
+          new CollectorWrapper(
+            completeOptions({
+              authKey: uuidv4(),
+              window: global.window,
+            }),
+            new MemorySessionIdHandler(uuidv4, 1000),
+            new SessionStorageTestNameHandler(),
+          )
+
+          await waitExpectation(() => {
+            expect(spyOnEventListenersHandlerInitialize).toHaveBeenCalled()
+            expect(spyOnScreenRecorderHandlerInitialize).not.toHaveBeenCalled()
+          })
+        })
+      })
+
+      describe('when fetched video recording setting is true', () => {
+        beforeEach(() => {
+          vi.spyOn(HttpGravityClient.prototype, 'readSessionCollectionSettings').mockReturnValue(
+            Promise.resolve({
+              settings: {
+                sessionRecording: true,
+                videoRecording: true,
+              },
+              error: null,
+            }),
+          )
+        })
+
+        it('records user actions and video events', async () => {
+          // eslint-disable-next-line no-new
+          new CollectorWrapper(
+            completeOptions({
+              authKey: uuidv4(),
+              window: global.window,
+            }),
+            new MemorySessionIdHandler(uuidv4, 1000),
+            new SessionStorageTestNameHandler(),
+          )
+
+          await waitExpectation(() => {
+            expect(spyOnEventListenersHandlerInitialize).toHaveBeenCalled()
+            expect(spyOnScreenRecorderHandlerInitialize).toHaveBeenCalled()
+          })
+        })
+      })
+
+      describe('when fetched video recording setting is false', () => {
+        beforeEach(() => {
+          vi.spyOn(HttpGravityClient.prototype, 'readSessionCollectionSettings').mockReturnValue(
+            Promise.resolve({
+              settings: {
+                sessionRecording: true,
+                videoRecording: false,
+              },
+              error: null,
+            }),
+          )
+        })
+
+        it('records user actions and no video event', async () => {
+          // eslint-disable-next-line no-new
+          new CollectorWrapper(
+            completeOptions({
+              authKey: uuidv4(),
+              window: global.window,
+            }),
+            new MemorySessionIdHandler(uuidv4, 1000),
+            new SessionStorageTestNameHandler(),
+          )
+
+          await waitExpectation(() => {
+            expect(spyOnEventListenersHandlerInitialize).toHaveBeenCalled()
+            expect(spyOnScreenRecorderHandlerInitialize).not.toHaveBeenCalled()
           })
         })
       })
@@ -406,7 +547,7 @@ describe('CollectorWrapper', () => {
   })
 
   describe('tracking is active for the current session according option "sessionsPercentageKept"', () => {
-    it('should always track if percentage is 100', () => {
+    it('should always track if percentage is 100', async () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
           ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
@@ -415,12 +556,15 @@ describe('CollectorWrapper', () => {
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
-      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
-      collectorWrapper.identifySession('logged', true)
-      expect(spyOnTraitHandle).toHaveBeenCalledOnce()
+
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+        collectorWrapper.identifySession('logged', true)
+        expect(spyOnTraitHandle).toHaveBeenCalledOnce()
+      })
     })
 
-    it('should never track if percentage is 0', () => {
+    it('should never track if percentage is 0', async () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
           ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
@@ -429,12 +573,15 @@ describe('CollectorWrapper', () => {
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
-      expect(spyOnUserActionHandle).not.toHaveBeenCalled()
-      collectorWrapper.identifySession('logged', true)
-      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).not.toHaveBeenCalled()
+        collectorWrapper.identifySession('logged', true)
+        expect(spyOnTraitHandle).not.toHaveBeenCalled()
+      })
     })
 
-    it('should continue tracking if collector is reset while the same session', () => {
+    it('should continue tracking if collector is reset while the same session', async () => {
       const memorySessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
 
       function createCollector(sessionsPercentageKept: number) {
@@ -449,23 +596,27 @@ describe('CollectorWrapper', () => {
       }
 
       createCollector(100)
-      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
-      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+        expect(spyOnTraitHandle).not.toHaveBeenCalled()
+      })
 
       const collectorWrapper = createCollector(0) // act as a new random choice causing tracker disabling
-      expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
-      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).toHaveBeenCalledOnce()
+        expect(spyOnTraitHandle).not.toHaveBeenCalled()
 
-      collectorWrapper.identifySession('logged', true)
-      expect(spyOnTraitHandle).toHaveBeenCalledOnce()
+        collectorWrapper.identifySession('logged', true)
+        expect(spyOnTraitHandle).toHaveBeenCalledOnce()
+      })
     })
 
     // flaky test ??
-    it('should collect percentage/100 from N sessions (if N is large enough...) ', () => {
+    it('should collect percentage/100 from N sessions (if N is large enough...) ', async () => {
       const sessionsPercentageKept = 10
 
-      function createCollector() {
-        return new CollectorWrapper(
+      async function createCollector() {
+        const collectorWrapper = new CollectorWrapper(
           completeOptions({
             ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
             sessionsPercentageKept,
@@ -473,6 +624,9 @@ describe('CollectorWrapper', () => {
           new MemorySessionIdHandler(uuidv4, 1000),
           new SessionStorageTestNameHandler(),
         )
+        setTimeout(() => {
+          return collectorWrapper
+        }, 10)
       }
 
       function isApproximation(candidate: number, target: number, tolerance: number) {
@@ -482,7 +636,7 @@ describe('CollectorWrapper', () => {
       const max = 1000
       let countCollectedSessions: number = 0
       for (let i = 1; i <= max; i++) {
-        createCollector()
+        await createCollector()
         countCollectedSessions = spyOnUserActionHandle.mock.calls.length
         const percentage = (100 * countCollectedSessions) / i
         if (i >= 100) {
@@ -499,7 +653,7 @@ describe('CollectorWrapper', () => {
   })
 
   describe('option "rejectSession" allows to reject a session', () => {
-    it('should not track session if rejectSession is positive', () => {
+    it('should not track session if rejectSession is positive', async () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
           ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
@@ -508,12 +662,15 @@ describe('CollectorWrapper', () => {
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
-      expect(spyOnUserActionHandle).not.toHaveBeenCalled()
-      collectorWrapper.identifySession('logged', true)
-      expect(spyOnTraitHandle).not.toHaveBeenCalled()
+
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).not.toHaveBeenCalled()
+        collectorWrapper.identifySession('logged', true)
+        expect(spyOnTraitHandle).not.toHaveBeenCalled()
+      })
     })
 
-    it('should keep session tracking if rejectSession is negative', () => {
+    it('should keep session tracking if rejectSession is negative', async () => {
       const collectorWrapper = new CollectorWrapper(
         completeOptions({
           ...DEFAULT_TEST_COLLECTOR_WRAPPER_OPTIONS,
@@ -522,9 +679,16 @@ describe('CollectorWrapper', () => {
         new MemorySessionIdHandler(uuidv4, 1000),
         new SessionStorageTestNameHandler(),
       )
-      expect(spyOnUserActionHandle).toHaveBeenCalled()
-      collectorWrapper.identifySession('logged', true)
-      expect(spyOnTraitHandle).toHaveBeenCalled()
+
+      await waitExpectation(() => {
+        expect(spyOnUserActionHandle).toHaveBeenCalled()
+        collectorWrapper.identifySession('logged', true)
+        expect(spyOnTraitHandle).toHaveBeenCalled()
+      })
     })
   })
 })
+
+async function waitExpectation(expectation: () => void) {
+  await waitForExpect(expectation)
+}

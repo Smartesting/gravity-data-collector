@@ -32,6 +32,7 @@ import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import crossfetch from 'cross-fetch'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 
+// FIXME: reduce the constructor to his minimum!
 class CollectorWrapper {
   readonly userActionHandler: UserActionHandler
   readonly screenRecorderHandler: ScreenRecorderHandler
@@ -46,7 +47,7 @@ class CollectorWrapper {
     readonly testNameHandler: TestNameHandler,
     fetch = crossfetch,
   ) {
-    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING, options.disableVideoRecording)
+    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
 
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
@@ -63,21 +64,28 @@ class CollectorWrapper {
       trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
     testNameHandler.refresh()
 
-    if (isNewSession) {
-      this.trackingHandler.setActive(keepSession(options))
-      sessionIdHandler.generateNewSessionId()
-    }
-
     this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
 
-    if (isNewSession) this.initSession(createSessionStartedUserAction(options.buildId))
-
     const eventListeners = this.makeEventListeners()
     this.eventListenerHandler = new EventListenersHandler(eventListeners)
     if (trackingIsAllowed(options.window.document.URL)) {
-      this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
+      this.gravityClient
+        .readSessionCollectionSettings()
+        .then(({ settings, error }) => {
+          if (error) console.error(error)
+          if (settings) {
+            this.trackingHandler.setTrackingActive(keepSession(options) && settings.sessionRecording)
+            this.trackingHandler.setVideoRecordingActive(settings.videoRecording)
+            this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
+            if (isNewSession) {
+              sessionIdHandler.generateNewSessionId()
+              this.initSession(createSessionStartedUserAction(options.buildId))
+            }
+          }
+        })
+        .catch(() => {})
     }
 
     if (this.isListenerEnabled(Listener.Requests)) {

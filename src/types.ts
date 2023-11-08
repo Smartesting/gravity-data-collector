@@ -274,3 +274,19 @@ export enum AddSessionRecordingError {
   notUUID = 'not_a_uuid',
   invalidFormat = 'invalid_format',
 }
+
+export interface ReadSessionCollectionSettingsResponse {
+  settings: {
+    sessionRecording: boolean
+    videoRecording: boolean
+  } | null
+  error: ReadSessionCollectionSettingsError | null
+}
+
+export enum ReadSessionCollectionSettingsError {
+  accessDenied = 'no_access',
+  projectExpired = 'project_expired',
+  projectNotFound = 'project_not_found',
+  collectionNotFound = 'collection_not_found',
+  incorrectSource = 'incorrect_source',
+}

@@ -2,6 +2,7 @@ import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   IdentifySessionResponse,
+  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -38,6 +39,16 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
       screenRecords,
     })
     return { error: null }
+  }
+
+  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+    return {
+      settings: {
+        sessionRecording: true,
+        videoRecording: false,
+      },
+      error: null,
+    }
   }
 
   private log(data: unknown) {

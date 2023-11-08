@@ -2,6 +2,7 @@ import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   IdentifySessionResponse,
+  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -11,6 +12,7 @@ import crossfetch from 'cross-fetch'
 import {
   buildGravityTrackingIdentifySessionApiUrl,
   buildGravityTrackingPublishApiUrl,
+  buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
@@ -64,6 +66,22 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     )
     const responseBody: AddSessionRecordingResponse = await response.json()
+    if (response.status !== 200) {
+      this.options.onError(response.status, responseBody.error)
+    }
+
+    return responseBody
+  }
+
+  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+    const response = await this.fetch(
+      buildGravityTrackingSessionCollectionSettingsApiUrl(this.options.authKey, this.options.gravityServerUrl),
+      {
+        method: 'GET',
+        redirect: 'follow',
+      },
+    )
+    const responseBody: ReadSessionCollectionSettingsResponse = await response.json()
     if (response.status !== 200) {
       this.options.onError(response.status, responseBody.error)
     }

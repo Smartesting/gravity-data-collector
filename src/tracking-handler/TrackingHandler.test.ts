@@ -85,19 +85,20 @@ describe('TrackingHandler', () => {
     expect(trackingHandler.isTracking()).toBeTruthy()
     trackingHandler.init(eventListenersHandler, screenRecorderHandler)
 
-    trackingHandler.setActive(false)
+    trackingHandler.setTrackingActive(false)
     expect(trackingHandler.isTracking()).toBeFalsy()
 
     trackingHandler.activateTracking()
     expect(trackingHandler.isTracking()).toBeFalsy()
 
-    trackingHandler.setActive(true)
+    trackingHandler.setTrackingActive(true)
     expect(trackingHandler.isTracking()).toBeTruthy()
   })
 
-  describe('when "disableVideoRecording" is set to true', () => {
+  describe('when "videoRecordingActive" is set to false', () => {
     beforeEach(() => {
-      trackingHandler = new TrackingHandler([403, 409], true)
+      trackingHandler = new TrackingHandler([403, 409])
+      trackingHandler.setVideoRecordingActive(false)
     })
 
     it('does not initialize the video recording', () => {

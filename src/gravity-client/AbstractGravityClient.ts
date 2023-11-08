@@ -2,6 +2,7 @@ import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   IdentifySessionResponse,
+  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -82,6 +83,8 @@ export abstract class AbstractGravityClient implements IGravityClient {
       this.sessionTraitsBuffer.flush(),
     ])
   }
+
+  abstract readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse>
 
   protected abstract handleSessionUserActions(
     sessionUserActions: ReadonlyArray<SessionUserAction>,
