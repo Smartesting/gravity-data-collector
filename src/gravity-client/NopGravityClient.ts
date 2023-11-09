@@ -31,7 +31,7 @@ export default class NopGravityClient extends AbstractGravityClient implements I
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
     return {
       settings: {
-        sessionRecording: true,
+        sessionRecording: false,
         videoRecording: false,
       },
       error: null,

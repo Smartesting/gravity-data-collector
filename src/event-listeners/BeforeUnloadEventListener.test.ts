@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it, vitest } from 'vitest'
-import { waitFor } from '@testing-library/dom'
+import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { NopUserActionHandler } from '../user-action/IUserActionHandler'
@@ -7,20 +6,21 @@ import { NopUserActionHandler } from '../user-action/IUserActionHandler'
 describe('BeforeUnloadEventListener', () => {
   describe('listener', () => {
     const userActionHandler = new NopUserActionHandler()
-    const flushSpy = vitest.spyOn(userActionHandler, 'flush')
+    let flushSpy: SpyInstance<[], void>
 
     beforeEach(() => {
-      vitest.restoreAllMocks()
+      flushSpy = vitest.spyOn(userActionHandler, 'flush')
     })
 
-    it('calls handler when beforeunload event been fired', async () => {
+    afterEach(() => {
+      flushSpy.mockRestore()
+    })
+
+    it('calls handler when beforeunload event has been fired', async () => {
       const { domWindow } = createElementInJSDOM('<div/>', 'div')
       new BeforeUnloadEventListener(userActionHandler, domWindow).init()
       domWindow.dispatchEvent(new Event('beforeunload'))
-
-      await waitFor(() => {
-        expect(flushSpy).toHaveBeenCalledOnce()
-      })
+      expect(flushSpy).toHaveBeenCalledOnce()
     })
   })
 })

@@ -275,11 +275,13 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
+export interface SessionCollectionSettings {
+  sessionRecording: boolean
+  videoRecording: boolean
+}
+
 export interface ReadSessionCollectionSettingsResponse {
-  settings: {
-    sessionRecording: boolean
-    videoRecording: boolean
-  } | null
+  settings: SessionCollectionSettings | null
   error: ReadSessionCollectionSettingsError | null
 }
 
