@@ -8,29 +8,33 @@ const MINUTE = 60 * SECOND
 const MAX_SESSION_DURATION = 30 * MINUTE
 
 export default class GravityCollector {
-  collectorWrapper: CollectorWrapper | undefined
+  private readonly asyncCollectorWrapper: Promise<CollectorWrapper>
 
-  constructor(collectorWrapper: CollectorWrapper) {
-    this.collectorWrapper = collectorWrapper
+  constructor(asyncCollectorWrapper: Promise<CollectorWrapper>) {
+    this.asyncCollectorWrapper = asyncCollectorWrapper
   }
 
   static getInstance(_window: any = window) {
     return _window._GravityCollector
   }
 
-  static async init(options?: Partial<CollectorOptions>) {
+  static init(options?: Partial<CollectorOptions>) {
     if (!windowExists() && options?.window === undefined) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
-    const wrapper = await collectorInstaller(options).withCookieSessionIdHandler(MAX_SESSION_DURATION).install()
-    if (wrapper) {
-      const windowToUse = (options?.window ?? window) as any
-      windowToUse._GravityCollector = new GravityCollector(wrapper)
-    }
+    const windowToUse = (options?.window ?? window) as any
+    windowToUse._GravityCollector = new GravityCollector(
+      collectorInstaller(options).withCookieSessionIdHandler(MAX_SESSION_DURATION).install(),
+    )
   }
 
-  static identifySession(traitName: string, traitValue: SessionTraitValue, _window: any = window) {
-    const collectorWrapper = this.getInstance(_window).collectorWrapper
+  static identifySession(traitName: string, traitValue: SessionTraitValue) {
+    const collector: GravityCollector = (window as any)._GravityCollector
+    collector.identifySession(traitName, traitValue).catch(console.error)
+  }
+
+  async identifySession(traitName: string, traitValue: SessionTraitValue) {
+    const collectorWrapper = await this.asyncCollectorWrapper
     if (collectorWrapper === undefined) {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
     }
