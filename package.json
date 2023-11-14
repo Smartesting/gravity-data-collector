@@ -8,8 +8,8 @@
     "/dist"
   ],
   "scripts": {
-    "tsc": "tsc",
-    "tsc:watch": "tsc  --watch",
+    "tsc": "tsc --noEmit",
+    "tsc:watch": "tsc --noEmit --watch",
     "build": "tsc --project tsconfig.build.json",
     "lint": "eslint --ext ts --max-warnings 0 src",
     "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
