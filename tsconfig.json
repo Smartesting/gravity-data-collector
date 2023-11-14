@@ -11,6 +11,6 @@
     "lib": ["es5", "dom"],
     "types": ["cypress", "node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "cypress/**/*.ts"],
   "exclude": ["node_modules", "**/__tests__/*"]
 }
