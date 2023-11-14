@@ -193,3 +193,7 @@ with the page to see collected user actions.
 
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by
 your developer tool.
+
+
+## Miscellaneous
+- we start a [FAQ](FAQ.md) hoping it can help you to face eventual problems with th Gravity Data Collector
