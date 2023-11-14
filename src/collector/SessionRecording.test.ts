@@ -10,10 +10,17 @@ import CollectorWrapper from './CollectorWrapper'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { mockFetch } from '../test-utils/mocks'
 import { createDummy } from '../test-utils/dummyFactory'
+import { Class } from '../test-utils/types'
+import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
 
-describe('Session recording (event & video) depends on remote Gravity settings', () => {
-  let initializeEventListeners: SpyInstance<[], void>
-  let initializeScreenRecording: SpyInstance<[], void>
+describe('Session recording (events & video) depends on remote Gravity settings', () => {
+  let initializeEventListeners: SpyInstance
+  let initializeScreenRecording: SpyInstance
+  let handleSessionUserActions: SpyInstance
+  let handleSessionTraits: SpyInstance
+  let handleScreenRecords: SpyInstance
+  let terminateEventRecording: SpyInstance
+  let terminateVideoRecording: SpyInstance
 
   beforeEach(() => {
     initializeEventListeners = vi.spyOn(EventListenersHandler.prototype, 'initializeEventListeners')
@@ -21,39 +28,33 @@ describe('Session recording (event & video) depends on remote Gravity settings',
   })
 
   afterEach(() => {
-    initializeEventListeners.mockReset()
-    initializeScreenRecording.mockReset()
+    initializeEventListeners.mockRestore()
+    initializeScreenRecording.mockRestore()
   })
+
+  function installSpies(clientClass: Class<AbstractGravityClient>) {
+    handleSessionUserActions = vi
+      .spyOn(clientClass.prototype, 'handleSessionUserActions')
+      .mockResolvedValue({ error: null })
+    handleSessionTraits = vi.spyOn(clientClass.prototype, 'handleSessionTraits').mockResolvedValue({ error: null })
+    handleScreenRecords = vi.spyOn(clientClass.prototype, 'handleScreenRecords').mockResolvedValue({ error: null })
+    terminateEventRecording = vi.spyOn(EventListenersHandler.prototype, 'terminateEventListeners')
+    terminateVideoRecording = vi.spyOn(ScreenRecorderHandler.prototype, 'terminateRecording')
+  }
+
+  function uninstallSpies() {
+    handleSessionUserActions.mockRestore()
+    handleSessionTraits.mockRestore()
+    handleScreenRecords.mockRestore()
+    terminateEventRecording.mockRestore()
+    terminateVideoRecording.mockRestore()
+  }
 
   describe('on dry run mode (debug=true)', () => {
     const installer = () => collectorInstaller({ requestInterval: 0, debug: true })
-    let handleSessionUserActions: SpyInstance
-    let handleSessionTraits: SpyInstance
-    let handleScreenRecords: SpyInstance
-    let terminateEventRecording: SpyInstance
-    let terminateVideoRecording: SpyInstance
 
-    beforeEach(() => {
-      handleSessionUserActions = vi
-        .spyOn(ConsoleGravityClient.prototype, 'handleSessionUserActions')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      handleSessionTraits = vi
-        .spyOn(ConsoleGravityClient.prototype, 'handleSessionTraits')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      handleScreenRecords = vi
-        .spyOn(ConsoleGravityClient.prototype, 'handleScreenRecords')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      terminateEventRecording = vi.spyOn(EventListenersHandler.prototype, 'terminateEventListeners')
-      terminateVideoRecording = vi.spyOn(ScreenRecorderHandler.prototype, 'terminateRecording')
-    })
-
-    afterEach(() => {
-      handleSessionUserActions.mockRestore()
-      handleSessionTraits.mockRestore()
-      handleScreenRecords.mockRestore()
-      terminateEventRecording.mockRestore()
-      terminateVideoRecording.mockRestore()
-    })
+    beforeEach(() => installSpies(ConsoleGravityClient))
+    afterEach(uninstallSpies)
 
     describe('use options settings if available', () => {
       it('records events & video', async () => {
@@ -123,33 +124,9 @@ describe('Session recording (event & video) depends on remote Gravity settings',
 
   describe('on live mode (debug=false)', () => {
     const installer = () => collectorInstaller({ requestInterval: 0, debug: false, authKey: uuid() })
-    let handleSessionUserActions: SpyInstance
-    let handleSessionTraits: SpyInstance
-    let handleScreenRecords: SpyInstance
-    let terminateEventRecording: SpyInstance
-    let terminateVideoRecording: SpyInstance
 
-    beforeEach(() => {
-      handleSessionUserActions = vi
-        .spyOn(HttpGravityClient.prototype, 'handleSessionUserActions')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      handleSessionTraits = vi
-        .spyOn(HttpGravityClient.prototype, 'handleSessionTraits')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      handleScreenRecords = vi
-        .spyOn(HttpGravityClient.prototype, 'handleScreenRecords')
-        .mockImplementation(async () => await Promise.resolve({ error: null }))
-      terminateEventRecording = vi.spyOn(EventListenersHandler.prototype, 'terminateEventListeners')
-      terminateVideoRecording = vi.spyOn(ScreenRecorderHandler.prototype, 'terminateRecording')
-    })
-
-    afterEach(() => {
-      handleSessionUserActions.mockRestore()
-      handleSessionTraits.mockRestore()
-      handleScreenRecords.mockRestore()
-      terminateEventRecording.mockRestore()
-      terminateVideoRecording.mockRestore()
-    })
+    beforeEach(() => installSpies(HttpGravityClient))
+    afterEach(uninstallSpies)
 
     describe('use remote settings if available', () => {
       it('records events & video', async () => {

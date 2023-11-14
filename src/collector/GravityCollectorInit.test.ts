@@ -32,8 +32,8 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
     })
 
     afterEach(() => {
-      handleUserAction.mockReset()
-      handleSessionTrait.mockReset()
+      handleUserAction.mockRestore()
+      handleSessionTrait.mockRestore()
     })
 
     it('a "sessionStarted" action is sent when initialized', async () => {
@@ -390,6 +390,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
 contractTest('dry run mode (debug=true)', () => {
   return collectorInstaller({ debug: true })
 })
+
 contractTest('live mode (debug=false)', () => {
   return collectorInstaller({ debug: false, authKey: uuid() })
 })

@@ -16,8 +16,8 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
     })
 
     afterEach(() => {
-      handleSessionTrait.mockReset()
-      consoleWarn.mockReset()
+      handleSessionTrait.mockRestore()
+      consoleWarn.mockRestore()
     })
 
     it('delegates session trait to handler', async () => {
