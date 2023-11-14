@@ -22,13 +22,13 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
 
     it('delegates session trait to handler', async () => {
       const collector = await installer().install()
-      collector.identifySession('connected', true)
+      await collector.identifySession('connected', true)
       expect(handleSessionTrait).toHaveBeenCalledWith('connected', true)
     })
 
     it('prevents bad format of session trait value', async () => {
       const collector = await installer().install()
-      collector.identifySession('connected', { badFormat: true } as unknown as string)
+      await collector.identifySession('connected', { badFormat: true } as unknown as string)
       expect(consoleWarn).toHaveBeenCalledWith(
         '[Gravity Data Collector] The following session trait value is not allowed: ',
         { badFormat: true },

@@ -39,13 +39,16 @@ export abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
   private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
 
-  protected constructor(options: GravityClientOptions, settingsHandler: RecordingSettingsDispatcher) {
+  protected constructor(options: GravityClientOptions, recordingSettingsDispatcher: RecordingSettingsDispatcher) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
       handleInterval: options.requestInterval,
       handleData: this.handleSessionUserActions.bind(this),
       onFlush: (buffer, response) => {
         options.onPublish?.(buffer)
-        if (response.error === null) this.screenRecordBuffer.unlock()
+        if (response.error === null) {
+          this.screenRecordBuffer.unlock()
+          this.sessionTraitsBuffer.unlock()
+        }
       },
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
@@ -54,6 +57,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
         const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
+      locked: true,
     })
     this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
       handleInterval: options.requestInterval,
@@ -63,7 +67,7 @@ export abstract class AbstractGravityClient implements IGravityClient {
       },
       locked: true,
     })
-    settingsHandler.subscribe(({ enableEventRecording, enableVideoRecording }) => {
+    recordingSettingsDispatcher.subscribe(({ enableEventRecording, enableVideoRecording }) => {
       if (enableEventRecording) {
         this.sessionUserActionBuffer.activate()
         this.sessionTraitsBuffer.activate()

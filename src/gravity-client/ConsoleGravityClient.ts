@@ -18,9 +18,9 @@ type ConsoleGravityClientOptions = GravityClientOptions & {
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
   constructor(
     private readonly options: ConsoleGravityClientOptions,
-    recordingSettingsHandler: RecordingSettingsDispatcher,
+    recordingSettingsDispatcher: RecordingSettingsDispatcher,
   ) {
-    super(options, recordingSettingsHandler)
+    super(options, recordingSettingsDispatcher)
   }
 
   async handleSessionUserActions(

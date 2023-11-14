@@ -39,6 +39,6 @@ export default class GravityCollector {
     if (this.collectorWrapper === undefined) {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
     }
-    this.collectorWrapper.identifySession(traitName, traitValue)
+    void this.collectorWrapper.identifySession(traitName, traitValue)
   }
 }

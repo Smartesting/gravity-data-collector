@@ -1,8 +1,7 @@
 import { v4 as uuidv4, v4 as uuid } from 'uuid'
-import { Listener, SessionTraitValue, UserAction, UserActionType } from '../types'
+import { Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { CollectorInstaller, collectorInstaller } from './CollectorInstaller'
-import UserActionHandler from '../user-action/UserActionHandler'
 import { asyncNop, nop } from '../utils/nop'
 import { getLastCallArgument } from '../test-utils/spies'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
@@ -17,17 +16,17 @@ import CypressEventListener from '../event-listeners/CypressEventListener'
 import { Class } from '../test-utils/types'
 import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
-import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import { mockFetch } from '../test-utils/mocks'
+import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
 
 function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.init() in ${context}`, () => {
-    let handleUserAction: SpyInstance<[UserAction], Promise<void>>
-    let handleSessionTrait: SpyInstance<[string, SessionTraitValue], Promise<void>>
+    let handleUserAction: SpyInstance<[SessionUserAction], Promise<void>>
+    let handleSessionTrait: SpyInstance<[string, SessionTraits], Promise<void>>
 
     beforeEach(() => {
-      handleUserAction = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(asyncNop)
-      handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(asyncNop)
+      handleUserAction = vi.spyOn(AbstractGravityClient.prototype, 'addSessionUserAction').mockImplementation(asyncNop)
+      handleSessionTrait = vi.spyOn(AbstractGravityClient.prototype, 'identifySession').mockImplementation(asyncNop)
       global.fetch = vi.fn()
     })
 
@@ -48,7 +47,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       expect(handleUserAction).toHaveBeenCalledOnce()
       const sessionId = sessionIdHandler.get()
 
-      handleUserAction.mockReset()
+      handleUserAction.mockClear()
       installer().withSessionIdHandler(sessionIdHandler).install()
       expect(handleUserAction).not.toHaveBeenCalled()
       expect(sessionIdHandler.get()).toEqual(sessionId)
@@ -62,7 +61,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       expect(handleUserAction).toHaveBeenCalledOnce()
       const sessionId = sessionIdHandler.get()
 
-      handleUserAction.mockReset()
+      handleUserAction.mockClear()
       testNameHandler.isNewTest.mockReturnValue(true)
       installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
@@ -158,7 +157,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
         installer()
           .withOptions({ originsToRecord: ['https://server.com'] })
           .install()
-        handleUserAction.mockReset() // clear first startedSession event
+        handleUserAction.mockClear() // clear first startedSession event
       })
 
       it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
@@ -172,7 +171,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           method: 'GET',
         })
 
-        handleUserAction.mockReset()
+        handleUserAction.mockClear()
         await fetch('https://notrecorded.com/example', {
           method: 'GET',
         })
@@ -189,7 +188,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           method: 'GET',
         })
 
-        handleUserAction.mockReset()
+        handleUserAction.mockClear()
         xhr.open('GET', 'https://notrecorded.com/example')
         expect(handleUserAction).not.toHaveBeenCalled()
       })
@@ -206,7 +205,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
             })
             .withFetch(mockFetch())
             .install()
-          handleUserAction.mockReset() // clear first startedSession event
+          handleUserAction.mockClear() // clear first startedSession event
         })
 
         it('uses recordRequestsFor option rather than originsToRecord option to determine if the request should be recorded when a fetch is made', async () => {
@@ -251,7 +250,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
             })
             .withFetch(mockFetch())
             .install()
-          handleUserAction.mockReset() // clear first startedSession event
+          handleUserAction.mockClear() // clear first startedSession event
         })
 
         it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
@@ -265,7 +264,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
             method: 'GET',
           })
 
-          handleUserAction.mockReset()
+          handleUserAction.mockClear()
           await fetch('https://notrecorded.com/example', {
             method: 'GET',
           })
@@ -282,7 +281,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
             method: 'GET',
           })
 
-          handleUserAction.mockReset()
+          handleUserAction.mockClear()
           xhr.open('GET', 'https://notrecorded.com/example')
           expect(handleUserAction).not.toHaveBeenCalled()
         })
@@ -306,14 +305,14 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       it('should always track if percentage is 100', async () => {
         const collector = installer().withOptions({ sessionsPercentageKept: 100 }).install()
         expect(handleUserAction).toHaveBeenCalledOnce()
-        collector.identifySession('logged', true)
+        await collector.identifySession('logged', true)
         expect(handleSessionTrait).toHaveBeenCalledOnce()
       })
 
       it('should never track if percentage is 0', async () => {
         const collector = installer().withOptions({ sessionsPercentageKept: 0 }).install()
         expect(handleUserAction).not.toHaveBeenCalled()
-        collector.identifySession('logged', true)
+        await collector.identifySession('logged', true)
         expect(handleSessionTrait).not.toHaveBeenCalled()
       })
 
@@ -331,7 +330,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
         expect(handleUserAction).toHaveBeenCalledOnce()
         expect(handleSessionTrait).not.toHaveBeenCalled()
 
-        collector.identifySession('logged', true)
+        await collector.identifySession('logged', true)
         expect(handleSessionTrait).toHaveBeenCalledOnce()
       })
 
@@ -370,7 +369,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           .install()
 
         expect(handleUserAction).not.toHaveBeenCalled()
-        collector.identifySession('logged', true)
+        await collector.identifySession('logged', true)
         expect(handleSessionTrait).not.toHaveBeenCalled()
       })
 
@@ -380,7 +379,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           .install()
 
         expect(handleUserAction).toHaveBeenCalled()
-        collector.identifySession('logged', true)
+        await collector.identifySession('logged', true)
         expect(handleSessionTrait).toHaveBeenCalled()
       })
     })

@@ -12,4 +12,8 @@ export class RecordingSettingsDispatcher {
   dispatch(settings: RecordingSettings) {
     this.listeners.forEach((listener) => listener(settings))
   }
+
+  terminate() {
+    this.dispatch({ enableEventRecording: false, enableVideoRecording: false })
+  }
 }

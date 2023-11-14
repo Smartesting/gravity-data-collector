@@ -25,9 +25,6 @@ export default class ScreenRecorderHandler {
   }
 
   async handle(screenRecord: eventWithTime) {
-    return await this.gravityClient
-      .addScreenRecord(this.sessionIdHandler.get(), screenRecord)
-      .then(() => {})
-      .catch(() => {})
+    return await this.gravityClient.addScreenRecord(this.sessionIdHandler.get(), screenRecord)
   }
 }
