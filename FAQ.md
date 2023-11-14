@@ -12,4 +12,4 @@
 
 - in your [Gravity](https://gravity.smartesting.com) project configuration, check that you have not deactivated the data collection
 
-- check that the collector option `authKkey` matches a key available in your [Gravity](https://gravity.smartesting.com) project 
+- check that the collector option `authKkey` matches a key available in your [Gravity](https://gravity.smartesting.com) project
