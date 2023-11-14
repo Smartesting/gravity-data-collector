@@ -1,11 +1,9 @@
 import { v4 as uuidv4, v4 as uuid } from 'uuid'
-import { Listener, SessionCollectionSettings, SessionTraitValue, UserAction, UserActionType } from '../types'
+import { Listener, SessionTraitValue, UserAction, UserActionType } from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { CollectorInstaller, collectorInstaller } from './CollectorInstaller'
 import UserActionHandler from '../user-action/UserActionHandler'
-import { nop } from '../utils/nop'
-import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
-import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
+import { asyncNop, nop } from '../utils/nop'
 import { getLastCallArgument } from '../test-utils/spies'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
@@ -16,31 +14,20 @@ import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
 import CypressEventListener from '../event-listeners/CypressEventListener'
-import HttpGravityClient from '../gravity-client/HttpGravityClient'
-import { IGravityClient } from '../gravity-client/IGravityClient'
-import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import { Class } from '../test-utils/types'
 import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
+import { mockFetch } from '../test-utils/mocks'
 
-function contractTest(context: string, installer: () => CollectorInstaller, gravityClientClass: Class<IGravityClient>) {
+function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.init() in ${context}`, () => {
-    const mockSessionCollectionSettings = (settings: SessionCollectionSettings) => {
-      vi.spyOn(gravityClientClass.prototype, 'readSessionCollectionSettings').mockReturnValue(
-        Promise.resolve({
-          settings,
-          error: null,
-        }),
-      )
-    }
-    let handleUserAction: SpyInstance<[UserAction], void>
-    let handleSessionTrait: SpyInstance<[traitName: string, traitValue: SessionTraitValue], void>
+    let handleUserAction: SpyInstance<[UserAction], Promise<void>>
+    let handleSessionTrait: SpyInstance<[string, SessionTraitValue], Promise<void>>
 
     beforeEach(() => {
-      mockSessionCollectionSettings({ sessionRecording: true, videoRecording: false })
-      handleUserAction = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(nop)
-      handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+      handleUserAction = vi.spyOn(UserActionHandler.prototype, 'handle').mockImplementation(asyncNop)
+      handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(asyncNop)
       global.fetch = vi.fn()
     })
 
@@ -50,19 +37,19 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
     })
 
     it('a "sessionStarted" action is sent when initialized', async () => {
-      await installer().install()
+      installer().install()
       expect(handleUserAction).toHaveBeenCalledOnce()
       expect(getLastCallArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
     })
 
     it('does not send "sessionStarted" action if session id exists', async () => {
       const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
-      await installer().withSessionIdHandler(sessionIdHandler).install()
+      installer().withSessionIdHandler(sessionIdHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
       const sessionId = sessionIdHandler.get()
 
       handleUserAction.mockReset()
-      await installer().withSessionIdHandler(sessionIdHandler).install()
+      installer().withSessionIdHandler(sessionIdHandler).install()
       expect(handleUserAction).not.toHaveBeenCalled()
       expect(sessionIdHandler.get()).toEqual(sessionId)
     })
@@ -71,13 +58,13 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
       const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
       const testNameHandler = mock<TestNameHandler>()
       testNameHandler.isNewTest.mockReturnValue(false)
-      await installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
+      installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
       const sessionId = sessionIdHandler.get()
 
       handleUserAction.mockReset()
       testNameHandler.isNewTest.mockReturnValue(true)
-      await installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
+      installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
       expect(getLastCallArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
       expect(sessionIdHandler.get()).not.toEqual(sessionId)
@@ -102,7 +89,7 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
           describe('when options.enabledListeners is not specified', () => {
             it(`initializes ${listenerClass.name}`, async () => {
               vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
-              await installer().install()
+              installer().install()
               expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
             })
           })
@@ -110,13 +97,13 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
           describe('when options.enabledListeners is specified', () => {
             it(`does not initialize ${listenerClass.name} when ${listenerOption} is not present`, async () => {
               vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
-              await installer().withOptions({ enabledListeners: [] }).install()
+              installer().withOptions({ enabledListeners: [] }).install()
               expect(listenerClass.prototype.init).not.toHaveBeenCalled()
             })
 
             it(`initializes ${listenerClass.name} when ${listenerOption} is present`, async () => {
               vi.spyOn(listenerClass.prototype, 'init').mockImplementation(nop)
-              await installer()
+              installer()
                 .withOptions({ enabledListeners: [listenerOption] })
                 .install()
               expect(listenerClass.prototype.init).toHaveBeenCalledOnce()
@@ -128,7 +115,7 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
     it('does not initialize CypressEventListener when window.Cypress is not available', async () => {
       vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-      await installer().install()
+      installer().install()
       expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
     })
 
@@ -144,13 +131,13 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
       describe('initializes CypressEventListener:', () => {
         it('if enabledListeners option is not set ', async () => {
           vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-          await installer().install()
+          installer().install()
           expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
         })
 
         it('if enabledListeners option is set and includes CypressCommands', async () => {
           vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-          await installer()
+          installer()
             .withOptions({ enabledListeners: [Listener.CypressCommands] })
             .install()
           expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
@@ -160,66 +147,15 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
       describe('does not initialize CypressEventListener:', () => {
         it('if enabledListeners option is set but does not include CypressCommands', async () => {
           vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-          await installer().withOptions({ enabledListeners: [] }).install()
+          installer().withOptions({ enabledListeners: [] }).install()
           expect(CypressEventListener.prototype.init).not.toHaveBeenCalled()
-        })
-      })
-    })
-
-    describe('tracking is controlled via \'IGravityClient.readSessionCollectionSettings\'', () => {
-      let initializeEventListeners: SpyInstance<[], void>
-      let initializeScreenRecording: SpyInstance<[], void>
-
-      beforeEach(() => {
-        initializeEventListeners = vi.spyOn(EventListenersHandler.prototype, 'initializeEventListeners')
-        initializeScreenRecording = vi
-          .spyOn(ScreenRecorderHandler.prototype, 'initializeRecording')
-          .mockImplementation(nop)
-      })
-
-      afterEach(() => {
-        initializeEventListeners.mockReset()
-        initializeScreenRecording.mockReset()
-      })
-
-      describe('when "sessionRecording" is true ', () => {
-        it('records sessions AND videos if "videoRecording" is true', async () => {
-          mockSessionCollectionSettings({
-            sessionRecording: true,
-            videoRecording: true,
-          })
-          await installer().install()
-          expect(initializeEventListeners).toHaveBeenCalled()
-          expect(initializeScreenRecording).toHaveBeenCalled()
-        })
-
-        it('records sessions, BUT videos if "videoRecording" is false', async () => {
-          mockSessionCollectionSettings({
-            sessionRecording: true,
-            videoRecording: false,
-          })
-          await installer().install()
-          expect(initializeEventListeners).toHaveBeenCalled()
-          expect(initializeScreenRecording).not.toHaveBeenCalled()
-        })
-      })
-
-      describe('when "sessionRecording" is false ', () => {
-        it('records nothing (even videoRecording is true)', async () => {
-          mockSessionCollectionSettings({
-            sessionRecording: false,
-            videoRecording: true,
-          })
-          await installer().install()
-          expect(initializeEventListeners).not.toHaveBeenCalled()
-          expect(initializeScreenRecording).not.toHaveBeenCalled()
         })
       })
     })
 
     describe('when recordRequestsFor is not set and originsToRecord is set', () => {
       beforeEach(async () => {
-        await installer()
+        installer()
           .withOptions({ originsToRecord: ['https://server.com'] })
           .install()
         handleUserAction.mockReset() // clear first startedSession event
@@ -262,12 +198,13 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
     describe('when recordRequestsFor is set', () => {
       describe('and originsToRecord is set', () => {
         beforeEach(async () => {
-          await installer()
+          installer()
             .withOptions({
               gravityServerUrl: 'https://gravity-server.com',
               recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
               originsToRecord: ['https://deprecated.com'],
             })
+            .withFetch(mockFetch())
             .install()
           handleUserAction.mockReset() // clear first startedSession event
         })
@@ -307,11 +244,12 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
       describe('and originsToRecord is not set', () => {
         beforeEach(async () => {
-          await installer()
+          installer()
             .withOptions({
               gravityServerUrl: 'https://gravity-server.com',
               recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
             })
+            .withFetch(mockFetch())
             .install()
           handleUserAction.mockReset() // clear first startedSession event
         })
@@ -366,14 +304,14 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
     describe('tracking is active for the current session according option "sessionsPercentageKept"', () => {
       it('should always track if percentage is 100', async () => {
-        const collector = await installer().withOptions({ sessionsPercentageKept: 100 }).install()
+        const collector = installer().withOptions({ sessionsPercentageKept: 100 }).install()
         expect(handleUserAction).toHaveBeenCalledOnce()
         collector.identifySession('logged', true)
         expect(handleSessionTrait).toHaveBeenCalledOnce()
       })
 
       it('should never track if percentage is 0', async () => {
-        const collector = await installer().withOptions({ sessionsPercentageKept: 0 }).install()
+        const collector = installer().withOptions({ sessionsPercentageKept: 0 }).install()
         expect(handleUserAction).not.toHaveBeenCalled()
         collector.identifySession('logged', true)
         expect(handleSessionTrait).not.toHaveBeenCalled()
@@ -381,12 +319,12 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
       it('should continue tracking if collector is reset while the same session', async () => {
         const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
-        await installer().withSessionIdHandler(sessionIdHandler).withOptions({ sessionsPercentageKept: 100 }).install()
+        installer().withSessionIdHandler(sessionIdHandler).withOptions({ sessionsPercentageKept: 100 }).install()
         expect(handleUserAction).toHaveBeenCalledOnce()
         expect(handleSessionTrait).not.toHaveBeenCalled()
 
         // act as a new random choice causing tracker disabling
-        const collector = await installer()
+        const collector = installer()
           .withSessionIdHandler(sessionIdHandler)
           .withOptions({ sessionsPercentageKept: 0 })
           .install()
@@ -408,7 +346,7 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
         let countCollectedSessions: number = 0
         for (let i = 1; i <= max; i++) {
-          await installer().withOptions({ sessionsPercentageKept }).install()
+          installer().withOptions({ sessionsPercentageKept }).withFetch(mockFetch()).install()
           countCollectedSessions = handleUserAction.mock.calls.length
           const percentage = (100 * countCollectedSessions) / i
           if (i >= 100) {
@@ -427,7 +365,7 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
 
     describe('option "rejectSession" allows to:', () => {
       it('reject session if rejectSession is positive', async () => {
-        const collector = await installer()
+        const collector = installer()
           .withOptions({ rejectSession: () => true })
           .install()
 
@@ -437,7 +375,7 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
       })
 
       it('keep session if rejectSession is negative', async () => {
-        const collector = await installer()
+        const collector = installer()
           .withOptions({ rejectSession: () => false })
           .install()
 
@@ -449,17 +387,9 @@ function contractTest(context: string, installer: () => CollectorInstaller, grav
   })
 }
 
-contractTest(
-  'dry run mode (debug=true)',
-  () => {
-    return collectorInstaller({ debug: true })
-  },
-  ConsoleGravityClient,
-)
-contractTest(
-  'live mode (debug=false)',
-  () => {
-    return collectorInstaller({ debug: false, authKey: uuid() })
-  },
-  HttpGravityClient,
-)
+contractTest('dry run mode (debug=true)', () => {
+  return collectorInstaller({ debug: true })
+})
+contractTest('live mode (debug=false)', () => {
+  return collectorInstaller({ debug: false, authKey: uuid() })
+})

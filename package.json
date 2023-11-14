@@ -8,6 +8,8 @@
     "/dist"
   ],
   "scripts": {
+    "tsc": "tsc",
+    "tsc:watch": "tsc  --watch",
     "build": "tsc --project tsconfig.build.json",
     "lint": "eslint --ext ts --max-warnings 0 src",
     "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
@@ -93,8 +95,7 @@
     "rrweb": "^2.0.0-alpha.11",
     "to-readable-stream": "^4.0.0",
     "unique-selector": "^0.5.0",
-    "uuid": "^8.3.2",
-    "wait-for-expect": "^3.0.2"
+    "uuid": "^8.3.2"
   },
   "browserify": {
     "transform": [

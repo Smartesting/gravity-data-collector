@@ -94,19 +94,4 @@ describe('TrackingHandler', () => {
     trackingHandler.setTrackingActive(true)
     expect(trackingHandler.isTracking()).toBeTruthy()
   })
-
-  describe('when "videoRecordingActive" is set to false', () => {
-    beforeEach(() => {
-      trackingHandler = new TrackingHandler([403, 409])
-      trackingHandler.setVideoRecordingActive(false)
-    })
-
-    it('does not initialize the video recording', () => {
-      vi.spyOn(TrackingHandler.prototype, 'activateTracking')
-      vi.spyOn(ScreenRecorderHandler.prototype, 'initializeRecording')
-      trackingHandler.init(eventListenersHandler, screenRecorderHandler)
-      expect(TrackingHandler.prototype.activateTracking).toHaveBeenCalledOnce()
-      expect(ScreenRecorderHandler.prototype.initializeRecording).not.toHaveBeenCalledOnce()
-    })
-  })
 })

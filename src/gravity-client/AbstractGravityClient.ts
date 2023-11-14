@@ -1,6 +1,7 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
+  CollectorOptions,
   IdentifySessionResponse,
   ReadSessionCollectionSettingsResponse,
   SessionTraits,
@@ -9,6 +10,7 @@ import {
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 
 export interface SessionTraitsWithSessionId {
   sessionId: string
@@ -25,36 +27,50 @@ export interface ScreenRecordsWithSessionId {
   screenRecords: ReadonlyArray<eventWithTime>
 }
 
+export interface GravityClientOptions {
+  requestInterval: number
+  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
+}
+
+export type RecordingSettings = Pick<CollectorOptions, 'enableEventRecording' | 'enableVideoRecording'>
+
 export abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
   private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
 
-  constructor(requestInterval: number, onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void) {
+  protected constructor(options: GravityClientOptions, settingsHandler: RecordingSettingsDispatcher) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: this.handleSessionUserActions.bind(this),
       onFlush: (buffer, response) => {
-        onPublish?.(buffer)
-        if (!this.screenRecordBuffer.getIsFlushingAllowed() && response.error === null) {
-          this.screenRecordBuffer.setIsFlushingAllowed(true)
-        }
+        options.onPublish?.(buffer)
+        if (response.error === null) this.screenRecordBuffer.unlock()
       },
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: async (sessionTraitsWithSessionIds) => {
         const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
     })
     this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: async (screenRecordsWithSessionIds) => {
         const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
         return await this.handleScreenRecords(sessionId, screenRecords)
       },
-      isFlushingAllowed: false,
+      locked: true,
+    })
+    settingsHandler.subscribe(({ enableEventRecording, enableVideoRecording }) => {
+      if (enableEventRecording) {
+        this.sessionUserActionBuffer.activate()
+        this.sessionTraitsBuffer.activate()
+      }
+      if (enableVideoRecording) {
+        this.screenRecordBuffer.activate()
+      }
     })
   }
 

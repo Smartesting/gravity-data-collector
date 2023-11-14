@@ -2,16 +2,16 @@ import { v4 as uuid } from 'uuid'
 import { SessionTraitValue } from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { CollectorInstaller, collectorInstaller } from './CollectorInstaller'
-import { nop } from '../utils/nop'
+import { asyncNop, nop } from '../utils/nop'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 
 function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.identifySession() in ${context}`, () => {
-    let handleSessionTrait: SpyInstance<[traitName: string, traitValue: SessionTraitValue], void>
+    let handleSessionTrait: SpyInstance<[traitName: string, traitValue: SessionTraitValue], Promise<void>>
     let consoleWarn: SpyInstance<any[], void>
 
     beforeEach(() => {
-      handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(nop)
+      handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(asyncNop)
       consoleWarn = vi.spyOn(global.console, 'warn').mockImplementation(nop)
     })
 

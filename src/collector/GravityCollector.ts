@@ -8,10 +8,10 @@ const MINUTE = 60 * SECOND
 const MAX_SESSION_DURATION = 30 * MINUTE
 
 export default class GravityCollector {
-  private readonly asyncCollectorWrapper: Promise<CollectorWrapper>
+  private readonly collectorWrapper: CollectorWrapper | undefined
 
-  constructor(asyncCollectorWrapper: Promise<CollectorWrapper>) {
-    this.asyncCollectorWrapper = asyncCollectorWrapper
+  constructor(collectorWrapper: CollectorWrapper) {
+    this.collectorWrapper = collectorWrapper
   }
 
   static getInstance(_window: any = window) {
@@ -23,21 +23,22 @@ export default class GravityCollector {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
     const windowToUse = (options?.window ?? window) as any
-    windowToUse._GravityCollector = new GravityCollector(
-      collectorInstaller(options).withCookieSessionIdHandler(MAX_SESSION_DURATION).install(),
-    )
+    const wrapper = collectorInstaller(options).withCookieSessionIdHandler(MAX_SESSION_DURATION).install()
+    windowToUse._GravityCollector = new GravityCollector(wrapper)
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {
     const collector: GravityCollector = (window as any)._GravityCollector
-    collector.identifySession(traitName, traitValue).catch(console.error)
+    if (!collector) {
+      throw new Error('No Gravity Data Collector found in window')
+    }
+    collector.identifySession(traitName, traitValue)
   }
 
-  async identifySession(traitName: string, traitValue: SessionTraitValue) {
-    const collectorWrapper = await this.asyncCollectorWrapper
-    if (collectorWrapper === undefined) {
+  public identifySession(traitName: string, traitValue: SessionTraitValue) {
+    if (this.collectorWrapper === undefined) {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
     }
-    collectorWrapper.identifySession(traitName, traitValue)
+    this.collectorWrapper.identifySession(traitName, traitValue)
   }
 }

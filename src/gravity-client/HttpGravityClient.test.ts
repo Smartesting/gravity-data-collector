@@ -5,39 +5,51 @@ import { SessionUserAction } from '../types'
 import { mockFetch } from '../test-utils/mocks'
 import { v4 as uuidv4 } from 'uuid'
 import { EventType, eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import { createDummy } from '../test-utils/dummyFactory'
+
+const DEFAULT_OPTIONS = {
+  requestInterval: 0,
+  authKey: uuidv4(),
+  gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+  onError: vi.fn(),
+  onPublish: vi.fn(),
+  enableEventRecording: true,
+  enableVideoRecording: true,
+}
 
 describe('HttpGravityClient', () => {
   it('does not call onError when receiving 200', async () => {
     const onError = vi.fn()
+    const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
     const gravityClient = new HttpGravityClient(
-      0,
       {
-        authKey: uuidv4(),
-        gravityServerUrl: GRAVITY_SERVER_ADDRESS,
+        ...DEFAULT_OPTIONS,
         onError,
       },
+      recordingSettingsDispatcher,
       mockFetch(),
     )
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
+    recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+
+    await gravityClient.addSessionUserAction(createDummy<SessionUserAction>({ sessionId: 'whatever' }))
     await gravityClient.flush()
     expect(onError).not.toHaveBeenCalled()
   })
 
   it('calls onError when receiving other than 200', async () => {
     const onError = vi.fn()
+    const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
     const gravityClient = new HttpGravityClient(
-      0,
-      {
-        authKey: uuidv4(),
-        gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-        onError,
-      },
+      { ...DEFAULT_OPTIONS, onError },
+      recordingSettingsDispatcher,
       mockFetch({
         status: 401,
         responseBody: { error: 'access_denied' },
       }),
     )
+    recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
     await gravityClient.flush()
@@ -46,18 +58,15 @@ describe('HttpGravityClient', () => {
 
   it('calls onPublish if it is defined', async () => {
     const onPublish = vi.fn()
+    const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
     const gravityClient = new HttpGravityClient(
-      0,
-      {
-        authKey: uuidv4(),
-        gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-        onError: vi.fn(),
-        onPublish,
-      },
+      { ...DEFAULT_OPTIONS, onPublish },
+      recordingSettingsDispatcher,
       mockFetch(),
     )
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    await gravityClient.addSessionUserAction({ sessionId: 'whatever' } as SessionUserAction)
+    recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+
+    await gravityClient.addSessionUserAction(createDummy<SessionUserAction>({ sessionId: 'whatever' }))
     await gravityClient.flush()
     expect(onPublish).toHaveBeenCalledTimes(1)
   })
@@ -76,39 +85,35 @@ describe('HttpGravityClient', () => {
     }
 
     it('does not handle screen records until user actions are sent', async () => {
+      const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
       const gravityClient = new HttpGravityClient(
-        0,
-        {
-          authKey: uuidv4(),
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          onError: vi.fn(),
-        },
+        DEFAULT_OPTIONS,
+        recordingSettingsDispatcher,
         mockFetch({ responseBody: { error: null } }),
       )
+      recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: true })
       const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+
       await gravityClient.addScreenRecord(sessionId, screenRecord)
       await gravityClient.flush()
       expect(spyHandleScreenRecords).not.toHaveBeenCalled()
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      await gravityClient.addSessionUserAction({ sessionId } as SessionUserAction)
+
+      await gravityClient.addSessionUserAction(createDummy<SessionUserAction>({ sessionId }))
       await gravityClient.flush()
       expect(spyHandleScreenRecords).toHaveBeenCalled()
     })
 
     it('does not handle screen records when user actions are sent with error', async () => {
+      const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
       const gravityClient = new HttpGravityClient(
-        0,
-        {
-          authKey: uuidv4(),
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          onError: vi.fn(),
-        },
+        DEFAULT_OPTIONS,
+        recordingSettingsDispatcher,
         mockFetch({ responseBody: { error: 'aïe aïe aïe' } }),
       )
+      recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
       const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      await gravityClient.addSessionUserAction({ sessionId } as SessionUserAction)
+
+      await gravityClient.addSessionUserAction(createDummy<SessionUserAction>({ sessionId }))
       await gravityClient.addScreenRecord(sessionId, screenRecord)
       await gravityClient.flush()
       expect(spyHandleScreenRecords).not.toHaveBeenCalled()
@@ -119,16 +124,14 @@ describe('HttpGravityClient', () => {
     it('sends all traits in a request', async () => {
       const authKey = uuidv4()
       const mockedFetch = mockFetch()
+      const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
       const gravityClient = new HttpGravityClient(
-        150,
-        {
-          authKey,
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          onError: vi.fn(),
-          onPublish: vi.fn(),
-        },
+        { ...DEFAULT_OPTIONS, requestInterval: 150, authKey },
+        recordingSettingsDispatcher,
         mockedFetch,
       )
+      recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+
       const sessionId = '123'
       await gravityClient.identifySession(sessionId, {
         admin: true,
@@ -137,7 +140,7 @@ describe('HttpGravityClient', () => {
         country: 'Zanzibar',
       })
       await gravityClient.flush()
-      expect(mockedFetch).to.toHaveBeenCalledTimes(1)
+      expect(mockedFetch).to.toHaveBeenCalledOnce()
       expect(mockedFetch).to.toHaveBeenCalledWith(
         `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
@@ -158,16 +161,14 @@ describe('HttpGravityClient', () => {
     it('only sends traits from the first session', async () => {
       const authKey = uuidv4()
       const mockedFetch = mockFetch()
+      const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
       const gravityClient = new HttpGravityClient(
-        150,
-        {
-          authKey,
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          onError: vi.fn(),
-          onPublish: vi.fn(),
-        },
+        { ...DEFAULT_OPTIONS, requestInterval: 150, authKey },
+        recordingSettingsDispatcher,
         mockedFetch,
       )
+      recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+
       const sessionId = '123'
       await gravityClient.identifySession(sessionId, {
         admin: true,
@@ -179,7 +180,7 @@ describe('HttpGravityClient', () => {
         country: 'Zanzibar',
       })
       await gravityClient.flush()
-      expect(mockedFetch).to.toHaveBeenCalledTimes(1)
+      expect(mockedFetch).to.toHaveBeenCalledOnce()
       expect(mockedFetch).to.toHaveBeenCalledWith(
         `${GRAVITY_SERVER_ADDRESS}/api/tracking/${authKey}/identify/${sessionId}`,
         {
@@ -198,16 +199,13 @@ describe('HttpGravityClient', () => {
 
     it('does not send traits when none have been collected', async () => {
       const mockedFetch = mockFetch()
+      const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
       const gravityClient = new HttpGravityClient(
-        150,
-        {
-          authKey: uuidv4(),
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          onError: vi.fn(),
-          onPublish: vi.fn(),
-        },
+        { ...DEFAULT_OPTIONS, requestInterval: 150 },
+        recordingSettingsDispatcher,
         mockedFetch,
       )
+      recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
       await gravityClient.flush()
       expect(mockedFetch).not.to.toHaveBeenCalled()
     })

@@ -9,10 +9,14 @@ export default class CypressEventListener implements IEventListener {
   private readonly listeners: Map<CypressEvent, ListenerFn> = new Map()
   private readonly testAfterRunListener: (event: any) => void
 
-  constructor(private readonly cypress: CypressObject, private readonly userActionHandler: IUserActionHandler) {
+  constructor(
+    private readonly cypress: CypressObject,
+    private readonly userActionHandler: IUserActionHandler,
+    onDispose: () => void,
+  ) {
     this.testAfterRunListener = () => {
-      console.log('[test:after:run] userActionHandler.flush()')
-      this.userActionHandler.flush()
+      console.log('[test:after:run] flush()')
+      onDispose()
     }
     for (const cypressEvent of Object.values(CypressEvent)) {
       this.listeners.set(cypressEvent, (event: any) => {

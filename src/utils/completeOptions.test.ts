@@ -98,6 +98,8 @@ describe('completeOptions', () => {
         sessionsPercentageKept: 100,
         rejectSession: DEFAULT_SESSION_REJECTION,
         window,
+        enableEventRecording: true,
+        enableVideoRecording: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -120,6 +122,8 @@ describe('completeOptions', () => {
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
         window,
+        enableEventRecording: true,
+        enableVideoRecording: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -146,6 +150,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
+          enableEventRecording: true,
+          enableVideoRecording: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -166,6 +172,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
+          enableEventRecording: true,
+          enableVideoRecording: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -186,6 +194,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
+          enableEventRecording: true,
+          enableVideoRecording: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -206,6 +216,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
+          enableEventRecording: true,
+          enableVideoRecording: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -226,9 +238,26 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
+          enableEventRecording: true,
+          enableVideoRecording: true,
         }
         expect(completed).toStrictEqual(expected)
       })
+    })
+  })
+
+  it('use deprecated `disableVideoRecording` to set `enableVideoRecording`', () => {
+    expect(completeOptions({ authKey: '', disableVideoRecording: true })).toMatchObject({
+      enableVideoRecording: false,
+    })
+    expect(completeOptions({ authKey: '', disableVideoRecording: false })).toMatchObject({
+      enableVideoRecording: true,
+    })
+    expect(completeOptions({ authKey: '', disableVideoRecording: true, enableVideoRecording: true })).toMatchObject({
+      enableVideoRecording: true,
+    })
+    expect(completeOptions({ authKey: '', disableVideoRecording: false, enableVideoRecording: false })).toMatchObject({
+      enableVideoRecording: false,
     })
   })
 })

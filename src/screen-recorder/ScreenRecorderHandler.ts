@@ -14,7 +14,7 @@ export default class ScreenRecorderHandler {
     // @ts-expect-error
     this.stopRecording = record({
       emit(event) {
-        handleRecord(event)
+        void handleRecord(event)
       },
       ...RECORDING_SETTINGS,
     })
@@ -24,14 +24,10 @@ export default class ScreenRecorderHandler {
     this.stopRecording?.()
   }
 
-  handle(screenRecord: eventWithTime) {
-    this.gravityClient
+  async handle(screenRecord: eventWithTime) {
+    return await this.gravityClient
       .addScreenRecord(this.sessionIdHandler.get(), screenRecord)
       .then(() => {})
       .catch(() => {})
-  }
-
-  flush(): void {
-    this.gravityClient.flush()
   }
 }

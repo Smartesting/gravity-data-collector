@@ -3,22 +3,24 @@ import {
   AddSessionUserActionsResponse,
   IdentifySessionResponse,
   ReadSessionCollectionSettingsResponse,
-  SessionCollectionSettings,
   SessionTraits,
   SessionUserAction,
 } from '../types'
-import { AbstractGravityClient } from './AbstractGravityClient'
+import { AbstractGravityClient, GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 
-export const DEFAULT_SESSION_COLLECTION_SETTINGS: SessionCollectionSettings = {
-  sessionRecording: true,
-  videoRecording: true,
+type ConsoleGravityClientOptions = GravityClientOptions & {
+  maxDelay?: number
 }
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
-  constructor(requestInterval: number, private readonly maxDelay: number = 0) {
-    super(requestInterval)
+  constructor(
+    private readonly options: ConsoleGravityClientOptions,
+    recordingSettingsHandler: RecordingSettingsDispatcher,
+  ) {
+    super(options, recordingSettingsHandler)
   }
 
   async handleSessionUserActions(
@@ -43,16 +45,17 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
 
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
     return {
-      settings: DEFAULT_SESSION_COLLECTION_SETTINGS,
+      settings: null,
       error: null,
     }
   }
 
   private log(data: unknown) {
-    if (this.maxDelay > 0) {
+    const maxDelay = this.options.maxDelay ?? 0
+    if (maxDelay > 0) {
       setTimeout(() => {
         console.log(data)
-      }, this.maxDelay * Math.random())
+      }, maxDelay * Math.random())
     } else {
       console.log(data)
     }

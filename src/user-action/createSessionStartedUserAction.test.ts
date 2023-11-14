@@ -133,7 +133,11 @@ describe('action', () => {
   })
 })
 
-function withPatchedProperties<T>(toPatch: unknown, properties: T, callBack: () => void) {
+function withPatchedProperties<T extends { [key: string]: any }>(
+  toPatch: unknown,
+  properties: T,
+  callBack: () => void,
+) {
   const originalProperties = Object.fromEntries(
     Object.entries(properties).map(([key]) => {
       return [key, (toPatch as T)[key]]

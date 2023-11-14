@@ -11,13 +11,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- add collector option `enableEventRecording` to (de)activate event recording
+- add collector option `enableVideoRecording` to (de)activate video recording
+
 ### Changed
 
 ### Deprecated
 
-### Removed
+- Option `disableVideoRecording` replaced by `enableVideoRecording` (reversed)
 
-- Option to disable video recording of sessions (now available from Gravity app)
+### Removed
 
 ### Fixed
 
