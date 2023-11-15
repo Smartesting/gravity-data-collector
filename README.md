@@ -194,6 +194,10 @@ with the page to see collected user actions.
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by
 your developer tool.
 
-## Miscellaneous
+## Any Question ?
 
+Maybe you need help to install and/or understand Gravity Data Collector
+
+- please visit our [documentation](https://docs.gravity-testing.com/) pages
 - we start a [FAQ](FAQ.md) hoping it can help you to face eventual problems with th Gravity Data Collector
+- [here](flowchart.md) is a flowchart summarizing how the collector works, depending on the options and configuration of your Gravity project.
