@@ -72,19 +72,20 @@ class CollectorWrapper {
       return
     }
     const isNewSession = !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
-    if (isNewSession && !keepSession(options)) {
-      this.recordingSettingsHandler.terminate()
-      return
+    if (isNewSession) {
+      if (!keepSession(options)) {
+        this.recordingSettingsHandler.terminate()
+        return
+      }
+
+      if (this.testNameHandler.isNewTest()) this.sessionIdHandler.generateNewSessionId()
+      this.initSession(createSessionStartedUserAction(options.buildId))
     }
     this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
     this.screenRecorderHandler.initializeRecording()
     if (this.isListenerEnabled(Listener.Requests)) {
       this.patchFetch()
-    }
-    if (isNewSession) {
-      this.sessionIdHandler.generateNewSessionId()
-      this.initSession(createSessionStartedUserAction(options.buildId))
     }
   }
 
@@ -185,7 +186,10 @@ class CollectorWrapper {
     return await this.gravityClient.readSessionCollectionSettings().then(({ settings }) => {
       const enableEventRecording = settings?.sessionRecording ?? this.options.enableEventRecording
       const enableVideoRecording = settings?.videoRecording ?? this.options.enableVideoRecording
-      return { enableEventRecording, enableVideoRecording }
+      return {
+        enableEventRecording,
+        enableVideoRecording,
+      }
     })
   }
 }

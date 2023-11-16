@@ -18,6 +18,7 @@ import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
 import { mockFetch } from '../test-utils/mocks'
 import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
+import * as rrweb from 'rrweb'
 
 function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.init() in ${context}`, () => {
@@ -76,11 +77,26 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       }
 
       const LISTENERS: ListenerTestData[] = [
-        { listenerClass: ClickEventListener, listenerOption: Listener.Click },
-        { listenerClass: KeyUpEventListener, listenerOption: Listener.KeyUp },
-        { listenerClass: KeyDownEventListener, listenerOption: Listener.KeyDown },
-        { listenerClass: ChangeEventListener, listenerOption: Listener.Change },
-        { listenerClass: BeforeUnloadEventListener, listenerOption: Listener.BeforeUnload },
+        {
+          listenerClass: ClickEventListener,
+          listenerOption: Listener.Click,
+        },
+        {
+          listenerClass: KeyUpEventListener,
+          listenerOption: Listener.KeyUp,
+        },
+        {
+          listenerClass: KeyDownEventListener,
+          listenerOption: Listener.KeyDown,
+        },
+        {
+          listenerClass: ChangeEventListener,
+          listenerOption: Listener.Change,
+        },
+        {
+          listenerClass: BeforeUnloadEventListener,
+          listenerOption: Listener.BeforeUnload,
+        },
       ]
 
       for (const { listenerClass, listenerOption } of LISTENERS) {
@@ -362,6 +378,17 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       })
     })
 
+    it('First video event must have same session id than first session event', () => {
+      const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+      let initialSessionId: string | null = null
+      vi.spyOn(rrweb, 'record').mockImplementationOnce(() => {
+        initialSessionId = sessionIdHandler.get()
+        return nop
+      })
+      installer().withSessionIdHandler(sessionIdHandler).withOptions({ enableVideoRecording: true }).install()
+      assert.equal(getLastCallArgument(handleUserAction).sessionId, initialSessionId)
+    })
+
     describe('option "rejectSession" allows to:', () => {
       it('reject session if rejectSession is positive', async () => {
         const collector = installer()
@@ -391,5 +418,8 @@ contractTest('dry run mode (debug=true)', () => {
 })
 
 contractTest('live mode (debug=false)', () => {
-  return collectorInstaller({ debug: false, authKey: uuid() })
+  return collectorInstaller({
+    debug: false,
+    authKey: uuid(),
+  })
 })
