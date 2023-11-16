@@ -1,4 +1,3 @@
-import { v4 as uuidv4, v4 as uuid } from 'uuid'
 import { Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { CollectorInstaller, collectorInstaller } from './CollectorInstaller'
@@ -19,6 +18,7 @@ import { AssertionError } from 'assert'
 import { mockFetch } from '../test-utils/mocks'
 import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
 import * as rrweb from 'rrweb'
+import { uuid } from '../utils/uuid'
 
 function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.init() in ${context}`, () => {
@@ -333,7 +333,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       })
 
       it('should continue tracking if collector is reset while the same session', async () => {
-        const sessionIdHandler = new MemorySessionIdHandler(uuidv4, 1000)
+        const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
         installer().withSessionIdHandler(sessionIdHandler).withOptions({ sessionsPercentageKept: 100 }).install()
         expect(handleUserAction).toHaveBeenCalledOnce()
         expect(handleSessionTrait).not.toHaveBeenCalled()

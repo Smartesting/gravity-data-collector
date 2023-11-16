@@ -3,11 +3,11 @@ import CollectorWrapper from './CollectorWrapper'
 import completeOptions from '../utils/completeOptions'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import { v4 as uuid } from 'uuid'
 import CookieSessionIdHandler from '../session-id-handler/CookieSessionIdHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import crossfetch from 'cross-fetch'
+import { uuid } from '../utils/uuid'
 
 export function collectorInstaller(options?: Partial<CollectorOptions>) {
   return new CollectorInstaller(options)
