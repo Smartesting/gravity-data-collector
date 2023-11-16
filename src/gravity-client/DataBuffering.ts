@@ -8,7 +8,7 @@ export interface DataBufferingOptions<Data, Response> {
 export class DataBuffering<Data, Response> {
   private readonly buffer: Data[] = []
   private readonly interval: NodeJS.Timer | null = null
-  private locked: boolean = false
+  private locked = false
   private active = false
 
   constructor(private readonly options: DataBufferingOptions<Data, Response>) {

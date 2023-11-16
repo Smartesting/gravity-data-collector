@@ -1,4 +1,4 @@
-import { CollectorOptions, CollectorOptionsWithWindow, ReadSessionCollectionSettingsResponse } from '../types'
+import { CollectorOptions, CollectorOptionsWithWindow } from '../types'
 import CollectorWrapper from './CollectorWrapper'
 import completeOptions from '../utils/completeOptions'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -7,7 +7,6 @@ import { v4 as uuid } from 'uuid'
 import CookieSessionIdHandler from '../session-id-handler/CookieSessionIdHandler'
 import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
-import { IGravityClient } from '../gravity-client/IGravityClient'
 import crossfetch from 'cross-fetch'
 
 export function collectorInstaller(options?: Partial<CollectorOptions>) {
@@ -20,9 +19,7 @@ export class CollectorInstaller {
   private options: CollectorOptionsWithWindow
   private sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
   private testNameHandler: TestNameHandler = new SessionStorageTestNameHandler()
-  private declare readonly gravityClient: IGravityClient
-  private declare readonly settingsProvider: Promise<ReadSessionCollectionSettingsResponse>
-  private declare fetch: FetchType
+  private fetch = crossfetch
 
   constructor(options?: Partial<CollectorOptions>) {
     this.options = completeOptions(options)
