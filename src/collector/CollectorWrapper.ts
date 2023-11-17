@@ -80,17 +80,22 @@ class CollectorWrapper {
         this.recordingSettingsHandler.terminate()
         return
       }
-
+      if (reset) {
+        this.userActionHandler.activate()
+        this.sessionTraitHandler.activate()
+      }
       if (this.testNameHandler.isNewTest()) this.sessionIdHandler.generateNewSessionId()
+      console.log('new session started')
       this.initSession(createSessionStartedUserAction(options.buildId))
     }
     this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
     this.screenRecorderHandler.initializeRecording()
 
-    if (reset) return
-    if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
-    this.userActionHandler.subscribe(this.checkSessionDuration.bind(this))
+    if (!reset) {
+      if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
+      this.userActionHandler.subscribe(this.checkTimeout.bind(this))
+    }
   }
 
   async identifySession(traitName: string, traitValue: SessionTraitValue): Promise<void> {
@@ -201,7 +206,7 @@ class CollectorWrapper {
     })
   }
 
-  private async checkSessionDuration() {
+  private async checkTimeout() {
     if (this.timeoutHandler.isExpired()) {
       console.log('expired')
       await this.gravityClient.flush()

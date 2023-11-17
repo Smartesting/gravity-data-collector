@@ -14,12 +14,13 @@ import {
   SessionTraits,
   SessionUserAction,
   TargetedUserAction,
+  UserActionType,
 } from '../types'
 import { eventWithTime } from '@rrweb/types'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
 
-describe.skip('Session timeout management', () => {
+describe('Session timeout management', () => {
   let initializeEventListeners: SpyInstance
   let initializeScreenRecording: SpyInstance
   let handleSessionUserActions: SpyInstance<[ReadonlyArray<SessionUserAction>], Promise<AddSessionUserActionsResponse>>
@@ -75,6 +76,7 @@ describe.skip('Session timeout management', () => {
         .withSessionIdHandler(new MemorySessionIdHandler(() => `sessionId-${count++}`))
         .withTimeoutHandler(new MemoryTimeoutHandler(1000))
         .install()
+      initializeEventListeners.mockClear()
       initializeScreenRecording.mockClear()
 
       // requestInterval #1 => flush SessionStarted
@@ -99,13 +101,25 @@ describe.skip('Session timeout management', () => {
         { sessionId: 'sessionId-1', target: { element: 'burst-1' } },
       ])
 
-      await collector.userActionHandler.handle(createDummy())
-      // screenRecordingHandler has been reset
+      await collector.userActionHandler.handle(
+        createDummy<TargetedUserAction>({ target: { element: 'handlingExpirationEvent' } }),
+      )
+      // the session has expired :
+      // - ScreenRecorderHandler must have been reset
+      // - EventListenersHandler must have been reset
       expect(initializeScreenRecording).toHaveBeenCalledOnce()
+      expect(initializeEventListeners).toHaveBeenCalledOnce()
 
       // requestInterval #5 => flush dummy userAction
       await vi.advanceTimersByTimeAsync(300)
       expect(handleSessionUserActions).toHaveBeenCalledTimes(3)
+      expect(getLastCallFirstArgument(handleSessionUserActions)).toHaveLength(2)
+      expect(getLastCallFirstArgument(handleSessionUserActions)[0]).toEqual({
+        sessionId: 'sessionId-1',
+        target: { element: 'handlingExpirationEvent' },
+      })
+      expect(getLastCallFirstArgument(handleSessionUserActions)[1].type).toEqual(UserActionType.SessionStarted)
+      expect(getLastCallFirstArgument(handleSessionUserActions)[1].sessionId).toEqual('sessionId-2')
 
       console.log('emit 2')
       await emitEachEventKind(collector, 'burst-2')
@@ -113,6 +127,8 @@ describe.skip('Session timeout management', () => {
       // requestInterval #6 => flush
       await vi.advanceTimersByTimeAsync(300)
       expect(handleSessionUserActions).toHaveBeenCalledTimes(4)
+      console.log(handleSessionUserActions.mock.calls)
+      console.log(handleSessionUserActions.mock.calls[3])
       expect(getLastCallFirstArgument(handleSessionUserActions)).toStrictEqual([
         { sessionId: 'sessionId-2', target: { element: 'burst-2' } },
       ])
