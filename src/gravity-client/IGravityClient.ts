@@ -11,4 +11,6 @@ export interface IGravityClient {
   readSessionCollectionSettings: () => Promise<ReadSessionCollectionSettingsResponse>
 
   flush: () => Promise<void>
+
+  reset: () => void
 }

@@ -110,6 +110,7 @@ class CollectorWrapper {
       this.screenRecorderHandler.terminateRecording()
       this.userActionHandler.terminate()
       this.sessionTraitHandler.terminate()
+      this.gravityClient.reset()
       return
     }
     if (terminateVideoRecording) {

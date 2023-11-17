@@ -78,6 +78,11 @@ export abstract class AbstractGravityClient implements IGravityClient {
     })
   }
 
+  reset() {
+    this.sessionTraitsBuffer.lock()
+    this.screenRecordBuffer.lock()
+  }
+
   async addSessionUserAction(sessionUserAction: SessionUserAction) {
     await this.sessionUserActionBuffer.addData(sessionUserAction)
   }

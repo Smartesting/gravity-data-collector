@@ -41,4 +41,8 @@ export class DataBuffering<Data, Response> {
     const handleResponse = await this.options.handleData(data)
     this.options.onFlush?.(data, handleResponse)
   }
+
+  lock() {
+    this.locked = true
+  }
 }
