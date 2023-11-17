@@ -3,7 +3,7 @@ import { UserActionType } from '../types'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class BeforeUnloadEventListener extends EventListener {
-  constructor(userActionHandler: IUserActionHandler, window: Window, private readonly onDispose: () => void) {
+  constructor(userActionHandler: IUserActionHandler, window: Window, private readonly onDispose: Function) {
     super(userActionHandler, 'beforeunload' as UserActionType, window)
   }
 

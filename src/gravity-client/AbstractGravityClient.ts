@@ -96,8 +96,8 @@ export abstract class AbstractGravityClient implements IGravityClient {
     })
   }
 
-  async flush() {
-    return await Promise.all([
+  async flush(): Promise<void> {
+    await Promise.all([
       this.sessionUserActionBuffer.flush(),
       this.screenRecordBuffer.flush(),
       this.sessionTraitsBuffer.flush(),

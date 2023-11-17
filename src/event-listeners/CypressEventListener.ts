@@ -12,7 +12,7 @@ export default class CypressEventListener implements IEventListener {
   constructor(
     private readonly cypress: CypressObject,
     private readonly userActionHandler: IUserActionHandler,
-    onDispose: () => void,
+    onDispose: Function,
   ) {
     this.testAfterRunListener = () => {
       console.log('[test:after:run] flush()')

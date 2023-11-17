@@ -2,7 +2,6 @@ import { Listener, SessionTraits, SessionUserAction, UserActionType } from '../t
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { CollectorInstaller, collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
-import { getLastCallArgument } from '../test-utils/spies'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import { mock } from 'vitest-mock-extended'
@@ -19,6 +18,7 @@ import { mockFetch } from '../test-utils/mocks'
 import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
 import * as rrweb from 'rrweb'
 import { uuid } from '../utils/uuid'
+import { getLastCallFirstArgument } from '../test-utils/spies'
 
 function contractTest(context: string, installer: () => CollectorInstaller) {
   describe(`GravityCollector.init() in ${context}`, () => {
@@ -39,11 +39,11 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
     it('a "sessionStarted" action is sent when initialized', async () => {
       installer().install()
       expect(handleUserAction).toHaveBeenCalledOnce()
-      expect(getLastCallArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
+      expect(getLastCallFirstArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
     })
 
     it('does not send "sessionStarted" action if session id exists', async () => {
-      const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+      const sessionIdHandler = new MemorySessionIdHandler(uuid)
       installer().withSessionIdHandler(sessionIdHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
       const sessionId = sessionIdHandler.get()
@@ -55,7 +55,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
     })
 
     it('a "sessionStarted" action is sent if session id exists but this is a new test', async () => {
-      const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+      const sessionIdHandler = new MemorySessionIdHandler(uuid)
       const testNameHandler = mock<TestNameHandler>()
       testNameHandler.isNewTest.mockReturnValue(false)
       installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
@@ -66,7 +66,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       testNameHandler.isNewTest.mockReturnValue(true)
       installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
       expect(handleUserAction).toHaveBeenCalledOnce()
-      expect(getLastCallArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
+      expect(getLastCallFirstArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
       expect(sessionIdHandler.get()).not.toEqual(sessionId)
     })
 
@@ -181,7 +181,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           method: 'GET',
         })
         expect(handleUserAction).toHaveBeenCalledOnce()
-        expect(getLastCallArgument(handleUserAction)).toMatchObject({
+        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
           type: UserActionType.AsyncRequest,
           url: 'https://server.com/example',
           method: 'GET',
@@ -198,7 +198,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
         const xhr = new XMLHttpRequest()
         xhr.open('GET', 'https://server.com/example')
         expect(handleUserAction).toHaveBeenCalled()
-        expect(getLastCallArgument(handleUserAction)).toMatchObject({
+        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
           type: UserActionType.AsyncRequest,
           url: 'https://server.com/example',
           method: 'GET',
@@ -235,7 +235,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           })
 
           expect(handleUserAction).toHaveBeenCalled()
-          expect(getLastCallArgument(handleUserAction)).toMatchObject({
+          expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
             type: UserActionType.AsyncRequest,
             url: 'https://server.com/example',
             method: 'GET',
@@ -249,7 +249,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
 
           xhr.open('GET', 'https://server.com/example')
           expect(handleUserAction).toHaveBeenCalled()
-          expect(getLastCallArgument(handleUserAction)).toMatchObject({
+          expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
             type: UserActionType.AsyncRequest,
             url: 'https://server.com/example',
             method: 'GET',
@@ -274,7 +274,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
             method: 'GET',
           })
           expect(handleUserAction).toHaveBeenCalledOnce()
-          expect(getLastCallArgument(handleUserAction)).toMatchObject({
+          expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
             type: UserActionType.AsyncRequest,
             url: 'https://server.com/example',
             method: 'GET',
@@ -291,7 +291,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
           const xhr = new XMLHttpRequest()
           xhr.open('GET', 'https://server.com/example')
           expect(handleUserAction).toHaveBeenCalled()
-          expect(getLastCallArgument(handleUserAction)).toMatchObject({
+          expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
             type: UserActionType.AsyncRequest,
             url: 'https://server.com/example',
             method: 'GET',
@@ -333,7 +333,7 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
       })
 
       it('should continue tracking if collector is reset while the same session', async () => {
-        const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+        const sessionIdHandler = new MemorySessionIdHandler(uuid)
         installer().withSessionIdHandler(sessionIdHandler).withOptions({ sessionsPercentageKept: 100 }).install()
         expect(handleUserAction).toHaveBeenCalledOnce()
         expect(handleSessionTrait).not.toHaveBeenCalled()
@@ -379,14 +379,14 @@ function contractTest(context: string, installer: () => CollectorInstaller) {
     })
 
     it('First video event must have same session id than first session event', () => {
-      const sessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+      const sessionIdHandler = new MemorySessionIdHandler(uuid)
       let initialSessionId: string | null = null
       vi.spyOn(rrweb, 'record').mockImplementationOnce(() => {
         initialSessionId = sessionIdHandler.get()
         return nop
       })
       installer().withSessionIdHandler(sessionIdHandler).withOptions({ enableVideoRecording: true }).install()
-      assert.equal(getLastCallArgument(handleUserAction).sessionId, initialSessionId)
+      assert.equal(getLastCallFirstArgument(handleUserAction).sessionId, initialSessionId)
     })
 
     describe('option "rejectSession" allows to:', () => {

@@ -7,16 +7,14 @@ export default interface ISessionIdHandler {
 }
 
 export abstract class BaseSessionIdHandler implements ISessionIdHandler {
-  constructor(private readonly makeSessionId: () => string, private readonly sessionDuration: number) {}
+  constructor(private readonly makeSessionId: () => string) {}
 
   get(): string {
     let sessionId = this.getSessionId()
-    if (sessionId === undefined || new Date().getTime() > this.getTimeout()) {
+    if (sessionId === undefined) {
       sessionId = this.makeSessionId()
       this.setSessionId(sessionId)
     }
-
-    this.setTimeout(new Date().getTime() + this.sessionDuration)
     return sessionId
   }
 
@@ -25,14 +23,12 @@ export abstract class BaseSessionIdHandler implements ISessionIdHandler {
   }
 
   generateNewSessionId(): void {
-    this.setSessionId(this.makeSessionId())
+    const sessionId = this.makeSessionId()
+    console.log('generate new session id', sessionId)
+    this.setSessionId(sessionId)
   }
 
   protected abstract getSessionId(): string | undefined
 
   protected abstract setSessionId(sessionId: string): void
-
-  protected abstract getTimeout(): number
-
-  protected abstract setTimeout(timeout: number): void
 }

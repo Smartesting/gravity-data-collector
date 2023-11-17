@@ -18,7 +18,7 @@ describe('UserActionHandler', () => {
 
     beforeEach(() => {
       client = new NopGravityClient(0)
-      sessionIdHandler = new MemorySessionIdHandler(() => sessionId, 10)
+      sessionIdHandler = new MemorySessionIdHandler(() => sessionId)
       userActionHandler = new UserActionHandler(sessionIdHandler, client)
     })
 

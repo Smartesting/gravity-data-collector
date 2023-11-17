@@ -8,6 +8,9 @@ import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTe
 import TestNameHandler from '../test-name-handler/TestNameHandler'
 import crossfetch from 'cross-fetch'
 import { uuid } from '../utils/uuid'
+import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
+import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
+import CookieTimeoutHandler from '../timeout-handler/CookieTimeoutHandler'
 
 export function collectorInstaller(options?: Partial<CollectorOptions>) {
   return new CollectorInstaller(options)
@@ -17,7 +20,8 @@ export type FetchType = typeof crossfetch
 
 export class CollectorInstaller {
   private options: CollectorOptionsWithWindow
-  private sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuid, 1000)
+  private sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuid)
+  private sessionTimeoutHandler: ITimeoutHandler = new MemoryTimeoutHandler(1000)
   private testNameHandler: TestNameHandler = new SessionStorageTestNameHandler()
   private fetch = crossfetch
 
@@ -30,13 +34,23 @@ export class CollectorInstaller {
     return this
   }
 
-  withCookieSessionIdHandler(sessionDuration: number, customWindow?: typeof window): CollectorInstaller {
+  withCookieSessionIdHandler(customWindow?: typeof window): CollectorInstaller {
     const windowToUse = this.options?.window ?? customWindow ?? window
-    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, sessionDuration, windowToUse))
+    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, windowToUse))
   }
 
   withSessionIdHandler(handler: ISessionIdHandler): CollectorInstaller {
     this.sessionIdHandler = handler
+    return this
+  }
+
+  withCookieTimeoutHandler(sessionDuration: number, customWindow?: typeof window): CollectorInstaller {
+    const windowToUse = this.options?.window ?? customWindow ?? window
+    return this.withTimeoutHandler(new CookieTimeoutHandler(sessionDuration, windowToUse))
+  }
+
+  withTimeoutHandler(handler: ITimeoutHandler): CollectorInstaller {
+    this.sessionTimeoutHandler = handler
     return this
   }
 
@@ -51,7 +65,13 @@ export class CollectorInstaller {
   }
 
   install(): CollectorWrapper {
-    const collectorWrapper = new CollectorWrapper(this.options, this.sessionIdHandler, this.testNameHandler, this.fetch)
+    const collectorWrapper = new CollectorWrapper(
+      this.options,
+      this.sessionIdHandler,
+      this.testNameHandler,
+      this.sessionTimeoutHandler,
+      this.fetch,
+    )
     collectorWrapper.init()
     return collectorWrapper
   }

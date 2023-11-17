@@ -31,6 +31,7 @@ import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { RecordingSettingsDispatcher } from '../gravity-client/RecordingSettingsDispatcher'
 import crossfetch from 'cross-fetch'
 import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
+import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -44,6 +45,7 @@ class CollectorWrapper {
     private readonly options: CollectorOptionsWithWindow,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
+    private readonly timeoutHandler: ITimeoutHandler,
     fetch = crossfetch,
   ) {
     this.gravityClient = options.debug
@@ -60,7 +62,7 @@ class CollectorWrapper {
     })
   }
 
-  init(): void {
+  init(reset = false): void {
     this.fetchRecordingSettings()
       .then((settings) => this.recordingSettingsHandler.dispatch(settings))
       .catch(console.error)
@@ -71,7 +73,8 @@ class CollectorWrapper {
       console.log('[Gravity data collector] invalid URL for tracking: ', currentUrl)
       return
     }
-    const isNewSession = !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
+    const isNewSession = reset || !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
+    console.log('init', { isNewSession })
     if (isNewSession) {
       if (!keepSession(options)) {
         this.recordingSettingsHandler.terminate()
@@ -84,9 +87,10 @@ class CollectorWrapper {
     this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
     this.screenRecorderHandler.initializeRecording()
-    if (this.isListenerEnabled(Listener.Requests)) {
-      this.patchFetch()
-    }
+
+    if (reset) return
+    if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
+    this.userActionHandler.subscribe(this.checkSessionDuration.bind(this))
   }
 
   async identifySession(traitName: string, traitValue: SessionTraitValue): Promise<void> {
@@ -166,12 +170,16 @@ class CollectorWrapper {
       eventListeners.push(new ChangeEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
-      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, window, this.gravityClient.flush))
+      eventListeners.push(
+        new BeforeUnloadEventListener(this.userActionHandler, window, async () => await this.gravityClient.flush()),
+      )
     }
 
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
     if (cypress !== undefined && this.isListenerEnabled(Listener.CypressCommands)) {
-      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler, this.gravityClient.flush))
+      eventListeners.push(
+        new CypressEventListener(cypress, this.userActionHandler, async () => await this.gravityClient.flush()),
+      )
     }
     return eventListeners
   }
@@ -191,6 +199,17 @@ class CollectorWrapper {
         enableVideoRecording,
       }
     })
+  }
+
+  private async checkSessionDuration() {
+    if (this.timeoutHandler.isExpired()) {
+      console.log('expired')
+      await this.gravityClient.flush()
+      console.log('flushed')
+      this.terminateRecording(true, true)
+      this.sessionIdHandler.generateNewSessionId()
+      this.init(true)
+    }
   }
 }
 
