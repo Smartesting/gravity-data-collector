@@ -24,6 +24,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix video records loss after session timeout
+
 ## [3.14.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.13.0...v3.14.0)
 
 ### Added
