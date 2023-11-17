@@ -3,7 +3,7 @@ import { expect, SpyInstance, vi } from 'vitest'
 import { EventType, eventWithTime } from '@rrweb/types'
 import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
-import { AbstractGravityClient, GravityClientOptions } from './AbstractGravityClient'
+import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsError,

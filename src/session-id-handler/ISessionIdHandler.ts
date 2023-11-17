@@ -23,9 +23,7 @@ export abstract class BaseSessionIdHandler implements ISessionIdHandler {
   }
 
   generateNewSessionId(): void {
-    const sessionId = this.makeSessionId()
-    console.log('generate new session id', sessionId)
-    this.setSessionId(sessionId)
+    this.setSessionId(this.makeSessionId())
   }
 
   protected abstract getSessionId(): string | undefined

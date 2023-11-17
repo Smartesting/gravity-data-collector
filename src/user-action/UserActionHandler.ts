@@ -23,17 +23,14 @@ export default class UserActionHandler implements IUserActionHandler {
 
   terminate() {
     this.active = false
-    console.log('unsubscribe all')
-    //    this.listeners.splice(0, this.listeners.length)
+    this.listeners.splice(0, this.listeners.length)
   }
 
   subscribe(listener: Function) {
-    console.log('subscribe')
     this.listeners.push(listener)
   }
 
   activate() {
-    console.log('actiavte')
     this.active = true
   }
 }

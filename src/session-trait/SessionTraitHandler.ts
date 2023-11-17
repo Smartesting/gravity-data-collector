@@ -16,7 +16,6 @@ export default class SessionTraitHandler {
   }
 
   activate() {
-    console.log('actiavte')
     this.active = true
   }
 }

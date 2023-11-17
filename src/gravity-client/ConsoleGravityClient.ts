@@ -6,7 +6,7 @@ import {
   SessionTraits,
   SessionUserAction,
 } from '../types'
-import { AbstractGravityClient, GravityClientOptions } from './AbstractGravityClient'
+import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
 import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'

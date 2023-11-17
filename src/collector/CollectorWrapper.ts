@@ -74,7 +74,6 @@ class CollectorWrapper {
       return
     }
     const isNewSession = reset || !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
-    console.log('init', { isNewSession })
     if (isNewSession) {
       if (!keepSession(options)) {
         this.recordingSettingsHandler.terminate()
@@ -85,7 +84,6 @@ class CollectorWrapper {
         this.sessionTraitHandler.activate()
       }
       if (this.testNameHandler.isNewTest()) this.sessionIdHandler.generateNewSessionId()
-      console.log('new session started')
       this.initSession(createSessionStartedUserAction(options.buildId))
     }
     this.testNameHandler.refresh()
@@ -209,9 +207,7 @@ class CollectorWrapper {
 
   private async checkTimeout() {
     if (this.timeoutHandler.isExpired()) {
-      console.log('expired')
       await this.gravityClient.flush()
-      console.log('flushed')
       this.terminateRecording(true, true)
       this.sessionIdHandler.generateNewSessionId()
       this.init(true)

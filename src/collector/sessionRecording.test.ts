@@ -11,7 +11,7 @@ import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { mockFetch } from '../test-utils/mocks'
 import { createDummy } from '../test-utils/dummyFactory'
 import { Class } from '../test-utils/types'
-import { AbstractGravityClient } from '../gravity-client/AbstractGravityClient'
+import AbstractGravityClient from '../gravity-client/AbstractGravityClient'
 
 describe('Session recording (events & video) depends on remote Gravity settings', () => {
   let initializeEventListeners: SpyInstance

@@ -34,7 +34,7 @@ export interface GravityClientOptions {
 
 export type RecordingSettings = Pick<CollectorOptions, 'enableEventRecording' | 'enableVideoRecording'>
 
-export abstract class AbstractGravityClient implements IGravityClient {
+export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
   private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
