@@ -36,12 +36,22 @@
 //   }
 // }
 
+import { ReadSessionCollectionSettingsResponse } from '../../src/types'
+import {
+  buildGravityTrackingIdentifySessionApiUrl,
+  buildGravityTrackingPublishApiUrl,
+  buildGravityTrackingSessionCollectionSettingsApiUrl,
+  buildGravityTrackingSessionRecordingApiUrl,
+} from '../../src/gravityEndPoints'
+
+const DEFAULT_GRAVITY_SERVER_URL = 'https://api.gravity.smartesting.com'
+
 Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => {
   return cy
     .intercept(
       {
         method: 'POST',
-        url: `https://api.gravity.smartesting.com/api/tracking/*/publish`,
+        url: buildGravityTrackingPublishApiUrl('*', DEFAULT_GRAVITY_SERVER_URL),
       },
       (req) => {
         if (onReq) {
@@ -60,7 +70,7 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => 
   cy.intercept(
     {
       method: 'POST',
-      url: `https://api.gravity.smartesting.com/api/tracking/*/identify/*`,
+      url: buildGravityTrackingIdentifySessionApiUrl('*', DEFAULT_GRAVITY_SERVER_URL, '*'),
     },
     (req) => {
       onReq(req)
@@ -76,7 +86,7 @@ Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: any) => void) => {
   cy.intercept(
     {
       method: 'POST',
-      url: `https://api.gravity.smartesting.com/api/tracking/*/record/*`,
+      url: buildGravityTrackingSessionRecordingApiUrl('*', DEFAULT_GRAVITY_SERVER_URL, '*'),
     },
     (req) => {
       onReq && onReq(req)
@@ -86,6 +96,20 @@ Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: any) => void) => {
       })
     },
   ).as('sendGravityRecord')
+})
+
+Cypress.Commands.add('interceptGravityCollectionSettings', () => {
+  const body: ReadSessionCollectionSettingsResponse = {
+    error: null,
+    settings: {
+      sessionRecording: true,
+      videoRecording: true,
+    },
+  }
+  cy.intercept('GET', buildGravityTrackingSessionCollectionSettingsApiUrl('*', DEFAULT_GRAVITY_SERVER_URL), {
+    statusCode: 200,
+    body,
+  }).as('getGravityCollectionSettings')
 })
 
 Cypress.Commands.add('openBaseSite', (path?: string) => {
@@ -128,6 +152,8 @@ declare global {
 
       interceptGravityRecord(onReq?: (req: any) => void): Chainable
 
+      interceptGravityCollectionSettings(): Chainable
+
       openBaseSite(path?: string): Chainable
 
       identifySession(): Chainable
@@ -143,8 +169,5 @@ declare global {
   }
 }
 
-// We can not declare global without having an export, so why not a function
-// which logs plop ?
-export default function plop() {
-  console.log('plop')
-}
+// We can not declare global without having an export
+export {}

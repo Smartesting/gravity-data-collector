@@ -5,7 +5,6 @@ describe('Handling Keydown as Changes', () => {
   beforeEach(() => {
     cy.clearCookies()
     sessionUserActionTypes = []
-
     cy.interceptGravityPublish((req) => {
       const { body } = req
 
@@ -13,6 +12,7 @@ describe('Handling Keydown as Changes', () => {
         sessionUserActionTypes.push(sessionUserAction.type)
       }
     })
+    cy.interceptGravityCollectionSettings()
   })
 
   for (const inputId of inputIds) {
