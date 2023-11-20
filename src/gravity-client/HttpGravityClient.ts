@@ -66,7 +66,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     )
     const responseBody: AddSessionRecordingResponse = await response.json()
-    this.dealWithResponseStatus(response.status)
+    this.handleResponseStatus(response.status)
 
     return responseBody
   }
@@ -80,11 +80,11 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     )
     const responseBody: ReadSessionCollectionSettingsResponse = await response.json()
-    this.dealWithResponseStatus(response.status)
+    this.handleResponseStatus(response.status)
     return responseBody
   }
 
-  private dealWithResponseStatus(statusCode: number) {
+  private handleResponseStatus(statusCode: number) {
     if (config.ERRORS_TERMINATE_TRACKING.includes(statusCode)) {
       this.recordingSettingsDispatcher.terminate()
     }
@@ -100,7 +100,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     })
     const responseBody: T = await response.json()
-    this.dealWithResponseStatus(response.status)
+    this.handleResponseStatus(response.status)
 
     return responseBody
   }
