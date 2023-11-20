@@ -6,13 +6,21 @@ import {
   SessionTraits,
   SessionUserAction,
 } from '../types'
-import { AbstractGravityClient } from './AbstractGravityClient'
+import { AbstractGravityClient, GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+
+type ConsoleGravityClientOptions = GravityClientOptions & {
+  maxDelay?: number
+}
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
-  constructor(requestInterval: number, private readonly maxDelay: number = 0) {
-    super(requestInterval)
+  constructor(
+    private readonly options: ConsoleGravityClientOptions,
+    recordingSettingsDispatcher: RecordingSettingsDispatcher,
+  ) {
+    super(options, recordingSettingsDispatcher)
   }
 
   async handleSessionUserActions(
@@ -23,10 +31,7 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
   }
 
   async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
-    this.log({
-      sessionId,
-      sessionTraits,
-    })
+    this.log({ sessionId, sessionTraits })
     return { error: null }
   }
 
@@ -34,28 +39,23 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    this.log({
-      sessionId,
-      screenRecords,
-    })
+    this.log({ sessionId, screenRecords })
     return { error: null }
   }
 
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
     return {
-      settings: {
-        sessionRecording: true,
-        videoRecording: false,
-      },
+      settings: null,
       error: null,
     }
   }
 
   private log(data: unknown) {
-    if (this.maxDelay > 0) {
+    const maxDelay = this.options.maxDelay ?? 0
+    if (maxDelay > 0) {
       setTimeout(() => {
         console.log(data)
-      }, this.maxDelay * Math.random())
+      }, maxDelay * Math.random())
     } else {
       console.log(data)
     }

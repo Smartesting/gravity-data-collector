@@ -1,7 +1,9 @@
-export default interface TestNameHandler {
-  getCurrent: () => string | null
+import { CypressObject } from '../types'
 
-  getPrevious: () => string | null
+export default interface TestNameHandler {
+  getCurrentTestName: (cypress?: CypressObject) => string | null
+
+  getPreviousTestName: () => string | null
 
   isNewTest: () => boolean
 

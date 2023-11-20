@@ -2,13 +2,14 @@ export interface DataBufferingOptions<Data, Response> {
   handleData: (data: ReadonlyArray<Data>) => Promise<Response>
   handleInterval: number
   onFlush?: (buffer: ReadonlyArray<Data>, response: Response) => void
-  isFlushingAllowed?: boolean
+  locked?: boolean
 }
 
 export class DataBuffering<Data, Response> {
   private readonly buffer: Data[] = []
   private readonly interval: NodeJS.Timer | null = null
-  private isFlushingAllowed: boolean = true
+  private locked = false
+  private active = false
 
   constructor(private readonly options: DataBufferingOptions<Data, Response>) {
     if (options.handleInterval > 0) {
@@ -16,17 +17,17 @@ export class DataBuffering<Data, Response> {
         void this.flush()
       }, options.handleInterval)
     }
-    if (options.isFlushingAllowed !== undefined) {
-      this.isFlushingAllowed = options.isFlushingAllowed
-    }
+    this.locked = options.locked ?? false
   }
 
-  public setIsFlushingAllowed(isFlushingAllowed: boolean) {
-    this.isFlushingAllowed = isFlushingAllowed
+  activate() {
+    this.active = true
+    if (this.interval === null) void this.flush()
   }
 
-  public getIsFlushingAllowed() {
-    return this.isFlushingAllowed
+  unlock() {
+    this.locked = false
+    if (this.interval === null) void this.flush()
   }
 
   async addData(data: Data): Promise<void> {
@@ -35,7 +36,7 @@ export class DataBuffering<Data, Response> {
   }
 
   async flush() {
-    if (this.buffer.length === 0 || !this.isFlushingAllowed) return
+    if (!this.active || this.buffer.length === 0 || this.locked) return
     const data = this.buffer.splice(0, this.buffer.length)
     const handleResponse = await this.options.handleData(data)
     this.options.onFlush?.(data, handleResponse)

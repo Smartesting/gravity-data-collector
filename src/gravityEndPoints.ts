@@ -20,10 +20,7 @@ export function buildGravityTrackingSessionRecordingApiUrl(
   return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/record/${sessionId}`
 }
 
-export function buildGravityTrackingSessionCollectionSettingsApiUrl(
-  authKey: string,
-  gravityServerUrl: string,
-) {
+export function buildGravityTrackingSessionCollectionSettingsApiUrl(authKey: string, gravityServerUrl: string) {
   return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/settings`
 }
 

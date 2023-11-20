@@ -2,11 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SessionStorageTestNameHandler from './SessionStorageTestNameHandler'
 
 describe('SessionStorageTestNameHandler', () => {
-  const attributes1: any = {
-    value: {
-      currentTest: {
-        titlePath: ['test'],
-      },
+  const cypressObject = {
+    currentTest: {
+      title: '',
+      titlePath: ['test'],
     },
   }
 
@@ -17,17 +16,14 @@ describe('SessionStorageTestNameHandler', () => {
   describe('getCurrent', () => {
     it('returns the current cypress test name', async () => {
       const testNameHandler = new SessionStorageTestNameHandler()
-      expect(testNameHandler.getCurrent()).toBeNull()
-
-      Object.defineProperty(window, 'Cypress', { ...attributes1 })
-
-      expect(testNameHandler.getCurrent()).equals('test')
+      expect(testNameHandler.getCurrentTestName()).toBeNull()
+      expect(testNameHandler.getCurrentTestName(cypressObject)).equals('test')
     })
   })
 
   describe('mock getCurrent', () => {
     beforeEach(() => {
-      vi.spyOn(SessionStorageTestNameHandler.prototype, 'getCurrent').mockImplementation(() => {
+      vi.spyOn(SessionStorageTestNameHandler.prototype, 'getCurrentTestName').mockImplementation(() => {
         return 'test1'
       })
     })
@@ -35,11 +31,11 @@ describe('SessionStorageTestNameHandler', () => {
     describe('refresh', () => {
       it('updates the previous cypress test name with the current one', async () => {
         const testNameHandler = new SessionStorageTestNameHandler()
-        expect(testNameHandler.getPrevious()).not.equals(testNameHandler.getCurrent())
+        expect(testNameHandler.getPreviousTestName()).not.equals(testNameHandler.getCurrentTestName())
 
         testNameHandler.refresh()
 
-        expect(testNameHandler.getPrevious()).equals(testNameHandler.getCurrent())
+        expect(testNameHandler.getPreviousTestName()).equals(testNameHandler.getCurrentTestName())
       })
     })
 
@@ -57,7 +53,7 @@ describe('SessionStorageTestNameHandler', () => {
       })
 
       it('return false if getPrevious returns null', async () => {
-        vi.spyOn(SessionStorageTestNameHandler.prototype, 'getCurrent').mockImplementation(() => {
+        vi.spyOn(SessionStorageTestNameHandler.prototype, 'getCurrentTestName').mockImplementation(() => {
           return null
         })
         const testNameHandler = new SessionStorageTestNameHandler()

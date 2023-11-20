@@ -6,16 +6,16 @@
     <title>Gravity Data Collector - Sandbox</title>
     <script>
       function identifySession() {
-        window._GravityCollector.collectorWrapper.identifySession('href', window.location.href)
+        window._GravityCollector.identifySession('href', window.location.href)
       }
     </script>
-    <body>
-      <a class="simple-link">A simple link which does nothing</a>
-      <a class="identify-link" onclick="identifySession()">A link to identify the session</a>
-
-      <a class="go-to-main" href="http://my-site.com:3000">Go to main site</a>
-      <a class="go-to-app" href="http://app.my-site.com:3000">Go to application</a>
-      <a class="go-to-another-site" href="http://auth.another-site.com:3000">Go to other site</a>
-    </body>
   </head>
+  <body>
+    <a class="simple-link">A simple link which does nothing</a>
+    <a class="identify-link" onclick="identifySession()">A link to identify the session</a>
+
+    <a class="go-to-main" href="http://my-site.com:3000">Go to main site</a>
+    <a class="go-to-app" href="http://app.my-site.com:3000">Go to application</a>
+    <a class="go-to-another-site" href="http://auth.another-site.com:3000">Go to other site</a>
+  </body>
 </html>

@@ -20,6 +20,8 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     excludeRegex: null,
     sessionsPercentageKept: 100,
     rejectSession: DEFAULT_SESSION_REJECTION,
+    enableEventRecording: true,
+    enableVideoRecording: options.disableVideoRecording === undefined ? true : !options.disableVideoRecording,
   }
 
   const debugDefaultOptions = {

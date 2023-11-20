@@ -18,8 +18,6 @@ import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListe
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
-import { config } from '../config'
-import TrackingHandler from '../tracking-handler/TrackingHandler'
 import { preventBadSessionTraitValue } from '../session-trait/checkSessionTraitValue'
 import { TargetEventListenerOptions } from '../event-listeners/TargetedEventListener'
 import createAsyncRequest from '../user-action/createAsyncRequest'
@@ -27,121 +25,124 @@ import { trackingUrlStartPart } from '../gravityEndPoints'
 import { IEventListener } from '../event-listeners/IEventListener'
 import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IGravityClient } from '../gravity-client/IGravityClient'
+import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import { RecordingSettingsDispatcher } from '../gravity-client/RecordingSettingsDispatcher'
 import crossfetch from 'cross-fetch'
-import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
+import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 
-// FIXME: reduce the constructor to his minimum!
 class CollectorWrapper {
+  private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
   readonly userActionHandler: UserActionHandler
   readonly screenRecorderHandler: ScreenRecorderHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
-  readonly trackingHandler: TrackingHandler
-  readonly gravityClient: IGravityClient
+  private readonly gravityClient: IGravityClient
 
   constructor(
-    readonly options: CollectorOptionsWithWindow,
-    readonly sessionIdHandler: ISessionIdHandler,
-    readonly testNameHandler: TestNameHandler,
+    private readonly options: CollectorOptionsWithWindow,
+    private readonly sessionIdHandler: ISessionIdHandler,
+    private readonly testNameHandler: TestNameHandler,
     fetch = crossfetch,
   ) {
-    this.trackingHandler = new TrackingHandler(config.ERRORS_TERMINATE_TRACKING)
-
     this.gravityClient = options.debug
-      ? new ConsoleGravityClient(options.requestInterval, options.maxDelay)
-      : new HttpGravityClient(
-          options.requestInterval,
-          {
-            ...options,
-            onError: (status) => this.trackingHandler.senderErrorCallback(status),
-          },
-          fetch,
-        )
-
-    const isNewSession =
-      trackingIsAllowed(options.window.document.URL) && (!sessionIdHandler.isSet() || testNameHandler.isNewTest())
-    testNameHandler.refresh()
-
+      ? new ConsoleGravityClient(options, this.recordingSettingsHandler)
+      : new HttpGravityClient(options, this.recordingSettingsHandler, fetch)
     this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
+    this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
+    this.recordingSettingsHandler.subscribe(({ enableEventRecording, enableVideoRecording }) => {
+      if (!enableEventRecording || !enableVideoRecording) {
+        this.terminateRecording(!enableEventRecording, !enableVideoRecording)
+      }
+    })
+  }
 
-    const eventListeners = this.makeEventListeners()
-    this.eventListenerHandler = new EventListenersHandler(eventListeners)
-    if (trackingIsAllowed(options.window.document.URL)) {
-      this.gravityClient
-        .readSessionCollectionSettings()
-        .then(({ settings, error }) => {
-          if (error) console.error(error)
-          if (settings) {
-            this.trackingHandler.setTrackingActive(keepSession(options) && settings.sessionRecording)
-            this.trackingHandler.setVideoRecordingActive(settings.videoRecording)
-            this.trackingHandler.init(this.eventListenerHandler, this.screenRecorderHandler)
-            if (isNewSession) {
-              sessionIdHandler.generateNewSessionId()
-              this.initSession(createSessionStartedUserAction(options.buildId))
-            }
-          }
+  init(): void {
+    this.fetchRecordingSettings()
+      .then((settings) => this.recordingSettingsHandler.dispatch(settings))
+      .catch(() => {
+        this.recordingSettingsHandler.dispatch({
+          enableEventRecording: false,
+          enableVideoRecording: false,
         })
-        .catch(() => {})
-    }
+      })
 
+    const options = this.options
+    const currentUrl = options.window.document.URL
+    if (!isValidURL(currentUrl)) {
+      console.log('[Gravity data collector] invalid URL for tracking: ', currentUrl)
+      return
+    }
+    const isNewSession = !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
+    if (isNewSession) {
+      if (!keepSession(options)) {
+        this.recordingSettingsHandler.terminate()
+        return
+      }
+
+      if (this.testNameHandler.isNewTest()) this.sessionIdHandler.generateNewSessionId()
+      this.initSession(createSessionStartedUserAction(options.buildId))
+    }
+    this.testNameHandler.refresh()
+    this.eventListenerHandler.initializeEventListeners()
+    this.screenRecorderHandler.initializeRecording()
     if (this.isListenerEnabled(Listener.Requests)) {
       this.patchFetch()
     }
   }
 
-  identifySession(traitName: string, traitValue: SessionTraitValue) {
-    if (this.trackingHandler.isTracking() && preventBadSessionTraitValue(traitValue)) {
-      this.sessionTraitHandler.handle(traitName, traitValue)
+  async identifySession(traitName: string, traitValue: SessionTraitValue): Promise<void> {
+    if (preventBadSessionTraitValue(traitValue)) {
+      return await this.sessionTraitHandler.handle(traitName, traitValue)
+    }
+  }
+
+  terminateRecording(terminateEventRecording: boolean, terminateVideoRecording: boolean) {
+    if (terminateEventRecording) {
+      this.eventListenerHandler.terminateEventListeners()
+      this.screenRecorderHandler.terminateRecording()
+      this.userActionHandler.terminate()
+      this.sessionTraitHandler.terminate()
+      return
+    }
+    if (terminateVideoRecording) {
+      this.screenRecorderHandler.terminateRecording()
     }
   }
 
   private initSession(sessionStartedUserAction: SessionStartedUserAction) {
-    if (this.trackingHandler.isTracking()) this.userActionHandler.handle(sessionStartedUserAction)
+    void this.userActionHandler.handle(sessionStartedUserAction)
   }
 
   private patchFetch() {
-    const { fetch: originalFetch } = this.options.window
-    this.options.window.fetch = async (...args) => {
+    const { gravityServerUrl, originsToRecord, recordRequestsFor, window } = this.options
+    const { fetch: originalFetch } = window
+    window.fetch = async (...args) => {
       const [resource, config] = args
       const url = resource as string
 
-      if (
-        this.trackingHandler.isTracking() &&
-        requestCanBeRecorded(
-          url,
-          this.options.gravityServerUrl,
-          this.options.recordRequestsFor ?? this.options.originsToRecord,
-        )
-      ) {
+      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
         let method = 'unknown'
         if (config?.method != null) {
           method = config.method
         }
-        this.userActionHandler.handle(createAsyncRequest(url, method))
+        void this.userActionHandler.handle(createAsyncRequest(url, method))
       }
 
       return await originalFetch(resource, config)
     }
 
-    const collectorWrapper = this
+    const userActionHandler = this.userActionHandler
     const originalXHROpen = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function () {
       const method = arguments[0]
       const url = arguments[1]
 
-      if (
-        collectorWrapper.trackingHandler.isTracking() &&
-        requestCanBeRecorded(
-          url,
-          collectorWrapper.options.gravityServerUrl,
-          collectorWrapper.options.recordRequestsFor ?? collectorWrapper.options.originsToRecord,
-        )
-      ) {
-        collectorWrapper.userActionHandler.handle(createAsyncRequest(url, method))
+      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
+        void userActionHandler.handle(createAsyncRequest(url, method))
       }
 
       return originalXHROpen.apply(this, Array.prototype.slice.call(arguments) as any)
@@ -149,46 +150,33 @@ class CollectorWrapper {
   }
 
   private makeEventListeners() {
+    const { window, excludeRegex, customSelector, selectorsOptions } = this.options
     const targetedEventListenerOptions: TargetEventListenerOptions = {
-      excludeRegex: this.options.excludeRegex,
-      customSelector: this.options.customSelector,
-      selectorsOptions: this.options.selectorsOptions,
+      excludeRegex,
+      customSelector,
+      selectorsOptions,
     }
 
     const eventListeners: IEventListener[] = []
-
     if (this.isListenerEnabled(Listener.Click)) {
-      eventListeners.push(
-        new ClickEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
-      )
+      eventListeners.push(new ClickEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
-
     if (this.isListenerEnabled(Listener.KeyUp)) {
-      eventListeners.push(
-        new KeyUpEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
-      )
+      eventListeners.push(new KeyUpEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
-
     if (this.isListenerEnabled(Listener.KeyDown)) {
-      eventListeners.push(
-        new KeyDownEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
-      )
+      eventListeners.push(new KeyDownEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
-
     if (this.isListenerEnabled(Listener.Change)) {
-      eventListeners.push(
-        new ChangeEventListener(this.userActionHandler, this.options.window, targetedEventListenerOptions),
-      )
+      eventListeners.push(new ChangeEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
-
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
-      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, this.options.window))
+      eventListeners.push(new BeforeUnloadEventListener(this.userActionHandler, window, this.gravityClient.flush))
     }
 
     const cypress = ((window as any).Cypress as CypressObject) ?? undefined
-
     if (cypress !== undefined && this.isListenerEnabled(Listener.CypressCommands)) {
-      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler))
+      eventListeners.push(new CypressEventListener(cypress, this.userActionHandler, this.gravityClient.flush))
     }
     return eventListeners
   }
@@ -197,18 +185,25 @@ class CollectorWrapper {
     const { enabledListeners } = this.options
     return enabledListeners === undefined || enabledListeners.includes(listener)
   }
+
+  private async fetchRecordingSettings(): Promise<RecordingSettings> {
+    if (this.options.debug) return this.options
+    return await this.gravityClient.readSessionCollectionSettings().then(({ settings, error }) => {
+      if (error !== null) {
+        return { enableEventRecording: false, enableVideoRecording: false }
+      }
+      const enableEventRecording = settings?.sessionRecording ?? this.options.enableEventRecording
+      const enableVideoRecording = settings?.videoRecording ?? this.options.enableVideoRecording
+      return { enableEventRecording, enableVideoRecording }
+    })
+  }
 }
 
 export default CollectorWrapper
 
-function trackingIsAllowed(url: string | undefined): boolean {
-  return url === undefined || !url.startsWith('about:')
-}
-
 function keepSession(options: CollectorOptions): boolean {
-  const keepSession = options.sessionsPercentageKept >= 100 * Math.random()
-  const rejectSession = options.rejectSession()
-  return keepSession && !rejectSession
+  if (!(options.sessionsPercentageKept >= 100 * Math.random())) return false
+  return !options.rejectSession()
 }
 
 function requestCanBeRecorded(url: string, gravityServerUrl: string, recordRequestsFor?: string[]) {
@@ -227,4 +222,8 @@ function requestCanBeRecorded(url: string, gravityServerUrl: string, recordReque
   }
 
   return false
+}
+
+function isValidURL(url: string | undefined): boolean {
+  return url === undefined || !url.startsWith('about:')
 }

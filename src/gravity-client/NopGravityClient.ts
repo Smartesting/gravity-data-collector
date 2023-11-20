@@ -9,8 +9,13 @@ import {
 import { AbstractGravityClient } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 
 export default class NopGravityClient extends AbstractGravityClient implements IGravityClient {
+  constructor(requestInterval: number) {
+    super({ requestInterval }, new RecordingSettingsDispatcher())
+  }
+
   async handleSessionUserActions(
     sessionUserActions: readonly SessionUserAction[],
   ): Promise<AddSessionUserActionsResponse> {
@@ -29,12 +34,6 @@ export default class NopGravityClient extends AbstractGravityClient implements I
   }
 
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
-    return {
-      settings: {
-        sessionRecording: true,
-        videoRecording: false,
-      },
-      error: null,
-    }
+    return { error: null, settings: null }
   }
 }

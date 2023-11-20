@@ -193,7 +193,12 @@ export interface CollectorOptions {
   window?: typeof window
   enabledListeners?: Listener[]
   buildId?: string
+  /**
+   * @deprecated Use enableVideoRecording instead (reversed).
+   */
   disableVideoRecording?: boolean
+  enableEventRecording?: boolean
+  enableVideoRecording?: boolean
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
@@ -275,11 +280,13 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
+export interface SessionCollectionSettings {
+  sessionRecording: boolean
+  videoRecording: boolean
+}
+
 export interface ReadSessionCollectionSettingsResponse {
-  settings: {
-    sessionRecording: boolean
-    videoRecording: boolean
-  } | null
+  settings: Partial<SessionCollectionSettings> | null
   error: ReadSessionCollectionSettingsError | null
 }
 
