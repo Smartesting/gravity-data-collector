@@ -63,7 +63,12 @@ class CollectorWrapper {
   init(): void {
     this.fetchRecordingSettings()
       .then((settings) => this.recordingSettingsHandler.dispatch(settings))
-      .catch(console.error)
+      .catch(() => {
+        this.recordingSettingsHandler.dispatch({
+          enableEventRecording: false,
+          enableVideoRecording: false,
+        })
+      })
 
     const options = this.options
     const currentUrl = options.window.document.URL
@@ -183,13 +188,13 @@ class CollectorWrapper {
 
   private async fetchRecordingSettings(): Promise<RecordingSettings> {
     if (this.options.debug) return this.options
-    return await this.gravityClient.readSessionCollectionSettings().then(({ settings }) => {
+    return await this.gravityClient.readSessionCollectionSettings().then(({ settings, error }) => {
+      if (error !== null) {
+        return { enableEventRecording: false, enableVideoRecording: false }
+      }
       const enableEventRecording = settings?.sessionRecording ?? this.options.enableEventRecording
       const enableVideoRecording = settings?.videoRecording ?? this.options.enableVideoRecording
-      return {
-        enableEventRecording,
-        enableVideoRecording,
-      }
+      return { enableEventRecording, enableVideoRecording }
     })
   }
 }

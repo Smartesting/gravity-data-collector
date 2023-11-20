@@ -28,17 +28,11 @@ flowchart TD
     subgraph live ["'live' mode (send to Gravity Server)"]
         l_init(( )) --> fetchSettings["Get recording settings from Gravity Server"]
         fetchSettings --> l_c1{"error occurred?"}
-        l_c1--YES-->l_c5{"options.\nenableEventRecording\n?"}
+        l_c1--YES-->end7((( )))
         l_c1--NO-->l_c3{"settings.\nenableEventRecording\n?"}
         l_c3--FALSE-->end6((( )))
         l_c3--TRUE-->l_c4{"settings.\nenableVideoRecording\n?"}
-        l_c4--FALSE-->sendEvents
-        l_c4--TRUE-->sendAll
-
-        l_c5--FALSE-->end7((( )))
-        l_c5--TRUE-->l_c6{"options.\nenableVideoRecording\n?"}
-        l_c6--FALSE-->sendEvents[Send user events only]
-        l_c6--TRUE-->sendAll[Send user events & video info]
+        l_c4--FALSE-->sendEvents[Send user events only]
+        l_c4--TRUE-->sendAll[Send user events & video info]
      end
-
 ```
