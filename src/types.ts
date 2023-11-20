@@ -286,7 +286,7 @@ export interface SessionCollectionSettings {
 }
 
 export interface ReadSessionCollectionSettingsResponse {
-  settings: SessionCollectionSettings | null
+  settings: Partial<SessionCollectionSettings> | null
   error: ReadSessionCollectionSettingsError | null
 }
 

@@ -12,6 +12,7 @@ describe('Handling sessions identification on multi-domain', () => {
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })
+    cy.interceptGravityCollectionSettings()
 
     cy.openBaseSite()
     cy.identifySession()
@@ -36,6 +37,7 @@ describe('Handling sessions identification on multi-domain', () => {
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })
+    cy.interceptGravityCollectionSettings()
 
     cy.openBaseSite()
     cy.identifySession()

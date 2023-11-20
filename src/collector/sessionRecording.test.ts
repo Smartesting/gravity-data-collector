@@ -5,7 +5,11 @@ import { nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
-import { ReadSessionCollectionSettingsResponse } from '../types'
+import {
+  ReadSessionCollectionSettingsError,
+  ReadSessionCollectionSettingsResponse,
+  SessionCollectionSettings,
+} from '../types'
 import CollectorWrapper from './CollectorWrapper'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { mockFetch } from '../test-utils/mocks'
@@ -130,12 +134,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
 
     describe('use remote settings if available', () => {
       it('records events & video', async () => {
-        const fetch = mockFetch<ReadSessionCollectionSettingsResponse>({
-          responseBody: { error: null, settings: { sessionRecording: true, videoRecording: true } },
-        })
-
         const collector = installer()
-          .withFetch(fetch)
+          .withFetch(mockFetchCollectionSettings({ sessionRecording: true, videoRecording: true }))
           .withOptions({ enableEventRecording: false, enableVideoRecording: false })
           .install()
 
@@ -149,11 +149,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       })
 
       it('records events BUT no videos', async () => {
-        const fetch = mockFetch<ReadSessionCollectionSettingsResponse>({
-          responseBody: { error: null, settings: { sessionRecording: true, videoRecording: false } },
-        })
         const collector = installer()
-          .withFetch(fetch)
+          .withFetch(mockFetchCollectionSettings({ sessionRecording: true, videoRecording: false }))
           .withOptions({ enableEventRecording: true, enableVideoRecording: true })
           .install()
 
@@ -167,11 +164,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       })
 
       it('records nothing', async () => {
-        const fetch = mockFetch<ReadSessionCollectionSettingsResponse>({
-          responseBody: { error: null, settings: { sessionRecording: false, videoRecording: false } },
-        })
         const collector = installer()
-          .withFetch(fetch)
+          .withFetch(mockFetchCollectionSettings({ sessionRecording: false, videoRecording: false }))
           .withOptions({ enableEventRecording: true, enableVideoRecording: true })
           .install()
 
@@ -185,10 +179,10 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       })
     })
 
-    describe('else use options settings if available', () => {
+    describe('else use options settings if fetched settings are undefined', () => {
       it('records events & video', async () => {
         const collector = installer()
-          .withFetch(mockFetch({ responseBody: { error: 'Unavailable', settings: null } }))
+          .withFetch(mockFetchCollectionSettings({}))
           .withOptions({ enableEventRecording: true, enableVideoRecording: true })
           .install()
 
@@ -203,8 +197,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
 
       it('records events BUT no videos', async () => {
         const collector = installer()
-          .withFetch(mockFetch({ responseBody: { error: 'Unavailable', settings: null } }))
-          .withOptions({ enableEventRecording: true, enableVideoRecording: false })
+          .withFetch(mockFetchCollectionSettings({ sessionRecording: true }))
+          .withOptions({ enableEventRecording: false, enableVideoRecording: false })
           .install()
 
         await emitEachEventKind(collector)
@@ -218,8 +212,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
 
       it('records nothing', async () => {
         const collector = installer()
-          .withFetch(mockFetch({ responseBody: { error: 'Unavailable', settings: null } }))
-          .withOptions({ enableEventRecording: false, enableVideoRecording: false })
+          .withFetch(mockFetchCollectionSettings({ videoRecording: false }))
+          .withOptions({ enableEventRecording: false, enableVideoRecording: true })
           .install()
 
         await emitEachEventKind(collector)
@@ -233,9 +227,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
     })
 
     it('else use default settings', async () => {
-      const collector = installer()
-        .withFetch(mockFetch({ responseBody: { error: 'Unavailable', settings: null } }))
-        .install()
+      const collector = installer().withFetch(mockFetchCollectionSettings({})).install()
 
       await emitEachEventKind(collector)
       expect(handleSessionUserActions).toHaveBeenCalled()
@@ -245,6 +237,38 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       expect(terminateEventRecording).not.toHaveBeenCalled()
       expect(terminateVideoRecording).not.toHaveBeenCalled()
     })
+
+    describe('terminate recording', () => {
+      it('if error received', async () => {
+        const collector = installer()
+          .withFetch(mockFetchCollectionSettings(null))
+          .withOptions({ enableEventRecording: true, enableVideoRecording: true })
+          .install()
+
+        await emitEachEventKind(collector)
+        expect(handleSessionUserActions).not.toHaveBeenCalled()
+        expect(handleSessionTraits).not.toHaveBeenCalled()
+        expect(handleScreenRecords).not.toHaveBeenCalled()
+
+        expect(terminateEventRecording).toHaveBeenCalled()
+        expect(terminateVideoRecording).toHaveBeenCalled()
+      })
+
+      it('if fetch error', async () => {
+        const collector = installer()
+          .withFetch(vi.fn().mockRejectedValue(new Error('fetch error')))
+          .withOptions({ enableEventRecording: true, enableVideoRecording: true })
+          .install()
+
+        await emitEachEventKind(collector)
+        expect(handleSessionUserActions).not.toHaveBeenCalled()
+        expect(handleSessionTraits).not.toHaveBeenCalled()
+        expect(handleScreenRecords).not.toHaveBeenCalled()
+
+        expect(terminateEventRecording).toHaveBeenCalled()
+        expect(terminateVideoRecording).toHaveBeenCalled()
+      })
+    })
   })
 })
 
@@ -252,4 +276,13 @@ async function emitEachEventKind(collector: CollectorWrapper) {
   await collector.userActionHandler.handle(createDummy())
   await collector.sessionTraitHandler.handle('age', 42)
   await collector.screenRecorderHandler.handle(createDummy())
+}
+
+function mockFetchCollectionSettings(settings: Partial<SessionCollectionSettings> | null) {
+  if (settings === null) {
+    return mockFetch<ReadSessionCollectionSettingsResponse>({
+      responseBody: { error: ReadSessionCollectionSettingsError.accessDenied, settings: null },
+    })
+  }
+  return mockFetch<ReadSessionCollectionSettingsResponse>({ responseBody: { error: null, settings } })
 }
