@@ -22,7 +22,7 @@ import { getLastCallFirstArgument } from '../test-utils/spies'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 import CopyEventListener from '../event-listeners/CopyEventListener'
 import CutEventListener from '../event-listeners/CutEventListener'
-import DbClickEventListener from '../event-listeners/DbClickEventListener'
+import DblClickEventListener from '../event-listeners/DblClickEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -123,7 +123,7 @@ describe.each([
         listenerOption: Listener.Cut,
       },
       {
-        listenerClass: DbClickEventListener,
+        listenerClass: DblClickEventListener,
         listenerOption: Listener.DblClick,
       },
     ]

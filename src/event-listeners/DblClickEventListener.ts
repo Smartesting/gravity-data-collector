@@ -2,7 +2,7 @@ import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEve
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import { UserActionType } from '../types'
 
-export default class DbClickEventListener extends TargetedEventListener {
+export default class DblClickEventListener extends TargetedEventListener {
     constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
         super(userActionHandler, UserActionType.DblClick, window, options)
     }

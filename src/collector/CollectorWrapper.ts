@@ -35,7 +35,7 @@ import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 import CopyEventListener from '../event-listeners/CopyEventListener'
 import CutEventListener from '../event-listeners/CutEventListener'
-import DbClickEventListener from '../event-listeners/DbClickEventListener'
+import DblClickEventListener from '../event-listeners/DblClickEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -172,7 +172,7 @@ class CollectorWrapper {
     const eventListeners: IEventListener[] = []
     const eventListenersClassByListener = {
       [Listener.Click]: ClickEventListener,
-      [Listener.DblClick]: DbClickEventListener,
+      [Listener.DblClick]: DblClickEventListener,
       [Listener.KeyUp]: KeyUpEventListener,
       [Listener.KeyDown]: KeyDownEventListener,
       [Listener.Change]: ChangeEventListener,
