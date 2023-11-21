@@ -21,6 +21,7 @@ import { uuid } from '../utils/uuid'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 import CopyEventListener from '../event-listeners/CopyEventListener'
+import CutEventListener from '../event-listeners/CutEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -115,6 +116,10 @@ describe.each([
       {
         listenerClass: CopyEventListener,
         listenerOption: Listener.Copy,
+      },
+      {
+        listenerClass: CutEventListener,
+        listenerOption: Listener.Cut,
       },
     ]
 

@@ -34,6 +34,7 @@ import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 import CopyEventListener from '../event-listeners/CopyEventListener'
+import CutEventListener from '../event-listeners/CutEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -168,26 +169,22 @@ class CollectorWrapper {
     }
 
     const eventListeners: IEventListener[] = []
-    if (this.isListenerEnabled(Listener.Click)) {
-      eventListeners.push(new ClickEventListener(this.userActionHandler, window, targetedEventListenerOptions))
+    const eventListenersClassByListener = {
+      [Listener.Click]: ClickEventListener,
+      [Listener.KeyUp]: KeyUpEventListener,
+      [Listener.KeyDown]: KeyDownEventListener,
+      [Listener.Change]: ChangeEventListener,
+      [Listener.ContextMenu]: ContextMenuEventListener,
+      [Listener.Copy]: CopyEventListener,
+      [Listener.Cut]: CutEventListener,
     }
-    if (this.isListenerEnabled(Listener.KeyUp)) {
-      eventListeners.push(new KeyUpEventListener(this.userActionHandler, window, targetedEventListenerOptions))
+
+    for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
+      if (this.isListenerEnabled(listener as Listener)) {
+        eventListeners.push(new ListenerClass(this.userActionHandler, window, targetedEventListenerOptions))
+      }
     }
-    if (this.isListenerEnabled(Listener.KeyDown)) {
-      eventListeners.push(new KeyDownEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
-    if (this.isListenerEnabled(Listener.Change)) {
-      eventListeners.push(new ChangeEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
-    if (this.isListenerEnabled(Listener.ContextMenu)) {
-      eventListeners.push(new ContextMenuEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
-    if (this.isListenerEnabled(Listener.Copy)) {
-      eventListeners.push(
-          new CopyEventListener(this.userActionHandler, window, targetedEventListenerOptions),
-      )
-    }
+
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
       eventListeners.push(
         new BeforeUnloadEventListener(this.userActionHandler, window, async () => await this.gravityClient.flush()),
