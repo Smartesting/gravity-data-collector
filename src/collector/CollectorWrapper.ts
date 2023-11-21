@@ -33,6 +33,7 @@ import crossfetch from 'cross-fetch'
 import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
+import CopyEventListener from '../event-listeners/CopyEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -181,6 +182,11 @@ class CollectorWrapper {
     }
     if (this.isListenerEnabled(Listener.ContextMenu)) {
       eventListeners.push(new ContextMenuEventListener(this.userActionHandler, window, targetedEventListenerOptions))
+    }
+    if (this.isListenerEnabled(Listener.Copy)) {
+      eventListeners.push(
+          new CopyEventListener(this.userActionHandler, window, targetedEventListenerOptions),
+      )
     }
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
       eventListeners.push(

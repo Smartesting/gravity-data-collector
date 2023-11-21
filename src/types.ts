@@ -7,6 +7,7 @@ export enum UserActionType {
   KeyUp = 'keyup',
   KeyDown = 'keydown',
   ContextMenu = 'contextmenu',
+  Copy = 'copy',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
 }
@@ -215,6 +216,7 @@ export enum Listener {
   Requests = 'requests',
   CypressCommands = 'cypressCommands',
   ContextMenu = 'contextMenu',
+  Copy = 'Copy'
 }
 
 export interface CreateSelectorsOptions {

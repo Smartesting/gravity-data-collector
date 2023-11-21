@@ -20,6 +20,7 @@ import * as rrweb from 'rrweb'
 import { uuid } from '../utils/uuid'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
+import CopyEventListener from '../event-listeners/CopyEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -110,6 +111,10 @@ describe.each([
       {
         listenerClass: ContextMenuEventListener,
         listenerOption: Listener.ContextMenu,
+      },
+      {
+        listenerClass: CopyEventListener,
+        listenerOption: Listener.Copy,
       },
     ]
 
