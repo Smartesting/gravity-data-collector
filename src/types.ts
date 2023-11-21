@@ -9,8 +9,23 @@ export enum UserActionType {
   ContextMenu = 'contextmenu',
   Copy = 'copy',
   Cut = 'cut',
+  DblClick = 'dblclick',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
+}
+
+export enum Listener {
+  Click = 'click',
+  KeyUp = 'keyUp',
+  KeyDown = 'keyDown',
+  Change = 'change',
+  BeforeUnload = 'beforeUnload',
+  Requests = 'requests',
+  CypressCommands = 'cypressCommands',
+  ContextMenu = 'contextMenu',
+  Copy = 'copy',
+  Cut = 'cut',
+  DblClick = 'dblClick'
 }
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand
@@ -206,19 +221,6 @@ export interface CollectorOptions {
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
   window: typeof window
-}
-
-export enum Listener {
-  Click = 'click',
-  KeyUp = 'keyUp',
-  KeyDown = 'keyDown',
-  Change = 'change',
-  BeforeUnload = 'beforeUnload',
-  Requests = 'requests',
-  CypressCommands = 'cypressCommands',
-  ContextMenu = 'contextMenu',
-  Copy = 'copy',
-  Cut = 'cut'
 }
 
 export interface CreateSelectorsOptions {
