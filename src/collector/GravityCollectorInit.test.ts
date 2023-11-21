@@ -19,6 +19,7 @@ import AbstractGravityClient from '../gravity-client/AbstractGravityClient'
 import * as rrweb from 'rrweb'
 import { uuid } from '../utils/uuid'
 import { getLastCallFirstArgument } from '../test-utils/spies'
+import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -105,6 +106,10 @@ describe.each([
       {
         listenerClass: BeforeUnloadEventListener,
         listenerOption: Listener.BeforeUnload,
+      },
+      {
+        listenerClass: ContextMenuEventListener,
+        listenerOption: Listener.ContextMenu,
       },
     ]
 
