@@ -214,7 +214,7 @@ export enum Listener {
   BeforeUnload = 'beforeUnload',
   Requests = 'requests',
   CypressCommands = 'cypressCommands',
-  ContextMenu = 'contextMenu'
+  ContextMenu = 'contextMenu',
 }
 
 export interface CreateSelectorsOptions {

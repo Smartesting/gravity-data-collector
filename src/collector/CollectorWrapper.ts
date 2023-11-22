@@ -180,9 +180,7 @@ class CollectorWrapper {
       eventListeners.push(new ChangeEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
     if (this.isListenerEnabled(Listener.ContextMenu)) {
-      eventListeners.push(
-          new ContextMenuEventListener(this.userActionHandler, window, targetedEventListenerOptions),
-      )
+      eventListeners.push(new ContextMenuEventListener(this.userActionHandler, window, targetedEventListenerOptions))
     }
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
       eventListeners.push(
