@@ -30,7 +30,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^3.15.0"
+    "@smartesting/gravity-data-collector": "https://smartesting.github.io/gravity-data-collector/canary/smartesting-gravity-data-collector.tgz"
   }
 }
 ```
