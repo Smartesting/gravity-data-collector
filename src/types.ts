@@ -3,29 +3,33 @@ import Cypress from 'cypress'
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
+  DblClick = 'dblclick',
   Change = 'change',
   KeyUp = 'keyup',
   KeyDown = 'keydown',
   ContextMenu = 'contextmenu',
   Copy = 'copy',
   Cut = 'cut',
-  DblClick = 'dblclick',
+  DragStart = 'dragstart',
+  Drop = 'drop',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
 }
 
 export enum Listener {
   Click = 'click',
+  ContextMenu = 'contextMenu',
+  DblClick = 'dblClick',
   KeyUp = 'keyUp',
   KeyDown = 'keyDown',
   Change = 'change',
+  Copy = 'copy',
+  Cut = 'cut',
+  DragStart = 'dragstart',
+  Drop = 'drop',
   BeforeUnload = 'beforeUnload',
   Requests = 'requests',
   CypressCommands = 'cypressCommands',
-  ContextMenu = 'contextMenu',
-  Copy = 'copy',
-  Cut = 'cut',
-  DblClick = 'dblClick'
 }
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand

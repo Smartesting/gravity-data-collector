@@ -23,6 +23,8 @@ import ContextMenuEventListener from '../event-listeners/ContextMenuEventListene
 import CopyEventListener from '../event-listeners/CopyEventListener'
 import CutEventListener from '../event-listeners/CutEventListener'
 import DblClickEventListener from '../event-listeners/DblClickEventListener'
+import DragStartEventListener from '../event-listeners/DragStartEventListener'
+import DropEventListener from '../event-listeners/DropEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -125,6 +127,14 @@ describe.each([
       {
         listenerClass: DblClickEventListener,
         listenerOption: Listener.DblClick,
+      },
+      {
+        listenerClass: DragStartEventListener,
+        listenerOption: Listener.DragStart,
+      },
+      {
+        listenerClass: DropEventListener,
+        listenerOption: Listener.Drop,
       },
     ]
 
