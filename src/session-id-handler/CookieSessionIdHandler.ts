@@ -2,11 +2,10 @@ import ISessionIdHandler, { BaseSessionIdHandler } from './ISessionIdHandler'
 import { readCookie, setCookie } from '../utils/documentCookie'
 
 const GRAVITY_SESSION_ID_COOKIE_KEY = 'gravity_session_id'
-const GRAVITY_SESSION_TIMEOUT_COOKIE_KEY = 'gravity_session_timeout'
 
 export default class CookieSessionIdHandler extends BaseSessionIdHandler implements ISessionIdHandler {
-  public constructor(makeSessionId: () => string, sessionDuration: number, private readonly win: typeof window) {
-    super(makeSessionId, sessionDuration)
+  public constructor(makeSessionId: () => string, private readonly win: typeof window) {
+    super(makeSessionId)
   }
 
   protected getSessionId(): string | undefined {
@@ -15,14 +14,5 @@ export default class CookieSessionIdHandler extends BaseSessionIdHandler impleme
 
   protected setSessionId(sessionId: string): void {
     setCookie(GRAVITY_SESSION_ID_COOKIE_KEY, sessionId, this.win)
-  }
-
-  protected getTimeout(): number {
-    const stored = readCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, this.win)
-    return stored !== undefined ? parseInt(stored) : new Date().getTime() - 1
-  }
-
-  protected setTimeout(timeout: number) {
-    setCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, timeout.toString())
   }
 }

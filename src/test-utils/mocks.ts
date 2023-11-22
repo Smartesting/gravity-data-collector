@@ -111,8 +111,8 @@ type MockFetchParams<T> = Partial<{
 export function mockFetch<T>(params?: MockFetchParams<T>) {
   const status = params?.status ?? 200
   const responseBody = params?.responseBody ?? {}
-  return vi.fn().mockImplementation(() => ({
+  return vi.fn().mockResolvedValue({
     status,
-    json: async (): Promise<any> => await Promise.resolve(responseBody),
-  }))
+    json: async () => await Promise.resolve(responseBody),
+  })
 }

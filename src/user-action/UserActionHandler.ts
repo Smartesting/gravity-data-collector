@@ -4,17 +4,14 @@ import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 
 export default class UserActionHandler implements IUserActionHandler {
+  private active = true
+  private readonly listeners: Array<Function> = []
   constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
 
-  handle(action: UserAction) {
-    this.gravityClient
-      .addSessionUserAction(this.toSessionUserAction(action))
-      .then(() => {})
-      .catch(() => {})
-  }
-
-  flush(): void {
-    this.gravityClient.flush()
+  async handle(action: UserAction): Promise<void> {
+    if (!this.active) return
+    this.listeners.forEach((listener) => listener())
+    return await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {
@@ -22,5 +19,18 @@ export default class UserActionHandler implements IUserActionHandler {
       sessionId: this.sessionIdHandler.get(),
       ...action,
     }
+  }
+
+  terminate() {
+    this.active = false
+    this.listeners.splice(0, this.listeners.length)
+  }
+
+  subscribe(listener: Function) {
+    this.listeners.push(listener)
+  }
+
+  activate() {
+    this.active = true
   }
 }

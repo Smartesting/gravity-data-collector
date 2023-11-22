@@ -1,12 +1,9 @@
 import ISessionIdHandler from './ISessionIdHandler'
-import { afterEach, beforeEach, describe, it } from 'vitest'
+import { beforeEach, describe, it } from 'vitest'
 import assert from 'assert'
 import MemorySessionIdHandler from './MemorySessionIdHandler'
 import SessionStorageSessionIdHandler from './SessionStorageSessionIdHandler'
 import CookieSessionIdHandler from './CookieSessionIdHandler'
-import sinon from 'sinon'
-
-const TIMEOUT = 1000 * 60 * 30
 
 let i = 0
 
@@ -40,42 +37,13 @@ function iSessionIdHandlerContractTest(
     })
 
     describe('get', () => {
-      let clock: sinon.SinonFakeTimers
-
-      beforeEach(() => {
-        clock = sinon.useFakeTimers()
-      })
-
-      afterEach(() => {
-        clock.restore()
-      })
-
-      it('generates a new sessionId when called', () => {
+      it('generates a new sessionId at the first call', () => {
         const sessionId = sessionIdHandler.get()
         assert.strictEqual(sessionId, 'session-1')
       })
 
-      it('keeps the same session ID until timeout is reached', () => {
-        const sessionId = sessionIdHandler.get()
-        clock.tick('10:00')
-        const newSessionId = sessionIdHandler.get()
-
-        assert.strictEqual(sessionId, 'session-1')
-        assert.strictEqual(newSessionId, 'session-1')
-      })
-
-      it('generates a new ID once timeout is reached', () => {
-        const sessionId = sessionIdHandler.get()
-        clock.tick('31:00')
-        const newSessionId = sessionIdHandler.get()
-
-        assert.strictEqual(sessionId, 'session-1')
-        assert.strictEqual(newSessionId, 'session-2')
-      })
-    })
-
-    describe('generateNewSessionId', () => {
-      it('generates a new session id', () => {
+      it('keeps the same session ID until a new sessionId is requested', () => {
+        assert.strictEqual(sessionIdHandler.get(), 'session-1')
         assert.strictEqual(sessionIdHandler.get(), 'session-1')
         sessionIdHandler.generateNewSessionId()
         assert.strictEqual(sessionIdHandler.get(), 'session-2')
@@ -86,19 +54,19 @@ function iSessionIdHandlerContractTest(
 
 iSessionIdHandlerContractTest(
   'MemorySessionIdHandler',
-  () => new MemorySessionIdHandler(incrementalIds, TIMEOUT),
+  () => new MemorySessionIdHandler(incrementalIds),
   () => {},
 )
 
 iSessionIdHandlerContractTest(
   'SessionStorageSessionIdHandler',
-  () => new SessionStorageSessionIdHandler(incrementalIds, TIMEOUT, global.window),
+  () => new SessionStorageSessionIdHandler(incrementalIds, global.window),
   () => sessionStorage.clear(),
 )
 
 iSessionIdHandlerContractTest(
   'CookieSessionIdHandler',
-  () => new CookieSessionIdHandler(incrementalIds, TIMEOUT, global.window),
+  () => new CookieSessionIdHandler(incrementalIds, global.window),
   clearCookies,
 )
 

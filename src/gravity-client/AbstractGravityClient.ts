@@ -1,15 +1,16 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
-  GravityMetric,
+  CollectorOptions,
   IdentifySessionResponse,
-  MonitorSessionResponse,
+  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 
 export interface SessionTraitsWithSessionId {
   sessionId: string
@@ -26,56 +27,60 @@ export interface ScreenRecordsWithSessionId {
   screenRecords: ReadonlyArray<eventWithTime>
 }
 
-export interface SessionMetricWithSessionId {
-  sessionId: string
-  metric: GravityMetric
+export interface GravityClientOptions {
+  requestInterval: number
+  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
 }
 
-export interface SessionMetricsWithSessionId {
-  sessionId: string
-  metrics: ReadonlyArray<GravityMetric>
-}
+export type RecordingSettings = Pick<CollectorOptions, 'enableEventRecording' | 'enableVideoRecording'>
 
-export abstract class AbstractGravityClient implements IGravityClient {
+export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
   private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
-  private readonly sessionMetricBuffer: DataBuffering<SessionMetricWithSessionId, MonitorSessionResponse>
 
-  constructor(requestInterval: number, onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void) {
+  protected constructor(options: GravityClientOptions, recordingSettingsDispatcher: RecordingSettingsDispatcher) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: this.handleSessionUserActions.bind(this),
       onFlush: (buffer, response) => {
-        onPublish?.(buffer)
-        if (!this.screenRecordBuffer.getIsFlushingAllowed() && response.error === null) {
-          this.screenRecordBuffer.setIsFlushingAllowed(true)
+        options.onPublish?.(buffer)
+        if (response.error === null) {
+          this.screenRecordBuffer.unlock()
+          this.sessionTraitsBuffer.unlock()
         }
       },
     })
     this.sessionTraitsBuffer = new DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: async (sessionTraitsWithSessionIds) => {
         const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
         return await this.handleSessionTraits(sessionId, sessionTraits)
       },
+      locked: true,
     })
     this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
-      handleInterval: requestInterval,
+      handleInterval: options.requestInterval,
       handleData: async (screenRecordsWithSessionIds) => {
         const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
         return await this.handleScreenRecords(sessionId, screenRecords)
       },
-      isFlushingAllowed: false,
+      locked: true,
     })
-    this.sessionMetricBuffer = new DataBuffering<SessionMetricWithSessionId, MonitorSessionResponse>({
-      handleInterval: requestInterval,
-      handleData: async (screenMetricWithSessionIds) => {
-        const { sessionId, metrics } = this.extractSessionIdAndMetrics(screenMetricWithSessionIds)
-        return await this.handleSessionMetrics(sessionId, metrics)
-      },
-      isFlushingAllowed: false,
+    recordingSettingsDispatcher.subscribe(({ enableEventRecording, enableVideoRecording }) => {
+      if (enableEventRecording) {
+        this.sessionUserActionBuffer.activate()
+        this.sessionTraitsBuffer.activate()
+      }
+      if (enableVideoRecording) {
+        this.screenRecordBuffer.activate()
+      }
     })
+  }
+
+  reset() {
+    this.sessionTraitsBuffer.lock()
+    this.screenRecordBuffer.lock()
   }
 
   async addSessionUserAction(sessionUserAction: SessionUserAction) {
@@ -96,20 +101,15 @@ export abstract class AbstractGravityClient implements IGravityClient {
     })
   }
 
-  async monitorSession(sessionId: string, metric: GravityMetric) {
-    await this.sessionMetricBuffer.addData({
-      sessionId,
-      metric,
-    })
-  }
-
-  async flush() {
-    return await Promise.all([
+  async flush(): Promise<void> {
+    await Promise.all([
       this.sessionUserActionBuffer.flush(),
       this.screenRecordBuffer.flush(),
       this.sessionTraitsBuffer.flush(),
     ])
   }
+
+  abstract readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse>
 
   protected abstract handleSessionUserActions(
     sessionUserActions: ReadonlyArray<SessionUserAction>,
@@ -124,11 +124,6 @@ export abstract class AbstractGravityClient implements IGravityClient {
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse>
-
-  protected abstract handleSessionMetrics(
-    sessionId: string,
-    metric: ReadonlyArray<GravityMetric>,
-  ): Promise<MonitorSessionResponse>
 
   private extractSessionIdAndSessionTraits(
     sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>,
@@ -167,26 +162,6 @@ export abstract class AbstractGravityClient implements IGravityClient {
     return {
       sessionId,
       screenRecords,
-    }
-  }
-
-  private extractSessionIdAndMetrics(
-    sessionMetricsWithSessionIds: ReadonlyArray<SessionMetricWithSessionId>,
-  ): SessionMetricsWithSessionId {
-    const sessionId = sessionMetricsWithSessionIds[0]?.sessionId
-    if (sessionId === undefined) {
-      throw new Error('No session id')
-    }
-
-    const metrics: GravityMetric[] = []
-    for (const screenRecordWithSessionId of sessionMetricsWithSessionIds) {
-      if (sessionId === screenRecordWithSessionId.sessionId) {
-        metrics.push(screenRecordWithSessionId.metric)
-      }
-    }
-    return {
-      sessionId,
-      metrics,
     }
   }
 }

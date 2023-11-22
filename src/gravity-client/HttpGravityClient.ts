@@ -1,37 +1,36 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
-  GravityMetric,
   IdentifySessionResponse,
-  MonitorSessionResponse,
+  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
-import { AbstractGravityClient } from './AbstractGravityClient'
+import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
 import {
   buildGravityTrackingIdentifySessionApiUrl,
-  buildGravityTrackingMonitorSessionApiUrl,
   buildGravityTrackingPublishApiUrl,
+  buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
+import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import { config } from '../config'
 
-interface HttpGravityClientOptions {
+type HttpGravityClientOptions = GravityClientOptions & {
   authKey: string
   gravityServerUrl: string
-  onError: (status: number, error: string | null) => void
-  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
 }
 
 export default class HttpGravityClient extends AbstractGravityClient implements IGravityClient {
   constructor(
-    requestInterval: number,
     private readonly options: HttpGravityClientOptions,
+    private readonly recordingSettingsDispatcher: RecordingSettingsDispatcher,
     private readonly fetch = crossfetch,
   ) {
-    super(requestInterval, options.onPublish)
+    super(options, recordingSettingsDispatcher)
   }
 
   async handleSessionUserActions(
@@ -67,21 +66,28 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     )
     const responseBody: AddSessionRecordingResponse = await response.json()
-    if (response.status !== 200) {
-      this.options.onError(response.status, responseBody.error)
-    }
+    this.handleResponseStatus(response.status)
 
     return responseBody
   }
 
-  async handleSessionMetrics(
-    sessionId: string,
-    metrics: ReadonlyArray<GravityMetric>,
-  ): Promise<MonitorSessionResponse> {
-    return await this.sendRequest<MonitorSessionResponse>(
-      buildGravityTrackingMonitorSessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
-      metrics,
+  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+    const response = await this.fetch(
+      buildGravityTrackingSessionCollectionSettingsApiUrl(this.options.authKey, this.options.gravityServerUrl),
+      {
+        method: 'GET',
+        redirect: 'follow',
+      },
     )
+    const responseBody: ReadSessionCollectionSettingsResponse = await response.json()
+    this.handleResponseStatus(response.status)
+    return responseBody
+  }
+
+  private handleResponseStatus(statusCode: number) {
+    if (config.ERRORS_TERMINATE_TRACKING.includes(statusCode)) {
+      this.recordingSettingsDispatcher.terminate()
+    }
   }
 
   private async sendRequest<T extends { error: string | null }>(url: string, body: unknown): Promise<T> {
@@ -94,9 +100,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       },
     })
     const responseBody: T = await response.json()
-    if (response.status !== 200) {
-      this.options.onError(response.status, responseBody.error)
-    }
+    this.handleResponseStatus(response.status)
 
     return responseBody
   }

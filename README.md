@@ -30,7 +30,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^3.14.0"
+    "@smartesting/gravity-data-collector": "^3.15.0"
   }
 }
 ```
@@ -46,7 +46,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@3.14.0/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@3.15.0/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -83,7 +83,8 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | originsToRecord        | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
 | buildId                | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
-| disableVideoRecording  | Boolean (optional)       | Disable video recording of sessions                                                                                                                                                             | true                                |
+| enableEventRecording   | Boolean (optional)       | Set to `false` to deactivate any recording (event & video)                                                                                                                                      | true                                |
+| enableVideoRecording   | Boolean (optional)       | Set to `false` to deactivate video recording                                                                                                                                                    | true                                |
 
 ## Features
 
@@ -196,3 +197,11 @@ with the page to see collected user actions.
 
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by
 your developer tool.
+
+## Any Question ?
+
+Maybe you need help to install and/or understand Gravity Data Collector
+
+- please visit our [documentation](https://docs.gravity-testing.com/) pages
+- we start a [FAQ](FAQ.md) hoping it can help you to face eventual problems with th Gravity Data Collector
+- [here](flowchart.md) is a flowchart summarizing how the collector works, depending on the options and configuration of your Gravity project.

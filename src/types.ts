@@ -1,5 +1,4 @@
 import Cypress from 'cypress'
-import { Metric } from 'web-vitals'
 
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
@@ -150,11 +149,6 @@ export interface GravityLocation {
   search: string
 }
 
-export interface GravityMetric {
-  location: GravityLocation
-  metric: Metric
-}
-
 export interface ViewportData {
   viewportWidth?: number
   viewportHeight?: number
@@ -199,7 +193,12 @@ export interface CollectorOptions {
   window?: typeof window
   enabledListeners?: Listener[]
   buildId?: string
+  /**
+   * @deprecated Use enableVideoRecording instead (reversed).
+   */
   disableVideoRecording?: boolean
+  enableEventRecording?: boolean
+  enableVideoRecording?: boolean
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
@@ -281,18 +280,20 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
-export interface MonitorSessionResponse {
-  error: MonitorSessionError | null
+export interface SessionCollectionSettings {
+  sessionRecording: boolean
+  videoRecording: boolean
 }
 
-export enum MonitorSessionError {
+export interface ReadSessionCollectionSettingsResponse {
+  settings: Partial<SessionCollectionSettings> | null
+  error: ReadSessionCollectionSettingsError | null
+}
+
+export enum ReadSessionCollectionSettingsError {
   accessDenied = 'no_access',
   projectExpired = 'project_expired',
   projectNotFound = 'project_not_found',
   collectionNotFound = 'collection_not_found',
-  invalidFormat = 'invalid_format',
-  sessionNotFound = 'session_not_found',
-  invalidField = 'invalid_field',
   incorrectSource = 'incorrect_source',
-  notUUID = 'not_a_uuid',
 }

@@ -13,7 +13,7 @@ describe('EventListenersHandler', () => {
   beforeEach(() => {
     userActionHandler = new NopUserActionHandler()
     clickEventListener = new ClickEventListener(userActionHandler, window)
-    beforeUnloadEventListener = new BeforeUnloadEventListener(userActionHandler, window)
+    beforeUnloadEventListener = new BeforeUnloadEventListener(userActionHandler, window, () => {})
     eventListenersHandler = new EventListenersHandler([clickEventListener, beforeUnloadEventListener])
   })
 

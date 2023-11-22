@@ -11,11 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Collect core web vitals metrics
-
 ### Changed
-
-- Video is not recorded by default
 
 ### Deprecated
 
@@ -23,19 +19,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.14.0..main)
-
-### Info
+## [3.15](https://github.com/Smartesting/gravity-data-collector/compare/v3.14.0...v3.15.0)
 
 ### Added
 
-### Changed
+- add collector option `enableEventRecording` to (de)activate event recording
+- add collector option `enableVideoRecording` to (de)activate video recording
 
 ### Deprecated
 
-### Removed
+- Option `disableVideoRecording` replaced by `enableVideoRecording` (reversed)
 
 ### Fixed
+
+- Fix video records loss after session timeout
 
 ## [3.14.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.13.0...v3.14.0)
 
