@@ -1,4 +1,4 @@
-import { describe, beforeEach, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { QueryType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import { createSelectors } from './createSelectors'
@@ -8,7 +8,7 @@ import path from 'path'
 describe('createSelector', () => {
   const html = `
   <body>
-    <div id="some-id" class="my-container" data-testid="container">
+    <div id='some-id' class='my-container' data-testid='container' role='main'>
       <input id='text-5' type='search' />
     </div>
   </body>`
@@ -29,11 +29,13 @@ describe('createSelector', () => {
         tag: 'div',
         nthChild: ':nth-child(2) > :nth-child(1)',
       },
-      attributes: {},
+      attributes: {
+        'data-testid': 'container',
+      },
     })
   })
 
-  it('do not return unavailable selectors for the element', () => {
+  it('does not return unavailable selectors for the element', () => {
     element = createElementInJSDOM(
       `
       <body>
@@ -55,18 +57,20 @@ describe('createSelector', () => {
     })
   })
 
-  it('only provide asked selectors', () => {
+  it('only provides asked selectors', () => {
     const selectors = createSelectors(element, { queries: [QueryType.class] })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {
         class: '.my-container',
       },
-      attributes: {},
+      attributes: {
+        'data-testid': 'container',
+      },
     })
   })
 
-  it('only provide asked selectors', () => {
+  it('only provides asked selectors #2', () => {
     const input = createElementInJSDOM(html, 'input').element
     const selectors = createSelectors(input, { queries: [QueryType.class, QueryType.attributes] })
     expect(selectors).toEqual({
@@ -84,7 +88,9 @@ describe('createSelector', () => {
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},
-      attributes: {},
+      attributes: {
+        'data-testid': 'container',
+      },
     })
   })
 
@@ -96,7 +102,9 @@ describe('createSelector', () => {
         id: '#some-id',
         class: '.my-container',
       },
-      attributes: {},
+      attributes: {
+        'data-testid': 'container',
+      },
     })
   })
 
@@ -115,7 +123,23 @@ describe('createSelector', () => {
   })
 
   it('provides the asked attributes', () => {
-    const selectors = createSelectors(element, { queries: [], attributes: ['data-testid'] })
+    const selectors = createSelectors(element, {
+      queries: [],
+      attributes: ['role'],
+    })
+    expect(selectors).toEqual({
+      xpath: '/html/body/div',
+      query: {},
+      attributes: {
+        role: 'main',
+      },
+    })
+  })
+
+  it('provides the data-testid attribute by default', () => {
+    const selectors = createSelectors(element, {
+      queries: [],
+    })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},
@@ -126,7 +150,10 @@ describe('createSelector', () => {
   })
 
   it('does not provide missing attributes', () => {
-    const selectors = createSelectors(element, { queries: [], attributes: ['role'] })
+    const selectors = createSelectors(element, {
+      queries: [],
+      attributes: ['href'],
+    })
     expect(selectors).toEqual({
       xpath: '/html/body/div',
       query: {},

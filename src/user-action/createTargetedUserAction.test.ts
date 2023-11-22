@@ -168,7 +168,7 @@ describe('createTargetedUserAction', () => {
         document: domWindow.document,
       })
       expect(action?.target.selectors).toEqual({
-        attributes: {},
+        attributes: { 'data-testid': 'userName' },
         query: {
           class: '.inline-form__input',
           id: '* > * > *',
