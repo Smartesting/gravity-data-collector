@@ -68,7 +68,7 @@ GravityCollector.init(/*options*/)
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
 | key                    | type                     | use                                                                                                                                                                                             | default value                       |
-| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-------------------------------------|
 | authKey                | String                   | The authentication key provided by Gravity to select the correct collection                                                                                                                     |                                     |
 | requestInterval        | Integer                  | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                    | 1000                                |
 | gravityServerUrl       | String                   | Gravity server URL                                                                                                                                                                              | https://api.gravity.smartesting.com |
@@ -84,7 +84,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | recordRequestsFor      | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
 | buildId                | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
 | enableEventRecording   | Boolean (optional)       | Set to `false` to deactivate any recording (event & video)                                                                                                                                      | true                                |
-| enableVideoRecording   | Boolean (optional)       | Set to `false` to deactivate video recording                                                                                                                                                    | true                                |
+| enableVideoRecording   | Boolean (optional)       | Set to `false` to deactivate video recording                                                                                                                                                    | false                               |
 
 ## Features
 

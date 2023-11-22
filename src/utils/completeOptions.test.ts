@@ -99,7 +99,7 @@ describe('completeOptions', () => {
         rejectSession: DEFAULT_SESSION_REJECTION,
         window,
         enableEventRecording: true,
-        enableVideoRecording: true,
+        enableVideoRecording: false,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -123,7 +123,7 @@ describe('completeOptions', () => {
         rejectSession: customSessionRejection,
         window,
         enableEventRecording: true,
-        enableVideoRecording: true,
+        enableVideoRecording: false,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -151,7 +151,7 @@ describe('completeOptions', () => {
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
-          enableVideoRecording: true,
+          enableVideoRecording: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -173,7 +173,7 @@ describe('completeOptions', () => {
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
-          enableVideoRecording: true,
+          enableVideoRecording: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -195,7 +195,7 @@ describe('completeOptions', () => {
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
-          enableVideoRecording: true,
+          enableVideoRecording: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -217,7 +217,7 @@ describe('completeOptions', () => {
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
-          enableVideoRecording: true,
+          enableVideoRecording: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -239,7 +239,7 @@ describe('completeOptions', () => {
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
-          enableVideoRecording: true,
+          enableVideoRecording: false,
         }
         expect(completed).toStrictEqual(expected)
       })

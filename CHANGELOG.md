@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `enableVideoRecording` is set to `false` by default
+
 ### Deprecated
 
 ### Removed

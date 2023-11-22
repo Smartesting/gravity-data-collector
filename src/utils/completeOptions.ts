@@ -21,7 +21,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     sessionsPercentageKept: 100,
     rejectSession: DEFAULT_SESSION_REJECTION,
     enableEventRecording: true,
-    enableVideoRecording: options.disableVideoRecording === undefined ? true : !options.disableVideoRecording,
+    enableVideoRecording: options.disableVideoRecording === undefined ? false : !options.disableVideoRecording,
   }
 
   const debugDefaultOptions = {
