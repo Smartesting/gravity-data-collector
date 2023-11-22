@@ -5,7 +5,7 @@ import getXPath from 'get-xpath'
 const defaultCreateSelectorsOptions: CreateSelectorsOptions = {
   queries: [QueryType.id, QueryType.class, QueryType.tag, QueryType.nthChild],
   excludedQueries: [],
-  attributes: [],
+  attributes: ['data-testid'],
 }
 
 export function createSelectors(element: Element, options?: Partial<CreateSelectorsOptions>): Selectors {
@@ -14,12 +14,11 @@ export function createSelectors(element: Element, options?: Partial<CreateSelect
     ...options,
   }
 
-  const selectors = {
+  return {
     xpath: getXPath(element, { ignoreId: true }),
     query: makeQuery(element, queries, excludedQueries),
     attributes: makeAttributes(element, attributes),
   }
-  return selectors
 }
 
 function makeQuery(element: Element, queries: QueryType[], excludedQueries: QueryType[]): Query {

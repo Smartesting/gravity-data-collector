@@ -16,6 +16,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- `data-testid` attribute is now collected by default on targeted user actions
+
 ### Deprecated
 
 ### Removed

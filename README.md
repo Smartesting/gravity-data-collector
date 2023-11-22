@@ -72,7 +72,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | maxDelay               | Integer                  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                             | 500                                 |
 | excludeRegex           | RegExp                   | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>Regular expression of ID and class names to ignore in selector computation.                                                  | null                                |
 | customSelector         | String (optional)        | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>The attribute to use as a selector if defined on an HTML element targeted by a user action.                                  | undefined                           |
-| selectorsOptions       | Object (optional)        | See [Tweaking selectors](#tweaking-selectors).                                                                                                                                                  | undefined                           |
+| selectorsOptions       | Object (optional)        | See [Work with selectors](#work-with-selectors).                                                                                                                                                | undefined                           |
 | sessionsPercentageKept | [0..100]                 | Rate of sessions to be collected                                                                                                                                                                | 100                                 |
 | rejectSession          | function `() => boolean` | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code> | `() => false`                       |
 | onPublish              | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                           |
@@ -86,8 +86,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 
 ### Work with selectors
 
-In the Gravity Data Collector, when a user action targets an HTML element, selectors computed in order to 1) obtain
-the coverage of a usage in Gravity, and 2) to replay the session as a Cypress test.
+In the Gravity Data Collector, when a user action targets an HTML element, selectors are computed in order to replay the session as an automated test.
 
 By default, the following selectors are computed:
 
@@ -99,25 +98,30 @@ By default, the following selectors are computed:
   - `nthChild`: selection based on nth-child (eg: `:nth-child(2) > :nth-child(4)`)
   - `attributes`: if available, selection based on the nodes attributes (eg: `[name=]`)
   - `combined`: a combination of the previous selectors (eg: `#menu nav :nth-child(2)`)
-- `attributes`: a hash of attributes provided by the user (eg: `{'data-testid': 'my-datatestid', role: 'list'}`)
+- `attributes`: a hash of attributes provided by the user (default: `['data-testid']`)
 
 #### Tweaking selectors
 
-When initializing the collector, you can specify which selectors are activated and custom attributes, for example:
+`xpath` is always collected.
+
+When initializing the collector, you can specify which selectors (in the `queries` field) and `attributes` you want to collect.
 
 ```typescript
 GravityCollector.init({ selectorsOptions: { attributes: ['data-testid', 'role'] } })
 ```
 
-This configuration will collect the `data-testid` and `role` attributes of the HTML elements with which the user
+This configuration will collect all the selectors (default if `queries` is not specified), the `data-testid` and the `role` attributes of the HTML element with which the user
 interacts.
 
 ```typescript
 GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-This configuration will only use CSS classes and tags to compute the selectors. Alternatively, you can also exclude some
-queries from the selectors. For example, if you do not want id-based selectors, you can specify it this way:
+This configuration will collect the CSS `class`(es), the `tag` and the `data-testid` (default if `attributes` is not specified) of the HTML element with which the user
+interacts.
+
+Alternatively, you can also exclude some
+selectors of the `queries` field. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
 GravityCollector.init({
@@ -127,7 +131,7 @@ GravityCollector.init({
 })
 ```
 
-You can specify both custom attributes and which selectors are computed:
+You can specify both `queries` and `attributes` fields:
 
 ```typescript
 GravityCollector.init({
