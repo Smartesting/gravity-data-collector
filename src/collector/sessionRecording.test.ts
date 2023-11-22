@@ -114,7 +114,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
     })
 
     it('else use default settings', async () => {
-      const collector = installer().install()
+      const collector = installer().withOptions({ enableVideoRecording: true }).install()
 
       await emitEachEventKind(collector)
       expect(handleSessionUserActions).toHaveBeenCalled()
@@ -227,7 +227,10 @@ describe('Session recording (events & video) depends on remote Gravity settings'
     })
 
     it('else use default settings', async () => {
-      const collector = installer().withFetch(mockFetchCollectionSettings({})).install()
+      const collector = installer()
+        .withOptions({ enableVideoRecording: true })
+        .withFetch(mockFetchCollectionSettings({}))
+        .install()
 
       await emitEachEventKind(collector)
       expect(handleSessionUserActions).toHaveBeenCalled()

@@ -60,7 +60,7 @@ describe.each([
   it('flush events if timeout is handled', async () => {
     let count = 1
     const collector = installer()
-      .withOptions({ requestInterval: 300 })
+      .withOptions({ requestInterval: 300, enableVideoRecording: true })
       .withSessionIdHandler(new MemorySessionIdHandler(() => `sessionId-${count++}`))
       .withTimeoutHandler(new MemoryTimeoutHandler(1000))
       .install()
