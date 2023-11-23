@@ -44,6 +44,7 @@ import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
 import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
 import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import { retrieveUrl } from '../utils/request'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -139,22 +140,20 @@ class CollectorWrapper {
 
   private patchFetch() {
     const { gravityServerUrl, originsToRecord, recordRequestsFor, window } = this.options
-    const { fetch: originalFetch } = window
-    window.fetch = async (...args) => {
-      const [resource, config] = args
-      const url = resource as string
+    const originalFetch = window.fetch
+    window.fetch = async (input: any /* should be RequestInfo|URL, but TSC failed */, init?: RequestInit) => {
+      const url = retrieveUrl(input)
 
       if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
         let method = 'unknown'
-        if (config?.method != null) {
-          method = config.method
+        if (init?.method != null) {
+          method = init.method
         }
         void this.userActionHandler.handle(createAsyncRequest(url, method))
       }
 
-      return await originalFetch(resource, config)
+      return await originalFetch(input, init)
     }
-
     const userActionHandler = this.userActionHandler
     const originalXHROpen = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function () {

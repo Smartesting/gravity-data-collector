@@ -31,6 +31,7 @@ import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
 import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
 import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import crossfetch from 'cross-fetch'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -49,7 +50,6 @@ describe.each([
   beforeEach(() => {
     handleUserAction = vi.spyOn(AbstractGravityClient.prototype, 'addSessionUserAction').mockImplementation(asyncNop)
     handleSessionTrait = vi.spyOn(AbstractGravityClient.prototype, 'identifySession').mockImplementation(asyncNop)
-    global.fetch = vi.fn()
   })
 
   afterEach(() => {
@@ -239,6 +239,7 @@ describe.each([
 
   describe('when recordRequestsFor is not set and originsToRecord is set', () => {
     beforeEach(async () => {
+      global.fetch = vi.fn() as typeof crossfetch
       installer()
         .withOptions({ originsToRecord: ['https://server.com'] })
         .install()
@@ -282,13 +283,13 @@ describe.each([
   describe('when recordRequestsFor is set', () => {
     describe('and originsToRecord is set', () => {
       beforeEach(async () => {
+        global.fetch = vi.fn() as typeof crossfetch
         installer()
           .withOptions({
             gravityServerUrl: 'https://gravity-server.com',
             recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
             originsToRecord: ['https://deprecated.com'],
           })
-          .withFetch(mockFetch())
           .install()
         handleUserAction.mockClear() // clear first startedSession event
       })
