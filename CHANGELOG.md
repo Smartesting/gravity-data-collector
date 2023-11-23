@@ -28,6 +28,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `blur`
   - `submit`
   - `reset`
+  - `mouseenter`
+  - `mouseleave`
+  - `scroll`
+  - `wheel`
 
 ### Changed
 

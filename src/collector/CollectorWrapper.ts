@@ -48,6 +48,10 @@ import FocusEventListener from '../event-listeners/FocusEventListener'
 import BlurEventListener from '../event-listeners/BlurEventListener'
 import SubmitEventListener from '../event-listeners/SubmitEventListener'
 import ResetEventListener from '../event-listeners/ResetEventListener'
+import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
+import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
+import ScrollEventListener from '../event-listeners/ScrollEventListener'
+import WheelEventListener from '../event-listeners/WheelEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -203,6 +207,10 @@ class CollectorWrapper {
       [Listener.Blur]: BlurEventListener,
       [Listener.Submit]: SubmitEventListener,
       [Listener.Reset]: ResetEventListener,
+      [Listener.MouseEnter]: MouseEnterEventListener,
+      [Listener.MouseLeave]: MouseLeaveEventListener,
+      [Listener.Scroll]: ScrollEventListener,
+      [Listener.Wheel]: WheelEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
