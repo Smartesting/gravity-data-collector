@@ -52,6 +52,7 @@ import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
 import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
+import ResizeEventListener from '../event-listeners/ResizeEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -202,6 +203,7 @@ class CollectorWrapper {
       [Listener.Pause]: PauseEventListener,
       [Listener.Seeked]: SeekedEventListener,
       [Listener.FullScreenChange]: FullScreenChangeEventListener,
+      [Listener.Resize]: ResizeEventListener,
       [Listener.HashChange]: HashChangeEventListener,
       [Listener.Focus]: FocusEventListener,
       [Listener.Blur]: BlurEventListener,

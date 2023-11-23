@@ -2,8 +2,8 @@ import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEve
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import { UserActionType } from '../types'
 
-export default class PlayEventListener extends TargetedEventListener {
+export default class ResizeEventListener extends TargetedEventListener {
   constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.Play, window, options)
+    super(userActionHandler, UserActionType.Resize, window, options)
   }
 }

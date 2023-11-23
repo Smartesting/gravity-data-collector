@@ -23,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `pause`
   - `seeked`
   - `fullscreenchange`
+  - `resize`
   - `hashchange`
   - `focus`
   - `blur`

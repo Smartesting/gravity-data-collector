@@ -4,6 +4,6 @@ import { UserActionType } from '../types'
 
 export default class SeekedEventListener extends TargetedEventListener {
   constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.Drop, window, options)
+    super(userActionHandler, UserActionType.Seeked, window, options)
   }
 }

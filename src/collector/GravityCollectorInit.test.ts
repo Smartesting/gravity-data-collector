@@ -39,6 +39,7 @@ import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
 import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
+import ResizeEventListener from '../event-listeners/ResizeEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -165,6 +166,10 @@ describe.each([
       {
         listenerClass: FullScreenChangeEventListener,
         listenerOption: Listener.FullScreenChange,
+      },
+      {
+        listenerClass: ResizeEventListener,
+        listenerOption: Listener.Resize,
       },
       {
         listenerClass: HashChangeEventListener,
