@@ -3,7 +3,7 @@ import IUserActionHandler from '../user-action/IUserActionHandler'
 import { UserActionType } from '../types'
 
 export default class PlayEventListener extends TargetedEventListener {
-    constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-        super(userActionHandler, UserActionType.Drop, window, options)
-    }
+  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
+    super(userActionHandler, UserActionType.Drop, window, options)
+  }
 }
