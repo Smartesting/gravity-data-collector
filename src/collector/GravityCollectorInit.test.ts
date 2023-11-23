@@ -25,6 +25,9 @@ import CutEventListener from '../event-listeners/CutEventListener'
 import DblClickEventListener from '../event-listeners/DblClickEventListener'
 import DragStartEventListener from '../event-listeners/DragStartEventListener'
 import DropEventListener from '../event-listeners/DropEventListener'
+import PlayEventListener from '../event-listeners/PlayEventListener'
+import PauseEventListener from '../event-listeners/PauseEventListener'
+import SeekedEventListener from '../event-listeners/SeekedEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -135,6 +138,18 @@ describe.each([
       {
         listenerClass: DropEventListener,
         listenerOption: Listener.Drop,
+      },
+      {
+        listenerClass: PlayEventListener,
+        listenerOption: Listener.Play,
+      },
+      {
+        listenerClass: PauseEventListener,
+        listenerOption: Listener.Pause,
+      },
+      {
+        listenerClass: SeekedEventListener,
+        listenerOption: Listener.Seeked,
       },
     ]
 

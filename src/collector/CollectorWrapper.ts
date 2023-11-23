@@ -38,6 +38,9 @@ import CutEventListener from '../event-listeners/CutEventListener'
 import DblClickEventListener from '../event-listeners/DblClickEventListener'
 import DragStartEventListener from '../event-listeners/DragStartEventListener'
 import DropEventListener from '../event-listeners/DropEventListener'
+import PlayEventListener from '../event-listeners/PlayEventListener'
+import PauseEventListener from '../event-listeners/PauseEventListener'
+import SeekedEventListener from '../event-listeners/SeekedEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -183,6 +186,9 @@ class CollectorWrapper {
       [Listener.Cut]: CutEventListener,
       [Listener.DragStart]: DragStartEventListener,
       [Listener.Drop]: DropEventListener,
+      [Listener.Play]: PlayEventListener,
+      [Listener.Pause]: PauseEventListener,
+      [Listener.Seeked]: SeekedEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {

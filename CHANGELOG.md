@@ -18,6 +18,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `dblclick`
   - `dragstart`
   - `drop`
+  - `play`
+  - `pause`
+  - `seeked`
 
 ### Changed
 
