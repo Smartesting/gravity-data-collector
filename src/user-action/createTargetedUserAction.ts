@@ -96,36 +96,41 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement, options: CreateTargetedUserActionOptions): UserActionTarget {
+function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {
   const { customSelector, document, selectorsOptions } = options
-  const actionTarget: UserActionTarget = {
-    element: target.tagName.toLocaleLowerCase(),
-  }
+  const element = isHtmlElement(target) ? target.tagName.toLocaleLowerCase() : 'window'
+  const actionTarget: UserActionTarget = { element }
 
-  const type = target.getAttribute('type')
-  if (type !== null) actionTarget.type = type
+  if (isHtmlElement(target)) {
+    const type = target.getAttribute('type')
+    if (type !== null) actionTarget.type = type
 
-  if (isCheckableElement(target)) {
-    actionTarget.value = (target as HTMLInputElement).checked.toString()
-  }
-
-  actionTarget.selectors = createSelectors(target, selectorsOptions)
-
-  const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
-
-  if (customSelectorAttribute !== null) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    actionTarget.selector = `[${customSelector}=${customSelectorAttribute}]`
-  } else {
-    try {
-      actionTarget.selector = unique(target, { excludeRegex: options.excludeRegex })
-    } catch {
-      // ignore
+    if (isCheckableElement(target)) {
+      actionTarget.value = (target as HTMLInputElement).checked.toString()
     }
-  }
 
-  const displayInfo = createTargetDisplayInfo(target, document)
-  if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
+    actionTarget.selectors = createSelectors(target, selectorsOptions)
+
+    const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
+
+    if (customSelectorAttribute !== null) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      actionTarget.selector = `[${customSelector}=${customSelectorAttribute}]`
+    } else {
+      try {
+        actionTarget.selector = unique(target, { excludeRegex: options.excludeRegex })
+      } catch {
+        // ignore
+      }
+    }
+
+    const displayInfo = createTargetDisplayInfo(target, document)
+    if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
+  }
 
   return actionTarget
+}
+
+function isHtmlElement(tbd: unknown): tbd is HTMLElement {
+  return (tbd as HTMLElement).tagName !== undefined
 }
