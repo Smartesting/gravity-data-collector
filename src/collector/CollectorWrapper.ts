@@ -54,6 +54,7 @@ import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
+import ToggleEventListener from '../event-listeners/ToggleEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -215,6 +216,7 @@ class CollectorWrapper {
       [Listener.MouseLeave]: MouseLeaveEventListener,
       [Listener.Scroll]: ScrollEventListener,
       [Listener.Wheel]: WheelEventListener,
+      [Listener.Toggle]: ToggleEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {

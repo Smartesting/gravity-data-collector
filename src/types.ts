@@ -28,6 +28,7 @@ export enum UserActionType {
   MouseLeave = 'mouseleave',
   Scroll = 'scroll',
   Wheel = 'wheel',
+  Toggle = 'toggle',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
 }
@@ -59,6 +60,7 @@ export enum Listener {
   MouseLeave = 'mouseleave',
   Scroll = 'scroll',
   Wheel = 'wheel',
+  Toggle = 'toggle',
   BeforeUnload = 'beforeUnload',
   Requests = 'requests',
   CypressCommands = 'cypressCommands',

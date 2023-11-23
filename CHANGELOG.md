@@ -34,6 +34,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `mouseleave`
   - `scroll`
   - `wheel`
+  - `toggle`
 
 ### Changed
 

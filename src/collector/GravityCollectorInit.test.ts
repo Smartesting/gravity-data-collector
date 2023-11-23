@@ -41,6 +41,7 @@ import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
+import ToggleEventListener from '../event-listeners/ToggleEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -215,6 +216,10 @@ describe.each([
       {
         listenerClass: WheelEventListener,
         listenerOption: Listener.Wheel,
+      },
+      {
+        listenerClass: ToggleEventListener,
+        listenerOption: Listener.Toggle,
       },
     ]
 
