@@ -28,6 +28,7 @@ import DropEventListener from '../event-listeners/DropEventListener'
 import PlayEventListener from '../event-listeners/PlayEventListener'
 import PauseEventListener from '../event-listeners/PauseEventListener'
 import SeekedEventListener from '../event-listeners/SeekedEventListener'
+import PasteEventListener from '../event-listeners/PasteEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -100,24 +101,24 @@ describe.each([
         listenerOption: Listener.Click,
       },
       {
-        listenerClass: KeyUpEventListener,
-        listenerOption: Listener.KeyUp,
+        listenerClass: DblClickEventListener,
+        listenerOption: Listener.DblClick,
       },
       {
-        listenerClass: KeyDownEventListener,
-        listenerOption: Listener.KeyDown,
+        listenerClass: ContextMenuEventListener,
+        listenerOption: Listener.ContextMenu,
       },
       {
         listenerClass: ChangeEventListener,
         listenerOption: Listener.Change,
       },
       {
-        listenerClass: BeforeUnloadEventListener,
-        listenerOption: Listener.BeforeUnload,
+        listenerClass: KeyUpEventListener,
+        listenerOption: Listener.KeyUp,
       },
       {
-        listenerClass: ContextMenuEventListener,
-        listenerOption: Listener.ContextMenu,
+        listenerClass: KeyDownEventListener,
+        listenerOption: Listener.KeyDown,
       },
       {
         listenerClass: CopyEventListener,
@@ -128,8 +129,8 @@ describe.each([
         listenerOption: Listener.Cut,
       },
       {
-        listenerClass: DblClickEventListener,
-        listenerOption: Listener.DblClick,
+        listenerClass: PasteEventListener,
+        listenerOption: Listener.Paste,
       },
       {
         listenerClass: DragStartEventListener,
@@ -150,6 +151,10 @@ describe.each([
       {
         listenerClass: SeekedEventListener,
         listenerOption: Listener.Seeked,
+      },
+      {
+        listenerClass: BeforeUnloadEventListener,
+        listenerOption: Listener.BeforeUnload,
       },
     ]
 

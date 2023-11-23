@@ -13,9 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Track new HTML events:
   - `contextmenu`
+  - `dblclick`
   - `copy`
   - `cut`
-  - `dblclick`
+  - `paste`
   - `dragstart`
   - `drop`
   - `play`

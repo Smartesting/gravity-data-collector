@@ -41,6 +41,7 @@ import DropEventListener from '../event-listeners/DropEventListener'
 import PlayEventListener from '../event-listeners/PlayEventListener'
 import PauseEventListener from '../event-listeners/PauseEventListener'
 import SeekedEventListener from '../event-listeners/SeekedEventListener'
+import PasteEventListener from '../event-listeners/PasteEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -178,12 +179,13 @@ class CollectorWrapper {
     const eventListenersClassByListener = {
       [Listener.Click]: ClickEventListener,
       [Listener.DblClick]: DblClickEventListener,
+      [Listener.ContextMenu]: ContextMenuEventListener,
+      [Listener.Change]: ChangeEventListener,
       [Listener.KeyUp]: KeyUpEventListener,
       [Listener.KeyDown]: KeyDownEventListener,
-      [Listener.Change]: ChangeEventListener,
-      [Listener.ContextMenu]: ContextMenuEventListener,
       [Listener.Copy]: CopyEventListener,
       [Listener.Cut]: CutEventListener,
+      [Listener.Paste]: PasteEventListener,
       [Listener.DragStart]: DragStartEventListener,
       [Listener.Drop]: DropEventListener,
       [Listener.Play]: PlayEventListener,
