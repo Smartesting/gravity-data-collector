@@ -29,6 +29,8 @@ import PlayEventListener from '../event-listeners/PlayEventListener'
 import PauseEventListener from '../event-listeners/PauseEventListener'
 import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
+import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
+import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -151,6 +153,14 @@ describe.each([
       {
         listenerClass: SeekedEventListener,
         listenerOption: Listener.Seeked,
+      },
+      {
+        listenerClass: FullScreenChangeEventListener,
+        listenerOption: Listener.FullScreenChange,
+      },
+      {
+        listenerClass: HashChangeEventListener,
+        listenerOption: Listener.HashChange,
       },
       {
         listenerClass: BeforeUnloadEventListener,

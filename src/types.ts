@@ -16,6 +16,8 @@ export enum UserActionType {
   Play = 'play',
   Pause = 'pause',
   Seeked = 'seeked',
+  FullScreenChange = 'fullscreenchange',
+  HashChange = 'hashchange',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
 }
@@ -35,6 +37,8 @@ export enum Listener {
   Play = 'play',
   Pause = 'pause',
   Seeked = 'seeked',
+  FullScreenChange = 'fullscreenchange',
+  HashChange = 'hashchange',
   BeforeUnload = 'beforeUnload',
   Requests = 'requests',
   CypressCommands = 'cypressCommands',

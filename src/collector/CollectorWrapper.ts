@@ -42,6 +42,8 @@ import PlayEventListener from '../event-listeners/PlayEventListener'
 import PauseEventListener from '../event-listeners/PauseEventListener'
 import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
+import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
+import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -191,6 +193,8 @@ class CollectorWrapper {
       [Listener.Play]: PlayEventListener,
       [Listener.Pause]: PauseEventListener,
       [Listener.Seeked]: SeekedEventListener,
+      [Listener.FullScreenChange]: FullScreenChangeEventListener,
+      [Listener.HashChange]: HashChangeEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
