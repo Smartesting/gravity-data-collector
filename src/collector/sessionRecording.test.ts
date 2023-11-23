@@ -198,7 +198,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       it('records events BUT no videos', async () => {
         const collector = installer()
           .withFetch(mockFetchCollectionSettings({ sessionRecording: true }))
-          .withOptions({ enableEventRecording: false, enableVideoRecording: false })
+          .withOptions({ enableEventRecording: true, enableVideoRecording: false })
           .install()
 
         await emitEachEventKind(collector)
@@ -213,7 +213,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
       it('records nothing', async () => {
         const collector = installer()
           .withFetch(mockFetchCollectionSettings({ videoRecording: false }))
-          .withOptions({ enableEventRecording: false, enableVideoRecording: true })
+          .withOptions({ enableEventRecording: false, enableVideoRecording: false })
           .install()
 
         await emitEachEventKind(collector)
@@ -228,17 +228,16 @@ describe('Session recording (events & video) depends on remote Gravity settings'
 
     it('else use default settings', async () => {
       const collector = installer()
-        .withOptions({ enableVideoRecording: true })
         .withFetch(mockFetchCollectionSettings({}))
         .install()
 
       await emitEachEventKind(collector)
       expect(handleSessionUserActions).toHaveBeenCalled()
       expect(handleSessionTraits).toHaveBeenCalled()
-      expect(handleScreenRecords).toHaveBeenCalled()
+      expect(handleScreenRecords).not.toHaveBeenCalled()
 
       expect(terminateEventRecording).not.toHaveBeenCalled()
-      expect(terminateVideoRecording).not.toHaveBeenCalled()
+      expect(terminateVideoRecording).toHaveBeenCalled()
     })
 
     describe('terminate recording', () => {
