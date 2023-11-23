@@ -31,6 +31,10 @@ import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
 import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
 import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import FocusEventListener from '../event-listeners/FocusEventListener'
+import BlurEventListener from '../event-listeners/BlurEventListener'
+import SubmitEventListener from '../event-listeners/SubmitEventListener'
+import ResetEventListener from '../event-listeners/ResetEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -161,6 +165,22 @@ describe.each([
       {
         listenerClass: HashChangeEventListener,
         listenerOption: Listener.HashChange,
+      },
+      {
+        listenerClass: FocusEventListener,
+        listenerOption: Listener.Focus,
+      },
+      {
+        listenerClass: BlurEventListener,
+        listenerOption: Listener.Blur,
+      },
+      {
+        listenerClass: SubmitEventListener,
+        listenerOption: Listener.Submit,
+      },
+      {
+        listenerClass: ResetEventListener,
+        listenerOption: Listener.Reset,
       },
       {
         listenerClass: BeforeUnloadEventListener,

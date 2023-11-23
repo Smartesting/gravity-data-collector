@@ -24,6 +24,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `seeked`
   - `fullscreenchange`
   - `hashchange`
+  - `focus`
+  - `blur`
+  - `submit`
+  - `reset`
 
 ### Changed
 
