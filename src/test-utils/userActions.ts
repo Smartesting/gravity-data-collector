@@ -43,9 +43,7 @@ export function createKeyDownUserAction(
   return userAction
 }
 
-export function createHashChangeUserAction(
-    window: Window,
-): TargetedUserAction {
+export function createHashChangeUserAction(window: Window): TargetedUserAction {
   const hashChangeEvent = {
     type: 'hashchange',
     target: window,
