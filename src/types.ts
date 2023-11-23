@@ -3,12 +3,67 @@ import Cypress from 'cypress'
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
+  DblClick = 'dblclick',
+  ContextMenu = 'contextmenu',
   Change = 'change',
   KeyUp = 'keyup',
   KeyDown = 'keydown',
-  ContextMenu = 'contextmenu',
+  Copy = 'copy',
+  Cut = 'cut',
+  Paste = 'paste',
+  Select = 'select',
+  DragStart = 'dragstart',
+  Drop = 'drop',
+  Play = 'play',
+  Pause = 'pause',
+  Seeked = 'seeked',
+  FullScreenChange = 'fullscreenchange',
+  Resize = 'resize',
+  HashChange = 'hashchange',
+  Focus = 'focus',
+  Blur = 'blur',
+  Submit = 'submit',
+  Reset = 'reset',
+  MouseEnter = 'mouseenter',
+  MouseLeave = 'mouseleave',
+  Scroll = 'scroll',
+  Wheel = 'wheel',
+  Toggle = 'toggle',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
+}
+
+export enum Listener {
+  Click = 'click',
+  DblClick = 'dblclick',
+  ContextMenu = 'contextmenu',
+  Change = 'change',
+  KeyUp = 'keyup',
+  KeyDown = 'keydown',
+  Copy = 'copy',
+  Cut = 'cut',
+  Paste = 'paste',
+  Select = 'select',
+  DragStart = 'dragstart',
+  Drop = 'drop',
+  Play = 'play',
+  Pause = 'pause',
+  Seeked = 'seeked',
+  FullScreenChange = 'fullscreenchange',
+  Resize = 'resize',
+  HashChange = 'hashchange',
+  Focus = 'focus',
+  Blur = 'blur',
+  Submit = 'submit',
+  Reset = 'reset',
+  MouseEnter = 'mouseenter',
+  MouseLeave = 'mouseleave',
+  Scroll = 'scroll',
+  Wheel = 'wheel',
+  Toggle = 'toggle',
+  BeforeUnload = 'beforeUnload',
+  Requests = 'requests',
+  CypressCommands = 'cypressCommands',
 }
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand
@@ -204,17 +259,6 @@ export interface CollectorOptions {
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
   window: typeof window
-}
-
-export enum Listener {
-  Click = 'click',
-  KeyUp = 'keyUp',
-  KeyDown = 'keyDown',
-  Change = 'change',
-  BeforeUnload = 'beforeUnload',
-  Requests = 'requests',
-  CypressCommands = 'cypressCommands',
-  ContextMenu = 'contextMenu',
 }
 
 export interface CreateSelectorsOptions {

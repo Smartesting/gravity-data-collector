@@ -27,8 +27,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added new events:
+- Track new HTML events:
   - `contextmenu`
+  - `dblclick`
+  - `copy`
+  - `cut`
+  - `paste`
+  - `select`
+  - `dragstart`
+  - `drop`
+  - `play`
+  - `pause`
+  - `seeked`
+  - `fullscreenchange`
+  - `resize`
+  - `hashchange`
+  - `focus`
+  - `blur`
+  - `submit`
+  - `reset`
+  - `mouseenter`
+  - `mouseleave`
+  - `scroll`
+  - `wheel`
+  - `toggle`
 
 ### Changed
 

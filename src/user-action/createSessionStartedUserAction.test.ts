@@ -46,10 +46,18 @@ describe('action', () => {
       expect(createSessionStartedUserAction().recordedAt).toEqual(now)
     })
 
-    it('sets buildId field when GRAVITY_BUILD_ID env var is set', () => {
-      withPatchedProperties(process.env, { GRAVITY_BUILD_ID: '51' }, () =>
-        expect(createSessionStartedUserAction().buildId).toEqual('51'),
-      )
+    describe('when GRAVITY_BUILD_ID env var is set', () => {
+      beforeEach(() => {
+        vi.stubEnv('GRAVITY_BUILD_ID', '51')
+      })
+
+      afterEach(() => {
+        vi.unstubAllEnvs()
+      })
+
+      it('sets buildId field from env', () => {
+        expect(createSessionStartedUserAction().buildId).toEqual('51')
+      })
     })
 
     it('sets buildId field when GRAVITY_BUILD_ID is set on the window', () => {
@@ -58,33 +66,61 @@ describe('action', () => {
       )
     })
 
-    it('does not set buildId field when GRAVITY_BUILD_ID is empty', () => {
-      withPatchedProperties(process.env, { GRAVITY_BUILD_ID: '' }, () =>
-        expect(createSessionStartedUserAction().buildId).toEqual(undefined),
-      )
+    describe('when GRAVITY_BUILD_ID is empty', () => {
+      beforeEach(() => {
+        vi.stubEnv('GRAVITY_BUILD_ID', '')
+      })
+
+      afterEach(() => {
+        vi.unstubAllEnvs()
+      })
+
+      it('does not set buildId field', () => {
+        expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+      })
     })
 
-    it('sets buildId field when REACT_APP_GRAVITY_BUILD_ID env var is set', () => {
-      withPatchedProperties(process.env, { REACT_APP_GRAVITY_BUILD_ID: '42' }, () =>
-        expect(createSessionStartedUserAction().buildId).toEqual('42'),
-      )
+    describe('when REACT_APP_GRAVITY_BUILD_ID env var is set', () => {
+      beforeEach(() => {
+        vi.stubEnv('REACT_APP_GRAVITY_BUILD_ID', '42')
+      })
+
+      afterEach(() => {
+        vi.unstubAllEnvs()
+      })
+
+      it('sets buildId field', () => {
+        expect(createSessionStartedUserAction().buildId).toEqual('42')
+      })
     })
 
-    it('does not set buildId field when REACT_APP_GRAVITY_BUILD_ID is empty', () => {
-      withPatchedProperties(process.env, { REACT_APP_GRAVITY_BUILD_ID: '' }, () =>
-        expect(createSessionStartedUserAction().buildId).toEqual(undefined),
-      )
+    describe('when REACT_APP_GRAVITY_BUILD_ID is empty', () => {
+      beforeEach(() => {
+        vi.stubEnv('REACT_APP_GRAVITY_BUILD_ID', '')
+      })
+
+      afterEach(() => {
+        vi.unstubAllEnvs()
+      })
+
+      it('does not set buildId field', () => {
+        expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+      })
     })
 
-    it('sets buildId field from GRAVITY_BUILD_ID when GRAVITY_BUILD_ID and REACT_APP_GRAVITY_BUILD_ID are set', () => {
-      withPatchedProperties(
-        process.env,
-        {
-          GRAVITY_BUILD_ID: '12',
-          REACT_APP_GRAVITY_BUILD_ID: '13',
-        },
-        () => expect(createSessionStartedUserAction().buildId).toEqual('12'),
-      )
+    describe('when GRAVITY_BUILD_ID and REACT_APP_GRAVITY_BUILD_ID are set', () => {
+      beforeEach(() => {
+        vi.stubEnv('GRAVITY_BUILD_ID', '12')
+        vi.stubEnv('REACT_APP_GRAVITY_BUILD_ID', '13')
+      })
+
+      afterEach(() => {
+        vi.unstubAllEnvs()
+      })
+
+      it('sets buildId field from GRAVITY_BUILD_ID', () => {
+        expect(createSessionStartedUserAction().buildId).toEqual('12')
+      })
     })
 
     it('returns Cypress current test if any', () => {

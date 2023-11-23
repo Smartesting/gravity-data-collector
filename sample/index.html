@@ -117,6 +117,94 @@
     </div>
   </fieldset>
 
+  <fieldset>
+    <style>
+      .dragContainer {
+        display: flex;
+      }
+
+      .dropZone {
+        flex-basis: 100%;
+        flex-grow: 1;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid gray;
+      }
+
+      .draggable {
+        background-color: aquamarine;
+        font-weight: normal;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        padding: 10px;
+        display: inline-block;
+      }
+    </style>
+    <script type="text/javascript">
+      function onDragStart(event) {
+        event
+          .dataTransfer
+          .setData('text/plain', event.target.id);
+
+        event
+          .currentTarget
+          .style
+          .backgroundColor = 'yellow';
+      }
+
+      function onDragOver(event) {
+        event.preventDefault();
+      }
+
+      function onDrop(event) {
+        const id = event
+          .dataTransfer
+          .getData('text');
+
+        const draggableElement = document.getElementById(id);
+        const dropzone = event.target;
+        dropzone.appendChild(draggableElement);
+        draggableElement.style.background = 'aquamarine'
+      }
+
+    </script>
+    <legend>Draggable element</legend>
+
+    <div class="dragContainer">
+      <div class="dropZone"
+           ondragover="onDragOver(event);"
+           ondrop="onDrop(event);"
+      >
+        <div
+          id="draggable-1"
+          class="draggable"
+          draggable="true"
+          ondragstart="onDragStart(event);"
+        >
+          Drag me
+        </div>
+      </div>
+
+      <div
+        class="dropZone"
+        ondragover="onDragOver(event);"
+        ondrop="onDrop(event);"
+      >
+      </div>
+    </div>
+
+  </fieldset>
+
+  <fieldset>
+    <legend>Video</legend>
+    <video
+      width="618"
+      height="347"
+      src="https://www.gravity-testing.com/wp-content/uploads/2023/08/gravity-home-visuals.mp4"
+      controls
+    ></video>
+  </fieldset>
+
   <fieldset style='display: grid; grid-row-gap: 10px'>
     <legend>Simulate navigation</legend>
     <div>

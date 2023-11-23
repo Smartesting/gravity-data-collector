@@ -33,6 +33,29 @@ import crossfetch from 'cross-fetch'
 import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
+import CopyEventListener from '../event-listeners/CopyEventListener'
+import CutEventListener from '../event-listeners/CutEventListener'
+import DblClickEventListener from '../event-listeners/DblClickEventListener'
+import DragStartEventListener from '../event-listeners/DragStartEventListener'
+import DropEventListener from '../event-listeners/DropEventListener'
+import PlayEventListener from '../event-listeners/PlayEventListener'
+import PauseEventListener from '../event-listeners/PauseEventListener'
+import SeekedEventListener from '../event-listeners/SeekedEventListener'
+import PasteEventListener from '../event-listeners/PasteEventListener'
+import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
+import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import FocusEventListener from '../event-listeners/FocusEventListener'
+import BlurEventListener from '../event-listeners/BlurEventListener'
+import SubmitEventListener from '../event-listeners/SubmitEventListener'
+import ResetEventListener from '../event-listeners/ResetEventListener'
+import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
+import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
+import ScrollEventListener from '../event-listeners/ScrollEventListener'
+import WheelEventListener from '../event-listeners/WheelEventListener'
+import ResizeEventListener from '../event-listeners/ResizeEventListener'
+import SelectEventListener from '../event-listeners/SelectEventListener'
+import ToggleEventListener from '../event-listeners/ToggleEventListener'
+import { retrieveUrl } from '../utils/request'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -128,22 +151,20 @@ class CollectorWrapper {
 
   private patchFetch() {
     const { gravityServerUrl, originsToRecord, recordRequestsFor, window } = this.options
-    const { fetch: originalFetch } = window
-    window.fetch = async (...args) => {
-      const [resource, config] = args
-      const url = resource as string
+    const originalFetch = window.fetch
+    window.fetch = async (input: any /* should be RequestInfo|URL, but TSC failed */, init?: RequestInit) => {
+      const url = retrieveUrl(input)
 
       if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
         let method = 'unknown'
-        if (config?.method != null) {
-          method = config.method
+        if (init?.method != null) {
+          method = init.method
         }
         void this.userActionHandler.handle(createAsyncRequest(url, method))
       }
 
-      return await originalFetch(resource, config)
+      return await originalFetch(input, init)
     }
-
     const userActionHandler = this.userActionHandler
     const originalXHROpen = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function () {
@@ -167,21 +188,42 @@ class CollectorWrapper {
     }
 
     const eventListeners: IEventListener[] = []
-    if (this.isListenerEnabled(Listener.Click)) {
-      eventListeners.push(new ClickEventListener(this.userActionHandler, window, targetedEventListenerOptions))
+    const eventListenersClassByListener = {
+      [Listener.Click]: ClickEventListener,
+      [Listener.DblClick]: DblClickEventListener,
+      [Listener.ContextMenu]: ContextMenuEventListener,
+      [Listener.Change]: ChangeEventListener,
+      [Listener.KeyUp]: KeyUpEventListener,
+      [Listener.KeyDown]: KeyDownEventListener,
+      [Listener.Copy]: CopyEventListener,
+      [Listener.Cut]: CutEventListener,
+      [Listener.Paste]: PasteEventListener,
+      [Listener.Select]: SelectEventListener,
+      [Listener.DragStart]: DragStartEventListener,
+      [Listener.Drop]: DropEventListener,
+      [Listener.Play]: PlayEventListener,
+      [Listener.Pause]: PauseEventListener,
+      [Listener.Seeked]: SeekedEventListener,
+      [Listener.FullScreenChange]: FullScreenChangeEventListener,
+      [Listener.Resize]: ResizeEventListener,
+      [Listener.HashChange]: HashChangeEventListener,
+      [Listener.Focus]: FocusEventListener,
+      [Listener.Blur]: BlurEventListener,
+      [Listener.Submit]: SubmitEventListener,
+      [Listener.Reset]: ResetEventListener,
+      [Listener.MouseEnter]: MouseEnterEventListener,
+      [Listener.MouseLeave]: MouseLeaveEventListener,
+      [Listener.Scroll]: ScrollEventListener,
+      [Listener.Wheel]: WheelEventListener,
+      [Listener.Toggle]: ToggleEventListener,
     }
-    if (this.isListenerEnabled(Listener.KeyUp)) {
-      eventListeners.push(new KeyUpEventListener(this.userActionHandler, window, targetedEventListenerOptions))
+
+    for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
+      if (this.isListenerEnabled(listener as Listener)) {
+        eventListeners.push(new ListenerClass(this.userActionHandler, window, targetedEventListenerOptions))
+      }
     }
-    if (this.isListenerEnabled(Listener.KeyDown)) {
-      eventListeners.push(new KeyDownEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
-    if (this.isListenerEnabled(Listener.Change)) {
-      eventListeners.push(new ChangeEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
-    if (this.isListenerEnabled(Listener.ContextMenu)) {
-      eventListeners.push(new ContextMenuEventListener(this.userActionHandler, window, targetedEventListenerOptions))
-    }
+
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
       eventListeners.push(
         new BeforeUnloadEventListener(this.userActionHandler, window, async () => await this.gravityClient.flush()),

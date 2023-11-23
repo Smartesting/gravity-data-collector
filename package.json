@@ -62,7 +62,7 @@
     "c8": "^7.11.3",
     "common-shakeify": "^1.1.2",
     "core-js": "^3.22.5",
-    "cypress": "^10.11.0",
+    "cypress": "^13.6.0",
     "esbuild": "^0.14.48",
     "eslint": "^8.19.0",
     "eslint-config-standard-with-typescript": "^22.0.0",

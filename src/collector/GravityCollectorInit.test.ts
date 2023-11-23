@@ -20,6 +20,29 @@ import * as rrweb from 'rrweb'
 import { uuid } from '../utils/uuid'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
+import CopyEventListener from '../event-listeners/CopyEventListener'
+import CutEventListener from '../event-listeners/CutEventListener'
+import DblClickEventListener from '../event-listeners/DblClickEventListener'
+import DragStartEventListener from '../event-listeners/DragStartEventListener'
+import DropEventListener from '../event-listeners/DropEventListener'
+import PlayEventListener from '../event-listeners/PlayEventListener'
+import PauseEventListener from '../event-listeners/PauseEventListener'
+import SeekedEventListener from '../event-listeners/SeekedEventListener'
+import PasteEventListener from '../event-listeners/PasteEventListener'
+import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
+import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import FocusEventListener from '../event-listeners/FocusEventListener'
+import BlurEventListener from '../event-listeners/BlurEventListener'
+import SubmitEventListener from '../event-listeners/SubmitEventListener'
+import ResetEventListener from '../event-listeners/ResetEventListener'
+import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
+import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
+import ScrollEventListener from '../event-listeners/ScrollEventListener'
+import WheelEventListener from '../event-listeners/WheelEventListener'
+import ResizeEventListener from '../event-listeners/ResizeEventListener'
+import SelectEventListener from '../event-listeners/SelectEventListener'
+import ToggleEventListener from '../event-listeners/ToggleEventListener'
+import crossfetch from 'cross-fetch'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -38,7 +61,6 @@ describe.each([
   beforeEach(() => {
     handleUserAction = vi.spyOn(AbstractGravityClient.prototype, 'addSessionUserAction').mockImplementation(asyncNop)
     handleSessionTrait = vi.spyOn(AbstractGravityClient.prototype, 'identifySession').mockImplementation(asyncNop)
-    global.fetch = vi.fn()
   })
 
   afterEach(() => {
@@ -92,6 +114,18 @@ describe.each([
         listenerOption: Listener.Click,
       },
       {
+        listenerClass: DblClickEventListener,
+        listenerOption: Listener.DblClick,
+      },
+      {
+        listenerClass: ContextMenuEventListener,
+        listenerOption: Listener.ContextMenu,
+      },
+      {
+        listenerClass: ChangeEventListener,
+        listenerOption: Listener.Change,
+      },
+      {
         listenerClass: KeyUpEventListener,
         listenerOption: Listener.KeyUp,
       },
@@ -100,16 +134,92 @@ describe.each([
         listenerOption: Listener.KeyDown,
       },
       {
-        listenerClass: ChangeEventListener,
-        listenerOption: Listener.Change,
+        listenerClass: CopyEventListener,
+        listenerOption: Listener.Copy,
+      },
+      {
+        listenerClass: CutEventListener,
+        listenerOption: Listener.Cut,
+      },
+      {
+        listenerClass: PasteEventListener,
+        listenerOption: Listener.Paste,
+      },
+      {
+        listenerClass: SelectEventListener,
+        listenerOption: Listener.Select,
+      },
+      {
+        listenerClass: DragStartEventListener,
+        listenerOption: Listener.DragStart,
+      },
+      {
+        listenerClass: DropEventListener,
+        listenerOption: Listener.Drop,
+      },
+      {
+        listenerClass: PlayEventListener,
+        listenerOption: Listener.Play,
+      },
+      {
+        listenerClass: PauseEventListener,
+        listenerOption: Listener.Pause,
+      },
+      {
+        listenerClass: SeekedEventListener,
+        listenerOption: Listener.Seeked,
+      },
+      {
+        listenerClass: FullScreenChangeEventListener,
+        listenerOption: Listener.FullScreenChange,
+      },
+      {
+        listenerClass: ResizeEventListener,
+        listenerOption: Listener.Resize,
+      },
+      {
+        listenerClass: HashChangeEventListener,
+        listenerOption: Listener.HashChange,
+      },
+      {
+        listenerClass: FocusEventListener,
+        listenerOption: Listener.Focus,
+      },
+      {
+        listenerClass: BlurEventListener,
+        listenerOption: Listener.Blur,
+      },
+      {
+        listenerClass: SubmitEventListener,
+        listenerOption: Listener.Submit,
+      },
+      {
+        listenerClass: ResetEventListener,
+        listenerOption: Listener.Reset,
       },
       {
         listenerClass: BeforeUnloadEventListener,
         listenerOption: Listener.BeforeUnload,
       },
       {
-        listenerClass: ContextMenuEventListener,
-        listenerOption: Listener.ContextMenu,
+        listenerClass: MouseEnterEventListener,
+        listenerOption: Listener.MouseEnter,
+      },
+      {
+        listenerClass: MouseLeaveEventListener,
+        listenerOption: Listener.MouseLeave,
+      },
+      {
+        listenerClass: ScrollEventListener,
+        listenerOption: Listener.Scroll,
+      },
+      {
+        listenerClass: WheelEventListener,
+        listenerOption: Listener.Wheel,
+      },
+      {
+        listenerClass: ToggleEventListener,
+        listenerOption: Listener.Toggle,
       },
     ]
 
@@ -184,6 +294,7 @@ describe.each([
 
   describe('when recordRequestsFor is not set and originsToRecord is set', () => {
     beforeEach(async () => {
+      global.fetch = vi.fn() as typeof crossfetch
       installer()
         .withOptions({ originsToRecord: ['https://server.com'] })
         .install()
@@ -227,13 +338,13 @@ describe.each([
   describe('when recordRequestsFor is set', () => {
     describe('and originsToRecord is set', () => {
       beforeEach(async () => {
+        global.fetch = vi.fn() as typeof crossfetch
         installer()
           .withOptions({
             gravityServerUrl: 'https://gravity-server.com',
             recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
             originsToRecord: ['https://deprecated.com'],
           })
-          .withFetch(mockFetch())
           .install()
         handleUserAction.mockClear() // clear first startedSession event
       })

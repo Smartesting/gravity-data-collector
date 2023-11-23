@@ -2,8 +2,8 @@ import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEve
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import { UserActionType } from '../types'
 
-export default class ContextMenuEventListener extends TargetedEventListener {
+export default class DragStartEventListener extends TargetedEventListener {
   constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.ContextMenu, window, options)
+    super(userActionHandler, UserActionType.DragStart, window, options)
   }
 }

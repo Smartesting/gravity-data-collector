@@ -42,3 +42,18 @@ export function createKeyDownUserAction(
   }
   return userAction
 }
+
+export function createHashChangeUserAction(window: Window): TargetedUserAction {
+  const hashChangeEvent = {
+    type: 'hashchange',
+    target: window,
+    newURL: '/plic#ploc',
+    oldURL: '/plic',
+  } as unknown as HashChangeEvent
+
+  const userAction = createTargetedUserAction(hashChangeEvent, UserActionType.HashChange, { document })
+  if (userAction === null) {
+    throw new AssertionError({ message: 'Expected non-null HashChange User Action' })
+  }
+  return userAction
+}

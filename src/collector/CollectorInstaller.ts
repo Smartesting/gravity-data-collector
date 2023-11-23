@@ -61,6 +61,7 @@ export class CollectorInstaller {
 
   withFetch(fetch: FetchType): CollectorInstaller {
     this.fetch = fetch
+    this.options.window.fetch = fetch
     return this
   }
 

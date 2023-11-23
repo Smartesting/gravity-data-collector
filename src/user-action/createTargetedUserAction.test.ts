@@ -4,7 +4,12 @@ import viewport from '../utils/viewport'
 import location from '../utils/location'
 import { GravityDocument, QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
-import { createClickUserAction, createKeyDownUserAction, createKeyUpUserAction } from '../test-utils/userActions'
+import {
+  createClickUserAction,
+  createHashChangeUserAction,
+  createKeyDownUserAction,
+  createKeyUpUserAction,
+} from '../test-utils/userActions'
 import { createTargetedUserAction } from './createTargetedUserAction'
 
 describe('createTargetedUserAction', () => {
@@ -77,6 +82,13 @@ describe('createTargetedUserAction', () => {
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
       expect(action.target.element).toEqual('div')
+    })
+
+    it('handles Window as a target too', () => {
+      const { domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
+      const action = createHashChangeUserAction(domWindow)
+
+      expect(action.target.element).toEqual('window')
     })
 
     it('type is recorded if element has the type attributes', () => {
