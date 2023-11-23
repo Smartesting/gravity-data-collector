@@ -40,6 +40,7 @@ import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
+import SelectEventListener from '../event-listeners/SelectEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -142,6 +143,10 @@ describe.each([
       {
         listenerClass: PasteEventListener,
         listenerOption: Listener.Paste,
+      },
+      {
+        listenerClass: SelectEventListener,
+        listenerOption: Listener.Select,
       },
       {
         listenerClass: DragStartEventListener,

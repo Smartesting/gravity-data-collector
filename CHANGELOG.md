@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `copy`
   - `cut`
   - `paste`
+  - `select`
   - `dragstart`
   - `drop`
   - `play`

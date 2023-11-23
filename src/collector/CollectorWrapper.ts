@@ -53,6 +53,7 @@ import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
+import SelectEventListener from '../event-listeners/SelectEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -197,6 +198,7 @@ class CollectorWrapper {
       [Listener.Copy]: CopyEventListener,
       [Listener.Cut]: CutEventListener,
       [Listener.Paste]: PasteEventListener,
+      [Listener.Select]: SelectEventListener,
       [Listener.DragStart]: DragStartEventListener,
       [Listener.Drop]: DropEventListener,
       [Listener.Play]: PlayEventListener,
