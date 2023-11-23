@@ -114,15 +114,15 @@ describe('Session recording (events & video) depends on remote Gravity settings'
     })
 
     it('else use default settings', async () => {
-      const collector = installer().withOptions({ enableVideoRecording: true }).install()
+      const collector = installer().install()
 
       await emitEachEventKind(collector)
       expect(handleSessionUserActions).toHaveBeenCalled()
       expect(handleSessionTraits).toHaveBeenCalled()
-      expect(handleScreenRecords).toHaveBeenCalled()
+      expect(handleScreenRecords).not.toHaveBeenCalled()
 
       expect(terminateEventRecording).not.toHaveBeenCalled()
-      expect(terminateVideoRecording).not.toHaveBeenCalled()
+      expect(terminateVideoRecording).toHaveBeenCalled()
     })
   })
 
