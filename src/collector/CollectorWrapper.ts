@@ -56,6 +56,10 @@ import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
 import { retrieveUrl } from '../utils/request'
+import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
+import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
+import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
+import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -216,6 +220,10 @@ class CollectorWrapper {
       [Listener.Scroll]: ScrollEventListener,
       [Listener.Wheel]: WheelEventListener,
       [Listener.Toggle]: ToggleEventListener,
+      [Listener.TouchStart]: TouchStartEventListener,
+      [Listener.TouchMove]: TouchMoveEventListener,
+      [Listener.TouchEnd]: TouchEndEventListener,
+      [Listener.TouchCancel]: TouchCancelEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {

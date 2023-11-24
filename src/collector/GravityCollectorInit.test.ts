@@ -43,6 +43,10 @@ import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
 import crossfetch from 'cross-fetch'
+import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
+import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
+import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
+import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 
 describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
@@ -220,6 +224,22 @@ describe.each([
       {
         listenerClass: ToggleEventListener,
         listenerOption: Listener.Toggle,
+      },
+      {
+        listenerClass: TouchStartEventListener,
+        listenerOption: Listener.TouchStart,
+      },
+      {
+        listenerClass: TouchMoveEventListener,
+        listenerOption: Listener.TouchMove,
+      },
+      {
+        listenerClass: TouchEndEventListener,
+        listenerOption: Listener.TouchEnd,
+      },
+      {
+        listenerClass: TouchCancelEventListener,
+        listenerOption: Listener.TouchCancel,
       },
     ]
 
