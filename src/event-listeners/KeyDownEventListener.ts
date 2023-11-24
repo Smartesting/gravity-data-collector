@@ -2,17 +2,14 @@ import { createTargetedUserAction } from '../user-action/createTargetedUserActio
 import { HTMLInputWithValue, KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners, recordChangeEvent } from '../utils/listeners'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
-import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
+import TargetedEventListener from './TargetedEventListener'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
-import IUserActionHandler from '../user-action/IUserActionHandler'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 
 class KeyDownEventListener extends TargetedEventListener {
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
-  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.KeyDown, window, options)
-  }
+  userActionType = UserActionType.KeyDown
 
   listener(event: KeyboardEvent) {
     const userAction = createTargetedUserAction(event, this.userActionType, this.options)

@@ -6,8 +6,9 @@ import { isTextField } from '../utils/listeners'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class ChangeEventListener extends TargetedEventListener {
+  userActionType = UserActionType.Change
   constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.Change, window, options)
+    super(userActionHandler, window, options)
   }
 
   listener(event: InputEvent) {

@@ -1,9 +1,6 @@
-import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
-import IUserActionHandler from '../user-action/IUserActionHandler'
+import TargetedEventListener from './TargetedEventListener'
 import { UserActionType } from '../types'
 
 export default class FullScreenChangeEventListener extends TargetedEventListener {
-  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.FullScreenChange, window, options)
-  }
+  userActionType = UserActionType.FullScreenChange
 }

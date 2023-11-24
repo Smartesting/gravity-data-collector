@@ -1,9 +1,6 @@
-import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
-import IUserActionHandler from '../user-action/IUserActionHandler'
+import TargetedEventListener from './TargetedEventListener'
 import { UserActionType } from '../types'
 
 export default class CopyEventListener extends TargetedEventListener {
-  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.Copy, window, options)
-  }
+  userActionType = UserActionType.Copy
 }

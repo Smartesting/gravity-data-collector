@@ -10,8 +10,9 @@ describe('EventListener', () => {
   const functionMock = vi.fn()
 
   class TestEventListener extends EventListener {
+    userActionType = userActionType
     constructor(window: Window) {
-      super(new NopUserActionHandler(), userActionType, window)
+      super(new NopUserActionHandler(), window)
     }
 
     protected listener(event: Event): void {

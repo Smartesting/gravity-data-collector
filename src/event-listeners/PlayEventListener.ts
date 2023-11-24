@@ -1,9 +1,6 @@
-import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
-import IUserActionHandler from '../user-action/IUserActionHandler'
+import TargetedEventListener from './TargetedEventListener'
 import { UserActionType } from '../types'
 
 export default class PlayEventListener extends TargetedEventListener {
-  constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
-    super(userActionHandler, UserActionType.Play, window, options)
-  }
+  userActionType = UserActionType.Play
 }
