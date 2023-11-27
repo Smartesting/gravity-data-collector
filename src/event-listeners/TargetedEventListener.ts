@@ -13,7 +13,7 @@ export default abstract class TargetedEventListener extends EventListener {
   public constructor(
     userActionHandler: IUserActionHandler,
     window: Window,
-    protected readonly options: TargetEventListenerOptions,
+    protected readonly options: TargetEventListenerOptions = {},
   ) {
     super(userActionHandler, window)
   }
