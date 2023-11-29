@@ -143,7 +143,7 @@ export interface UserActionProperties {
   viewportData: ViewportData
 }
 
-export type UserActionData = ClickUserActionData | KeyUserActionData
+export type UserActionData = ClickUserActionData | KeyUserActionData | MouseActionData
 
 export interface ClickUserActionData {
   clickOffsetX: number
@@ -152,6 +152,11 @@ export interface ClickUserActionData {
   elementRelOffsetY?: number
   elementOffsetX?: number
   elementOffsetY?: number
+}
+
+export interface MouseActionData {
+  clientX: number
+  clientY: number
 }
 
 export interface KeyUserActionData {

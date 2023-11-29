@@ -2,7 +2,7 @@ import unique from 'unique-selector'
 import {
   ClickUserActionData,
   CreateSelectorsOptions,
-  KeyUserActionData,
+  KeyUserActionData, MouseActionData,
   TargetedUserAction,
   UserActionData,
   UserActionTarget,
@@ -65,6 +65,9 @@ function createActionData(event: Event, type: UserActionType): UserActionData | 
     case UserActionType.KeyDown:
     case UserActionType.KeyUp:
       return createKeyUserActionData(event as KeyboardEvent)
+    case UserActionType.DragStart:
+    case UserActionType.Drop:
+      return createMouseActionData(event as DragEvent)
     default:
       return null
   }
@@ -94,6 +97,12 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
     key,
     code,
   }
+}
+
+function createMouseActionData(event: DragEvent): MouseActionData {
+  const { clientX, clientY } = event
+
+  return { clientX, clientY }
 }
 
 function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {
