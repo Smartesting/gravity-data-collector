@@ -2,7 +2,8 @@ import unique from 'unique-selector'
 import {
   ClickUserActionData,
   CreateSelectorsOptions,
-  KeyUserActionData, MouseActionData,
+  KeyUserActionData,
+  MouseActionData,
   TargetedUserAction,
   UserActionData,
   UserActionTarget,
