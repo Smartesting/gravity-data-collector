@@ -268,6 +268,7 @@ export interface CollectorOptions {
   disableVideoRecording?: boolean
   enableEventRecording?: boolean
   enableVideoRecording?: boolean
+  enableVideoAnonymization?: boolean
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {

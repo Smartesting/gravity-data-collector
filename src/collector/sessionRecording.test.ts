@@ -65,7 +65,60 @@ describe('Session recording (events & video) depends on remote Gravity settings'
     beforeEach(() => installSpies(ConsoleGravityClient))
     afterEach(uninstallSpies)
 
-    it('use default settings', async () => {
+    describe('use options settings if available', () => {
+      it('records events & video', async () => {
+        const collector = installer()
+          .withOptions({
+            enableEventRecording: true,
+            enableVideoRecording: true,
+          })
+          .install()
+
+        await emitEachEventKind(collector)
+        expect(handleSessionUserActions).toHaveBeenCalled()
+        expect(handleSessionTraits).toHaveBeenCalled()
+        expect(handleScreenRecords).toHaveBeenCalled()
+
+        expect(terminateEventRecording).not.toHaveBeenCalled()
+        expect(terminateVideoRecording).not.toHaveBeenCalled()
+      })
+
+      it('records events BUT no videos', async () => {
+        const collector = installer()
+          .withOptions({
+            enableEventRecording: true,
+            enableVideoRecording: false,
+          })
+          .install()
+
+        await emitEachEventKind(collector)
+        expect(handleSessionUserActions).toHaveBeenCalled()
+        expect(handleSessionTraits).toHaveBeenCalled()
+        expect(handleScreenRecords).not.toHaveBeenCalled()
+
+        expect(terminateEventRecording).not.toHaveBeenCalled()
+        expect(terminateVideoRecording).toHaveBeenCalled()
+      })
+
+      it('records nothing', async () => {
+        const collector = installer()
+          .withOptions({
+            enableEventRecording: false,
+            enableVideoRecording: true,
+          })
+          .install()
+
+        await emitEachEventKind(collector)
+        expect(handleSessionUserActions).not.toHaveBeenCalled()
+        expect(handleSessionTraits).not.toHaveBeenCalled()
+        expect(handleScreenRecords).not.toHaveBeenCalled()
+
+        expect(terminateEventRecording).toHaveBeenCalled()
+        expect(terminateVideoRecording).toHaveBeenCalled()
+      })
+    })
+
+    it('else use default settings', async () => {
       const collector = installer().install()
 
       await emitEachEventKind(collector)

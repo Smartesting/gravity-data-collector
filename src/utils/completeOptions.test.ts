@@ -13,15 +13,24 @@ describe('completeOptions', () => {
   })
 
   it('throws an error when provided an invalid "sessionsPercentageKept"', () => {
-    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: NaN })).toThrow(
-      'option "sessionsPercentageKept": NaN is not a valid percentage (should be in range 0..100)',
-    )
-    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: -1 })).toThrow(
-      'option "sessionsPercentageKept": -1 is not a valid percentage (should be in range 0..100)',
-    )
-    expect(() => completeOptions({ authKey: '123', sessionsPercentageKept: 101 })).toThrow(
-      'option "sessionsPercentageKept": 101 is not a valid percentage (should be in range 0..100)',
-    )
+    expect(() =>
+      completeOptions({
+        authKey: '123',
+        sessionsPercentageKept: NaN,
+      }),
+    ).toThrow('option "sessionsPercentageKept": NaN is not a valid percentage (should be in range 0..100)')
+    expect(() =>
+      completeOptions({
+        authKey: '123',
+        sessionsPercentageKept: -1,
+      }),
+    ).toThrow('option "sessionsPercentageKept": -1 is not a valid percentage (should be in range 0..100)')
+    expect(() =>
+      completeOptions({
+        authKey: '123',
+        sessionsPercentageKept: 101,
+      }),
+    ).toThrow('option "sessionsPercentageKept": 101 is not a valid percentage (should be in range 0..100)')
   })
 
   describe('when selectorsOptions is set', () => {
@@ -31,33 +40,50 @@ describe('completeOptions', () => {
     it('throws an error when selectorsOptions.attributes is not an array of string', () => {
       // @ts-expect-error
       selectorsOptions = { attributes: null }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
-        'option "selectorsOptions.attributes": "null" is not a valid option. Expected a list of strings',
-      )
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow('option "selectorsOptions.attributes": "null" is not a valid option. Expected a list of strings')
 
       // @ts-expect-error
       selectorsOptions = { attributes: 'data-testid' }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
-        'option "selectorsOptions.attributes": "data-testid" is not a valid option. Expected a list of strings',
-      )
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow('option "selectorsOptions.attributes": "data-testid" is not a valid option. Expected a list of strings')
 
       // @ts-expect-error
       selectorsOptions = { attributes: ['data-testid', null] }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
-        'option "selectorsOptions.attributes": "null" is not a valid string',
-      )
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow('option "selectorsOptions.attributes": "null" is not a valid string')
     })
 
     it('throws an error when selectorOptions.queries is not a list of QueryType', () => {
       // @ts-expect-error
       selectorsOptions = { queries: null }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
-        'option "selectorsOptions.queries": "null" is not a valid option. Expected a list of QueryType',
-      )
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow('option "selectorsOptions.queries": "null" is not a valid option. Expected a list of QueryType')
 
       // @ts-expect-error
       selectorsOptions = { queries: [QueryType.id, 'doupidou'] }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow(
         'option "selectorsOptions.queries": "doupidou" is not a valid QueryType. Valid values are: id, class, tag',
       )
     })
@@ -65,13 +91,21 @@ describe('completeOptions', () => {
     it('throws an error when selectorOptions.excludedQueries is not a list of QueryType', () => {
       // @ts-expect-error
       selectorsOptions = { excludedQueries: null }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
-        'option "selectorsOptions.excludedQueries": "null" is not a valid option. Expected a list of QueryType',
-      )
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow('option "selectorsOptions.excludedQueries": "null" is not a valid option. Expected a list of QueryType')
 
       // @ts-expect-error
       selectorsOptions = { excludedQueries: [QueryType.id, 'doupidou'] }
-      expect(() => completeOptions({ authKey, selectorsOptions })).toThrow(
+      expect(() =>
+        completeOptions({
+          authKey,
+          selectorsOptions,
+        }),
+      ).toThrow(
         'option "selectorsOptions.excludedQueries": "doupidou" is not a valid QueryType. Valid values are: id, class, tag',
       )
     })
@@ -81,7 +115,10 @@ describe('completeOptions', () => {
         queries: [QueryType.class, QueryType.tag],
         attributes: ['role', 'data-testid'],
       }
-      completeOptions({ authKey, selectorsOptions })
+      completeOptions({
+        authKey,
+        selectorsOptions,
+      })
     })
   })
 
@@ -100,6 +137,7 @@ describe('completeOptions', () => {
         window,
         enableEventRecording: true,
         enableVideoRecording: true,
+        enableVideoAnonymization: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -124,6 +162,7 @@ describe('completeOptions', () => {
         window,
         enableEventRecording: true,
         enableVideoRecording: true,
+        enableVideoAnonymization: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -152,6 +191,7 @@ describe('completeOptions', () => {
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
+          enableVideoAnonymization: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -174,6 +214,7 @@ describe('completeOptions', () => {
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
+          enableVideoAnonymization: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -196,6 +237,7 @@ describe('completeOptions', () => {
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
+          enableVideoAnonymization: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -218,6 +260,7 @@ describe('completeOptions', () => {
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
+          enableVideoAnonymization: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -240,6 +283,7 @@ describe('completeOptions', () => {
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
+          enableVideoAnonymization: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -247,16 +291,38 @@ describe('completeOptions', () => {
   })
 
   it('use deprecated `disableVideoRecording` to set `enableVideoRecording`', () => {
-    expect(completeOptions({ authKey: '', disableVideoRecording: true })).toMatchObject({
+    expect(
+      completeOptions({
+        authKey: '',
+        disableVideoRecording: true,
+      }),
+    ).toMatchObject({
       enableVideoRecording: false,
     })
-    expect(completeOptions({ authKey: '', disableVideoRecording: false })).toMatchObject({
+    expect(
+      completeOptions({
+        authKey: '',
+        disableVideoRecording: false,
+      }),
+    ).toMatchObject({
       enableVideoRecording: true,
     })
-    expect(completeOptions({ authKey: '', disableVideoRecording: true, enableVideoRecording: true })).toMatchObject({
+    expect(
+      completeOptions({
+        authKey: '',
+        disableVideoRecording: true,
+        enableVideoRecording: true,
+      }),
+    ).toMatchObject({
       enableVideoRecording: true,
     })
-    expect(completeOptions({ authKey: '', disableVideoRecording: false, enableVideoRecording: false })).toMatchObject({
+    expect(
+      completeOptions({
+        authKey: '',
+        disableVideoRecording: false,
+        enableVideoRecording: false,
+      }),
+    ).toMatchObject({
       enableVideoRecording: false,
     })
   })

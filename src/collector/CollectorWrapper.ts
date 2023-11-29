@@ -260,9 +260,9 @@ class CollectorWrapper {
   private async fetchRecordingSettings(): Promise<RecordingSettings> {
     if (this.options.debug) {
       return {
-        enableEventRecording: true,
-        enableVideoRecording: true,
-        enableVideoAnonymization: false,
+        enableEventRecording: this.options.enableEventRecording,
+        enableVideoRecording: this.options.enableVideoRecording,
+        enableVideoAnonymization: this.options.enableVideoAnonymization,
       }
     }
 
@@ -270,11 +270,10 @@ class CollectorWrapper {
       if (settings === null || error !== null) {
         return ALL_RECORDING_SETTINGS_DISABLED
       }
-      const enableEventRecording = settings.sessionRecording ?? this.options.enableEventRecording
-      const enableVideoRecording = settings.videoRecording ?? this.options.enableVideoRecording
+
       return {
-        enableEventRecording,
-        enableVideoRecording,
+        enableEventRecording: settings.sessionRecording,
+        enableVideoRecording: settings.videoRecording,
         enableVideoAnonymization: settings.videoAnonymization,
       }
     })
