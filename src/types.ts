@@ -342,10 +342,11 @@ export enum AddSessionRecordingError {
 export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
+  videoAnonymization: boolean
 }
 
 export interface ReadSessionCollectionSettingsResponse {
-  settings: Partial<SessionCollectionSettings> | null
+  settings: SessionCollectionSettings | null
   error: ReadSessionCollectionSettingsError | null
 }
 

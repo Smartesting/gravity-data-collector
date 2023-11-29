@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Anonymization of video recordings controllable from Gravity
 - Track new HTML events:
   - `contextmenu`
   - `dblclick`

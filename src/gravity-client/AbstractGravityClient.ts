@@ -32,7 +32,9 @@ export interface GravityClientOptions {
   onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
 }
 
-export type RecordingSettings = Pick<CollectorOptions, 'enableEventRecording' | 'enableVideoRecording'>
+export type RecordingSettings = Pick<CollectorOptions, 'enableEventRecording' | 'enableVideoRecording'> & {
+  enableVideoAnonymization: boolean
+}
 
 export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>

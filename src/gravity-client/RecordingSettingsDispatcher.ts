@@ -1,5 +1,11 @@
 import { RecordingSettings } from './AbstractGravityClient'
 
+export const ALL_RECORDING_SETTINGS_DISABLED: RecordingSettings = {
+  enableEventRecording: false,
+  enableVideoRecording: false,
+  enableVideoAnonymization: false,
+}
+
 type RecordingSettingsListener = (settings: RecordingSettings) => void
 
 export class RecordingSettingsDispatcher {
@@ -14,6 +20,6 @@ export class RecordingSettingsDispatcher {
   }
 
   terminate() {
-    this.dispatch({ enableEventRecording: false, enableVideoRecording: false })
+    this.dispatch(ALL_RECORDING_SETTINGS_DISABLED)
   }
 }
