@@ -28,7 +28,10 @@ import { IGravityClient } from '../gravity-client/IGravityClient'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
-import { RecordingSettingsDispatcher } from '../gravity-client/RecordingSettingsDispatcher'
+import {
+  ALL_RECORDING_SETTINGS_DISABLED,
+  RecordingSettingsDispatcher,
+} from '../gravity-client/RecordingSettingsDispatcher'
 import crossfetch from 'cross-fetch'
 import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
@@ -56,6 +59,10 @@ import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
 import { retrieveUrl } from '../utils/request'
+import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
+import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
+import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
+import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -79,21 +86,24 @@ class CollectorWrapper {
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
-    this.recordingSettingsHandler.subscribe(({ enableEventRecording, enableVideoRecording }) => {
-      if (!enableEventRecording || !enableVideoRecording) {
-        this.terminateRecording(!enableEventRecording, !enableVideoRecording)
-      }
-    })
+    this.recordingSettingsHandler.subscribe(
+      ({ enableEventRecording, enableVideoRecording, enableVideoAnonymization }) => {
+        if (!enableEventRecording || !enableVideoRecording) {
+          this.terminateRecording(!enableEventRecording, !enableVideoRecording)
+        }
+
+        if (enableVideoRecording) {
+          this.screenRecorderHandler.initializeRecording({ anonymization: enableVideoAnonymization })
+        }
+      },
+    )
   }
 
   init(reset = false): void {
     this.fetchRecordingSettings()
       .then((settings) => this.recordingSettingsHandler.dispatch(settings))
       .catch(() => {
-        this.recordingSettingsHandler.dispatch({
-          enableEventRecording: false,
-          enableVideoRecording: false,
-        })
+        this.recordingSettingsHandler.dispatch(ALL_RECORDING_SETTINGS_DISABLED)
       })
 
     const options = this.options
@@ -117,7 +127,6 @@ class CollectorWrapper {
     }
     this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
-    this.screenRecorderHandler.initializeRecording()
 
     if (!reset) {
       if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
@@ -216,6 +225,10 @@ class CollectorWrapper {
       [Listener.Scroll]: ScrollEventListener,
       [Listener.Wheel]: WheelEventListener,
       [Listener.Toggle]: ToggleEventListener,
+      [Listener.TouchStart]: TouchStartEventListener,
+      [Listener.TouchMove]: TouchMoveEventListener,
+      [Listener.TouchEnd]: TouchEndEventListener,
+      [Listener.TouchCancel]: TouchCancelEventListener,
     }
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
@@ -245,14 +258,24 @@ class CollectorWrapper {
   }
 
   private async fetchRecordingSettings(): Promise<RecordingSettings> {
-    if (this.options.debug) return this.options
-    return await this.gravityClient.readSessionCollectionSettings().then(({ settings, error }) => {
-      if (error !== null) {
-        return { enableEventRecording: false, enableVideoRecording: false }
+    if (this.options.debug) {
+      return {
+        enableEventRecording: this.options.enableEventRecording,
+        enableVideoRecording: this.options.enableVideoRecording,
+        enableVideoAnonymization: this.options.enableVideoAnonymization,
       }
-      const enableEventRecording = settings?.sessionRecording ?? this.options.enableEventRecording
-      const enableVideoRecording = settings?.videoRecording ?? this.options.enableVideoRecording
-      return { enableEventRecording, enableVideoRecording }
+    }
+
+    return await this.gravityClient.readSessionCollectionSettings().then(({ settings, error }) => {
+      if (settings === null || error !== null) {
+        return ALL_RECORDING_SETTINGS_DISABLED
+      }
+
+      return {
+        enableEventRecording: settings.sessionRecording,
+        enableVideoRecording: settings.videoRecording,
+        enableVideoAnonymization: settings.videoAnonymization,
+      }
     })
   }
 

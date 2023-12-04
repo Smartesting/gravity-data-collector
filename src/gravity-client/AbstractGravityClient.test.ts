@@ -28,7 +28,10 @@ const DEFAULT_OPTIONS = {
 describe('AbstractGravityClient', () => {
   it('calls onPublish if it is defined', async () => {
     const onPublish = vi.fn()
-    const gravityClient = new TestGravityClient({ ...DEFAULT_OPTIONS, onPublish })
+    const gravityClient = new TestGravityClient({
+      ...DEFAULT_OPTIONS,
+      onPublish,
+    })
 
     await gravityClient.addSessionUserAction(createDummy())
     await gravityClient.flush()
@@ -84,7 +87,10 @@ describe('AbstractGravityClient', () => {
     let handleSessionTraits: SpyInstance
 
     beforeEach(async () => {
-      gravityClient = new TestGravityClient({ ...DEFAULT_OPTIONS, requestInterval: 150 })
+      gravityClient = new TestGravityClient({
+        ...DEFAULT_OPTIONS,
+        requestInterval: 150,
+      })
       handleSessionTraits = vi.spyOn(gravityClient, 'handleSessionTraits')
       await gravityClient.flush()
     })
@@ -151,7 +157,11 @@ class TestGravityClient extends AbstractGravityClient {
     recordingSettingsDispatcher: RecordingSettingsDispatcher = new RecordingSettingsDispatcher(),
   ) {
     super(options, recordingSettingsDispatcher)
-    recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: true })
+    recordingSettingsDispatcher.dispatch({
+      enableEventRecording: true,
+      enableVideoRecording: true,
+      enableVideoAnonymization: true,
+    })
   }
 
   public async handleScreenRecords(
@@ -172,6 +182,9 @@ class TestGravityClient extends AbstractGravityClient {
   }
 
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
-    return { error: null, settings: null }
+    return {
+      error: null,
+      settings: null,
+    }
   }
 }

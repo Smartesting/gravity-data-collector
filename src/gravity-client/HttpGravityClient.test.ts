@@ -31,7 +31,11 @@ describe('HttpGravityClient', () => {
             responseBody: { error: `error with code=${statusCode}` },
           }),
         )
-        recordingSettingsDispatcher.dispatch({ enableEventRecording: true, enableVideoRecording: false })
+        recordingSettingsDispatcher.dispatch({
+          enableEventRecording: true,
+          enableVideoRecording: false,
+          enableVideoAnonymization: true,
+        })
         await gravityClient.addSessionUserAction(createDummy())
         await gravityClient.flush()
 

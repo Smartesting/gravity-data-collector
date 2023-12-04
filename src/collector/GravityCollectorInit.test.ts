@@ -1,4 +1,10 @@
-import { Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
+import {
+  Listener,
+  ReadSessionCollectionSettingsResponse,
+  SessionTraits,
+  SessionUserAction,
+  UserActionType,
+} from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
@@ -31,6 +37,7 @@ import SeekedEventListener from '../event-listeners/SeekedEventListener'
 import PasteEventListener from '../event-listeners/PasteEventListener'
 import FullScreenChangeEventListener from '../event-listeners/FullScreenChangeEventListener'
 import HashChangeEventListener from '../event-listeners/HashChangeEventListener'
+import { waitFor } from '@testing-library/dom'
 import FocusEventListener from '../event-listeners/FocusEventListener'
 import BlurEventListener from '../event-listeners/BlurEventListener'
 import SubmitEventListener from '../event-listeners/SubmitEventListener'
@@ -43,9 +50,16 @@ import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
 import crossfetch from 'cross-fetch'
+import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
+import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
+import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
+import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 
 describe.each([
-  { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
+  {
+    context: 'dry run mode (debug=true)',
+    installer: () => collectorInstaller({ debug: true }),
+  },
   {
     context: 'live mode (debug=false)',
     installer: () =>
@@ -220,6 +234,22 @@ describe.each([
       {
         listenerClass: ToggleEventListener,
         listenerOption: Listener.Toggle,
+      },
+      {
+        listenerClass: TouchStartEventListener,
+        listenerOption: Listener.TouchStart,
+      },
+      {
+        listenerClass: TouchMoveEventListener,
+        listenerOption: Listener.TouchMove,
+      },
+      {
+        listenerClass: TouchEndEventListener,
+        listenerOption: Listener.TouchEnd,
+      },
+      {
+        listenerClass: TouchCancelEventListener,
+        listenerOption: Listener.TouchCancel,
       },
     ]
 
@@ -503,14 +533,30 @@ describe.each([
     })
   })
 
-  it('First video event must have same session id than first session event', () => {
+  it('First video event must have same session id than first session event', async () => {
     const sessionIdHandler = new MemorySessionIdHandler(uuid)
     let initialSessionId: string | null = null
-    vi.spyOn(rrweb, 'record').mockImplementationOnce(() => {
+    const recordSpy = vi.spyOn(rrweb, 'record').mockImplementationOnce(() => {
       initialSessionId = sessionIdHandler.get()
       return nop
     })
-    installer().withSessionIdHandler(sessionIdHandler).withOptions({ enableVideoRecording: true }).install()
+    installer()
+      .withSessionIdHandler(sessionIdHandler)
+      .withOptions({ enableVideoRecording: true })
+      .withFetch(
+        mockFetch<ReadSessionCollectionSettingsResponse>({
+          responseBody: {
+            error: null,
+            settings: {
+              sessionRecording: true,
+              videoRecording: true,
+              videoAnonymization: true,
+            },
+          },
+        }),
+      )
+      .install()
+    await waitFor(() => expect(recordSpy).toBeCalled())
     assert.equal(getLastCallFirstArgument(handleUserAction).sessionId, initialSessionId)
   })
 

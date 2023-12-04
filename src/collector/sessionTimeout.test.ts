@@ -26,7 +26,10 @@ describe.each([
     installer: () =>
       collectorInstaller({ debug: false, authKey: uuid() }).withFetch(
         mockFetch<ReadSessionCollectionSettingsResponse>({
-          responseBody: { error: null, settings: { sessionRecording: true, videoRecording: true } },
+          responseBody: {
+            error: null,
+            settings: { sessionRecording: true, videoRecording: true, videoAnonymization: true },
+          },
         }),
       ),
   },

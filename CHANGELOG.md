@@ -21,12 +21,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.15.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.16.0...main)
 
 ### Info
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [3.16.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.15.0...v3.16.0)
+
+### Added
+
+- Anonymization of video recordings controllable from Gravity
+- Option to enable/disable video recording anonymization in debug mode
 - Track new HTML events:
   - `contextmenu`
   - `dblclick`
@@ -51,16 +65,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `scroll`
   - `wheel`
   - `toggle`
+  - `touchstart`
+  - `touchmove`
+  - `touchend`
+  - `touchcancel`
 
 ### Changed
 
 - `data-testid` attribute is now collected by default on targeted user actions
-
-### Deprecated
-
-### Removed
-
-### Fixed
 
 ## [3.15](https://github.com/Smartesting/gravity-data-collector/compare/v3.14.0...v3.15.0)
 

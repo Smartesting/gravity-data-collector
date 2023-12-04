@@ -1,5 +1,5 @@
 import EventListener from '../event-listeners/EventListener'
-import { CreateSelectorsOptions, UserActionType } from '../types'
+import { CreateSelectorsOptions } from '../types'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 
@@ -10,13 +10,12 @@ export interface TargetEventListenerOptions {
 }
 
 export default abstract class TargetedEventListener extends EventListener {
-  protected constructor(
+  public constructor(
     userActionHandler: IUserActionHandler,
-    userActionType: UserActionType,
     window: Window,
-    protected readonly options: TargetEventListenerOptions,
+    protected readonly options: TargetEventListenerOptions = {},
   ) {
-    super(userActionHandler, userActionType, window)
+    super(userActionHandler, window)
   }
 
   public listener(event: Event) {

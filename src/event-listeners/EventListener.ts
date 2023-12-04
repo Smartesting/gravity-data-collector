@@ -4,12 +4,8 @@ import IUserActionHandler from '../user-action/IUserActionHandler'
 
 export default abstract class EventListener implements IEventListener {
   private readonly listenerBind
-
-  protected constructor(
-    protected readonly userActionHandler: IUserActionHandler,
-    protected readonly userActionType: UserActionType,
-    protected readonly window: Window,
-  ) {
+  abstract readonly userActionType: UserActionType
+  protected constructor(protected readonly userActionHandler: IUserActionHandler, protected readonly window: Window) {
     this.listenerBind = this.listener.bind(this)
   }
 

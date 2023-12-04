@@ -16,6 +16,11 @@ const RECORDING_SETTINGS = {
     },
     input: 'last',
   },
+}
+
+export default RECORDING_SETTINGS
+
+export const WITH_PARTIAL_ANONYMIZATION = {
   maskInputOptions: {
     color: false,
     date: false,
@@ -34,9 +39,17 @@ const RECORDING_SETTINGS = {
     select: true,
     password: true,
   },
-  maskInputFn: (text: string) => {
-    return text.replace(/[^@.]/g, '#')
-  },
+  maskInputFn: (text: string) => text.replace(/[^@.]/g, '#'),
 }
 
-export default RECORDING_SETTINGS
+export const WITH_TOTAL_ANONYMIZATION = {
+  maskAllInputs: true,
+  maskInputFn: (text: string) => text.replace(/[^-_/:,@.;?! ]/g, '#'),
+  maskTextSelector: '*',
+  maskTextFn: (text: string) => {
+    const trimmedText = text.trim()
+    if (trimmedText.length > 0) {
+      return trimmedText.replace(/[^-_/:,@.;?! ]/g, '#')
+    }
+  },
+}

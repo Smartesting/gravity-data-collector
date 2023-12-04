@@ -29,6 +29,10 @@ export enum UserActionType {
   Scroll = 'scroll',
   Wheel = 'wheel',
   Toggle = 'toggle',
+  TouchStart = 'touchstart',
+  TouchMove = 'touchmove',
+  TouchEnd = 'touchend',
+  TouchCancel = 'touchcancel',
   AsyncRequest = 'asyncRequest',
   TestCommand = 'testCommand',
 }
@@ -61,6 +65,10 @@ export enum Listener {
   Scroll = 'scroll',
   Wheel = 'wheel',
   Toggle = 'toggle',
+  TouchStart = 'touchstart',
+  TouchMove = 'touchmove',
+  TouchEnd = 'touchend',
+  TouchCancel = 'touchcancel',
   BeforeUnload = 'beforeUnload',
   Requests = 'requests',
   CypressCommands = 'cypressCommands',
@@ -135,7 +143,7 @@ export interface UserActionProperties {
   viewportData: ViewportData
 }
 
-export type UserActionData = ClickUserActionData | KeyUserActionData
+export type UserActionData = ClickUserActionData | KeyUserActionData | MouseActionData
 
 export interface ClickUserActionData {
   clickOffsetX: number
@@ -144,6 +152,11 @@ export interface ClickUserActionData {
   elementRelOffsetY?: number
   elementOffsetX?: number
   elementOffsetY?: number
+}
+
+export interface MouseActionData {
+  clientX: number
+  clientY: number
 }
 
 export interface KeyUserActionData {
@@ -255,6 +268,7 @@ export interface CollectorOptions {
   disableVideoRecording?: boolean
   enableEventRecording?: boolean
   enableVideoRecording?: boolean
+  enableVideoAnonymization?: boolean
 }
 
 export type CollectorOptionsWithWindow = CollectorOptions & {
@@ -329,10 +343,11 @@ export enum AddSessionRecordingError {
 export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
+  videoAnonymization: boolean
 }
 
 export interface ReadSessionCollectionSettingsResponse {
-  settings: Partial<SessionCollectionSettings> | null
+  settings: SessionCollectionSettings | null
   error: ReadSessionCollectionSettingsError | null
 }
 
