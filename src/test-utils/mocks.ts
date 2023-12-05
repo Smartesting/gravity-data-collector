@@ -48,6 +48,7 @@ export function mockClick(target: HTMLElement, clientX: number = 10, clientY: nu
     clientX,
     clientY,
     height: 0,
+    getBoundingClientRect: target.getBoundingClientRect,
   } as unknown as PointerEvent
 }
 

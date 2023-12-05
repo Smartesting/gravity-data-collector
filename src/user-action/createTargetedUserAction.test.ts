@@ -244,7 +244,7 @@ describe('createTargetedUserAction', () => {
     })
   })
 
-  it('pointer coordinates data when the event is a click', () => {
+  it('pointer coordinates data when the event is a mouse event', () => {
     const { element, domWindow } = createElementInJSDOM(
       '<input type="text" data-testid="userName" class="size-lg"/>',
       'input',
@@ -255,30 +255,48 @@ describe('createTargetedUserAction', () => {
     const eltBounds = element?.getBoundingClientRect()
 
     expect(action.userActionData).toEqual({
-      clickOffsetX: 12,
-      clickOffsetY: 34,
-      elementOffsetX: eltBounds?.left,
-      elementOffsetY: eltBounds?.top,
+      clientX: 12,
+      clientY: 34,
       elementRelOffsetX: Math.trunc(12 - (eltBounds?.left ?? 0)),
       elementRelOffsetY: Math.trunc(34 - (eltBounds?.top ?? 0)),
+      elementHeight: eltBounds?.height,
+      elementWidth: eltBounds?.width,
+      elementOffsetX: eltBounds?.left,
+      elementOffsetY: eltBounds?.top,
+      scrollableAncestors: [],
     })
   })
 
   it('key data when the event is a keyup', () => {
     const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
     const action = createKeyUpUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
+
+    const eltBounds = element?.getBoundingClientRect()
+
     expect(action.userActionData).toEqual({
       key: 'Shift',
       code: 'ShiftLeft',
+      elementHeight: eltBounds?.height,
+      elementWidth: eltBounds?.width,
+      elementOffsetX: eltBounds?.left,
+      elementOffsetY: eltBounds?.top,
+      scrollableAncestors: [],
     })
   })
 
   it('key data when the event is a keydown', () => {
     const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
     const action = createKeyDownUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
+
+    const eltBounds = element?.getBoundingClientRect()
     expect(action.userActionData).toEqual({
       key: 'Shift',
       code: 'ShiftLeft',
+      elementHeight: eltBounds?.height,
+      elementWidth: eltBounds?.width,
+      elementOffsetX: eltBounds?.left,
+      elementOffsetY: eltBounds?.top,
+      scrollableAncestors: [],
     })
   })
 })
