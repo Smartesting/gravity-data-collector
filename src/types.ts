@@ -157,6 +157,8 @@ export interface ScrollableAncestor {
   selectors: Selectors
   scrollX: number
   scrollY: number
+  elementWidth: number
+  elementHeight: number
 }
 
 export interface MouseActionData {

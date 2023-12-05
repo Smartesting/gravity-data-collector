@@ -2,7 +2,9 @@ import unique from 'unique-selector'
 import {
   CreateSelectorsOptions,
   KeyUserActionData,
-  MouseActionData, TargetActionData,
+  MouseActionData,
+  ScrollableAncestor,
+  TargetActionData,
   TargetedUserAction,
   UserActionData,
   UserActionTarget,
@@ -44,11 +46,11 @@ export function createTargetedUserAction(
   if (target === null || target === undefined || event.target === options.document) return null
 
   const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
-? {
-    ...getTargetActionData(target),
-    ...createActionData(target, event, type),
-  }
-: undefined
+    ? {
+        ...getTargetActionData(target),
+        ...createActionData(target, event, type),
+      }
+    : undefined
 
   return {
     type,
@@ -68,15 +70,37 @@ function hasGetBoundingClientRect(target: HTMLElement): boolean {
 function getTargetActionData(target: HTMLElement): TargetActionData {
   const targetOffset = target.getBoundingClientRect()
   return {
-    elementOffsetX: targetOffset.left,
-    elementOffsetY: targetOffset.top,
-    elementWidth: targetOffset.width,
-    elementHeight: targetOffset.height,
-    scrollableAncestors: [],
+    elementOffsetX: Math.trunc(targetOffset.left),
+    elementOffsetY: Math.trunc(targetOffset.top),
+    elementWidth: Math.trunc(targetOffset.width),
+    elementHeight: Math.trunc(targetOffset.height),
+    scrollableAncestors: getScrollableAncestors(target),
   }
 }
 
-function createActionData(target: HTMLElement, event: Event, type: UserActionType): KeyUserActionData | MouseActionData | {} {
+function getScrollableAncestors(target: HTMLElement): ReadonlyArray<ScrollableAncestor> {
+  const { scrollTop, scrollLeft, parentElement } = target
+  const scrollableAncestors = parentElement ? getScrollableAncestors(parentElement) : []
+
+  if (scrollTop > 0 || scrollLeft > 0) {
+    const scrollable: ScrollableAncestor = {
+      scrollX: Math.trunc(scrollLeft),
+      scrollY: Math.trunc(scrollTop),
+      elementHeight: Math.trunc(target.getBoundingClientRect().height),
+      elementWidth: Math.trunc(target.getBoundingClientRect().width),
+      selectors: createSelectors(target),
+    }
+    return [...scrollableAncestors, scrollable]
+  }
+
+  return scrollableAncestors
+}
+
+function createActionData(
+  target: HTMLElement,
+  event: Event,
+  type: UserActionType,
+): KeyUserActionData | MouseActionData | {} {
   switch (type) {
     case UserActionType.Click:
     case UserActionType.ContextMenu:

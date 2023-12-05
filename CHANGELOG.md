@@ -13,7 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
- - Update `UserActionData` to embed data about the targeted element.
+- Update `UserActionData` to embed data about the targeted element.
 
 ### Deprecated
 
