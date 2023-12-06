@@ -70,7 +70,7 @@ function hasGetBoundingClientRect(target: HTMLElement): boolean {
 
 function getTargetActionData(target: HTMLElement): TargetActionData {
   return {
-    ...getElementPosition(target),
+    elementPosition: getElementPosition(target),
     scrollableAncestors: getScrollableAncestors(target),
   }
 }
@@ -81,7 +81,7 @@ function getScrollableAncestors(target: HTMLElement): ReadonlyArray<ScrollableAn
 
   if (scrollTop > 0 || scrollLeft > 0) {
     const scrollable: ScrollableAncestor = {
-      ...getElementPosition(target),
+      elementPosition: getElementPosition(target),
       scrollX: Math.trunc(scrollLeft),
       scrollY: Math.trunc(scrollTop),
       selectors: createSelectors(target),
@@ -96,10 +96,12 @@ function getElementPosition(target: HTMLElement): ElementPosition {
   const targetOffset = target.getBoundingClientRect()
 
   return {
-    elementOffsetX: Math.trunc(targetOffset.left),
-    elementOffsetY: Math.trunc(targetOffset.top),
-    elementWidth: Math.trunc(targetOffset.width),
-    elementHeight: Math.trunc(targetOffset.height),
+    offsetTop: Math.trunc(target.offsetTop),
+    offsetLeft: Math.trunc(target.offsetLeft),
+    boundingOffsetTop: Math.trunc(target.offsetTop),
+    boundingOffsetLeft: Math.trunc(target.offsetLeft),
+    width: Math.trunc(targetOffset.width),
+    height: Math.trunc(targetOffset.height),
   }
 }
 

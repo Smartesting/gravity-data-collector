@@ -259,10 +259,14 @@ describe('createTargetedUserAction', () => {
       clientY: 34,
       elementRelOffsetX: Math.trunc(12 - (eltBounds?.left ?? 0)),
       elementRelOffsetY: Math.trunc(34 - (eltBounds?.top ?? 0)),
-      elementHeight: eltBounds?.height,
-      elementWidth: eltBounds?.width,
-      elementOffsetX: eltBounds?.left,
-      elementOffsetY: eltBounds?.top,
+      elementPosition: {
+        boundingOffsetLeft: eltBounds?.left,
+        boundingOffsetTop: eltBounds?.top,
+        height: eltBounds?.height,
+        offsetLeft: element.offsetLeft,
+        offsetTop: element.offsetTop,
+        width: eltBounds?.width,
+      },
       scrollableAncestors: [],
     })
   })
@@ -276,10 +280,14 @@ describe('createTargetedUserAction', () => {
     expect(action.userActionData).toEqual({
       key: 'Shift',
       code: 'ShiftLeft',
-      elementHeight: eltBounds?.height,
-      elementWidth: eltBounds?.width,
-      elementOffsetX: eltBounds?.left,
-      elementOffsetY: eltBounds?.top,
+      elementPosition: {
+        boundingOffsetLeft: eltBounds?.left,
+        boundingOffsetTop: eltBounds?.top,
+        height: eltBounds?.height,
+        offsetLeft: element.offsetLeft,
+        offsetTop: element.offsetTop,
+        width: eltBounds?.width,
+      },
       scrollableAncestors: [],
     })
   })
@@ -292,10 +300,14 @@ describe('createTargetedUserAction', () => {
     expect(action.userActionData).toEqual({
       key: 'Shift',
       code: 'ShiftLeft',
-      elementHeight: eltBounds?.height,
-      elementWidth: eltBounds?.width,
-      elementOffsetX: eltBounds?.left,
-      elementOffsetY: eltBounds?.top,
+      elementPosition: {
+        boundingOffsetLeft: eltBounds?.left,
+        boundingOffsetTop: eltBounds?.top,
+        height: eltBounds?.height,
+        offsetLeft: element.offsetLeft,
+        offsetTop: element.offsetTop,
+        width: eltBounds?.width,
+      },
       scrollableAncestors: [],
     })
   })
