@@ -1,6 +1,7 @@
 import unique from 'unique-selector'
 import {
   CreateSelectorsOptions,
+  ElementPosition,
   KeyUserActionData,
   MouseActionData,
   ScrollableAncestor,
@@ -68,12 +69,8 @@ function hasGetBoundingClientRect(target: HTMLElement): boolean {
 }
 
 function getTargetActionData(target: HTMLElement): TargetActionData {
-  const targetOffset = target.getBoundingClientRect()
   return {
-    elementOffsetX: Math.trunc(targetOffset.left),
-    elementOffsetY: Math.trunc(targetOffset.top),
-    elementWidth: Math.trunc(targetOffset.width),
-    elementHeight: Math.trunc(targetOffset.height),
+    ...getElementPosition(target),
     scrollableAncestors: getScrollableAncestors(target),
   }
 }
@@ -84,16 +81,26 @@ function getScrollableAncestors(target: HTMLElement): ReadonlyArray<ScrollableAn
 
   if (scrollTop > 0 || scrollLeft > 0) {
     const scrollable: ScrollableAncestor = {
+      ...getElementPosition(target),
       scrollX: Math.trunc(scrollLeft),
       scrollY: Math.trunc(scrollTop),
-      elementHeight: Math.trunc(target.getBoundingClientRect().height),
-      elementWidth: Math.trunc(target.getBoundingClientRect().width),
       selectors: createSelectors(target),
     }
     return [...scrollableAncestors, scrollable]
   }
 
   return scrollableAncestors
+}
+
+function getElementPosition(target: HTMLElement): ElementPosition {
+  const targetOffset = target.getBoundingClientRect()
+
+  return {
+    elementOffsetX: Math.trunc(targetOffset.left),
+    elementOffsetY: Math.trunc(targetOffset.top),
+    elementWidth: Math.trunc(targetOffset.width),
+    elementHeight: Math.trunc(targetOffset.height),
+  }
 }
 
 function createActionData(

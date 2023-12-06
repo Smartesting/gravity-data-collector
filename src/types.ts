@@ -145,18 +145,19 @@ export interface UserActionProperties {
 
 export type UserActionData = TargetActionData & (KeyUserActionData | MouseActionData | {})
 
-export interface TargetActionData {
-  elementOffsetX: number
-  elementOffsetY: number
-  elementWidth: number
-  elementHeight: number
+export type TargetActionData = ElementPosition & {
   scrollableAncestors: ReadonlyArray<ScrollableAncestor>
 }
 
-export interface ScrollableAncestor {
+export type ScrollableAncestor = ElementPosition & {
   selectors: Selectors
   scrollX: number
   scrollY: number
+}
+
+export interface ElementPosition {
+  elementOffsetX: number
+  elementOffsetY: number
   elementWidth: number
   elementHeight: number
 }
