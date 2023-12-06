@@ -195,6 +195,7 @@ describe('completeOptions', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          enableLogging: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -218,6 +219,7 @@ describe('completeOptions', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          enableLogging: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -241,6 +243,7 @@ describe('completeOptions', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          enableLogging: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -264,6 +267,7 @@ describe('completeOptions', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          enableLogging: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -287,6 +291,7 @@ describe('completeOptions', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          enableLogging: true,
         }
         expect(completed).toStrictEqual(expected)
       })

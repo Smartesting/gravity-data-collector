@@ -13,6 +13,7 @@ import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
 
 type ConsoleGravityClientOptions = GravityClientOptions & {
   maxDelay?: number
+  enableLogging?: boolean
 }
 
 export default class ConsoleGravityClient extends AbstractGravityClient implements IGravityClient {
@@ -39,7 +40,10 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    this.log({ sessionId, screenRecords })
+    this.log({
+      sessionId,
+      screenRecords,
+    })
     return { error: null }
   }
 
@@ -51,6 +55,7 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
   }
 
   private log(data: unknown) {
+    if (this.options.enableLogging === false) return
     const maxDelay = this.options.maxDelay ?? 0
     if (maxDelay > 0) {
       setTimeout(() => {
