@@ -138,6 +138,7 @@ describe('completeOptions', () => {
         enableEventRecording: true,
         enableVideoRecording: false,
         enableVideoAnonymization: true,
+        enableLogging: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -149,6 +150,7 @@ describe('completeOptions', () => {
         maxDelay: 15,
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
+        enableLogging: false,
       })
       const expected: CollectorOptions = {
         authKey: '',
@@ -163,12 +165,13 @@ describe('completeOptions', () => {
         enableEventRecording: true,
         enableVideoRecording: false,
         enableVideoAnonymization: true,
+        enableLogging: false,
       }
       expect(completed).toStrictEqual(expected)
     })
   })
 
-  describe('when  debug is set to false', () => {
+  describe('when debug is set to false', () => {
     it('throws an error if authKey is not provided', () => {
       expect(() => completeOptions({ debug: false })).toThrow('No AuthKey provided')
     })

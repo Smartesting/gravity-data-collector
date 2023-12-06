@@ -23,6 +23,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     enableEventRecording: true,
     enableVideoRecording: options.disableVideoRecording === undefined ? false : !options.disableVideoRecording,
     enableVideoAnonymization: true,
+    enableLogging: true,
   }
 
   const debugDefaultOptions = {

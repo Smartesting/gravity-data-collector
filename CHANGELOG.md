@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `enableLogging` option to allow users to disable action printing in debug mode
+
 ### Changed
 
 - `enableVideoRecording` is set to `false` by default
