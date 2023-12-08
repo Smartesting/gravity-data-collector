@@ -1,9 +1,11 @@
 import unique from 'unique-selector'
 import {
-  ClickUserActionData,
   CreateSelectorsOptions,
+  ElementPosition,
   KeyUserActionData,
   MouseActionData,
+  ScrollableAncestor,
+  TargetActionData,
   TargetedUserAction,
   UserActionData,
   UserActionTarget,
@@ -44,51 +46,94 @@ export function createTargetedUserAction(
   const target = event.target as HTMLElement
   if (target === null || target === undefined || event.target === options.document) return null
 
-  const userAction: TargetedUserAction = {
+  const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
+    ? {
+        ...getTargetActionData(target),
+        ...createActionData(target, event, type),
+      }
+    : undefined
+
+  return {
     type,
     target: createActionTarget(target, options),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
     viewportData: viewport(),
+    userActionData,
   }
-  const userActionData = createActionData(event, type)
-  if (userActionData !== null) {
-    userAction.userActionData = userActionData
-  }
-  return userAction
 }
 
-function createActionData(event: Event, type: UserActionType): UserActionData | null {
+function hasGetBoundingClientRect(target: HTMLElement): boolean {
+  return target.getBoundingClientRect !== undefined
+}
+
+function getTargetActionData(target: HTMLElement): TargetActionData {
+  return {
+    elementPosition: getElementPosition(target),
+    scrollableAncestors: getScrollableAncestors(target),
+  }
+}
+
+function getScrollableAncestors(target: HTMLElement): ReadonlyArray<ScrollableAncestor> {
+  const { scrollTop, scrollLeft, parentElement } = target
+  const scrollableAncestors = parentElement ? getScrollableAncestors(parentElement) : []
+
+  if (scrollTop > 0 || scrollLeft > 0) {
+    const scrollable: ScrollableAncestor = {
+      elementPosition: getElementPosition(target),
+      scrollX: Math.trunc(scrollLeft),
+      scrollY: Math.trunc(scrollTop),
+      selectors: createSelectors(target),
+    }
+    return [...scrollableAncestors, scrollable]
+  }
+
+  return scrollableAncestors
+}
+
+function getElementPosition(target: HTMLElement): ElementPosition {
+  const targetOffset = target.getBoundingClientRect()
+
+  return {
+    offsetTop: Math.trunc(target.offsetTop),
+    offsetLeft: Math.trunc(target.offsetLeft),
+    boundingOffsetTop: Math.trunc(target.offsetTop),
+    boundingOffsetLeft: Math.trunc(target.offsetLeft),
+    width: Math.trunc(targetOffset.width),
+    height: Math.trunc(targetOffset.height),
+  }
+}
+
+function createActionData(
+  target: HTMLElement,
+  event: Event,
+  type: UserActionType,
+): KeyUserActionData | MouseActionData | {} {
   switch (type) {
     case UserActionType.Click:
-      return createClickUserActionData(event as MouseEvent)
+    case UserActionType.ContextMenu:
+    case UserActionType.DblClick:
+    case UserActionType.DragStart:
+    case UserActionType.Drop:
+      return createMouseActionData(target, event as MouseEvent)
     case UserActionType.KeyDown:
     case UserActionType.KeyUp:
       return createKeyUserActionData(event as KeyboardEvent)
-    case UserActionType.DragStart:
-    case UserActionType.Drop:
-      return createMouseActionData(event as DragEvent)
     default:
-      return null
+      return {}
   }
 }
 
-function createClickUserActionData(event: MouseEvent): ClickUserActionData {
-  const actionData: ClickUserActionData = {
-    clickOffsetX: Math.trunc(event.clientX),
-    clickOffsetY: Math.trunc(event.clientY),
-  }
+function createMouseActionData(target: HTMLElement, event: MouseEvent): MouseActionData | {} {
+  const targetOffset = target.getBoundingClientRect()
 
-  const target = event.target as HTMLElement
-  if (target !== null) {
-    const targetOffset = target.getBoundingClientRect()
-    actionData.elementOffsetX = Math.trunc(targetOffset.left)
-    actionData.elementOffsetY = Math.trunc(targetOffset.top)
-    actionData.elementRelOffsetX = Math.trunc(event.clientX - targetOffset.left)
-    actionData.elementRelOffsetY = Math.trunc(event.clientY - targetOffset.top)
+  return {
+    clientX: Math.trunc(event.clientX),
+    clientY: Math.trunc(event.clientY),
+    elementRelOffsetX: Math.trunc(event.clientX - targetOffset.left),
+    elementRelOffsetY: Math.trunc(event.clientY - targetOffset.top),
   }
-  return actionData
 }
 
 function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
@@ -98,12 +143,6 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
     key,
     code,
   }
-}
-
-function createMouseActionData(event: DragEvent): MouseActionData {
-  const { clientX, clientY } = event
-
-  return { clientX, clientY }
 }
 
 function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {

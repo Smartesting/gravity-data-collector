@@ -143,20 +143,34 @@ export interface UserActionProperties {
   viewportData: ViewportData
 }
 
-export type UserActionData = ClickUserActionData | KeyUserActionData | MouseActionData
+export type UserActionData = TargetActionData & (KeyUserActionData | MouseActionData | {})
 
-export interface ClickUserActionData {
-  clickOffsetX: number
-  clickOffsetY: number
-  elementRelOffsetX?: number
-  elementRelOffsetY?: number
-  elementOffsetX?: number
-  elementOffsetY?: number
+export interface TargetActionData {
+  elementPosition: ElementPosition
+  scrollableAncestors: ReadonlyArray<ScrollableAncestor>
+}
+
+export interface ScrollableAncestor {
+  selectors: Selectors
+  elementPosition: ElementPosition
+  scrollX: number
+  scrollY: number
+}
+
+export interface ElementPosition {
+  offsetTop: number
+  offsetLeft: number
+  boundingOffsetTop: number
+  boundingOffsetLeft: number
+  width: number
+  height: number
 }
 
 export interface MouseActionData {
   clientX: number
   clientY: number
+  elementRelOffsetX: number
+  elementRelOffsetY: number
 }
 
 export interface KeyUserActionData {

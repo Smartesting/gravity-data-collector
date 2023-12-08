@@ -1,6 +1,4 @@
-import { CypressObject, GravityDocument, TargetedUserAction } from '../types'
-import createElementInJSDOM from './createElementInJSDOM'
-import { createClickUserAction } from './userActions'
+import { CypressObject, GravityDocument } from '../types'
 import { ListenerFn } from 'eventemitter2'
 import { vi } from 'vitest'
 
@@ -48,6 +46,7 @@ export function mockClick(target: HTMLElement, clientX: number = 10, clientY: nu
     clientX,
     clientY,
     height: 0,
+    getBoundingClientRect: target.getBoundingClientRect,
   } as unknown as PointerEvent
 }
 
@@ -67,11 +66,6 @@ export function mockKeyDown(target: HTMLElement, key: string, code: string): Key
     code,
     target,
   } as unknown as KeyboardEvent
-}
-
-export function mockClickUserAction(): TargetedUserAction {
-  const { element } = createElementInJSDOM('<div>Click Me</div>', 'div')
-  return createClickUserAction(element)
 }
 
 export function mockCypressObject(): CypressObject {

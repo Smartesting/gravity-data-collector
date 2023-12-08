@@ -23,7 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.16.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.0...main)
 
 ### Info
 
@@ -36,6 +36,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.17.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.16.0...v3.17.0)
+
+### Changed
+
+- Update `UserActionData` to embed data about the targeted element.
 
 ## [3.16.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.15.0...v3.16.0)
 
