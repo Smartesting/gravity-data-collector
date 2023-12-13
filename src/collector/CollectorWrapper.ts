@@ -288,6 +288,8 @@ class CollectorWrapper {
       await this.gravityClient.flush()
       this.terminateRecording(true, true)
       this.init(true)
+    } else {
+      this.timeoutHandler.reset()
     }
   }
 }

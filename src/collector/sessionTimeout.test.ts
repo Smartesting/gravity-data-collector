@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi, vitest } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
@@ -22,6 +22,7 @@ import { waitFor } from '@testing-library/dom'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { mockFetch } from '../test-utils/mocks'
+import CookieTimeoutHandler from '../timeout-handler/CookieTimeoutHandler'
 
 describe.each([
   {
@@ -113,6 +114,7 @@ describe.each([
     expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-1', { id: 'burst-1' }])
     expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'burst-1' }]])
 
+    await vi.advanceTimersByTimeAsync(2000)
     await collector.userActionHandler.handle(
       createDummy<TargetedUserAction>({ target: { element: 'handlingExpirationEvent' } }),
     )
@@ -156,9 +158,11 @@ describe.each([
 
 const memorySessionIdHandler = new MemorySessionIdHandler(uuid)
 const memoryTimeoutHandler = new MemoryTimeoutHandler(1000)
+const cookieTimeoutHandler = new CookieTimeoutHandler(1000, global.window)
 describe.each([
   {
     context: 'with memory-based timeout',
+    timeoutHandler: memoryTimeoutHandler,
     installer: () =>
       collectorInstaller({ authKey: uuid() })
         .withSessionIdHandler(memorySessionIdHandler)
@@ -166,14 +170,15 @@ describe.each([
   },
   {
     context: 'with cookie-based timeout',
+    timeoutHandler: cookieTimeoutHandler,
     installer: () =>
       collectorInstaller({
         authKey: uuid(),
       })
         .withCookieSessionIdHandler()
-        .withCookieTimeoutHandler(1000),
+        .withTimeoutHandler(cookieTimeoutHandler),
   },
-])('timeout in context $context', ({ installer }) => {
+])('timeout in context $context', ({ installer, timeoutHandler }) => {
   let handleUserAction: SpyInstance<[SessionUserAction], Promise<void>>
   let handleSessionTrait: SpyInstance<[string, SessionTraits], Promise<void>>
 
@@ -204,6 +209,14 @@ describe.each([
     const secondInstallationSessionId = getLastCallFirstArgument(handleUserAction).sessionId
 
     assert.notEqual(firstInstallationSessionId, secondInstallationSessionId)
+  })
+
+  it('is reset when a user action is handled', async () => {
+    const spy = vitest.spyOn(timeoutHandler, 'reset')
+    const collector = installer().install()
+    await collector.userActionHandler.handle(createDummy<TargetedUserAction>({ target: { element: 'div' } }))
+
+    expect(spy).toBeCalled()
   })
 })
 
