@@ -7,6 +7,7 @@ import { IGravityClient } from '../gravity-client/IGravityClient'
 import IUserActionHandler from './IUserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
+import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
 
 describe('UserActionHandler', () => {
   describe('handle', () => {
@@ -19,14 +20,17 @@ describe('UserActionHandler', () => {
     beforeEach(() => {
       client = new NopGravityClient(0)
       sessionIdHandler = new MemorySessionIdHandler(() => sessionId)
-      userActionHandler = new UserActionHandler(sessionIdHandler, client)
+      userActionHandler = new UserActionHandler(sessionIdHandler, new MemoryTimeoutHandler(1000), client)
     })
 
     it('adds a session id when  handling a user action', async () => {
       const spy = vitest.spyOn(client, 'addSessionUserAction')
       userActionHandler.handle(userAction)
 
-      expect(spy).toHaveBeenCalledWith({ ...userAction, sessionId })
+      expect(spy).toHaveBeenCalledWith({
+        ...userAction,
+        sessionId,
+      })
     })
   })
 })

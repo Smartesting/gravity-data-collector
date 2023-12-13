@@ -82,7 +82,7 @@ class CollectorWrapper {
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options, this.recordingSettingsHandler)
       : new HttpGravityClient(options, this.recordingSettingsHandler, fetch)
-    this.userActionHandler = new UserActionHandler(sessionIdHandler, this.gravityClient)
+    this.userActionHandler = new UserActionHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
@@ -106,13 +106,20 @@ class CollectorWrapper {
         this.recordingSettingsHandler.dispatch(ALL_RECORDING_SETTINGS_DISABLED)
       })
 
+    if (!reset) {
+      if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
+      this.userActionHandler.subscribe(this.checkTimeout.bind(this))
+    }
+
     const options = this.options
     const currentUrl = options.window.document.URL
     if (!isValidURL(currentUrl)) {
       console.log('[Gravity data collector] invalid URL for tracking: ', currentUrl)
       return
     }
-    const isNewSession = reset || !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest()
+    const isNewSession =
+      reset || !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest() || this.timeoutHandler.isExpired()
+
     if (isNewSession) {
       if (!keepSession(options)) {
         this.recordingSettingsHandler.terminate()
@@ -127,11 +134,6 @@ class CollectorWrapper {
     }
     this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
-
-    if (!reset) {
-      if (this.isListenerEnabled(Listener.Requests)) this.patchFetch()
-      this.userActionHandler.subscribe(this.checkTimeout.bind(this))
-    }
   }
 
   async identifySession(traitName: string, traitValue: SessionTraitValue): Promise<void> {
@@ -281,9 +283,10 @@ class CollectorWrapper {
 
   private async checkTimeout() {
     if (this.timeoutHandler.isExpired()) {
+      this.timeoutHandler.reset()
+      this.sessionIdHandler.generateNewSessionId()
       await this.gravityClient.flush()
       this.terminateRecording(true, true)
-      this.sessionIdHandler.generateNewSessionId()
       this.init(true)
     }
   }
