@@ -38,15 +38,6 @@ describe.each([
       vitest.advanceTimersByTime(SESSION_DURATION)
       expect(timeoutHandler.isExpired()).toBe(true)
     })
-
-    it('automatically reset timeout after sessionDuration', () => {
-      vitest.advanceTimersByTime(SESSION_DURATION)
-      expect(timeoutHandler.isExpired()).toBe(true)
-      vitest.advanceTimersByTime(1)
-      expect(timeoutHandler.isExpired()).toBe(false)
-      vitest.advanceTimersByTime(SESSION_DURATION)
-      expect(timeoutHandler.isExpired()).toBe(true)
-    })
   })
 })
 

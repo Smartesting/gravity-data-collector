@@ -2,16 +2,24 @@ import { SessionUserAction, UserAction } from '../types'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
+import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
   private readonly listeners: Array<Function> = []
-  constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
+
+  constructor(
+    private readonly sessionIdHandler: ISessionIdHandler,
+    private readonly timeoutHandler: ITimeoutHandler,
+    private readonly gravityClient: IGravityClient,
+  ) {}
 
   async handle(action: UserAction): Promise<void> {
     if (!this.active) return
+    if (!this.timeoutHandler.isExpired()) {
+      await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
+    }
     this.listeners.forEach((listener) => listener())
-    return await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {

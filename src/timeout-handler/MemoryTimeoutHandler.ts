@@ -1,17 +1,17 @@
 import ITimeoutHandler from './ITimeoutHandler'
 
 export default class MemoryTimeoutHandler implements ITimeoutHandler {
-  private sessionTimeout: number
+  private sessionTimeout = 0
 
   constructor(private readonly sessionDuration: number) {
-    this.sessionTimeout = new Date().getTime() + sessionDuration
+    this.reset()
   }
 
   isExpired(): boolean {
-    const isExpired = new Date().getTime() >= this.sessionTimeout
-    if (isExpired) {
-      this.sessionTimeout = new Date().getTime() + this.sessionDuration
-    }
-    return isExpired
+    return new Date().getTime() >= this.sessionTimeout
+  }
+
+  reset(): void {
+    this.sessionTimeout = new Date().getTime() + this.sessionDuration
   }
 }

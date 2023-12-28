@@ -33,7 +33,7 @@ jobs:
       - name: Run cypress tests
         uses: cypress-io/github-action@v4
         with:
-          browser: chrome
+          browser: electron
           start: npm run start-e2e-test-site
       - name: Store Cypress videos
         if: ${{ failure() }}

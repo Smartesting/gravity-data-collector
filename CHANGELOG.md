@@ -23,7 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.1...main)
 
 ### Info
 
@@ -36,6 +36,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+
+## [3.17.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.0...v3.17.1)
+
+### Fixed
+
+- The session timeout was reset with each new tab, causing sessions to last several days
+- The session timeout was not reset after new user events
 
 ## [3.17.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.16.0...v3.17.0)
 
