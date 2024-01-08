@@ -1,6 +1,6 @@
-import TargetedEventListener from './TargetedEventListener'
 import { UserActionType } from '../types'
+import RepeatedEventListener from './RepeatedEventListener'
 
-export default class ScrollEventListener extends TargetedEventListener {
+export default class ScrollEventListener extends RepeatedEventListener {
   userActionType = UserActionType.Scroll
 }

@@ -13,12 +13,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Some events are not replicated anymore when they are triggered multiple times with the same target to avoid spamming:
+  - `scroll`
+  - `wheel`
+  - `touchmove`
+  - `resize`
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-
 
 ## [3.17.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.0...v3.17.1)
 
