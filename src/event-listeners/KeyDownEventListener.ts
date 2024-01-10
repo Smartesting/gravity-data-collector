@@ -6,6 +6,7 @@ import TargetedEventListener from './TargetedEventListener'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
+import { sameJSONObjects } from '../utils/SameJSONObjects'
 
 class KeyDownEventListener extends TargetedEventListener {
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
@@ -71,10 +72,6 @@ function makeMinimalTargetedUserAction(userAction: TargetedUserAction) {
   const { element, selector, selectors } = target
 
   return { type, target: { element, selector, selectors } }
-}
-
-function sameJSONObjects<T>(o1: T, o2: T): boolean {
-  return JSON.stringify(o1) === JSON.stringify(o2)
 }
 
 export default KeyDownEventListener

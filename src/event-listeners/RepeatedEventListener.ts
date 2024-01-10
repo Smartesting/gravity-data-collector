@@ -4,6 +4,7 @@ import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsH
 import { TargetedUserAction } from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
+import { sameJSONObjects } from '../utils/SameJSONObjects'
 
 export default abstract class RepeatedEventListener extends TargetedEventListener {
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
@@ -19,27 +20,21 @@ export default abstract class RepeatedEventListener extends TargetedEventListene
     }
   }
 
-  sameActionThanLast(targetedUserAction: TargetedUserAction): boolean {
+  private sameActionThanLast(targetedUserAction: TargetedUserAction): boolean {
     const lastUserAction = this.userActionHistory.getLast()
 
     if (lastUserAction === undefined) return false
     if (!isTargetedUserAction(lastUserAction)) return false
 
-    return compareTargetedUserAction(targetedUserAction, lastUserAction)
+    return sameJSONObjects(
+      this.makeComparableUserAction(targetedUserAction),
+      this.makeComparableUserAction(lastUserAction),
+    )
   }
-}
 
-function compareTargetedUserAction(tua1: TargetedUserAction, tua2: TargetedUserAction): boolean {
-  return sameJSONObjects(makeMinimalTargetedUserAction(tua1), makeMinimalTargetedUserAction(tua2))
-}
+  protected makeComparableUserAction({ type, target }: TargetedUserAction): any {
+    const { element, selector, selectors } = target
 
-function makeMinimalTargetedUserAction(userAction: TargetedUserAction) {
-  const { type, target } = userAction
-  const { element, selector, selectors } = target
-
-  return { type, target: { element, selector, selectors } }
-}
-
-function sameJSONObjects<T>(o1: T, o2: T): boolean {
-  return JSON.stringify(o1) === JSON.stringify(o2)
+    return { type, target: { element, selector, selectors } }
+  }
 }
