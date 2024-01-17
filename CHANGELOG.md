@@ -31,6 +31,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Some events are not replicated anymore when they are triggered multiple times with the same target to avoid spamming:
+  - `scroll`
+  - `wheel`
+  - `touchmove`
+  - `resize`
+
 ### Deprecated
 
 ### Removed
