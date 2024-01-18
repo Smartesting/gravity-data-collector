@@ -3,7 +3,7 @@ import { fireEvent, getByRole, getByTestId, waitFor } from '@testing-library/dom
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import { TargetedUserAction, UserAction, UserActionType } from '../types'
+import { NO_ANONYMIZATION_SETTINGS, QueryType, TargetedUserAction, UserAction, UserActionType } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
@@ -33,7 +33,7 @@ describe('KeyDownEventListener', () => {
     return listHandledUserActions().filter((userAction) => userAction.type === expectedType)
   }
 
-  it('calls createTargetedUserAction with the excludeRegex option', async () => {
+  it('calls createTargetedUserAction with the "selectorOptions" option', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
@@ -42,36 +42,22 @@ describe('KeyDownEventListener', () => {
       'div',
     )
 
-    new KeyDownEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
+    new KeyDownEventListener(userActionHandler, domWindow, {
+      selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+    }).init()
     const search = await waitFor(() => getByRole(element, 'searchbox'))
 
     fireEvent.keyDown(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
-        excludeRegex: /.*/,
-      })
-    })
-  })
-
-  it('calls createTargetedUserAction with the customSelector option', async () => {
-    const { element, domWindow } = createElementInJSDOM(
-      `
-            <div>
-                <input id="text-5" type="search" />
-            </div>`,
-      'div',
-    )
-
-    new KeyDownEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
-    const search = await waitFor(() => getByRole(element, 'searchbox'))
-
-    fireEvent.keyDown(search)
-
-    await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
-        customSelector: 'data-testid',
-      })
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+        new KeyboardEvent('keydown'),
+        'keydown',
+        NO_ANONYMIZATION_SETTINGS,
+        {
+          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+        },
+      )
     })
   })
 

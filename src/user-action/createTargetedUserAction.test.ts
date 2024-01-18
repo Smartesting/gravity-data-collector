@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockClick, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { GravityDocument, QueryType, UserActionType } from '../types'
+import { GravityDocument, NO_ANONYMIZATION_SETTINGS, QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import {
   createClickUserAction,
@@ -26,7 +26,7 @@ describe('createTargetedUserAction', () => {
 
     const action = createClickUserAction(element, 0, 0, domWindow.document)
 
-    expect(action.type).toEqual(UserActionType.Click)
+    expect(action?.type).toEqual(UserActionType.Click)
   })
 
   it('returns location data', () => {
@@ -81,7 +81,7 @@ describe('createTargetedUserAction', () => {
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
-      expect(action.target.element).toEqual('div')
+      expect(action?.target.element).toEqual('div')
     })
 
     it('handles Window as a target too', () => {
@@ -102,83 +102,19 @@ describe('createTargetedUserAction', () => {
       expect(action?.target.type).toEqual('text')
     })
 
-    it('returns ID selector if ID is available', () => {
-      const { element, domWindow } = createElementInJSDOM(
-        '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
-        'input',
-      )
-
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
-
-      expect(action.target?.selector).toEqual('#id-input-8')
-    })
-
-    it('returns class selector if ID is excluded by regex', () => {
-      const { element, domWindow } = createElementInJSDOM(
-        '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
-        'input',
-      )
-
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        excludeRegex: /^#id-input-.*$/,
-        document: domWindow.document,
-      })
-
-      expect(action?.target?.selector).toEqual('.size-lg')
-    })
-
-    it('returns custom selector if it is defined', () => {
-      const { element, domWindow } = createElementInJSDOM(
-        '<input type="text" id="id-input-8" data-testid="userName" class="size-lg"/>',
-        'input',
-      )
-
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        customSelector: 'data-testid',
-        document: domWindow.document,
-      })
-
-      expect(action?.target?.selector).toEqual('[data-testid=userName]')
-    })
-
-    it('falls back to classic matching if the custom selector is not available', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="text" class="size-lg"/>', 'input')
-
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        customSelector: 'data-testid',
-        document: domWindow.document,
-      })
-
-      expect(action?.target?.selector).toEqual('.size-lg')
-    })
-
-    it('returns class selector if ID is unavailable', () => {
-      const { element, domWindow } = createElementInJSDOM(
-        '<input type="text" data-testid="userName" class="size-lg"/>',
-        'input',
-      )
-
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
-
-      expect(action.target?.selector).toEqual('.size-lg')
-    })
-
-    it('returns tag selector if ID and class are unavailable', () => {
-      const { element, domWindow } = createElementInJSDOM('<input type="text" data-testid="userName"/>', 'input')
-
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
-
-      expect(action.target?.selector).toEqual('input')
-    })
-
     it('computes selectors', () => {
       const { element, domWindow } = createElementInJSDOM(
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        document: domWindow.document,
-      })
+      const action = createTargetedUserAction(
+        mockClick(element, 0, 0),
+        UserActionType.Click,
+        NO_ANONYMIZATION_SETTINGS,
+        {
+          document: domWindow.document,
+        },
+      )
       expect(action?.target.selectors).toEqual({
         attributes: { 'data-testid': 'userName' },
         query: {
@@ -196,13 +132,18 @@ describe('createTargetedUserAction', () => {
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        document: domWindow.document,
-        selectorsOptions: {
-          excludedQueries: [QueryType.id],
-          attributes: ['data-testid'],
+      const action = createTargetedUserAction(
+        mockClick(element, 0, 0),
+        UserActionType.Click,
+        NO_ANONYMIZATION_SETTINGS,
+        {
+          document: domWindow.document,
+          selectorsOptions: {
+            excludedQueries: [QueryType.id],
+            attributes: ['data-testid'],
+          },
         },
-      })
+      )
       expect(action?.target.selectors).toEqual({
         attributes: {
           'data-testid': 'userName',
@@ -224,7 +165,7 @@ describe('createTargetedUserAction', () => {
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
-      expect(action.target?.value).toBeUndefined()
+      expect(action?.target?.value).toBeUndefined()
     })
 
     it('"true" is recorded if input is a checked checkbox', () => {
@@ -232,7 +173,7 @@ describe('createTargetedUserAction', () => {
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
-      expect(action.target?.value).equals('true')
+      expect(action?.target?.value).equals('true')
     })
 
     it('"false" is recorded if input is a checked checkbox', () => {
@@ -240,7 +181,7 @@ describe('createTargetedUserAction', () => {
 
       const action = createClickUserAction(element, 0, 0, domWindow.document)
 
-      expect(action.target?.value).equals('false')
+      expect(action?.target?.value).equals('false')
     })
   })
 
@@ -254,7 +195,7 @@ describe('createTargetedUserAction', () => {
 
     const eltBounds = element?.getBoundingClientRect()
 
-    expect(action.userActionData).toEqual({
+    expect(action?.userActionData).toEqual({
       clientX: 12,
       clientY: 34,
       elementRelOffsetX: Math.trunc(12 - (eltBounds?.left ?? 0)),
@@ -277,7 +218,7 @@ describe('createTargetedUserAction', () => {
 
     const eltBounds = element?.getBoundingClientRect()
 
-    expect(action.userActionData).toEqual({
+    expect(action?.userActionData).toEqual({
       key: 'Shift',
       code: 'ShiftLeft',
       elementPosition: {
@@ -310,5 +251,50 @@ describe('createTargetedUserAction', () => {
       },
       scrollableAncestors: [],
     })
+  })
+
+  it('returns null if the target element matches option "ignoreSelectors"', () => {
+    const { element, domWindow } = createElementInJSDOM('<button class="personalInfo">Click Me</button>', 'button')
+
+    const action = createTargetedUserAction(
+      mockClick(element, 0, 0),
+      UserActionType.Click,
+      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
+      { document: domWindow.document },
+    )
+
+    expect(action).toBeNull()
+  })
+
+  it('returns null if the target is a descendant of an element matching option "ignoreSelectors"', () => {
+    const { element, domWindow } = createElementInJSDOM(
+      '<div class="personalInfo"><div><button>Click Me</button></div></div>',
+      'button',
+    )
+
+    const action = createTargetedUserAction(
+      mockClick(element, 0, 0),
+      UserActionType.Click,
+      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
+      { document: domWindow.document },
+    )
+
+    expect(action).toBeNull()
+  })
+
+  it('returns action if the target is an ascendant of an element matching option "ignoreSelectors"', () => {
+    const { element, domWindow } = createElementInJSDOM(
+      '<div><button class="personalInfo">Click Me</button></div>',
+      'div',
+    )
+
+    const action = createTargetedUserAction(
+      mockClick(element, 0, 0),
+      UserActionType.Click,
+      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
+      { document: domWindow.document },
+    )
+
+    expect(action).not.toBeNull()
   })
 })

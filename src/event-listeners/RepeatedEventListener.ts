@@ -10,7 +10,12 @@ export default abstract class RepeatedEventListener extends TargetedEventListene
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
 
   public listener(event: Event) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = createTargetedUserAction(
+      event,
+      this.userActionType,
+      this.userActionHandler.getAnonymizationSettings(),
+      this.options,
+    )
 
     if (userAction !== null) {
       if (!this.sameActionThanLast(userAction)) {
@@ -33,8 +38,7 @@ export default abstract class RepeatedEventListener extends TargetedEventListene
   }
 
   protected makeComparableUserAction({ type, target }: TargetedUserAction): any {
-    const { element, selector, selectors } = target
-
-    return { type, target: { element, selector, selectors } }
+    const { element, selectors } = target
+    return { type, target: { element, selectors } }
   }
 }

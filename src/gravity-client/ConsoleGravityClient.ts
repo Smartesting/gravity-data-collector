@@ -9,7 +9,7 @@ import {
 import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import { eventWithTime } from '@rrweb/types'
-import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 
 type ConsoleGravityClientOptions = GravityClientOptions & {
   maxDelay?: number

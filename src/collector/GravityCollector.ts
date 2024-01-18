@@ -1,5 +1,5 @@
 import CollectorWrapper from './CollectorWrapper'
-import { CollectorOptions, SessionTraitValue } from '../types'
+import { ProductionCollectorOptions, SessionTraitValue } from '../types'
 import windowExists from '../utils/windowExists'
 import { collectorInstaller } from './CollectorInstaller'
 
@@ -18,16 +18,14 @@ export default class GravityCollector {
     return _window._GravityCollector
   }
 
-  static init(options?: Partial<CollectorOptions>) {
+  static init(options?: Partial<ProductionCollectorOptions>) {
     if (!windowExists() && options?.window === undefined) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
-    const windowToUse = (options?.window ?? window) as any
-    const wrapper = collectorInstaller(options)
-      .withCookieSessionIdHandler(windowToUse)
-      .withCookieTimeoutHandler(MAX_SESSION_DURATION, windowToUse)
-      .install()
-    windowToUse._GravityCollector = new GravityCollector(wrapper)
+    const installer = collectorInstaller(options)
+      .withCookieSessionIdHandler()
+      .withCookieTimeoutHandler(MAX_SESSION_DURATION)
+    installer.window()._GravityCollector = new GravityCollector(installer.install())
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {

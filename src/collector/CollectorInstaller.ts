@@ -1,4 +1,4 @@
-import { CollectorOptions, CollectorOptionsWithWindow } from '../types'
+import { CollectorOptions } from '../types'
 import CollectorWrapper from './CollectorWrapper'
 import completeOptions from '../utils/completeOptions'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
@@ -19,7 +19,7 @@ export function collectorInstaller(options?: Partial<CollectorOptions>) {
 export type FetchType = typeof crossfetch
 
 export class CollectorInstaller {
-  private options: CollectorOptionsWithWindow
+  private options: CollectorOptions
   private sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuid)
   private sessionTimeoutHandler: ITimeoutHandler = new MemoryTimeoutHandler(1000)
   private testNameHandler: TestNameHandler = new SessionStorageTestNameHandler()
@@ -29,14 +29,17 @@ export class CollectorInstaller {
     this.options = completeOptions(options)
   }
 
+  window(): any {
+    return this.options.window
+  }
+
   withOptions(overridden: Partial<CollectorOptions>): CollectorInstaller {
     this.options = { ...this.options, ...overridden }
     return this
   }
 
-  withCookieSessionIdHandler(customWindow?: typeof window): CollectorInstaller {
-    const windowToUse = this.options?.window ?? customWindow ?? window
-    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, windowToUse))
+  withCookieSessionIdHandler(): CollectorInstaller {
+    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, this.options.window))
   }
 
   withSessionIdHandler(handler: ISessionIdHandler): CollectorInstaller {
@@ -44,9 +47,8 @@ export class CollectorInstaller {
     return this
   }
 
-  withCookieTimeoutHandler(sessionDuration: number, customWindow?: typeof window): CollectorInstaller {
-    const windowToUse = this.options?.window ?? customWindow ?? window
-    return this.withTimeoutHandler(new CookieTimeoutHandler(sessionDuration, windowToUse))
+  withCookieTimeoutHandler(sessionDuration: number): CollectorInstaller {
+    return this.withTimeoutHandler(new CookieTimeoutHandler(sessionDuration, this.options.window))
   }
 
   withTimeoutHandler(handler: ITimeoutHandler): CollectorInstaller {

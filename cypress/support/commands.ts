@@ -105,6 +105,8 @@ Cypress.Commands.add('interceptGravityCollectionSettings', () => {
       sessionRecording: true,
       videoRecording: true,
       videoAnonymization: true,
+      anonymizeSelectors: undefined,
+      ignoreSelectors: undefined,
     },
   }
   cy.intercept('GET', buildGravityTrackingSessionCollectionSettingsApiUrl('*', DEFAULT_GRAVITY_SERVER_URL), {

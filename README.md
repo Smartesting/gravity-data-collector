@@ -70,24 +70,24 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | gravityServerUrl         | String                   | Gravity server URL                                                                                                                                                                              | https://api.gravity.smartesting.com |
 | debug                    | Boolean                  | Logs user action in the console instead of sending them to Gravity                                                                                                                              | false                               |
 | maxDelay                 | Integer                  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                             | 500                                 |
-| excludeRegex             | RegExp                   | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>Regular expression of ID and class names to ignore in selector computation.                                                  | null                                |
-| customSelector           | String (optional)        | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>The attribute to use as a selector if defined on an HTML element targeted by a user action.                                  | undefined                           |
 | selectorsOptions         | Object (optional)        | See [Work with selectors](#work-with-selectors).                                                                                                                                                | undefined                           |
 | sessionsPercentageKept   | [0..100]                 | Rate of sessions to be collected                                                                                                                                                                | 100                                 |
 | rejectSession            | function `() => boolean` | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code> | `() => false`                       |
 | onPublish                | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                           |
-| originsToRecord          | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor        | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
 | buildId                  | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
 | enableEventRecording     | Boolean (optional)       | Set to `false` to deactivate any recording (event & video) (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                 | true                                |
 | enableVideoRecording     | Boolean (optional)       | Set to `false` to deactivate video recording (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                               | true                                |
 | enableVideoAnonymization | Boolean (optional)       | Set to `false` to deactivate video anonymization (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                           | true                                |
+| anonymizeSelectors       | string (optional)        | HTML elements (and descendants) matching this CSS selector will be anonymized (only in debug mode, otherwise this option is controlled from the Gravity interface)                              | undefined                           |
+| ignoreSelectors          | string (optional)        | HTML elements (and descendants) matching this CSS selector will not be recorded (only in debug mode, otherwise this option is controlled from the Gravity interface)                            | undefined                           |
 
 ## Features
 
 ### Work with selectors
 
-In the Gravity Data Collector, when a user action targets an HTML element, selectors are computed in order to replay the session as an automated test.
+In the Gravity Data Collector, when a user action targets an HTML element, selectors are computed in order to replay the
+session as an automated test.
 
 By default, the following selectors are computed:
 
@@ -105,20 +105,23 @@ By default, the following selectors are computed:
 
 `xpath` is always collected.
 
-When initializing the collector, you can specify which selectors (in the `queries` field) and `attributes` you want to collect.
+When initializing the collector, you can specify which selectors (in the `queries` field) and `attributes` you want to
+collect.
 
 ```typescript
 GravityCollector.init({ selectorsOptions: { attributes: ['data-testid', 'role'] } })
 ```
 
-This configuration will collect all the selectors (default if `queries` is not specified), the `data-testid` and the `role` attributes of the HTML element with which the user
+This configuration will collect all the selectors (default if `queries` is not specified), the `data-testid` and
+the `role` attributes of the HTML element with which the user
 interacts.
 
 ```typescript
 GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
 ```
 
-This configuration will collect the CSS `class`(es), the `tag` and the `data-testid` (default if `attributes` is not specified) of the HTML element with which the user
+This configuration will collect the CSS `class`(es), the `tag` and the `data-testid` (default if `attributes` is not
+specified) of the HTML element with which the user
 interacts.
 
 Alternatively, you can also exclude some
@@ -161,14 +164,16 @@ to `true` and then to `false`, the first value will be overwritten.
 
 In order to easily identify your tests sessions in Gravity, the data-collector can send build information to Gravity.
 
-The build ID can be specified in multiple way. You can set the following properties on `process.env` (for example when using React)
+The build ID can be specified in multiple way. You can set the following properties on `process.env` (for example when
+using React)
 
 | environment variable name  | Gravity data |
 | -------------------------- | ------------ |
 | GRAVITY_BUILD_ID           | buildId      |
 | REACT_APP_GRAVITY_BUILD_ID | buildId      |
 
-You can also declare `window.GRAVITY_BUILD_ID` (or simply declare a global variable `GRAVITY_BUILD_ID` which should be assigned to the window object).
+You can also declare `window.GRAVITY_BUILD_ID` (or simply declare a global variable `GRAVITY_BUILD_ID` which should be
+assigned to the window object).
 
 Another solution is to pass the `buildId`parameter when initializing gravity data collector:
 
@@ -205,4 +210,5 @@ Maybe you need help to install and/or understand Gravity Data Collector
 
 - please visit our [documentation](https://docs.gravity-testing.com/) pages
 - we start a [FAQ](FAQ.md) hoping it can help you to face eventual problems with th Gravity Data Collector
-- [here](flowchart.md) is a flowchart summarizing how the collector works, depending on the options and configuration of your Gravity project.
+- [here](flowchart.md) is a flowchart summarizing how the collector works, depending on the options and configuration of
+  your Gravity project.

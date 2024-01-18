@@ -1,9 +1,10 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import {
   CollectorOptions,
-  CollectorOptionsWithWindow,
   CypressObject,
   Listener,
+  NO_RECORDING_SETTINGS,
+  RecordingSettings,
   SessionStartedUserAction,
   SessionTraitValue,
 } from '../types'
@@ -28,12 +29,7 @@ import { IGravityClient } from '../gravity-client/IGravityClient'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
-import {
-  ALL_RECORDING_SETTINGS_DISABLED,
-  RecordingSettingsDispatcher,
-} from '../gravity-client/RecordingSettingsDispatcher'
 import crossfetch from 'cross-fetch'
-import { RecordingSettings } from '../gravity-client/AbstractGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import ContextMenuEventListener from '../event-listeners/ContextMenuEventListener'
 import CopyEventListener from '../event-listeners/CopyEventListener'
@@ -63,6 +59,7 @@ import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
 import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
+import RecordingSettingsDispatcher from '../gravity-client/RecordingSettingsDispatcher'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
@@ -73,7 +70,7 @@ class CollectorWrapper {
   private readonly gravityClient: IGravityClient
 
   constructor(
-    private readonly options: CollectorOptionsWithWindow,
+    private readonly options: CollectorOptions,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly testNameHandler: TestNameHandler,
     private readonly timeoutHandler: ITimeoutHandler,
@@ -87,13 +84,23 @@ class CollectorWrapper {
     this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
     this.recordingSettingsHandler.subscribe(
-      ({ enableEventRecording, enableVideoRecording, enableVideoAnonymization }) => {
+      ({
+        enableEventRecording,
+        enableVideoRecording,
+        enableVideoAnonymization,
+        ignoreSelectors,
+        anonymizeSelectors,
+      }) => {
         if (!enableEventRecording || !enableVideoRecording) {
           this.terminateRecording(!enableEventRecording, !enableVideoRecording)
         }
-
+        this.userActionHandler.setAnonymizationSettings({ anonymizeSelectors, ignoreSelectors })
         if (enableVideoRecording) {
-          this.screenRecorderHandler.initializeRecording({ anonymization: enableVideoAnonymization })
+          this.screenRecorderHandler.initializeRecording({
+            enableAnonymization: enableVideoAnonymization,
+            ignoreSelectors,
+            anonymizeSelectors,
+          })
         }
       },
     )
@@ -103,7 +110,7 @@ class CollectorWrapper {
     this.fetchRecordingSettings()
       .then((settings) => this.recordingSettingsHandler.dispatch(settings))
       .catch(() => {
-        this.recordingSettingsHandler.dispatch(ALL_RECORDING_SETTINGS_DISABLED)
+        this.recordingSettingsHandler.dispatch(NO_RECORDING_SETTINGS)
       })
 
     if (!reset) {
@@ -161,12 +168,12 @@ class CollectorWrapper {
   }
 
   private patchFetch() {
-    const { gravityServerUrl, originsToRecord, recordRequestsFor, window } = this.options
+    const { gravityServerUrl, recordRequestsFor, window } = this.options
     const originalFetch = window.fetch
     window.fetch = async (input: any /* should be RequestInfo|URL, but TSC failed */, init?: RequestInit) => {
       const url = retrieveUrl(input)
 
-      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
+      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor)) {
         let method = 'unknown'
         if (init?.method != null) {
           method = init.method
@@ -182,7 +189,7 @@ class CollectorWrapper {
       const method = arguments[0]
       const url = arguments[1]
 
-      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor ?? originsToRecord)) {
+      if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor)) {
         void userActionHandler.handle(createAsyncRequest(url, method))
       }
 
@@ -191,10 +198,8 @@ class CollectorWrapper {
   }
 
   private makeEventListeners() {
-    const { window, excludeRegex, customSelector, selectorsOptions } = this.options
+    const { window, selectorsOptions } = this.options
     const targetedEventListenerOptions: TargetEventListenerOptions = {
-      excludeRegex,
-      customSelector,
       selectorsOptions,
     }
 
@@ -261,22 +266,17 @@ class CollectorWrapper {
 
   private async fetchRecordingSettings(): Promise<RecordingSettings> {
     if (this.options.debug) {
-      return {
-        enableEventRecording: this.options.enableEventRecording,
-        enableVideoRecording: this.options.enableVideoRecording,
-        enableVideoAnonymization: this.options.enableVideoAnonymization,
-      }
+      return this.options
     }
 
     return await this.gravityClient.readSessionCollectionSettings().then(({ settings, error }) => {
-      if (settings === null || error !== null) {
-        return ALL_RECORDING_SETTINGS_DISABLED
-      }
-
+      if (settings === null || error !== null) return NO_RECORDING_SETTINGS
       return {
         enableEventRecording: settings.sessionRecording,
         enableVideoRecording: settings.videoRecording,
         enableVideoAnonymization: settings.videoAnonymization,
+        anonymizeSelectors: settings.anonymizeSelectors,
+        ignoreSelectors: settings.ignoreSelectors,
       }
     })
   }

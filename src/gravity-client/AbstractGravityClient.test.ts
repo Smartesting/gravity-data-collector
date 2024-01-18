@@ -1,7 +1,7 @@
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { expect, SpyInstance, vi } from 'vitest'
 import { EventType, eventWithTime } from '@rrweb/types'
-import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
 import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import {
@@ -161,6 +161,8 @@ class TestGravityClient extends AbstractGravityClient {
       enableEventRecording: true,
       enableVideoRecording: true,
       enableVideoAnonymization: true,
+      anonymizeSelectors: undefined,
+      ignoreSelectors: undefined,
     })
   }
 

@@ -45,4 +45,12 @@ export class DataBuffering<Data, Response> {
   lock() {
     this.locked = true
   }
+
+  clear(keepItems?: (data: Data) => boolean) {
+    if (keepItems) {
+      this.buffer.splice(0, this.buffer.length, ...this.buffer.filter(keepItems))
+    } else {
+      this.buffer.splice(0, this.buffer.length)
+    }
+  }
 }

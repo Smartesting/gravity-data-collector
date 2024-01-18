@@ -49,7 +49,6 @@ import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
-import crossfetch from 'cross-fetch'
 import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
 import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
 import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
@@ -322,11 +321,14 @@ describe.each([
     })
   })
 
-  describe('when recordRequestsFor is not set and originsToRecord is set', () => {
+  describe('when recordRequestsFor is set', () => {
     beforeEach(async () => {
-      global.fetch = vi.fn() as typeof crossfetch
       installer()
-        .withOptions({ originsToRecord: ['https://server.com'] })
+        .withOptions({
+          gravityServerUrl: 'https://gravity-server.com',
+          recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
+        })
+        .withFetch(mockFetch())
         .install()
       handleUserAction.mockClear() // clear first startedSession event
     })
@@ -363,112 +365,18 @@ describe.each([
       xhr.open('GET', 'https://notrecorded.com/example')
       expect(handleUserAction).not.toHaveBeenCalled()
     })
-  })
 
-  describe('when recordRequestsFor is set', () => {
-    describe('and originsToRecord is set', () => {
-      beforeEach(async () => {
-        global.fetch = vi.fn() as typeof crossfetch
-        installer()
-          .withOptions({
-            gravityServerUrl: 'https://gravity-server.com',
-            recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
-            originsToRecord: ['https://deprecated.com'],
-          })
-          .install()
-        handleUserAction.mockClear() // clear first startedSession event
+    it('does not record a tracking request from Gravity when a POST fetch is made', async () => {
+      await fetch('https://gravity-server.com/api/tracking/abcd-efg/publish', {
+        method: 'POST',
       })
-
-      it('uses recordRequestsFor option rather than originsToRecord option to determine if the request should be recorded when a fetch is made', async () => {
-        await fetch('https://deprecated.com/example', {
-          method: 'GET',
-        })
-        expect(handleUserAction).not.toHaveBeenCalled()
-
-        await fetch('https://server.com/example', {
-          method: 'GET',
-        })
-
-        expect(handleUserAction).toHaveBeenCalled()
-        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
-          type: UserActionType.AsyncRequest,
-          url: 'https://server.com/example',
-          method: 'GET',
-        })
-      })
-
-      it('uses recordRequestsFor option rather than originsToRecord option to determine if the request should be recorded when a XHR is made', async () => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', 'https://deprecated.com/example')
-        expect(handleUserAction).not.toHaveBeenCalled()
-
-        xhr.open('GET', 'https://server.com/example')
-        expect(handleUserAction).toHaveBeenCalled()
-        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
-          type: UserActionType.AsyncRequest,
-          url: 'https://server.com/example',
-          method: 'GET',
-        })
-      })
+      expect(handleUserAction).not.toHaveBeenCalled()
     })
 
-    describe('and originsToRecord is not set', () => {
-      beforeEach(async () => {
-        installer()
-          .withOptions({
-            gravityServerUrl: 'https://gravity-server.com',
-            recordRequestsFor: ['https://server.com', 'https://gravity-server.com'],
-          })
-          .withFetch(mockFetch())
-          .install()
-        handleUserAction.mockClear() // clear first startedSession event
-      })
-
-      it('records the request when a fetch is made with a URL origin that can be recorded', async () => {
-        await fetch('https://server.com/example', {
-          method: 'GET',
-        })
-        expect(handleUserAction).toHaveBeenCalledOnce()
-        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
-          type: UserActionType.AsyncRequest,
-          url: 'https://server.com/example',
-          method: 'GET',
-        })
-
-        handleUserAction.mockClear()
-        await fetch('https://notrecorded.com/example', {
-          method: 'GET',
-        })
-        expect(handleUserAction).not.toHaveBeenCalled()
-      })
-
-      it('records the request when a XHR is made with a URL origin that can be recorded', async () => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', 'https://server.com/example')
-        expect(handleUserAction).toHaveBeenCalled()
-        expect(getLastCallFirstArgument(handleUserAction)).toMatchObject({
-          type: UserActionType.AsyncRequest,
-          url: 'https://server.com/example',
-          method: 'GET',
-        })
-
-        handleUserAction.mockClear()
-        xhr.open('GET', 'https://notrecorded.com/example')
-        expect(handleUserAction).not.toHaveBeenCalled()
-      })
-
-      it('does not record a tracking request from Gravity when a POST fetch is made', async () => {
-        await fetch('https://gravity-server.com/api/tracking/abcd-efg/publish', {
-          method: 'POST',
-        })
-        expect(handleUserAction).not.toHaveBeenCalled()
-      })
-
-      it('does not record a tracking request from Gravity when a POST XHR is made', async () => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('POST', 'https://gravity-server.com/api/tracking/abcd-efg/publish')
-        expect(handleUserAction).not.toHaveBeenCalled()
-      })
+    it('does not record a tracking request from Gravity when a POST XHR is made', async () => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', 'https://gravity-server.com/api/tracking/abcd-efg/publish')
+      expect(handleUserAction).not.toHaveBeenCalled()
     })
   })
 
@@ -550,6 +458,8 @@ describe.each([
               sessionRecording: true,
               videoRecording: true,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             },
           },
         }),

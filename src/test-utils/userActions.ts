@@ -1,4 +1,4 @@
-import { TargetedUserAction, UserActionType } from '../types'
+import { NO_ANONYMIZATION_SETTINGS, TargetedUserAction, UserActionType } from '../types'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { mockClick, mockKeyDown, mockKeyUp } from './mocks'
 import { AssertionError } from 'assert'
@@ -10,7 +10,12 @@ export function createClickUserAction(
   clientY: number = 10,
   document: Document = getDocument(),
 ): TargetedUserAction {
-  const userAction = createTargetedUserAction(mockClick(element, clientX, clientY), UserActionType.Click, { document })
+  const userAction = createTargetedUserAction(
+    mockClick(element, clientX, clientY),
+    UserActionType.Click,
+    NO_ANONYMIZATION_SETTINGS,
+    { document },
+  )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null Click User Action' })
   }
@@ -23,7 +28,12 @@ export function createKeyUpUserAction(
   code: string,
   document: Document = getDocument(),
 ): TargetedUserAction {
-  const userAction = createTargetedUserAction(mockKeyUp(element, key, code), UserActionType.KeyUp, { document })
+  const userAction = createTargetedUserAction(
+    mockKeyUp(element, key, code),
+    UserActionType.KeyUp,
+    NO_ANONYMIZATION_SETTINGS,
+    { document },
+  )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null KeyUp User Action' })
   }
@@ -36,7 +46,12 @@ export function createKeyDownUserAction(
   code: string,
   document: Document = getDocument(),
 ): TargetedUserAction {
-  const userAction = createTargetedUserAction(mockKeyDown(element, key, code), UserActionType.KeyDown, { document })
+  const userAction = createTargetedUserAction(
+    mockKeyDown(element, key, code),
+    UserActionType.KeyDown,
+    NO_ANONYMIZATION_SETTINGS,
+    { document },
+  )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null KeyDown User Action' })
   }
@@ -51,7 +66,14 @@ export function createHashChangeUserAction(window: Window): TargetedUserAction {
     oldURL: '/plic',
   } as unknown as HashChangeEvent
 
-  const userAction = createTargetedUserAction(hashChangeEvent, UserActionType.HashChange, { document })
+  const userAction = createTargetedUserAction(
+    hashChangeEvent,
+    UserActionType.HashChange,
+    { anonymizeSelectors: undefined, ignoreSelectors: undefined },
+    {
+      document,
+    },
+  )
   if (userAction === null) {
     throw new AssertionError({ message: 'Expected non-null HashChange User Action' })
   }

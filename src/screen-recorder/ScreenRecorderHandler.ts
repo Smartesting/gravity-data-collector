@@ -4,20 +4,30 @@ import { eventWithTime, listenerHandler } from '@rrweb/types'
 import RECORDING_SETTINGS, { WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from './recordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
+interface ScreenRecordingOptions {
+  enableAnonymization?: boolean
+  anonymizeSelectors?: string
+  ignoreSelectors?: string
+}
+
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
   constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
 
-  initializeRecording(options?: Partial<{ anonymization: boolean }>) {
+  initializeRecording(options?: ScreenRecordingOptions) {
     const handleRecord = this.handle.bind(this)
+    const anonymization = options?.enableAnonymization
+      ? WITH_TOTAL_ANONYMIZATION
+      : { ...WITH_PARTIAL_ANONYMIZATION, maskTextSelector: options?.anonymizeSelectors ?? null }
     // @ts-expect-error
     this.stopRecording = record({
       emit(event) {
         void handleRecord(event)
       },
       ...RECORDING_SETTINGS,
-      ...(options?.anonymization ? WITH_TOTAL_ANONYMIZATION : WITH_PARTIAL_ANONYMIZATION),
+      ...anonymization,
+      blockSelector: options?.ignoreSelectors,
     })
   }
 

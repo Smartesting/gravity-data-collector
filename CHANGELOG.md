@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add options `anonymizeSelectors` & `ignoreSelectors` to precisely control recording of some elements
+
 ### Changed
 
 - Some events are not replicated anymore when they are triggered multiple times with the same target to avoid spamming:
@@ -22,6 +24,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Deprecated
 
 ### Removed
+
+- remove the following deprecated options:
+  - `excludeRegex`: use `selectorsOptions` instead
+  - `customSelector`: use `selectorsOptions` instead
+  - `originsToRecord`: use `recordRequestsFor` instead
 
 ### Fixed
 
@@ -138,7 +145,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Allow specifying window when initializing collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
+- Allow specifying window when initializing
+  collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
 
 ### Fixed
 

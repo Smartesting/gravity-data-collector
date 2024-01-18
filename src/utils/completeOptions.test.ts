@@ -131,13 +131,19 @@ describe('completeOptions', () => {
         debug: true,
         maxDelay: 500,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-        excludeRegex: null,
         sessionsPercentageKept: 100,
         rejectSession: DEFAULT_SESSION_REJECTION,
         window,
         enableEventRecording: true,
         enableVideoRecording: true,
         enableVideoAnonymization: true,
+        buildId: undefined,
+        enabledListeners: undefined,
+        anonymizeSelectors: undefined,
+        ignoreSelectors: undefined,
+        onPublish: undefined,
+        recordRequestsFor: undefined,
+        selectorsOptions: undefined,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -156,13 +162,19 @@ describe('completeOptions', () => {
         debug: true,
         maxDelay: 15,
         gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-        excludeRegex: null,
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
         window,
         enableEventRecording: true,
         enableVideoRecording: true,
         enableVideoAnonymization: true,
+        buildId: undefined,
+        enabledListeners: undefined,
+        anonymizeSelectors: undefined,
+        ignoreSelectors: undefined,
+        onPublish: undefined,
+        recordRequestsFor: undefined,
+        selectorsOptions: undefined,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -185,13 +197,19 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
           enableVideoAnonymization: true,
+          buildId: undefined,
+          enabledListeners: undefined,
+          anonymizeSelectors: undefined,
+          ignoreSelectors: undefined,
+          onPublish: undefined,
+          recordRequestsFor: undefined,
+          selectorsOptions: undefined,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -208,13 +226,19 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
           enableVideoAnonymization: true,
+          buildId: undefined,
+          enabledListeners: undefined,
+          anonymizeSelectors: undefined,
+          ignoreSelectors: undefined,
+          onPublish: undefined,
+          recordRequestsFor: undefined,
+          selectorsOptions: undefined,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -231,36 +255,19 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
-          excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
           enableVideoAnonymization: true,
-        }
-        expect(completed).toStrictEqual(expected)
-      })
-
-      it('does not override user input for excludeRegex', () => {
-        const completed = completeOptions({
-          debug: false,
-          authKey: '123-456-789',
-          excludeRegex: /^#my-id-.*$/,
-        })
-        const expected: CollectorOptions = {
-          authKey: '123-456-789',
-          requestInterval: 1000,
-          debug: false,
-          maxDelay: 0,
-          gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-          excludeRegex: /^#my-id-.*$/,
-          sessionsPercentageKept: 100,
-          rejectSession: DEFAULT_SESSION_REJECTION,
-          window,
-          enableEventRecording: true,
-          enableVideoRecording: true,
-          enableVideoAnonymization: true,
+          buildId: undefined,
+          enabledListeners: undefined,
+          anonymizeSelectors: undefined,
+          ignoreSelectors: undefined,
+          onPublish: undefined,
+          recordRequestsFor: undefined,
+          selectorsOptions: undefined,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -277,53 +284,34 @@ describe('completeOptions', () => {
           debug: false,
           maxDelay: 0,
           gravityServerUrl: 'http://localhost:3000',
-          excludeRegex: null,
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
           enableEventRecording: true,
           enableVideoRecording: true,
           enableVideoAnonymization: true,
+          buildId: undefined,
+          enabledListeners: undefined,
+          anonymizeSelectors: undefined,
+          ignoreSelectors: undefined,
+          onPublish: undefined,
+          recordRequestsFor: undefined,
+          selectorsOptions: undefined,
         }
         expect(completed).toStrictEqual(expected)
       })
     })
   })
 
-  it('use deprecated `disableVideoRecording` to set `enableVideoRecording`', () => {
-    expect(
-      completeOptions({
-        authKey: '',
-        disableVideoRecording: true,
-      }),
-    ).toMatchObject({
-      enableVideoRecording: false,
-    })
-    expect(
-      completeOptions({
-        authKey: '',
-        disableVideoRecording: false,
-      }),
-    ).toMatchObject({
-      enableVideoRecording: true,
-    })
-    expect(
-      completeOptions({
-        authKey: '',
-        disableVideoRecording: true,
-        enableVideoRecording: true,
-      }),
-    ).toMatchObject({
-      enableVideoRecording: true,
-    })
-    expect(
-      completeOptions({
-        authKey: '',
-        disableVideoRecording: false,
-        enableVideoRecording: false,
-      }),
-    ).toMatchObject({
-      enableVideoRecording: false,
-    })
+  it('throws an error when provided an invalid "ignoreSelectors" option', () => {
+    expect(() => completeOptions({ ignoreSelectors: '42' })).toThrow(
+      "Option 'ignoreSelectors' is not a valid CSS selector",
+    )
+  })
+
+  it('throws an error when provided an invalid "anonymizeSelectors" option', () => {
+    expect(() => completeOptions({ anonymizeSelectors: '[s' })).toThrow(
+      "Option 'anonymizeSelectors' is not a valid CSS selector",
+    )
   })
 })

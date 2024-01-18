@@ -2,7 +2,7 @@ import HttpGravityClient from './HttpGravityClient'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { expect, vi } from 'vitest'
 import { mockFetch } from '../test-utils/mocks'
-import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
 import { config } from '../config'
 import { uuid } from '../utils/uuid'
@@ -35,6 +35,8 @@ describe('HttpGravityClient', () => {
           enableEventRecording: true,
           enableVideoRecording: false,
           enableVideoAnonymization: true,
+          anonymizeSelectors: undefined,
+          ignoreSelectors: undefined,
         })
         await gravityClient.addSessionUserAction(createDummy())
         await gravityClient.flush()

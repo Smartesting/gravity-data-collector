@@ -186,10 +186,6 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
-  /**
-   * @deprecated Use selectors instead.
-   */
-  selector?: string
   selectors?: Selectors
   value?: string
   type?: string
@@ -250,43 +246,56 @@ export interface GravityDocument {
   title: string
 }
 
-export interface CollectorOptions {
+export interface CommonCollectorOptions {
   authKey: string
   requestInterval: number
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
-  /**
-   * @deprecated Use selectorsOptions instead.
-   */
-  excludeRegex: RegExp | null
-  /**
-   * @deprecated Use selectorsOptions instead.
-   */
-  customSelector?: string
-  selectorsOptions?: Partial<CreateSelectorsOptions>
+  selectorsOptions: Partial<CreateSelectorsOptions> | undefined
   sessionsPercentageKept: number
   rejectSession: () => boolean
-  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
-  /**
-   * @deprecated Use recordRequestsFor instead.
-   */
-  originsToRecord?: string[]
-  recordRequestsFor?: string[]
-  window?: typeof window
-  enabledListeners?: Listener[]
-  buildId?: string
-  /**
-   * @deprecated Use enableVideoRecording instead (reversed).
-   */
-  disableVideoRecording?: boolean
-  enableEventRecording?: boolean
-  enableVideoRecording?: boolean
-  enableVideoAnonymization?: boolean
+  onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
+  recordRequestsFor: string[] | undefined
+  window: typeof window
+  enabledListeners: Listener[] | undefined
+  enableEventRecording: boolean
 }
 
-export type CollectorOptionsWithWindow = CollectorOptions & {
-  window: typeof window
+export type ProductionCollectorOptions = CommonCollectorOptions & {
+  enableVideoRecording: boolean
+  enableVideoAnonymization: boolean
+  anonymizeSelectors: string | undefined
+  ignoreSelectors: string | undefined
+}
+
+export type TestCollectorOptions = CommonCollectorOptions & {
+  buildId: string | undefined
+}
+
+export type CollectorOptions = ProductionCollectorOptions & TestCollectorOptions
+
+export type RecordingSettings = Pick<
+  CollectorOptions,
+  | 'enableEventRecording'
+  | 'enableVideoRecording'
+  | 'enableVideoAnonymization'
+  | 'anonymizeSelectors'
+  | 'ignoreSelectors'
+>
+export const NO_RECORDING_SETTINGS: RecordingSettings = {
+  enableEventRecording: false,
+  enableVideoRecording: false,
+  enableVideoAnonymization: false,
+  anonymizeSelectors: undefined,
+  ignoreSelectors: undefined,
+}
+
+export type AnonymizationSettings = Pick<RecordingSettings, 'anonymizeSelectors' | 'ignoreSelectors'>
+
+export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
+  anonymizeSelectors: undefined,
+  ignoreSelectors: undefined,
 }
 
 export interface CreateSelectorsOptions {
@@ -358,6 +367,8 @@ export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
   videoAnonymization: boolean
+  anonymizeSelectors: string | undefined
+  ignoreSelectors: string | undefined
 }
 
 export interface ReadSessionCollectionSettingsResponse {
