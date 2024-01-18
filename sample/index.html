@@ -13,11 +13,9 @@
         // authKey: '',
         // gravityServerUrl: 'http://localhost:3000',
         requestInterval: 1000,
-        customSelector: "data-gravity",
-        excludeRegex: /^#text-.*$/,
-        buildId: '1234'
-      })
-    })
+        buildId: "1234"
+      });
+    });
 
     function fetchSomething() {
       fetch("https://jsonplaceholder.typicode.com/users/1", {
@@ -43,8 +41,8 @@
     <fieldset style="display: grid; grid-row-gap: 5px">
       <legend>Enter textual values:</legend>
 
-      <label for='text-1'></label>
-      <input id='text-1' placeholder='Change value to track it' />
+      <label for="text-1"></label>
+      <input id="text-1" placeholder="Change value to track it" data-testid="bonjourjesuitestid" />
 
       <label for="text-2"></label>
       <textarea id="text-2" placeholder="Change text to track it" rows="4"></textarea>
