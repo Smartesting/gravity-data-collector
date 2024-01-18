@@ -1,5 +1,5 @@
 import CollectorWrapper from './CollectorWrapper'
-import { ProductionCollectorOptions, SessionTraitValue } from '../types'
+import { CollectorOptions, SessionTraitValue } from '../types'
 import windowExists from '../utils/windowExists'
 import { collectorInstaller } from './CollectorInstaller'
 
@@ -18,7 +18,7 @@ export default class GravityCollector {
     return _window._GravityCollector
   }
 
-  static init(options?: Partial<ProductionCollectorOptions>) {
+  static init(options?: Partial<CollectorOptions>) {
     if (!windowExists() && options?.window === undefined) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }

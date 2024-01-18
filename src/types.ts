@@ -246,7 +246,7 @@ export interface GravityDocument {
   title: string
 }
 
-export interface CommonCollectorOptions {
+export interface CollectorOptions {
   authKey: string
   requestInterval: number
   gravityServerUrl: string
@@ -260,20 +260,12 @@ export interface CommonCollectorOptions {
   window: typeof window
   enabledListeners: Listener[] | undefined
   enableEventRecording: boolean
-}
-
-export type ProductionCollectorOptions = CommonCollectorOptions & {
   enableVideoRecording: boolean
   enableVideoAnonymization: boolean
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
-}
-
-export type TestCollectorOptions = CommonCollectorOptions & {
   buildId: string | undefined
 }
-
-export type CollectorOptions = ProductionCollectorOptions & TestCollectorOptions
 
 export type RecordingSettings = Pick<
   CollectorOptions,
