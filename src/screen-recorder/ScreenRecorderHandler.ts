@@ -1,7 +1,11 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import { record } from 'rrweb'
 import { eventWithTime, listenerHandler } from '@rrweb/types'
-import RECORDING_SETTINGS, { WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from './recordingSettings'
+import RECORDING_SETTINGS, {
+  WITH_DEFAULT_ANONYMIZATION,
+  WITH_PARTIAL_ANONYMIZATION,
+  WITH_TOTAL_ANONYMIZATION,
+} from './recordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 
 interface ScreenRecordingOptions {
@@ -19,7 +23,9 @@ export default class ScreenRecorderHandler {
     const handleRecord = this.handle.bind(this)
     const anonymization = options?.enableAnonymization
       ? WITH_TOTAL_ANONYMIZATION
-      : { ...WITH_PARTIAL_ANONYMIZATION, maskTextSelector: options?.anonymizeSelectors ?? null }
+      : options?.anonymizeSelectors
+      ? { ...WITH_DEFAULT_ANONYMIZATION, maskTextSelector: options.anonymizeSelectors }
+      : { ...WITH_PARTIAL_ANONYMIZATION }
     // @ts-expect-error
     this.stopRecording = record({
       emit(event) {

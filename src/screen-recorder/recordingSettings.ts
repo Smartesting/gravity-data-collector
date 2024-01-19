@@ -43,6 +43,29 @@ export const WITH_PARTIAL_ANONYMIZATION = {
   maskTextFn: maskText,
 }
 
+export const WITH_DEFAULT_ANONYMIZATION = {
+  maskInputOptions: {
+    color: true,
+    date: true,
+    'datetime-local': true,
+    email: true,
+    month: true,
+    number: true,
+    range: true,
+    search: true,
+    tel: true,
+    text: true,
+    time: true,
+    url: true,
+    week: true,
+    textarea: true,
+    select: true,
+    password: true,
+  },
+  maskInputFn: maskInput,
+  maskTextFn: maskText,
+}
+
 export const WITH_TOTAL_ANONYMIZATION = {
   maskAllInputs: true,
   maskInputFn: maskInput,
