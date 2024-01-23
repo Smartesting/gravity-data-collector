@@ -1,4 +1,4 @@
 export const config = {
-  COLLECTOR_VERSION: '3.17.1',
+  COLLECTOR_VERSION: '4.0.0',
   ERRORS_TERMINATE_TRACKING: [403, 409, 422],
 }
