@@ -98,10 +98,11 @@ export interface CypressCommand {
 export type ListenerFn = (...values: any[]) => void
 
 export interface CypressObject {
-  listeners: (event?: any) => ListenerFn[]
-  removeListener: (event: any, listener: ListenerFn) => void
-  addListener: (event: any, listener: ListenerFn) => Listener
-  currentTest: {
+  listeners: (event: string) => ReadonlyArray<ListenerFn>
+  removeListener: (event: string, listener: ListenerFn) => void
+  addListener: (event: string, listener: ListenerFn) => void
+  emit: (event: string, ...values: any[]) => boolean
+  currentTest?: {
     title: string
     titlePath: string[]
   }
