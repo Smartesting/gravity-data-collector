@@ -1,5 +1,3 @@
-import Cypress from 'cypress'
-
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
@@ -97,7 +95,17 @@ export interface CypressCommand {
   type?: string
 }
 
-export type CypressObject = Cypress.Cypress & CyEventEmitter
+export type ListenerFn = (...values: any[]) => void
+
+export interface CypressObject {
+  listeners: (event?: any) => ListenerFn[]
+  removeListener: (event: any, listener: ListenerFn) => void
+  addListener: (event: any, listener: ListenerFn) => Listener
+  currentTest: {
+    title: string
+    titlePath: string[]
+  }
+}
 
 export type AsyncRequest = {
   url: string
