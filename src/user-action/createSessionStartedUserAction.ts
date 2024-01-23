@@ -6,12 +6,16 @@ import gravityDocument from '../utils/gravityDocument'
 import { makeCypressTestContext } from '../utils/makeCypressTestContext'
 
 function discoverBuildId() {
-  return (
-    rejectBlankString((window as { GRAVITY_BUILD_ID?: string }).GRAVITY_BUILD_ID) ??
-    rejectBlankString(process?.env?.GRAVITY_BUILD_ID) ??
-    rejectBlankString(process?.env?.REACT_APP_GRAVITY_BUILD_ID) ??
-    undefined
-  )
+  try {
+    return (
+      rejectBlankString((window as { GRAVITY_BUILD_ID?: string }).GRAVITY_BUILD_ID) ??
+      rejectBlankString(process.env.GRAVITY_BUILD_ID) ??
+      rejectBlankString(process.env.REACT_APP_GRAVITY_BUILD_ID) ??
+      undefined
+    )
+  } catch (e) {
+    return undefined
+  }
 }
 
 function rejectBlankString(value: string | undefined): string | null {
