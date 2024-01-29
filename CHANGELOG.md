@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.2...main)
+
+### Info
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
 ## [4.0.2](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.1...v4.0.2)
 
 ### Removed
