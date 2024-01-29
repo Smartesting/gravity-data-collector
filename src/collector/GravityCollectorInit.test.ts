@@ -45,7 +45,6 @@ import ResetEventListener from '../event-listeners/ResetEventListener'
 import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
 import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
-import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
@@ -225,10 +224,6 @@ describe.each([
       {
         listenerClass: ScrollEventListener,
         listenerOption: Listener.Scroll,
-      },
-      {
-        listenerClass: WheelEventListener,
-        listenerOption: Listener.Wheel,
       },
       {
         listenerClass: ToggleEventListener,

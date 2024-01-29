@@ -50,7 +50,6 @@ import ResetEventListener from '../event-listeners/ResetEventListener'
 import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
 import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
-import WheelEventListener from '../event-listeners/WheelEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
 import ToggleEventListener from '../event-listeners/ToggleEventListener'
@@ -94,7 +93,10 @@ class CollectorWrapper {
         if (!enableEventRecording || !enableVideoRecording) {
           this.terminateRecording(!enableEventRecording, !enableVideoRecording)
         }
-        this.userActionHandler.setAnonymizationSettings({ anonymizeSelectors, ignoreSelectors })
+        this.userActionHandler.setAnonymizationSettings({
+          anonymizeSelectors,
+          ignoreSelectors,
+        })
         if (enableVideoRecording) {
           this.screenRecorderHandler.initializeRecording({
             enableAnonymization: enableVideoAnonymization,
@@ -230,7 +232,6 @@ class CollectorWrapper {
       [Listener.MouseEnter]: MouseEnterEventListener,
       [Listener.MouseLeave]: MouseLeaveEventListener,
       [Listener.Scroll]: ScrollEventListener,
-      [Listener.Wheel]: WheelEventListener,
       [Listener.Toggle]: ToggleEventListener,
       [Listener.TouchStart]: TouchStartEventListener,
       [Listener.TouchMove]: TouchMoveEventListener,

@@ -17,6 +17,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Removed
 
+- ``wheel`` event capture, which could be the cause of slowdowns
+
 ### Fixed
 
 ## [4.0.1](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.0...v4.0.1)
