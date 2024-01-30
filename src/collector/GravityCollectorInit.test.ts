@@ -42,8 +42,6 @@ import FocusEventListener from '../event-listeners/FocusEventListener'
 import BlurEventListener from '../event-listeners/BlurEventListener'
 import SubmitEventListener from '../event-listeners/SubmitEventListener'
 import ResetEventListener from '../event-listeners/ResetEventListener'
-import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
-import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
@@ -212,14 +210,6 @@ describe.each([
       {
         listenerClass: BeforeUnloadEventListener,
         listenerOption: Listener.BeforeUnload,
-      },
-      {
-        listenerClass: MouseEnterEventListener,
-        listenerOption: Listener.MouseEnter,
-      },
-      {
-        listenerClass: MouseLeaveEventListener,
-        listenerOption: Listener.MouseLeave,
       },
       {
         listenerClass: ScrollEventListener,

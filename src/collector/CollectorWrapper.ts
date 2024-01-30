@@ -47,8 +47,6 @@ import FocusEventListener from '../event-listeners/FocusEventListener'
 import BlurEventListener from '../event-listeners/BlurEventListener'
 import SubmitEventListener from '../event-listeners/SubmitEventListener'
 import ResetEventListener from '../event-listeners/ResetEventListener'
-import MouseEnterEventListener from '../event-listeners/MouseEnterEventListener'
-import MouseLeaveEventListener from '../event-listeners/MouseLeaveEventListener'
 import ScrollEventListener from '../event-listeners/ScrollEventListener'
 import ResizeEventListener from '../event-listeners/ResizeEventListener'
 import SelectEventListener from '../event-listeners/SelectEventListener'
@@ -229,8 +227,6 @@ class CollectorWrapper {
       [Listener.Blur]: BlurEventListener,
       [Listener.Submit]: SubmitEventListener,
       [Listener.Reset]: ResetEventListener,
-      [Listener.MouseEnter]: MouseEnterEventListener,
-      [Listener.MouseLeave]: MouseLeaveEventListener,
       [Listener.Scroll]: ScrollEventListener,
       [Listener.Toggle]: ToggleEventListener,
       [Listener.TouchStart]: TouchStartEventListener,
