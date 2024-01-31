@@ -1,16 +1,16 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
-  CollectorOptions,
   IdentifySessionResponse,
   ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
+  UserActionType,
 } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { eventWithTime } from '@rrweb/types'
-import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 
 export interface SessionTraitsWithSessionId {
   sessionId: string
@@ -31,11 +31,6 @@ export interface GravityClientOptions {
   requestInterval: number
   onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
 }
-
-export type RecordingSettings = Pick<
-  CollectorOptions,
-  'enableEventRecording' | 'enableVideoRecording' | 'enableVideoAnonymization'
->
 
 export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
@@ -70,15 +65,24 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       },
       locked: true,
     })
-    recordingSettingsDispatcher.subscribe(({ enableEventRecording, enableVideoRecording }) => {
-      if (enableEventRecording) {
-        this.sessionUserActionBuffer.activate()
-        this.sessionTraitsBuffer.activate()
-      }
-      if (enableVideoRecording) {
-        this.screenRecordBuffer.activate()
-      }
-    })
+    recordingSettingsDispatcher.subscribe(
+      ({ enableEventRecording, enableVideoRecording, anonymizeSelectors, ignoreSelectors }) => {
+        if (!isBlank(ignoreSelectors) || !isBlank(anonymizeSelectors)) {
+          // remove all buffered userActions and videos because they may have info to anonymize/ignore
+          this.sessionUserActionBuffer.clear(
+            (sessionUserAction) => sessionUserAction.type === UserActionType.SessionStarted,
+          )
+          this.screenRecordBuffer.clear()
+        }
+        if (enableEventRecording) {
+          this.sessionUserActionBuffer.activate()
+          this.sessionTraitsBuffer.activate()
+        }
+        if (enableVideoRecording) {
+          this.screenRecordBuffer.activate()
+        }
+      },
+    )
   }
 
   reset() {
@@ -167,4 +171,10 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       screenRecords,
     }
   }
+}
+
+function isBlank(text: string | undefined) {
+  if (text === undefined) return true
+  if (text === null) return true
+  return text.length === 0
 }

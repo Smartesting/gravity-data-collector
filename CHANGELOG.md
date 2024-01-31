@@ -23,11 +23,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.1...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.3...main)
 
 ### Info
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [4.0.3](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.2...v4.0.3)
+
+### Removed
+
+`mouseenter` and `mouseleave` events capture, which could be the cause of slowdowns
+
+## [4.0.2](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.1...v4.0.2)
+
+### Removed
+
+- `wheel` event capture, which could be the cause of slowdowns
+
+## [4.0.1](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.0...v4.0.1)
+
+### Fixed
+
+- catch exception `Uncaught ReferenceError: process is not defined` in method `discoverBuildId`
+
+## [4.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.1...v4.0.0)
+
+### Added
+
+- Add options `anonymizeSelectors` & `ignoreSelectors` to precisely control recording of some elements
 
 ### Changed
 
@@ -37,11 +69,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   - `touchmove`
   - `resize`
 
-### Deprecated
-
 ### Removed
 
+- remove the following deprecated options:
+  - `excludeRegex`: use `selectorsOptions` instead
+  - `customSelector`: use `selectorsOptions` instead
+  - `originsToRecord`: use `recordRequestsFor` instead
+
 ### Fixed
+
+- fix exception `Uncaught ReferenceError: process is not defined` in method `discoverBuildId`
 
 ## [3.17.1](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.0...v3.17.1)
 
@@ -156,7 +193,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Allow specifying window when initializing collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
+- Allow specifying window when initializing
+  collector [#24](https://github.com/Smartesting/gravity-data-collector/pull/24)
 
 ### Fixed
 

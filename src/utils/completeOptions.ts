@@ -1,9 +1,10 @@
-import { CollectorOptions, CollectorOptionsWithWindow, CreateSelectorsOptions, QueryType } from '../types'
+import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
+import { checkCssSelector } from './cssSelectorUtils'
 
 export const DEFAULT_SESSION_REJECTION = () => false
 
-export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptionsWithWindow {
+export default function completeOptions(options?: Partial<CollectorOptions>): CollectorOptions {
   const authKeyError = new Error('No AuthKey provided')
   if (options == null) {
     throw authKeyError
@@ -17,13 +18,20 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     maxDelay: 0,
     requestInterval: 1000,
     gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-    excludeRegex: null,
     sessionsPercentageKept: 100,
     rejectSession: DEFAULT_SESSION_REJECTION,
+    enabledListeners: undefined,
     enableEventRecording: true,
-    enableVideoRecording: options.disableVideoRecording === undefined ? false : !options.disableVideoRecording,
+    enableVideoRecording: false,
     enableVideoAnonymization: true,
     enableLogging: true,
+    window: options.window ?? window,
+    buildId: undefined,
+    onPublish: undefined,
+    recordRequestsFor: undefined,
+    selectorsOptions: undefined,
+    anonymizeSelectors: undefined,
+    ignoreSelectors: undefined,
   }
 
   const debugDefaultOptions = {
@@ -31,14 +39,19 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     maxDelay: 500,
   }
 
-  const completedOptions: CollectorOptionsWithWindow = {
+  const completedOptions: CollectorOptions = {
     ...(debug ? debugDefaultOptions : defaultOptions),
     ...sanitizeOptions(options),
-    window: options.window ?? window,
   }
 
   checkPropertyPercentage(completedOptions, 'sessionsPercentageKept')
   checkSelectorsOptions(completedOptions.selectorsOptions ?? {})
+  if (!checkCssSelector(completedOptions.anonymizeSelectors)) {
+    throw new Error("Option 'anonymizeSelectors' is not a valid CSS selector")
+  }
+  if (!checkCssSelector(completedOptions.ignoreSelectors)) {
+    throw new Error("Option 'ignoreSelectors' is not a valid CSS selector")
+  }
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError

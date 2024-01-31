@@ -1,5 +1,5 @@
-import unique from 'unique-selector'
 import {
+  AnonymizationSettings,
   CreateSelectorsOptions,
   ElementPosition,
   KeyUserActionData,
@@ -18,33 +18,33 @@ import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
+import { matchClosest } from '../utils/cssSelectorUtils'
 
-interface CreateTargetedUserActionOptions {
+export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
-  excludeRegex: RegExp | null
-  customSelector: string | undefined
   document: Document
 }
 
-const createTargetedUserActionDefaultOptions: CreateTargetedUserActionOptions = {
+const CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS: CreateTargetedUserActionOptions = {
   selectorsOptions: undefined,
-  excludeRegex: null,
-  customSelector: undefined,
   document: getDocument(),
 }
 
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
+  { anonymizeSelectors, ignoreSelectors }: AnonymizationSettings,
   customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
   const options = {
-    ...createTargetedUserActionDefaultOptions,
+    ...CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS,
     ...customOptions,
   }
 
   const target = event.target as HTMLElement
   if (target === null || target === undefined || event.target === options.document) return null
+
+  if (matchClosest(target, ignoreSelectors)) return null
 
   const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
     ? {
@@ -55,7 +55,7 @@ export function createTargetedUserAction(
 
   return {
     type,
-    target: createActionTarget(target, options),
+    target: createActionTarget(target, options, anonymizeSelectors),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -145,8 +145,12 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {
-  const { customSelector, document, selectorsOptions } = options
+function createActionTarget(
+  target: HTMLElement | Window,
+  options: CreateTargetedUserActionOptions,
+  anonymizeSelectors: string | undefined,
+): UserActionTarget {
+  const { document, selectorsOptions } = options
   const element = isHtmlElement(target) ? target.tagName.toLocaleLowerCase() : 'window'
   const actionTarget: UserActionTarget = { element }
 
@@ -160,20 +164,7 @@ function createActionTarget(target: HTMLElement | Window, options: CreateTargete
 
     actionTarget.selectors = createSelectors(target, selectorsOptions)
 
-    const customSelectorAttribute = customSelector !== undefined ? target.getAttribute(customSelector) : null
-
-    if (customSelectorAttribute !== null) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      actionTarget.selector = `[${customSelector}=${customSelectorAttribute}]`
-    } else {
-      try {
-        actionTarget.selector = unique(target, { excludeRegex: options.excludeRegex })
-      } catch {
-        // ignore
-      }
-    }
-
-    const displayInfo = createTargetDisplayInfo(target, document)
+    const displayInfo = createTargetDisplayInfo(target, document, anonymizeSelectors)
     if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
   }
 

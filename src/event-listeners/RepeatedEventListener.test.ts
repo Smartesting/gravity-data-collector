@@ -38,7 +38,12 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {})
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new MouseEvent('click'),
+          'click',
+          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
+          {},
+        )
       })
     })
 
@@ -61,7 +66,12 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {})
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new MouseEvent('click'),
+          'click',
+          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
+          {},
+        )
       })
     })
 
@@ -87,7 +97,12 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledTimes(3)
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {})
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new MouseEvent('click'),
+          'click',
+          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
+          {},
+        )
       })
     })
   })

@@ -150,6 +150,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
               sessionRecording: true,
               videoRecording: true,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             }),
           )
           .install()
@@ -170,6 +172,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
               sessionRecording: true,
               videoRecording: false,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             }),
           )
           .install()
@@ -190,12 +194,14 @@ describe('Session recording (events & video) depends on remote Gravity settings'
               sessionRecording: true,
               videoRecording: true,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             }),
           )
           .install()
 
         await emitEachEventKind(collector)
-        expect(getLastCallFirstArgument(initializeScreenRecording).anonymization).toBeTruthy()
+        expect(getLastCallFirstArgument(initializeScreenRecording).enableAnonymization).toBeTruthy()
       })
 
       it('records non-anonymized videos', async () => {
@@ -206,12 +212,14 @@ describe('Session recording (events & video) depends on remote Gravity settings'
               sessionRecording: true,
               videoRecording: true,
               videoAnonymization: false,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             }),
           )
           .install()
 
         await emitEachEventKind(collector)
-        expect(getLastCallFirstArgument(initializeScreenRecording).anonymization).toBeFalsy()
+        expect(getLastCallFirstArgument(initializeScreenRecording).enableAnonymization).toBeFalsy()
       })
 
       it('records nothing', async () => {
@@ -221,6 +229,8 @@ describe('Session recording (events & video) depends on remote Gravity settings'
               sessionRecording: false,
               videoRecording: false,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             }),
           )
           .install()

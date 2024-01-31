@@ -46,7 +46,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@3.17.1/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@4.0.3/dist/gravity-logger-min.js"
 ></script>
 ```
 
@@ -74,19 +74,18 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | gravityServerUrl         | String                   | Gravity server URL                                                                                                                                                                              | https://api.gravity.smartesting.com |
 | debug                    | Boolean                  | Logs user action in the console instead of sending them to Gravity                                                                                                                              | false                               |
 | maxDelay                 | Integer                  | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                             | 500                                 |
-| excludeRegex             | RegExp                   | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>Regular expression of ID and class names to ignore in selector computation.                                                  | null                                |
-| customSelector           | String (optional)        | <u>Deprecated</u>, use <code>selectorsOptions</code> instead. <br/>The attribute to use as a selector if defined on an HTML element targeted by a user action.                                  | undefined                           |
 | selectorsOptions         | Object (optional)        | See [Work with selectors](#work-with-selectors).                                                                                                                                                | undefined                           |
 | sessionsPercentageKept   | [0..100]                 | Rate of sessions to be collected                                                                                                                                                                | 100                                 |
 | rejectSession            | function `() => boolean` | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code> | `() => false`                       |
 | onPublish                | function (optional)      | Adds a function called after each publish to the gravity server.                                                                                                                                | undefined                           |
-| originsToRecord          | String[] (optional)      | <u>Deprecated</u>, renamed <code>recordRequestsFor</code>.                                                                                                                                      | undefined                           |
 | recordRequestsFor        | String[] (optional)      | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                         | undefined                           |
 | buildId                  | String (optional)        | The build reference when running tests                                                                                                                                                          | undefined                           |
 | enableEventRecording     | Boolean (optional)       | Set to `true` to activate any recording (event & video) (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                    | true                                |
 | enableVideoRecording     | Boolean (optional)       | Set to `false` to deactivate video recording (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                               | false                               |
 | enableVideoAnonymization | Boolean (optional)       | Set to `false` to deactivate video anonymization (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                           | true                                |
 | enableLogging            | Boolean (optional)       | Set to `false` to deactivate logging (only in debug mode)                                                                                                                                       | true                                |
+| anonymizeSelectors       | string (optional)        | HTML elements (and descendants) matching this CSS selector will be anonymized (only in debug mode, otherwise this option is controlled from the Gravity interface)                              | undefined                           |
+| ignoreSelectors          | string (optional)        | HTML elements (and descendants) matching this CSS selector will not be recorded (only in debug mode, otherwise this option is controlled from the Gravity interface)                            | undefined                           |
 
 ## Features
 

@@ -1,5 +1,4 @@
-import { CypressObject, GravityDocument } from '../types'
-import { ListenerFn } from 'eventemitter2'
+import { CypressObject, GravityDocument, ListenerFn } from '../types'
 import { vi } from 'vitest'
 
 export function mockWindowScreen() {
@@ -68,15 +67,16 @@ export function mockKeyDown(target: HTMLElement, key: string, code: string): Key
   } as unknown as KeyboardEvent
 }
 
-export function mockCypressObject(): CypressObject {
+export function mockCypressObject(attributes: Partial<CypressObject> = {}): CypressObject {
   const listeners: Record<string, ListenerFn[]> = {}
-  // noinspection JSUnusedGlobalSymbols
-  const cypress = {
-    listeners: (event: string): readonly ListenerFn[] => listeners[event] ?? [],
-    addListener: (event: string, listener: ListenerFn) => {
+  return {
+    listeners(event: string) {
+      return listeners[event] ?? []
+    },
+    addListener(event: string, listener: ListenerFn) {
       Array.isArray(listeners[event]) ? listeners[event].push(listener) : (listeners[event] = [listener])
     },
-    removeListener: (event: string, listener: ListenerFn) => {
+    removeListener(event: string, listener: ListenerFn) {
       if (Array.isArray(listeners[event])) {
         const index = listeners[event].indexOf(listener)
         if (index !== -1) {
@@ -93,8 +93,8 @@ export function mockCypressObject(): CypressObject {
       }
       return false
     },
+    ...attributes,
   }
-  return cypress as CypressObject
 }
 
 type MockFetchParams<T> = Partial<{

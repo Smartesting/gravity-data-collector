@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SessionStorageTestNameHandler from './SessionStorageTestNameHandler'
+import { mockCypressObject } from '../test-utils/mocks'
 
 describe('SessionStorageTestNameHandler', () => {
-  const cypressObject = {
+  const cypressObject = mockCypressObject({
     currentTest: {
       title: '',
       titlePath: ['test'],
     },
-  }
+  })
 
   beforeEach(() => {
     window.sessionStorage.clear()

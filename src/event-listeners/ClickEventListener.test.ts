@@ -4,6 +4,7 @@ import ClickEventListener from '../event-listeners/ClickEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
+import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
 
 describe('ClickEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -17,7 +18,7 @@ describe('ClickEventListener', () => {
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
 
-  it('calls createTargetedUserAction with the excludeRegex option', async () => {
+  it('calls createTargetedUserAction with the "selectorOptions" option', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
@@ -26,34 +27,22 @@ describe('ClickEventListener', () => {
       'div',
     )
 
-    new ClickEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
+    new ClickEventListener(userActionHandler, domWindow, {
+      selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+    }).init()
 
     const search = await waitFor(() => getByRole(element, 'searchbox'))
     fireEvent.click(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', { excludeRegex: /.*/ })
-    })
-  })
-
-  it('calls createTargetedUserAction with the customSelector option', async () => {
-    const { element, domWindow } = createElementInJSDOM(
-      `
-            <div>
-                <input id="text-5" type="search" />
-            </div>`,
-      'div',
-    )
-
-    new ClickEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
-
-    const search = await waitFor(() => getByRole(element, 'searchbox'))
-    fireEvent.click(search)
-
-    await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
-        customSelector: 'data-testid',
-      })
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+        new MouseEvent('click'),
+        'click',
+        NO_ANONYMIZATION_SETTINGS,
+        {
+          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+        },
+      )
     })
   })
 

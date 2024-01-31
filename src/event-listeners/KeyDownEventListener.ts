@@ -13,11 +13,21 @@ class KeyDownEventListener extends TargetedEventListener {
   userActionType = UserActionType.KeyDown
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = createTargetedUserAction(
+      event,
+      this.userActionType,
+      this.userActionHandler.getAnonymizationSettings(),
+      this.options,
+    )
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
 
     if (recordChangeEvent(event.code, event.target)) {
-      const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
+      const changeUserAction = createTargetedUserAction(
+        event,
+        UserActionType.Change,
+        this.userActionHandler.getAnonymizationSettings(),
+        this.options,
+      )
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
         changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue)
         this.userActionHistory.push(changeUserAction)
@@ -69,9 +79,9 @@ function compareTargetedUserAction(tua1: TargetedUserAction, tua2: TargetedUserA
 
 function makeMinimalTargetedUserAction(userAction: TargetedUserAction) {
   const { type, target } = userAction
-  const { element, selector, selectors } = target
+  const { element, selectors } = target
 
-  return { type, target: { element, selector, selectors } }
+  return { type, target: { element, selectors } }
 }
 
 export default KeyDownEventListener

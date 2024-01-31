@@ -1,5 +1,3 @@
-import Cypress from 'cypress'
-
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
@@ -97,7 +95,18 @@ export interface CypressCommand {
   type?: string
 }
 
-export type CypressObject = Cypress.Cypress & CyEventEmitter
+export type ListenerFn = (...values: any[]) => void
+
+export interface CypressObject {
+  listeners: (event: string) => ReadonlyArray<ListenerFn>
+  removeListener: (event: string, listener: ListenerFn) => void
+  addListener: (event: string, listener: ListenerFn) => void
+  emit: (event: string, ...values: any[]) => boolean
+  currentTest?: {
+    title: string
+    titlePath: string[]
+  }
+}
 
 export type AsyncRequest = {
   url: string
@@ -186,10 +195,6 @@ export type HTMLInputWithValue = HTMLInputElement | HTMLTextAreaElement
 
 export interface UserActionTarget {
   element: string
-  /**
-   * @deprecated Use selectors instead.
-   */
-  selector?: string
   selectors?: Selectors
   value?: string
   type?: string
@@ -256,38 +261,43 @@ export interface CollectorOptions {
   gravityServerUrl: string
   debug: boolean
   maxDelay: number
-  /**
-   * @deprecated Use selectorsOptions instead.
-   */
-  excludeRegex: RegExp | null
-  /**
-   * @deprecated Use selectorsOptions instead.
-   */
-  customSelector?: string
-  selectorsOptions?: Partial<CreateSelectorsOptions>
+  selectorsOptions: Partial<CreateSelectorsOptions> | undefined
   sessionsPercentageKept: number
   rejectSession: () => boolean
-  onPublish?: (userActions: ReadonlyArray<SessionUserAction>) => void
-  /**
-   * @deprecated Use recordRequestsFor instead.
-   */
-  originsToRecord?: string[]
-  recordRequestsFor?: string[]
-  window?: typeof window
-  enabledListeners?: Listener[]
-  buildId?: string
-  /**
-   * @deprecated Use enableVideoRecording instead (reversed).
-   */
-  disableVideoRecording?: boolean
-  enableEventRecording?: boolean
-  enableVideoRecording?: boolean
-  enableVideoAnonymization?: boolean
-  enableLogging?: boolean
+  onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
+  recordRequestsFor: string[] | undefined
+  window: typeof window
+  enabledListeners: Listener[] | undefined
+  enableEventRecording: boolean
+  enableVideoRecording: boolean
+  enableVideoAnonymization: boolean
+  enableLogging: boolean | undefined
+  anonymizeSelectors: string | undefined
+  ignoreSelectors: string | undefined
+  buildId: string | undefined
 }
 
-export type CollectorOptionsWithWindow = CollectorOptions & {
-  window: typeof window
+export type RecordingSettings = Pick<
+  CollectorOptions,
+  | 'enableEventRecording'
+  | 'enableVideoRecording'
+  | 'enableVideoAnonymization'
+  | 'anonymizeSelectors'
+  | 'ignoreSelectors'
+>
+export const NO_RECORDING_SETTINGS: RecordingSettings = {
+  enableEventRecording: false,
+  enableVideoRecording: false,
+  enableVideoAnonymization: false,
+  anonymizeSelectors: undefined,
+  ignoreSelectors: undefined,
+}
+
+export type AnonymizationSettings = Pick<RecordingSettings, 'anonymizeSelectors' | 'ignoreSelectors'>
+
+export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
+  anonymizeSelectors: undefined,
+  ignoreSelectors: undefined,
 }
 
 export interface CreateSelectorsOptions {
@@ -359,6 +369,8 @@ export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
   videoAnonymization: boolean
+  anonymizeSelectors: string | undefined
+  ignoreSelectors: string | undefined
 }
 
 export interface ReadSessionCollectionSettingsResponse {

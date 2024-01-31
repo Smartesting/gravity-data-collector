@@ -16,7 +16,7 @@ import {
   buildGravityTrackingSessionRecordingApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
-import { RecordingSettingsDispatcher } from './RecordingSettingsDispatcher'
+import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { config } from '../config'
 
 type HttpGravityClientOptions = GravityClientOptions & {

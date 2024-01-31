@@ -7,6 +7,7 @@ import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class ChangeEventListener extends TargetedEventListener {
   userActionType = UserActionType.Change
+
   constructor(userActionHandler: IUserActionHandler, window: Window, options: TargetEventListenerOptions = {}) {
     super(userActionHandler, window, options)
   }
@@ -15,7 +16,12 @@ class ChangeEventListener extends TargetedEventListener {
     if (isTextField(event.target)) return
 
     const elementTarget = event.target as HTMLInputWithValue
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = createTargetedUserAction(
+      event,
+      this.userActionType,
+      this.userActionHandler.getAnonymizationSettings(),
+      this.options,
+    )
     if (userAction != null) {
       userAction.target.value = sanitizeHTMLElementValue(elementTarget)
       this.userActionHandler.handle(userAction)

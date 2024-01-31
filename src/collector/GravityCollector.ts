@@ -22,12 +22,10 @@ export default class GravityCollector {
     if (!windowExists() && options?.window === undefined) {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
-    const windowToUse = (options?.window ?? window) as any
-    const wrapper = collectorInstaller(options)
-      .withCookieSessionIdHandler(windowToUse)
-      .withCookieTimeoutHandler(MAX_SESSION_DURATION, windowToUse)
-      .install()
-    windowToUse._GravityCollector = new GravityCollector(wrapper)
+    const installer = collectorInstaller(options)
+      .withCookieSessionIdHandler()
+      .withCookieTimeoutHandler(MAX_SESSION_DURATION)
+    installer.window()._GravityCollector = new GravityCollector(installer.install())
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {

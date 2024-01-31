@@ -1,14 +1,8 @@
-import { RecordingSettings } from './AbstractGravityClient'
-
-export const ALL_RECORDING_SETTINGS_DISABLED: RecordingSettings = {
-  enableEventRecording: false,
-  enableVideoRecording: false,
-  enableVideoAnonymization: false,
-}
+import { NO_RECORDING_SETTINGS, RecordingSettings } from '../types'
 
 type RecordingSettingsListener = (settings: RecordingSettings) => void
 
-export class RecordingSettingsDispatcher {
+export default class RecordingSettingsDispatcher {
   private readonly listeners: Array<RecordingSettingsListener> = []
 
   subscribe(listener: RecordingSettingsListener): void {
@@ -20,6 +14,6 @@ export class RecordingSettingsDispatcher {
   }
 
   terminate() {
-    this.dispatch(ALL_RECORDING_SETTINGS_DISABLED)
+    this.dispatch(NO_RECORDING_SETTINGS)
   }
 }

@@ -39,17 +39,44 @@ export const WITH_PARTIAL_ANONYMIZATION = {
     select: true,
     password: true,
   },
-  maskInputFn: (text: string) => text.replace(/[^@.]/g, '#'),
+  maskInputFn: maskInput,
+  maskTextFn: maskText,
+}
+
+export const WITH_DEFAULT_ANONYMIZATION = {
+  maskInputOptions: {
+    color: true,
+    date: true,
+    'datetime-local': true,
+    email: true,
+    month: true,
+    number: true,
+    range: true,
+    search: true,
+    tel: true,
+    text: true,
+    time: true,
+    url: true,
+    week: true,
+    textarea: true,
+    select: true,
+    password: true,
+  },
+  maskInputFn: maskInput,
+  maskTextFn: maskText,
 }
 
 export const WITH_TOTAL_ANONYMIZATION = {
   maskAllInputs: true,
-  maskInputFn: (text: string) => text.replace(/[^-_/:,@.;?! ]/g, '#'),
+  maskInputFn: maskInput,
   maskTextSelector: '*',
-  maskTextFn: (text: string) => {
-    const trimmedText = text.trim()
-    if (trimmedText.length > 0) {
-      return trimmedText.replace(/[^-_/:,@.;?! ]/g, '#')
-    }
-  },
+  maskTextFn: maskText,
+}
+
+export function maskText(text: string) {
+  return text.trim().replace(/[^-_/:,@.;?! ]/g, '#')
+}
+
+function maskInput(text: string) {
+  return text.trim().replace(/[^@.]/g, '#')
 }

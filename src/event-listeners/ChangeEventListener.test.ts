@@ -5,6 +5,7 @@ import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
+import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
 
 describe('ChangeEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -20,7 +21,7 @@ describe('ChangeEventListener', () => {
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
 
-  it('calls createTargetedUserAction with the excludeRegex option', async () => {
+  it('calls createTargetedUserAction with the "selectorOptions" option', async () => {
     const { element, domWindow } = createElementInJSDOM(
       `
       <div>
@@ -29,34 +30,22 @@ describe('ChangeEventListener', () => {
       'div',
     )
 
-    new ChangeEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
+    new ChangeEventListener(userActionHandler, domWindow, {
+      selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+    }).init()
 
     const checkbox = await waitFor(() => getByRole(element, 'checkbox'))
     fireEvent.change(checkbox)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', { excludeRegex: /.*/ })
-    })
-  })
-
-  it('calls createTargetedUserAction with the customSelector option', async () => {
-    const { element, domWindow } = createElementInJSDOM(
-      `
-      <div>
-        <input id='text-5' type='checkbox' />
-      </div>`,
-      'div',
-    )
-
-    new ChangeEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
-
-    const checkbox = await waitFor(() => getByRole(element, 'checkbox'))
-    fireEvent.change(checkbox)
-
-    await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', {
-        customSelector: 'data-testid',
-      })
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+        new Event('change'),
+        'change',
+        NO_ANONYMIZATION_SETTINGS,
+        {
+          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+        },
+      )
     })
   })
 

@@ -1,9 +1,10 @@
 import TestNameHandler from './TestNameHandler'
+import { CypressObject } from '../types'
 
 const GRAVITY_SESSION_STORAGE_KEY_TEST_NAME = 'gravity-test-name'
 
 export default class SessionStorageTestNameHandler implements TestNameHandler {
-  getCurrentTestName(cypress?: any): string | null {
+  getCurrentTestName(cypress?: CypressObject): string | null {
     if (cypress?.currentTest !== undefined) {
       return cypress.currentTest.titlePath.join(' > ')
     }

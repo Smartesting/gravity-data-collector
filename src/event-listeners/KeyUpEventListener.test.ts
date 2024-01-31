@@ -4,6 +4,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
+import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
 
 describe('KeyUpEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -18,7 +19,7 @@ describe('KeyUpEventListener', () => {
       createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
     })
 
-    it('calls createTargetedUserAction with the excludeRegex option', async () => {
+    it('calls createTargetedUserAction with the "selectorOptions" option', async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
             <div>
@@ -27,36 +28,26 @@ describe('KeyUpEventListener', () => {
         'div',
       )
 
-      new KeyUpEventListener(userActionHandler, domWindow, { excludeRegex: /.*/ }).init()
+      new KeyUpEventListener(userActionHandler, domWindow, {
+        selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+      }).init()
       const search = await waitFor(() => getByRole(element, 'searchbox'))
 
       fireEvent.keyUp(search)
 
       await waitFor(() => {
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keyup'), 'keyup', {
-          excludeRegex: /.*/,
-        })
-      })
-    })
-
-    it('calls createTargetedUserAction with the customSelector option', async () => {
-      const { element, domWindow } = createElementInJSDOM(
-        `
-            <div>
-                <input id="text-5" type="search" />
-            </div>`,
-        'div',
-      )
-
-      new KeyUpEventListener(userActionHandler, domWindow, { customSelector: 'data-testid' }).init()
-      const search = await waitFor(() => getByRole(element, 'searchbox'))
-
-      fireEvent.keyUp(search)
-
-      await waitFor(() => {
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keyup'), 'keyup', {
-          customSelector: 'data-testid',
-        })
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          new KeyboardEvent('keyup'),
+          'keyup',
+          NO_ANONYMIZATION_SETTINGS,
+          {
+            selectorsOptions: {
+              queries: [QueryType.id],
+              excludedQueries: [QueryType.tag],
+              attributes: ['myAttribute'],
+            },
+          },
+        )
       })
     })
 

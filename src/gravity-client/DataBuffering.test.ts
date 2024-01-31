@@ -81,5 +81,27 @@ describe('DataBuffering', () => {
       expect(handleData).to.toHaveBeenCalledTimes(2)
       expect(handleData).to.toHaveBeenNthCalledWith(2, [42])
     })
+
+    it('the buffer can be cleared', async () => {
+      await dataBuffer.addData(3.14)
+      await dataBuffer.addData(2.71)
+      await dataBuffer.addData(1.618)
+      dataBuffer.clear()
+
+      await dataBuffer.addData(42)
+      vi.advanceTimersByTime(handleInterval)
+      expect(handleData).to.toHaveBeenCalledTimes(1)
+      expect(handleData).to.toHaveBeenCalledWith([42])
+    })
+
+    it('the buffer can be partially cleared', async () => {
+      await dataBuffer.addData(3.14)
+      await dataBuffer.addData(2.71)
+      await dataBuffer.addData(1.618)
+      dataBuffer.clear((n) => n > 3)
+      vi.advanceTimersByTime(handleInterval)
+      expect(handleData).to.toHaveBeenCalledTimes(1)
+      expect(handleData).to.toHaveBeenCalledWith([3.14])
+    })
   })
 })

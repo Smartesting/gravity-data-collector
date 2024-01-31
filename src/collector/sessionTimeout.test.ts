@@ -45,6 +45,8 @@ describe.each([
               sessionRecording: true,
               videoRecording: true,
               videoAnonymization: true,
+              anonymizeSelectors: undefined,
+              ignoreSelectors: undefined,
             },
           },
         }),
@@ -97,22 +99,22 @@ describe.each([
     await vi.advanceTimersByTimeAsync(300)
     expect(handleSessionUserActions).toHaveBeenCalledTimes(1)
 
-    // first user event emits (burst #1)
-    await emitEachEventKind(collector, 'burst-1')
+    // first user event emits (wave #1)
+    await emitEachEventKind(collector, 'wave-1')
 
-    // requestInterval #4 => flush burst-1
+    // requestInterval #4 => flush wave-1
     await vi.advanceTimersByTimeAsync(300)
     expect(handleSessionUserActions).toHaveBeenCalledTimes(2)
     expect(handleSessionUserActions.mock.lastCall).toStrictEqual([
       [
         {
           sessionId: 'sessionId-1',
-          target: { element: 'burst-1' },
+          target: { element: 'wave-1' },
         },
       ],
     ])
-    expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-1', { id: 'burst-1' }])
-    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'burst-1' }]])
+    expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-1', { id: 'wave-1' }])
+    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'wave-1' }]])
 
     await vi.advanceTimersByTimeAsync(2000)
     await collector.userActionHandler.handle(
@@ -137,8 +139,8 @@ describe.each([
       ],
     ])
 
-    // second user event emits (burst #2)
-    await emitEachEventKind(collector, 'burst-2')
+    // second user event emits (wave #2)
+    await emitEachEventKind(collector, 'wave-2')
 
     // requestInterval #6 => flush
     await vi.advanceTimersByTimeAsync(300)
@@ -147,12 +149,12 @@ describe.each([
       [
         {
           sessionId: 'sessionId-2',
-          target: { element: 'burst-2' },
+          target: { element: 'wave-2' },
         },
       ],
     ])
-    expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-2', { id: 'burst-2' }])
-    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-2', [{ data: 'burst-2' }]])
+    expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-2', { id: 'wave-2' }])
+    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-2', [{ data: 'wave-2' }]])
   })
 })
 
