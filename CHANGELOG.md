@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- add optional `interactiveTarget` field in `TargetedUserAction` to save ancestor element holding click listener
+
 ### Changed
 
 ### Deprecated

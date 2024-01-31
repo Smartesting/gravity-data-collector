@@ -20,6 +20,14 @@ import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
 import { matchClosest } from '../utils/cssSelectorUtils'
 
+const ANCESTOR_HOLDING_CLICK_LISTENER_TAGS: ReadonlyArray<keyof HTMLElementTagNameMap> = [
+  'a',
+  'button',
+  'nav',
+  'input',
+  'li',
+]
+
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
   document: Document
@@ -53,7 +61,7 @@ export function createTargetedUserAction(
       }
     : undefined
 
-  return {
+  const targetedUserAction: TargetedUserAction = {
     type,
     target: createActionTarget(target, options, anonymizeSelectors),
     location: location(),
@@ -62,6 +70,13 @@ export function createTargetedUserAction(
     viewportData: viewport(),
     userActionData,
   }
+  if (type === UserActionType.Click) {
+    const userTarget = target.closest(ANCESTOR_HOLDING_CLICK_LISTENER_TAGS.join(','))
+    if (userTarget && userTarget !== target) {
+      targetedUserAction.interactiveTarget = createActionTarget(userTarget as HTMLElement, options, anonymizeSelectors)
+    }
+  }
+  return targetedUserAction
 }
 
 function hasGetBoundingClientRect(target: HTMLElement): boolean {

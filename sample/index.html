@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
   <title>Gravity Data Collector - Sandbox</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
   <script async id="logger" src="../dist-sandbox/bundle.js" type="text/javascript"></script>
   <script>
     const script = document.querySelector("#logger");
@@ -236,8 +238,25 @@
       <span kind="sensitive">s3cr3t!</span>
     </div>
   </fieldset>
+
+
+  <fieldset>
+    <legend>Nested elements</legend>
+    <button type="button" onclick="console.log('John')" style="padding:6px;margin:6px">
+      <div style="background: #AAA; padding:6px;margin:6px; display: flex">
+        <span class="material-icons" style="background: #CCC; padding:6px;margin:6px">account_circle</span>
+        <span style="font-size: large; background: #CCC; padding:6px;margin:6px">John</span>
+      </div>
+    </button>
+    <button type="button" id="Samantha" style="padding:6px;margin:6px">
+      <div style="background: #AAA; padding:6px;margin:6px; display: flex">
+        <span class="material-icons" style="background: #CCC; padding:6px;margin:6px">account_circle</span>
+        <span style="font-size: large; background: #CCC; padding:6px;margin:6px">Samantha</span>
+      </div>
+    </button>
+  </fieldset>
   <p>
 </div>
-
+<script>document.querySelector('#Samantha').addEventListener('click', ()=>console.log('Samantha'))</script>
 </body>
 </html>

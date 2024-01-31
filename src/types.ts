@@ -141,6 +141,7 @@ export type SessionStartedUserAction = {
 
 export type TargetedUserAction = {
   target: UserActionTarget
+  interactiveTarget?: UserActionTarget
   userActionData?: UserActionData
 } & UserActionProperties
 
