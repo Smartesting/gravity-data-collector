@@ -71,9 +71,13 @@ export function createTargetedUserAction(
     userActionData,
   }
   if (type === UserActionType.Click) {
-    const userTarget = target.closest(ANCESTOR_HOLDING_CLICK_LISTENER_TAGS.join(','))
-    if (userTarget && userTarget !== target) {
-      targetedUserAction.interactiveTarget = createActionTarget(userTarget as HTMLElement, options, anonymizeSelectors)
+    const interactiveTarget = target.closest(ANCESTOR_HOLDING_CLICK_LISTENER_TAGS.join(','))
+    if (interactiveTarget && interactiveTarget !== target) {
+      targetedUserAction.interactiveTarget = createActionTarget(
+        interactiveTarget as HTMLElement,
+        options,
+        anonymizeSelectors,
+      )
     }
   }
   return targetedUserAction
