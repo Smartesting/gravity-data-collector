@@ -23,11 +23,49 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.3...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.4...main)
 
 ### Info
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [4.0.4](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.3...v4.0.4)
+
+### Added
+
+- add optional `interactiveTarget` field in `TargetedUserAction` to save ancestor element holding click listener
+
+## [4.0.3](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.2...v4.0.3)
+
+### Removed
+
+`mouseenter` and `mouseleave` events capture, which could be the cause of slowdowns
+
+## [4.0.2](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.1...v4.0.2)
+
+### Removed
+
+- `wheel` event capture, which could be the cause of slowdowns
+
+## [4.0.1](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.0...v4.0.1)
+
+### Fixed
+
+- catch exception `Uncaught ReferenceError: process is not defined` in method `discoverBuildId`
+
+## [4.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v3.17.1...v4.0.0)
+
+### Added
+
+- Add options `anonymizeSelectors` & `ignoreSelectors` to precisely control recording of some elements
 
 ### Changed
 

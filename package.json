@@ -1,6 +1,6 @@
 {
   "name": "@smartesting/gravity-data-collector",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
@@ -11,6 +11,7 @@
     "tsc": "tsc --noEmit",
     "tsc:watch": "tsc --noEmit --watch",
     "build": "tsc --project tsconfig.build.json",
+    "build:watch": "tsc --watch --project tsconfig.build.json",
     "lint": "eslint --ext ts --max-warnings 0 src",
     "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
     "test": "vitest",

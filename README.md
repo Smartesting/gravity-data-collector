@@ -46,7 +46,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@4.0.3/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@4.0.4/dist/gravity-logger-min.js"
 ></script>
 ```
 

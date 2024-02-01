@@ -84,6 +84,21 @@ describe('createTargetedUserAction', () => {
       expect(action?.target.element).toEqual('div')
     })
 
+    it('interactiveTarget if event is click on a nested element', () => {
+      const { element, domWindow } = createElementInJSDOM('<button><span>Click Me</span></button>', 'span')
+
+      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      expect(action?.interactiveTarget?.element).toEqual('button')
+    })
+
+    it('undefined interactiveTarget if event is click on an interactive element', () => {
+      const { element, domWindow } = createElementInJSDOM('<button><span>Click Me</span></button>', 'button')
+
+      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      expect(action?.interactiveTarget).toBeUndefined()
+      expect(action?.target.element).toEqual('button')
+    })
+
     it('handles Window as a target too', () => {
       const { domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
       const action = createHashChangeUserAction(domWindow)
