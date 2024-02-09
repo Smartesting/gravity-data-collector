@@ -1,8 +1,15 @@
-import { AnonymizationSettings, NO_ANONYMIZATION_SETTINGS, SessionUserAction, UserAction } from '../types'
+import {
+  AnonymizationSettings,
+  GravityLocation,
+  NO_ANONYMIZATION_SETTINGS,
+  SessionUserAction,
+  UserAction,
+} from '../types'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
+import { computePathname } from '../utils/computePathname'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
@@ -13,6 +20,7 @@ export default class UserActionHandler implements IUserActionHandler {
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly gravityClient: IGravityClient,
+    private readonly useHashInUrlAsPathname: boolean,
   ) {}
 
   getAnonymizationSettings(): AnonymizationSettings {
@@ -32,9 +40,14 @@ export default class UserActionHandler implements IUserActionHandler {
   }
 
   private toSessionUserAction(action: UserAction): SessionUserAction {
+    const location: GravityLocation = {
+      ...action.location,
+      ...(this.useHashInUrlAsPathname && { pathname: computePathname(action.location.href) }),
+    }
     return {
       sessionId: this.sessionIdHandler.get(),
       ...action,
+      location,
     }
   }
 

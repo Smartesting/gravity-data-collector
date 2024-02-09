@@ -20,15 +20,31 @@ describe('UserActionHandler', () => {
     beforeEach(() => {
       client = new NopGravityClient(0)
       sessionIdHandler = new MemorySessionIdHandler(() => sessionId)
-      userActionHandler = new UserActionHandler(sessionIdHandler, new MemoryTimeoutHandler(1000), client)
+      userActionHandler = new UserActionHandler(sessionIdHandler, new MemoryTimeoutHandler(1000), client, true)
     })
 
-    it('adds a session id when  handling a user action', async () => {
+    it('adds a session id when handling a user action', async () => {
       const spy = vitest.spyOn(client, 'addSessionUserAction')
       userActionHandler.handle(userAction)
 
       expect(spy).toHaveBeenCalledWith({
         ...userAction,
+        sessionId,
+      })
+    })
+
+    it('adapts the pathname if the "useHashInUrlAsPathname" constructor parameter is true', async () => {
+      const spy = vitest.spyOn(client, 'addSessionUserAction')
+      userAction.location.href = 'http://plic.com/#/ploc'
+      userActionHandler.handle(userAction)
+
+      expect(spy).toHaveBeenCalledWith({
+        ...userAction,
+        location: {
+          href: 'http://plic.com/#/ploc',
+          pathname: '/ploc',
+          search: '',
+        },
         sessionId,
       })
     })

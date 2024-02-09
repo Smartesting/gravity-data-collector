@@ -144,6 +144,7 @@ describe('completeOptions', () => {
         onPublish: undefined,
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
+        useHashInUrlAsPathname: false,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -175,6 +176,7 @@ describe('completeOptions', () => {
         onPublish: undefined,
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
+        useHashInUrlAsPathname: false,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -210,6 +212,7 @@ describe('completeOptions', () => {
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
+          useHashInUrlAsPathname: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -239,6 +242,7 @@ describe('completeOptions', () => {
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
+          useHashInUrlAsPathname: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -268,6 +272,7 @@ describe('completeOptions', () => {
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
+          useHashInUrlAsPathname: false,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -297,6 +302,7 @@ describe('completeOptions', () => {
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
+          useHashInUrlAsPathname: false,
         }
         expect(completed).toStrictEqual(expected)
       })

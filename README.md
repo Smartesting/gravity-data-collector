@@ -81,6 +81,7 @@ The `GravityCollector.init()` can take a `CollectorOptions` object with the foll
 | enableVideoAnonymization | Boolean (optional)       | Set to `false` to deactivate video anonymization (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                           | true                                |
 | anonymizeSelectors       | string (optional)        | HTML elements (and descendants) matching this CSS selector will be anonymized (only in debug mode, otherwise this option is controlled from the Gravity interface)                              | undefined                           |
 | ignoreSelectors          | string (optional)        | HTML elements (and descendants) matching this CSS selector will not be recorded (only in debug mode, otherwise this option is controlled from the Gravity interface)                            | undefined                           |
+| useHashInUrlAsPathname   | Boolean (optional)       | Set to `true` to have a correct representation of pages in Gravity if your page URLs look like this: "http://mysite.com/#/something/else"                                                       | false                               |
 
 ## Features
 
@@ -178,7 +179,10 @@ assigned to the window object).
 Another solution is to pass the `buildId`parameter when initializing gravity data collector:
 
 ```javascript
-GravityCollector.init({ authKey: '...', buildId: '1234' })
+GravityCollector.init({
+  authKey: '...',
+  buildId: '1234',
+})
 ```
 
 ## Sandbox

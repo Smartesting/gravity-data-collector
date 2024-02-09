@@ -20,7 +20,12 @@ describe('KeyDownEventListener', () => {
   beforeEach(() => {
     vitest.restoreAllMocks()
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111')
-    userActionHandler = new UserActionHandler(sessionIdHandler, new MemoryTimeoutHandler(1000), new NopGravityClient(0))
+    userActionHandler = new UserActionHandler(
+      sessionIdHandler,
+      new MemoryTimeoutHandler(1000),
+      new NopGravityClient(0),
+      false,
+    )
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })

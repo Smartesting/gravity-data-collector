@@ -31,6 +31,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     selectorsOptions: undefined,
     anonymizeSelectors: undefined,
     ignoreSelectors: undefined,
+    useHashInUrlAsPathname: false,
   }
 
   const debugDefaultOptions = {

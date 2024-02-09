@@ -110,6 +110,7 @@ describe.each([
         {
           sessionId: 'sessionId-1',
           target: { element: 'wave-1' },
+          location: {},
         },
       ],
     ])

@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- option `useHashInUrlAsPathname` which handles cases where the href of the pages looks like this `http://mysite.com/#/something/else`
+
 ### Changed
 
 ### Deprecated

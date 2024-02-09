@@ -275,6 +275,7 @@ export interface CollectorOptions {
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
   buildId: string | undefined
+  useHashInUrlAsPathname: boolean
 }
 
 export type RecordingSettings = Pick<
