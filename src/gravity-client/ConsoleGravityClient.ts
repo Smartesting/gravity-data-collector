@@ -1,6 +1,8 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
+  AddSnapshotResponse,
+  DocumentSnapshot,
   IdentifySessionResponse,
   ReadSessionCollectionSettingsResponse,
   SessionTraits,
@@ -40,6 +42,11 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
     this.log({ sessionId, screenRecords })
+    return { error: null }
+  }
+
+  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
+    this.log({ sessionId, snapshots })
     return { error: null }
   }
 

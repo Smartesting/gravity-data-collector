@@ -3,17 +3,15 @@ import { expect, SpyInstance, vi } from 'vitest'
 import { EventType, eventWithTime } from '@rrweb/types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
-import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
+import { GravityClientOptions } from './AbstractGravityClient'
 import {
-  AddSessionRecordingResponse,
   AddSessionUserActionsError,
   AddSessionUserActionsResponse,
-  IdentifySessionResponse,
   ReadSessionCollectionSettingsResponse,
-  SessionTraits,
   SessionUserAction,
 } from '../types'
 import { uuid } from '../utils/uuid'
+import NopGravityClient from './NopGravityClient'
 
 const DEFAULT_OPTIONS = {
   requestInterval: 0,
@@ -151,7 +149,7 @@ describe('AbstractGravityClient', () => {
   })
 })
 
-class TestGravityClient extends AbstractGravityClient {
+class TestGravityClient extends NopGravityClient {
   constructor(
     options: GravityClientOptions,
     recordingSettingsDispatcher: RecordingSettingsDispatcher = new RecordingSettingsDispatcher(),
@@ -164,23 +162,6 @@ class TestGravityClient extends AbstractGravityClient {
       anonymizeSelectors: undefined,
       ignoreSelectors: undefined,
     })
-  }
-
-  public async handleScreenRecords(
-    sessionId: string,
-    screenRecords: ReadonlyArray<eventWithTime>,
-  ): Promise<AddSessionRecordingResponse> {
-    return { error: null }
-  }
-
-  public async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
-    return { error: null }
-  }
-
-  public async handleSessionUserActions(
-    sessionUserActions: ReadonlyArray<SessionUserAction>,
-  ): Promise<AddSessionUserActionsResponse> {
-    return { error: null }
   }
 
   async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {

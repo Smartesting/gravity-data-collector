@@ -366,6 +366,20 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
+export interface AddSnapshotResponse {
+  error: AddSnapshotError | null
+}
+
+export enum AddSnapshotError {
+  accessDenied = 'no_access',
+  projectExpired = 'project_expired',
+  projectNotFound = 'project_not_found',
+  collectionNotFound = 'collection_not_found',
+  sessionNotFound = 'session_not_found',
+  notUUID = 'not_a_uuid',
+  invalidFormat = 'invalid_format',
+}
+
 export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
@@ -385,4 +399,9 @@ export enum ReadSessionCollectionSettingsError {
   projectNotFound = 'project_not_found',
   collectionNotFound = 'collection_not_found',
   incorrectSource = 'incorrect_source',
+}
+
+export interface DocumentSnapshot {
+  content: string
+  timestamp: number
 }

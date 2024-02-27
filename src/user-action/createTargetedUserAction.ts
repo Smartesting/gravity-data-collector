@@ -20,7 +20,7 @@ import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
 import { matchClosest } from '../utils/cssSelectorUtils'
 
-const ANCESTOR_HOLDING_CLICK_LISTENER_TAGS: ReadonlyArray<keyof HTMLElementTagNameMap> = [
+export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
   'a',
   'button',
   'nav',
@@ -71,7 +71,7 @@ export function createTargetedUserAction(
     userActionData,
   }
   if (type === UserActionType.Click) {
-    const interactiveTarget = target.closest(ANCESTOR_HOLDING_CLICK_LISTENER_TAGS.join(','))
+    const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
       targetedUserAction.interactiveTarget = createActionTarget(
         interactiveTarget as HTMLElement,

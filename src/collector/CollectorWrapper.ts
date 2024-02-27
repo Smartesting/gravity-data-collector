@@ -57,11 +57,13 @@ import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 import RecordingSettingsDispatcher from '../gravity-client/RecordingSettingsDispatcher'
+import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
   readonly userActionHandler: UserActionHandler
   readonly screenRecorderHandler: ScreenRecorderHandler
+  readonly snapshotRecorderHandler: SnapshotRecorderHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   private readonly gravityClient: IGravityClient
@@ -76,14 +78,21 @@ class CollectorWrapper {
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options, this.recordingSettingsHandler)
       : new HttpGravityClient(options, this.recordingSettingsHandler, fetch)
+    this.snapshotRecorderHandler = new SnapshotRecorderHandler(
+      options.window,
+      timeoutHandler,
+      sessionIdHandler,
+      this.gravityClient,
+    )
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
       timeoutHandler,
+      this.snapshotRecorderHandler,
       this.gravityClient,
       this.options.useHashInUrlAsPathname,
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
-    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, this.gravityClient)
+    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
     this.recordingSettingsHandler.subscribe(
       ({
@@ -102,6 +111,11 @@ class CollectorWrapper {
         })
         if (enableVideoRecording) {
           this.screenRecorderHandler.initializeRecording({
+            enableAnonymization: enableVideoAnonymization,
+            ignoreSelectors,
+            anonymizeSelectors,
+          })
+          this.snapshotRecorderHandler.initializeRecording({
             enableAnonymization: enableVideoAnonymization,
             ignoreSelectors,
             anonymizeSelectors,
@@ -158,6 +172,7 @@ class CollectorWrapper {
     if (terminateEventRecording) {
       this.eventListenerHandler.terminateEventListeners()
       this.screenRecorderHandler.terminateRecording()
+      this.snapshotRecorderHandler.terminateRecording()
       this.userActionHandler.terminate()
       this.sessionTraitHandler.terminate()
       this.gravityClient.reset()
@@ -165,6 +180,7 @@ class CollectorWrapper {
     }
     if (terminateVideoRecording) {
       this.screenRecorderHandler.terminateRecording()
+      this.snapshotRecorderHandler.terminateRecording()
     }
   }
 

@@ -7,8 +7,9 @@ import RECORDING_SETTINGS, {
   WITH_TOTAL_ANONYMIZATION,
 } from './recordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 
-interface ScreenRecordingOptions {
+export interface ScreenRecordingOptions {
   enableAnonymization?: boolean
   anonymizeSelectors?: string
   ignoreSelectors?: string
@@ -17,7 +18,11 @@ interface ScreenRecordingOptions {
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
-  constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
+  constructor(
+    private readonly sessionIdHandler: ISessionIdHandler,
+    private readonly timeoutHandler: ITimeoutHandler,
+    private readonly gravityClient: IGravityClient,
+  ) {}
 
   initializeRecording(options?: ScreenRecordingOptions) {
     const handleRecord = this.handle.bind(this)
@@ -42,6 +47,8 @@ export default class ScreenRecorderHandler {
   }
 
   async handle(screenRecord: eventWithTime) {
-    return await this.gravityClient.addScreenRecord(this.sessionIdHandler.get(), screenRecord)
+    if (!this.timeoutHandler.isExpired()) {
+      return await this.gravityClient.addScreenRecord(this.sessionIdHandler.get(), screenRecord)
+    }
   }
 }

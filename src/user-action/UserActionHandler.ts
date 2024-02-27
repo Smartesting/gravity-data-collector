@@ -10,6 +10,7 @@ import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import { computePathname } from '../utils/computePathname'
+import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
@@ -19,6 +20,7 @@ export default class UserActionHandler implements IUserActionHandler {
   constructor(
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly timeoutHandler: ITimeoutHandler,
+    private readonly snapshotRecorderHandler: SnapshotRecorderHandler,
     private readonly gravityClient: IGravityClient,
     private readonly useHashInUrlAsPathname: boolean,
   ) {}
@@ -35,6 +37,7 @@ export default class UserActionHandler implements IUserActionHandler {
     if (!this.active) return
     if (!this.timeoutHandler.isExpired()) {
       await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
+      await this.snapshotRecorderHandler.handle(action)
     }
     this.listeners.forEach((listener) => listener())
   }
