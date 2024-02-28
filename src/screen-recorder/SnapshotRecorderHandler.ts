@@ -55,9 +55,9 @@ export default class SnapshotRecorderHandler {
       content: snapshot,
       pathname,
       timestamp: Date.now(),
+      viewport: action.viewportData,
     }
     this.lastSnapshot = documentSnapshot
-    console.log('add snapshot', documentSnapshot.pathname, documentSnapshot.content.length)
     await this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
   }
 }

@@ -405,4 +405,5 @@ export interface DocumentSnapshot {
   content: string
   pathname: string
   timestamp: number
+  viewport: ViewportData
 }
