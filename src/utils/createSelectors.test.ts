@@ -162,7 +162,7 @@ describe('createSelector', () => {
   })
 
   it('fallbacks to more generic options when needed', () => {
-    const sample = readFileSync(path.join(__dirname, '..', '..', 'sample', 'index.html'), 'utf-8')
+    const sample = readFileSync(path.join(__dirname, '..', '..', 'samples', 'index.html'), 'utf-8')
     const hamster = createElementInJSDOM(sample, 'option[value=hamster').element
 
     expect(createSelectors(hamster)).toEqual({

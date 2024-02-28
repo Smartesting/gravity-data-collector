@@ -4,7 +4,15 @@ import { ScreenRecordingOptions } from './ScreenRecorderHandler'
 import { createCache, createMirror, rebuild, snapshot as doSnapshot } from 'rrweb-snapshot'
 import { WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from './recordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
-import { KeyUserActionData, UserAction, UserActionTarget, UserActionType } from '../types'
+import {
+  DocumentSnapshot,
+  KeyUserActionData,
+  SessionUserAction,
+  TargetedUserAction,
+  UserAction,
+  UserActionTarget,
+  UserActionType,
+} from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { CLICKABLE_ELEMENT_TAG_NAMES } from '../user-action/createTargetedUserAction'
 
@@ -12,7 +20,7 @@ type SnapshotOptions = Parameters<typeof doSnapshot>[1]
 
 export default class SnapshotRecorderHandler {
   private options: SnapshotOptions | null = null
-  private lastSnapshot: string | null = null
+  private lastSnapshot: DocumentSnapshot | null = null
 
   constructor(
     private readonly window: Window,
@@ -28,7 +36,6 @@ export default class SnapshotRecorderHandler {
       this.options.maskTextSelector = settings.anonymizeSelectors
     }
     this.options.blockSelector = settings.ignoreSelectors
-    void this.handle()
   }
 
   terminateRecording() {
@@ -36,19 +43,26 @@ export default class SnapshotRecorderHandler {
     this.options = null
   }
 
-  async handle(action?: UserAction) {
+  async handle(action: SessionUserAction) {
     if (!this.options) return
-    if (!isSnapshotTrigger(action)) return
     if (this.timeoutHandler.isExpired()) return
+    if (!action || !isSnapshotTrigger(action)) return
     const snapshot = createSnapshot(this.window.document, this.options)
     if (!snapshot) return
-    if (snapshot === this.lastSnapshot) return
-    this.lastSnapshot = snapshot
-    await this.gravityClient.addSnapshot(this.sessionIdHandler.get(), { content: snapshot, timestamp: Date.now() })
+    const pathname = action.location.pathname
+    if (this.lastSnapshot && this.lastSnapshot.pathname === pathname && this.lastSnapshot.content === snapshot) return
+    const documentSnapshot: DocumentSnapshot = {
+      content: snapshot,
+      pathname,
+      timestamp: Date.now(),
+    }
+    this.lastSnapshot = documentSnapshot
+    console.log('add snapshot', documentSnapshot.pathname, documentSnapshot.content.length)
+    await this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
   }
 }
 
-function isSnapshotTrigger(userAction?: UserAction) {
+function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserAction {
   if (userAction && isTargetedUserAction(userAction)) {
     const target: UserActionTarget = userAction.interactiveTarget ?? userAction.target
     return (

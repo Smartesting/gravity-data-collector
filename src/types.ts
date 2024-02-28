@@ -403,5 +403,6 @@ export enum ReadSessionCollectionSettingsError {
 
 export interface DocumentSnapshot {
   content: string
+  pathname: string
   timestamp: number
 }

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Gravity Data Collector - Sandbox</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script async id="logger" src="../dist-sandbox/bundle.js" type="text/javascript"></script>
+    <script>
+      const script = document.querySelector('#logger')
+      script.addEventListener('load', function () {
+        window.GravityCollector.init({
+          debug: true,
+          authKey: 'acf27d0a-2b0f-4811-a716-ff4ef24f2e9e',
+          gravityServerUrl: 'http://localhost:3000',
+        })
+      })
+
+      function fetchSomething() {
+        fetch('https://jsonplaceholder.typicode.com/users/1', {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        })
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="content">
+      <h1>
+        <img
+          width="150"
+          src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting-bleu.svg"
+          alt="Smartesting"
+          class="logo-primary"
+        />
+        Gravity Data Collector sample
+      </h1>
+      <p>
+        Some data values are sanitized before to be sent to Gravity server (all the input texts for instance). Others
+        are kept as they are.
+      </p>
+
+      <form>
+        <fieldset style="display: grid; grid-row-gap: 5px">
+          <legend>Enter textual values:</legend>
+
+          <label for="text-1"></label>
+          <input id="text-1" placeholder="Change value to track it" data-testid="bonjourjesuitestid" />
+
+          <label for="text-2"></label>
+          <textarea id="text-2" placeholder="Change text to track it" rows="4"></textarea>
+
+          <label for="text-3"></label>
+          <input id="text-3" type="password" placeholder="Change password to track it" />
+
+          <label for="text-4"></label>
+          <input id="text-4" type="date" placeholder="Change date to track it" />
+
+          <label for="text-5"></label>
+          <input id="text-5" type="search" placeholder="Change search to track it" />
+        </fieldset>
+      </form>
+
+      <fieldset>
+        <legend>Choose a value:</legend>
+
+        <div>
+          <input type="radio" id="radio-1" name="testRadio" value="1" />
+          <label for="radio-1">1</label>
+        </div>
+        <div>
+          <input type="radio" id="radio-2" name="testRadio" value="2" />
+          <label for="radio-2">2</label>
+        </div>
+        <div>
+          <input type="radio" id="radio-3" name="testRadio" value="3" />
+          <label for="radio-3">3</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Choose a combination:</legend>
+
+        <div>
+          <input data-gravity="checkbox-1" type="checkbox" id="checkbox-1" name="checkbox" checked />
+          <label for="checkbox-1">Checkbox 1</label>
+        </div>
+
+        <div>
+          <input data-gravity="checkbox-2" type="checkbox" id="checkbox-2" name="checkbox" />
+          <label for="checkbox-2">Checkbox 2</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Select a value:</legend>
+
+        <div>
+          <label for="pet-select">Choose a pet:</label>
+          <select
+            name="pets"
+            id="pet-select"
+            onchange='window.GravityCollector.identifySession("petSelected", document.getElementById("pet-select").value)'
+          >
+            <option value="">--Please choose an option--</option>
+            <option value="dog">Dog</option>
+            <option value="cat">Cat</option>
+            <option value="hamster">Hamster</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Interact with button:</legend>
+
+        <div>
+          <input
+            type="button"
+            id="button-1"
+            value="Click me!"
+            onclick='window.GravityCollector.identifySession("buttonClicked", true)'
+          />
+          <input type="button" id="button-2" value="Fetch something" onclick="fetchSomething()" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <style>
+          .dragContainer {
+            display: flex;
+          }
+
+          .dropZone {
+            flex-basis: 100%;
+            flex-grow: 1;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+          }
+
+          .draggable {
+            background-color: aquamarine;
+            font-weight: normal;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            display: inline-block;
+          }
+        </style>
+        <script type="text/javascript">
+          function onDragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.id)
+
+            event.currentTarget.style.backgroundColor = 'yellow'
+          }
+
+          function onDragOver(event) {
+            event.preventDefault()
+          }
+
+          function onDrop(event) {
+            const id = event.dataTransfer.getData('text')
+
+            const draggableElement = document.getElementById(id)
+            const dropzone = event.target
+            dropzone.appendChild(draggableElement)
+            draggableElement.style.background = 'aquamarine'
+          }
+        </script>
+        <legend>Draggable element</legend>
+
+        <div class="dragContainer">
+          <div class="dropZone" ondragover="onDragOver(event);" ondrop="onDrop(event);">
+            <div id="draggable-1" class="draggable" draggable="true" ondragstart="onDragStart(event);">Drag me</div>
+          </div>
+
+          <div class="dropZone" ondragover="onDragOver(event);" ondrop="onDrop(event);"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Video</legend>
+        <video
+          width="618"
+          height="347"
+          src="https://www.gravity-testing.com/wp-content/uploads/2023/08/gravity-home-visuals.mp4"
+          controls
+        ></video>
+      </fieldset>
+
+      <fieldset>
+        <legend>Scrollable zone</legend>
+
+        <div style="height: 200px; width: 500px; overflow: scroll">
+          <div style="height: 800px">Scroll around here</div>
+        </div>
+      </fieldset>
+
+      <fieldset style="display: grid; grid-row-gap: 10px">
+        <legend>Simulate navigation</legend>
+        <div>
+          <a href="index.html">Follow link</a>
+        </div>
+        <div>
+          <form action="index.html">
+            <input type="submit" value="Submit form" />
+          </form>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Personal or sensitive data</legend>
+        <div class="personalInfo">
+          <button>John</button>
+          <a href="#">Smith</a>
+          <p>1139 Davis Court Metropolis, Illinois(IL), 62960 618-907-7079</p>
+        </div>
+        <div>
+          <span kind="sensitive">s3cr3t!</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Nested elements</legend>
+        <button type="button" onclick="console.log('John')" style="padding: 6px; margin: 6px">
+          <div style="background: #aaa; padding: 6px; margin: 6px; display: flex">
+            <span class="material-icons" style="background: #ccc; padding: 6px; margin: 6px">account_circle</span>
+            <span style="font-size: large; background: #ccc; padding: 6px; margin: 6px">John</span>
+          </div>
+        </button>
+        <button type="button" id="Samantha" style="padding: 6px; margin: 6px">
+          <div style="background: #aaa; padding: 6px; margin: 6px; display: flex">
+            <span class="material-icons" style="background: #ccc; padding: 6px; margin: 6px">account_circle</span>
+            <span style="font-size: large; background: #ccc; padding: 6px; margin: 6px">Samantha</span>
+          </div>
+        </button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dynamic elements</legend>
+        <button type="button" onclick="addItem()">Add item</button>
+        <ul id="item-list"></ul>
+      </fieldset>
+      <p></p>
+    </div>
+
+    <script>
+      function addItem() {
+        const list = document.getElementById('item-list')
+        const item = document.createElement('li')
+        item.textContent = 'item ' + (list.childElementCount + 1)
+        list.appendChild(item)
+      }
+
+      document.querySelector('#Samantha').addEventListener('click', () => console.log('Samantha'))
+    </script>
+  </body>
+</html>

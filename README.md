@@ -46,7 +46,7 @@ Put this tag in each page that must use Gravity Data Collector.
 ></script>
 ```
 
-Please, look to [index.html](sample/index.html) to see how to use the script in HTML.
+Please, look to [index.html](samples/index.html) to see how to use the script in HTML.
 
 **Note:** The minified version of Gravity Data Collector is available only since release 2.1.5
 
@@ -187,7 +187,7 @@ GravityCollector.init({
 
 ## Sandbox
 
-In order to test modifications on the library, a sandbox is accessible in [index.html](sample/index.html) file
+In order to test modifications on the library, a sandbox is accessible in [index.html](samples/index.html) file
 
 First, build the lib
 
@@ -202,7 +202,7 @@ npm run build-sandbox
 npm run watch-sandbox
 ```
 
-Finally, open [index.html](sample/index.html) with a browser, display the console (F12 with most browsers) and interact
+Finally, open [index.html](samples/index.html) with a browser, display the console (F12 with most browsers) and interact
 with the page to see collected user actions.
 
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by

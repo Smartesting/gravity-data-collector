@@ -36,8 +36,9 @@ export default class UserActionHandler implements IUserActionHandler {
   async handle(action: UserAction): Promise<void> {
     if (!this.active) return
     if (!this.timeoutHandler.isExpired()) {
-      await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
-      await this.snapshotRecorderHandler.handle(action)
+      const sessionUserAction = this.toSessionUserAction(action)
+      await this.gravityClient.addSessionUserAction(sessionUserAction)
+      await this.snapshotRecorderHandler.handle(sessionUserAction)
     }
     this.listeners.forEach((listener) => listener())
   }
