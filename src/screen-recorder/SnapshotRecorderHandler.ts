@@ -5,6 +5,7 @@ import { createCache, createMirror, rebuild, snapshot as doSnapshot } from 'rrwe
 import { WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from './recordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
+  CLICKABLE_ELEMENT_TAG_NAMES,
   DocumentSnapshot,
   KeyUserActionData,
   SessionUserAction,
@@ -12,7 +13,6 @@ import {
   UserAction,
   UserActionTarget,
   UserActionType,
-  CLICKABLE_ELEMENT_TAG_NAMES,
 } from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
 
@@ -94,7 +94,12 @@ function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserA
 
 const SNAPSHOT_CONTAINER_ID = 'gravity-data-collector-snapshot'
 
-function createSnapshot(document: Document, options: SnapshotOptions): { html: string | null, elementCount: number } {
+interface Snapshot {
+  html: string | null
+  elementCount: number
+}
+
+function createSnapshot(document: Document, options: SnapshotOptions): Snapshot {
   try {
     const snapshot = doSnapshot(document, options)
     if (!snapshot) return { html: null, elementCount: 0 }
