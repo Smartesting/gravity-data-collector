@@ -407,3 +407,11 @@ export interface DocumentSnapshot {
   timestamp: number
   viewport: ViewportData
 }
+
+export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
+  'a',
+  'button',
+  'nav',
+  'input',
+  'li',
+]

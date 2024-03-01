@@ -12,15 +12,16 @@ import {
   UserAction,
   UserActionTarget,
   UserActionType,
+  CLICKABLE_ELEMENT_TAG_NAMES,
 } from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
-import { CLICKABLE_ELEMENT_TAG_NAMES } from '../user-action/createTargetedUserAction'
 
 type SnapshotOptions = Parameters<typeof doSnapshot>[1]
 
 export default class SnapshotRecorderHandler {
   private options: SnapshotOptions | null = null
   private lastSnapshot: DocumentSnapshot | null = null
+  private lastSnapshotElementCount = -1
 
   constructor(
     private readonly window: Window,
@@ -31,6 +32,7 @@ export default class SnapshotRecorderHandler {
 
   initializeRecording(settings: ScreenRecordingOptions) {
     this.lastSnapshot = null
+    this.lastSnapshotElementCount = -1
     this.options = settings.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : WITH_PARTIAL_ANONYMIZATION
     if (settings.anonymizeSelectors) {
       this.options.maskTextSelector = settings.anonymizeSelectors
@@ -40,6 +42,7 @@ export default class SnapshotRecorderHandler {
 
   terminateRecording() {
     this.lastSnapshot = null
+    this.lastSnapshotElementCount = -1
     this.options = null
   }
 
@@ -47,17 +50,26 @@ export default class SnapshotRecorderHandler {
     if (!this.options) return
     if (this.timeoutHandler.isExpired()) return
     if (!action || !isSnapshotTrigger(action)) return
-    const snapshot = createSnapshot(this.window.document, this.options)
-    if (!snapshot) return
+    const { html, elementCount } = createSnapshot(this.window.document, this.options)
+    if (!html) return
+
     const pathname = action.location.pathname
-    if (this.lastSnapshot && this.lastSnapshot.pathname === pathname && this.lastSnapshot.content === snapshot) return
+    console.log({ elementCount })
+    if (
+      this.lastSnapshot &&
+      this.lastSnapshot.pathname === pathname &&
+      this.lastSnapshotElementCount === elementCount
+    ) {
+      return
+    }
     const documentSnapshot: DocumentSnapshot = {
-      content: snapshot,
+      content: html,
       pathname,
       timestamp: Date.now(),
       viewport: action.viewportData,
     }
     this.lastSnapshot = documentSnapshot
+    this.lastSnapshotElementCount = elementCount
     await this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
   }
 }
@@ -82,10 +94,10 @@ function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserA
 
 const SNAPSHOT_CONTAINER_ID = 'gravity-data-collector-snapshot'
 
-function createSnapshot(document: Document, options: SnapshotOptions): string | null {
+function createSnapshot(document: Document, options: SnapshotOptions): { html: string | null, elementCount: number } {
   try {
     const snapshot = doSnapshot(document, options)
-    if (!snapshot) return null
+    if (!snapshot) return { html: null, elementCount: 0 }
     let snapshotContainer = document.getElementById(SNAPSHOT_CONTAINER_ID)
     if (!snapshotContainer) {
       snapshotContainer = document.createElement('div')
@@ -103,16 +115,22 @@ function createSnapshot(document: Document, options: SnapshotOptions): string | 
       shadow.appendChild(iFrame)
     }
     const iFrameDocument = (snapshotContainer.shadowRoot?.children[0] as HTMLIFrameElement).contentWindow?.document
-    if (!iFrameDocument) return null
+    if (!iFrameDocument) return { html: null, elementCount: 0 }
 
     const node = rebuild(snapshot, {
       doc: iFrameDocument,
       cache: createCache(),
       mirror: createMirror(),
     })
-    return node ? new XMLSerializer().serializeToString(node) : null
+    if (node) {
+      let elementCount = iFrameDocument.body.querySelectorAll('*').length
+      if (iFrameDocument.body.querySelector('#' + SNAPSHOT_CONTAINER_ID)) {
+        elementCount--
+      }
+      return { html: new XMLSerializer().serializeToString(node), elementCount }
+    }
   } catch (e) {
     console.error(e)
-    return null
   }
+  return { html: null, elementCount: 0 }
 }

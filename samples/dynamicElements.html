@@ -15,12 +15,17 @@
         })
       })
     </script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
 
   <body>
     <div id="content">
-      <button type="button" onclick="addItem()">Add item</button>
-      <ul id="item-list"></ul>
+      <h1>Dynamic elements</h1>
+      <fieldset>
+        <legend>Interactive list</legend>
+        <button type="button" onclick="addItem()">Add item</button>
+        <ul id="item-list"></ul>
+      </fieldset>
     </div>
     <script>
       let nextIndex = 1
