@@ -57,7 +57,7 @@ import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 import RecordingSettingsDispatcher from '../gravity-client/RecordingSettingsDispatcher'
-import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
+import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()

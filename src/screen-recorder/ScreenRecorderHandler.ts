@@ -5,7 +5,7 @@ import RECORDING_SETTINGS, {
   WITH_DEFAULT_ANONYMIZATION,
   WITH_PARTIAL_ANONYMIZATION,
   WITH_TOTAL_ANONYMIZATION,
-} from './recordingSettings'
+} from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 
@@ -31,7 +31,6 @@ export default class ScreenRecorderHandler {
       : options?.anonymizeSelectors
       ? { ...WITH_DEFAULT_ANONYMIZATION, maskTextSelector: options.anonymizeSelectors }
       : { ...WITH_PARTIAL_ANONYMIZATION }
-    // @ts-expect-error
     this.stopRecording = record({
       emit(event) {
         void handleRecord(event)

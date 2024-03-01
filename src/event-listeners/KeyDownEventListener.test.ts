@@ -10,7 +10,7 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
-import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
+import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
 
 describe('KeyDownEventListener', () => {
   let userActionHandler: IUserActionHandler

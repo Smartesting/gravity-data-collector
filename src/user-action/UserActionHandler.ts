@@ -10,7 +10,7 @@ import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import { computePathname } from '../utils/computePathname'
-import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
+import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true

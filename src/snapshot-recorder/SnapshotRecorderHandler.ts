@@ -1,8 +1,7 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { ScreenRecordingOptions } from './ScreenRecorderHandler'
-import { createCache, createMirror, rebuild, snapshot as doSnapshot } from 'rrweb-snapshot'
-import { WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from './recordingSettings'
+import { ScreenRecordingOptions } from '../screen-recorder/ScreenRecorderHandler'
+import { SnapshotOptions, WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from '../utils/rrwebRecordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
   CLICKABLE_ELEMENT_TAG_NAMES,
@@ -15,8 +14,7 @@ import {
   UserActionType,
 } from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
-
-type SnapshotOptions = Parameters<typeof doSnapshot>[1]
+import { createSnapshot } from './createSnapshot'
 
 export default class SnapshotRecorderHandler {
   private options: SnapshotOptions | null = null
@@ -54,7 +52,6 @@ export default class SnapshotRecorderHandler {
     if (!html) return
 
     const pathname = action.location.pathname
-    console.log({ elementCount })
     if (
       this.lastSnapshot &&
       this.lastSnapshot.pathname === pathname &&
@@ -90,52 +87,4 @@ function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserA
     )
   }
   return false
-}
-
-const SNAPSHOT_CONTAINER_ID = 'gravity-data-collector-snapshot'
-
-interface Snapshot {
-  html: string | null
-  elementCount: number
-}
-
-function createSnapshot(document: Document, options: SnapshotOptions): Snapshot {
-  try {
-    const snapshot = doSnapshot(document, options)
-    if (!snapshot) return { html: null, elementCount: 0 }
-    let snapshotContainer = document.getElementById(SNAPSHOT_CONTAINER_ID)
-    if (!snapshotContainer) {
-      snapshotContainer = document.createElement('div')
-      snapshotContainer.setAttribute('id', SNAPSHOT_CONTAINER_ID)
-      snapshotContainer.style.display = 'none'
-      snapshotContainer.style.position = 'absolute !important'
-      snapshotContainer.style.top = '0px !important'
-      snapshotContainer.style.left = '0px !important'
-      snapshotContainer.style.height = '0px !important'
-      snapshotContainer.style.width = '0px !important'
-      document.body.appendChild(snapshotContainer)
-      const shadow = snapshotContainer.attachShadow({ mode: 'open' })
-      const iFrame = document.createElement('iframe')
-      iFrame.setAttribute('title', 'gravity-data-collector-snapshot-iframe')
-      shadow.appendChild(iFrame)
-    }
-    const iFrameDocument = (snapshotContainer.shadowRoot?.children[0] as HTMLIFrameElement).contentWindow?.document
-    if (!iFrameDocument) return { html: null, elementCount: 0 }
-
-    const node = rebuild(snapshot, {
-      doc: iFrameDocument,
-      cache: createCache(),
-      mirror: createMirror(),
-    })
-    if (node) {
-      let elementCount = iFrameDocument.body.querySelectorAll('*').length
-      if (iFrameDocument.body.querySelector('#' + SNAPSHOT_CONTAINER_ID)) {
-        elementCount--
-      }
-      return { html: new XMLSerializer().serializeToString(node), elementCount }
-    }
-  } catch (e) {
-    console.error(e)
-  }
-  return { html: null, elementCount: 0 }
 }

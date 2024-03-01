@@ -8,7 +8,7 @@ import IUserActionHandler from './IUserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
-import SnapshotRecorderHandler from '../screen-recorder/SnapshotRecorderHandler'
+import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
 
 describe('UserActionHandler', () => {
   describe('handle', () => {
