@@ -28,6 +28,8 @@ jobs:
       - run: npm ci
       - run: npm run tsc
       - run: npm run build
+      - run: npm run lint
+      - run: ./node_modules/.bin/prettier --check .
       - run: npm test
       - name: Run cypress tests
         uses: cypress-io/github-action@v4
@@ -41,5 +43,3 @@ jobs:
           name: cypress-videos
           path: |
             cypress/videos/
-      - run: npm run lint
-      - run: ./node_modules/.bin/prettier --check .
