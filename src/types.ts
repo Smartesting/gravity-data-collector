@@ -401,11 +401,16 @@ export enum ReadSessionCollectionSettingsError {
   incorrectSource = 'incorrect_source',
 }
 
+interface ViewportSize {
+  width: number
+  height: number
+}
+
 export interface DocumentSnapshot {
   content: string
   pathname: string
   timestamp: number
-  viewport: { width: number, height: number }
+  viewport: ViewportSize
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
