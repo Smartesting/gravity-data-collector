@@ -405,7 +405,7 @@ export interface DocumentSnapshot {
   content: string
   pathname: string
   timestamp: number
-  viewport: ViewportData
+  viewport: { width: number, height: number }
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
