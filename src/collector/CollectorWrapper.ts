@@ -78,20 +78,21 @@ class CollectorWrapper {
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options, this.recordingSettingsHandler)
       : new HttpGravityClient(options, this.recordingSettingsHandler, fetch)
-    this.userActionHandler = new UserActionHandler(
-      sessionIdHandler,
-      timeoutHandler,
-      this.gravityClient,
-      this.options.useHashInUrlAsPathname,
-    )
-    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
-    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.snapshotRecorderHandler = new SnapshotRecorderHandler(
       options,
       timeoutHandler,
       sessionIdHandler,
       this.gravityClient,
     )
+    this.userActionHandler = new UserActionHandler(
+      sessionIdHandler,
+      timeoutHandler,
+      this.gravityClient,
+      this.options.useHashInUrlAsPathname,
+      this.snapshotRecorderHandler,
+    )
+    this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
+    this.screenRecorderHandler = new ScreenRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
     this.recordingSettingsHandler.subscribe(
       ({

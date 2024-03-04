@@ -6,14 +6,11 @@
     <title>Gravity Data Collector - Sandbox</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script async id="logger" src="../dist-sandbox/bundle.js" type="text/javascript"></script>
+    <script type="text/javascript" src="config.js"></script>
     <script>
       const script = document.querySelector('#logger')
       script.addEventListener('load', function () {
-        window.GravityCollector.init({
-          debug: true,
-          authKey: 'acf27d0a-2b0f-4811-a716-ff4ef24f2e9e',
-          gravityServerUrl: 'http://localhost:3000',
-        })
+        window.GravityCollector.init(config)
       })
 
       function fetchSomething() {
@@ -242,20 +239,12 @@
 
       <fieldset>
         <legend>Dynamic elements</legend>
-        <button type="button" onclick="addItem()">Add item</button>
-        <ul id="item-list"></ul>
+        <a href="./dynamicElements.html">dedicated page</a>
       </fieldset>
       <p></p>
     </div>
 
     <script>
-      function addItem() {
-        const list = document.getElementById('item-list')
-        const item = document.createElement('li')
-        item.textContent = 'item ' + (list.childElementCount + 1)
-        list.appendChild(item)
-      }
-
       document.querySelector('#Samantha').addEventListener('click', () => console.log('Samantha'))
     </script>
   </body>
