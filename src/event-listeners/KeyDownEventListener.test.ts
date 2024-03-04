@@ -10,6 +10,7 @@ import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler
 import IUserActionHandler from '../user-action/IUserActionHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
+import { nop } from '../utils/nop'
 
 describe('KeyDownEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -22,7 +23,7 @@ describe('KeyDownEventListener', () => {
     sessionIdHandler = new MemorySessionIdHandler(() => 'aaa-111')
     const timeoutHandler = new MemoryTimeoutHandler(1000)
     const client = new NopGravityClient({ requestInterval: 0 })
-    userActionHandler = new UserActionHandler(sessionIdHandler, timeoutHandler, client, false)
+    userActionHandler = new UserActionHandler(sessionIdHandler, timeoutHandler, client, false, { onUserAction: nop })
     handleSpy = vitest.spyOn(userActionHandler, 'handle')
     createTargetedUserActionSpy = vitest.spyOn(createTargetedUserActionModule, 'createTargetedUserAction')
   })
