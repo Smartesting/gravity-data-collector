@@ -36,12 +36,14 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   ) {}
 
   initializeRecording(settings: ScreenRecordingOptions) {
+    console.log('[SRH] initialize recording', settings)
     this.snapshotOptions = settings.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : WITH_PARTIAL_ANONYMIZATION
     if (settings.anonymizeSelectors) {
       this.snapshotOptions.maskTextSelector = settings.anonymizeSelectors
     }
     this.snapshotOptions.blockSelector = settings.ignoreSelectors
     this.snapshotDocument = installSnapshotContainer(window.document)
+    console.log('[SRH] snapshotDocument', this.snapshotDocument)
     if (this.snapshotDocument) {
       this.observer.observe(window.document.body, { childList: true, subtree: true })
     }
