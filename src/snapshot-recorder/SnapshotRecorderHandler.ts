@@ -79,7 +79,6 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     const window = this.collectorOptions.window
     const pathname = getLocationPathname(window, this.collectorOptions)
     this.debounce(() => {
-      console.log(this.snapshotOptions, this.snapshotDocument)
       if (!this.snapshotOptions || !this.snapshotDocument) return
       const startingDate = Date.now()
       const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions)
