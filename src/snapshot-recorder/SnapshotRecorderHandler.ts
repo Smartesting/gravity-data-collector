@@ -78,13 +78,12 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   buildAndSendSnapshot() {
     const window = this.collectorOptions.window
     const pathname = getLocationPathname(window, this.collectorOptions)
-    console.log(`[SRH] debounce snapshot for path ${pathname}`)
     this.debounce(() => {
       console.log(this.snapshotOptions, this.snapshotDocument)
       if (!this.snapshotOptions || !this.snapshotDocument) return
       const startingDate = Date.now()
       const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions)
-      console.log(`[SRH] html= ${html ?? 'null'}`)
+      console.log(`[SRH] html= ${html?.length ?? 'null'}`)
       if (!html) return
       const documentSnapshot = this.createDocumentSnapshot(html, pathname)
       console.log('send snapshot created in (ms)', Date.now() - startingDate)
