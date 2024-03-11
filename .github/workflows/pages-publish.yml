@@ -5,6 +5,7 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ['main', 'use-publish-on-pages-action']
+    tags: ['*-beta']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,6 +34,7 @@ jobs:
         uses: Smartesting/publish-on-pages@main
         with:
           branches: main canary development
+          tags: '*-beta'
           library_name: smartesting-gravity-data-collector
           bundle: gravity-logger-min.js
           npm_build_targets: build build-minified pack
