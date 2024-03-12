@@ -73,7 +73,7 @@ You can now use your draft release. In your `package.json` file:
   }
 ```
 
-Or direclty as an HTML script tag:
+Or directly as an HTML script tag:
 
 ```html
 <script
@@ -83,5 +83,7 @@ Or direclty as an HTML script tag:
   type="text/javascript"
 ></script>
 ```
+
+**Note:** any tag named `vX.Y.Z-beta` will be published on Github pages.
 
 **Warning:** do not remove the `main` and `canary` branches from the script and workflow trigger.
