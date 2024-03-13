@@ -5,12 +5,12 @@ describe('Handling sessions identification on iframes', () => {
   })
 
   it('properly stores the session id when the tracked site is embedded in an iframe', () => {
-    const sessionIds = []
+    const sessionIds: string[] = []
 
     cy.interceptGravityCollectionSettings()
     cy.interceptGravityPublish((req) => {
       if (req.url.includes('5678')) {
-        req.body.forEach((sessionUserAction) => {
+        req.body.forEach((sessionUserAction: { sessionId: string }) => {
           sessionIds.push(sessionUserAction.sessionId)
         })
       }
