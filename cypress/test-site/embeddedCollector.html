@@ -4,7 +4,18 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Gravity Data Collector - Sandbox</title>
+    <script async id="logger" type="text/javascript" src="./bundle.js"></script>
     <script>
+      const script = document.querySelector('#logger')
+      script.addEventListener('load', function () {
+        window.GravityCollector.init({
+          authKey: '5678',
+          requestInterval: 100,
+          gravityServerUrl: 'https://api.gravity.smartesting.com',
+          enabledListeners: ['click'],
+        })
+      })
+
       function identifySession() {
         window._GravityCollector.identifySession('href', window.location.href)
       }
