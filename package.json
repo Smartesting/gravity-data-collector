@@ -18,7 +18,7 @@
     "make-test-site": "cp -r cypress/test-site/. dist-sandbox",
     "start-e2e-test-site": "npm run build && npm run build-sandbox && npm run make-test-site && (npm run serve & npm run serve-secured)",
     "serve": "serve dist-sandbox",
-    "serve-secured": "serve -p 443 dist-sandbox --ssl-cert dist-sandbox/.cert/cert.pem --ssl-key dist-sandbox/.cert/key.pem",
+    "serve-secured": "serve -p 3443 dist-sandbox --ssl-cert dist-sandbox/.cert/cert.pem --ssl-key dist-sandbox/.cert/key.pem",
     "cypress": "cypress open --e2e --browser=electron",
     "cypress-run": "cypress run",
     "coverage": "vitest run --coverage",
