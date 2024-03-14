@@ -11,7 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- options `cookieStrategy` and `cookieWriter` to enable various strategies for setting cookies.
+- options `cookieStrategy` and `cookieWriter` to enable various strategies for setting cookies. [#29](https://github.com/Smartesting/gravity-data-collector/pull/29)
 
 ### Changed
 
