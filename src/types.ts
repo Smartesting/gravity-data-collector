@@ -256,36 +256,50 @@ export interface GravityDocument {
   title: string
 }
 
-export interface CollectorOptions {
-  authKey: string
-  requestInterval: number
-  gravityServerUrl: string
-  debug: boolean
-  maxDelay: number
-  selectorsOptions: Partial<CreateSelectorsOptions> | undefined
-  sessionsPercentageKept: number
-  rejectSession: () => boolean
-  onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
-  recordRequestsFor: string[] | undefined
-  window: typeof window
-  enabledListeners: Listener[] | undefined
+export type CollectorOptions = RecordingSettings &
+  CookieSettings & {
+    authKey: string
+    requestInterval: number
+    gravityServerUrl: string
+    debug: boolean
+    maxDelay: number
+    selectorsOptions: Partial<CreateSelectorsOptions> | undefined
+    sessionsPercentageKept: number
+    rejectSession: () => boolean
+    onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
+    recordRequestsFor: string[] | undefined
+    window: typeof window
+    enabledListeners: Listener[] | undefined
+    buildId: string | undefined
+    useHashInUrlAsPathname: boolean
+  }
+
+export enum CookieStrategy {
+  default = 'default',
+  subDomains = 'subDomains',
+  iframeEmbedding = 'iframeEmbedding',
+}
+
+export interface CookieOptions {
+  Path: string
+  Domain: string
+  SameSite: 'Strict' | 'Lax' | 'None'
+  Secure: boolean
+}
+
+export interface CookieSettings {
+  cookieStrategy: CookieStrategy
+  cookieWriter: ((key: string, value: string, options: Partial<CookieOptions>) => string) | null
+}
+
+export interface RecordingSettings {
   enableEventRecording: boolean
   enableVideoRecording: boolean
   enableVideoAnonymization: boolean
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
-  buildId: string | undefined
-  useHashInUrlAsPathname: boolean
 }
 
-export type RecordingSettings = Pick<
-  CollectorOptions,
-  | 'enableEventRecording'
-  | 'enableVideoRecording'
-  | 'enableVideoAnonymization'
-  | 'anonymizeSelectors'
-  | 'ignoreSelectors'
->
 export const NO_RECORDING_SETTINGS: RecordingSettings = {
   enableEventRecording: false,
   enableVideoRecording: false,

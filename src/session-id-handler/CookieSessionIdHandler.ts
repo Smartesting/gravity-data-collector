@@ -1,18 +1,22 @@
 import ISessionIdHandler, { BaseSessionIdHandler } from './ISessionIdHandler'
-import { readCookie, setCookie } from '../utils/documentCookie'
+import DocumentCookie from '../utils/DocumentCookie'
+import { CookieSettings } from '../types'
 
 const GRAVITY_SESSION_ID_COOKIE_KEY = 'gravity_session_id'
 
 export default class CookieSessionIdHandler extends BaseSessionIdHandler implements ISessionIdHandler {
-  public constructor(makeSessionId: () => string, private readonly win: typeof window) {
+  private readonly documentCookie: DocumentCookie
+
+  public constructor(makeSessionId: () => string, cookieSettings: CookieSettings, win: typeof window) {
     super(makeSessionId)
+    this.documentCookie = new DocumentCookie(cookieSettings, win)
   }
 
   protected getSessionId(): string | undefined {
-    return readCookie(GRAVITY_SESSION_ID_COOKIE_KEY, this.win)
+    return this.documentCookie.read(GRAVITY_SESSION_ID_COOKIE_KEY)
   }
 
   protected setSessionId(sessionId: string): void {
-    setCookie(GRAVITY_SESSION_ID_COOKIE_KEY, sessionId, this.win)
+    this.documentCookie.write(GRAVITY_SESSION_ID_COOKIE_KEY, sessionId)
   }
 }

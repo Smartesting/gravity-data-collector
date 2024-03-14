@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import MemoryTimeoutHandler from './MemoryTimeoutHandler'
 import CookieTimeoutHandler from './CookieTimeoutHandler'
 import { nop } from '../utils/nop'
+import { CookieStrategy } from '../types'
 
 const SESSION_DURATION = 1234
 
@@ -14,7 +15,12 @@ describe.each([
   },
   {
     implementation: 'CookieTimeoutHandler',
-    makeTimeoutHandler: () => new CookieTimeoutHandler(SESSION_DURATION, global.window),
+    makeTimeoutHandler: () =>
+      new CookieTimeoutHandler(
+        SESSION_DURATION,
+        { cookieWriter: null, cookieStrategy: CookieStrategy.default },
+        global.window,
+      ),
     cleanup: clearCookies,
   },
 ])('$implementation', ({ makeTimeoutHandler, cleanup }) => {

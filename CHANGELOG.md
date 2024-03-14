@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- options `cookieStrategy` and `cookieWriter` to enable various strategies for setting cookies.
+
 ### Changed
 
 ### Deprecated
