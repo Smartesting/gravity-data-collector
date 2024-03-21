@@ -292,6 +292,7 @@ class CollectorWrapper {
       return {
         enableEventRecording: settings.sessionRecording,
         enableVideoRecording: settings.videoRecording,
+        enableSnapshotRecording: settings.snapshotRecording,
         enableVideoAnonymization: settings.videoAnonymization,
         anonymizeSelectors: settings.anonymizeSelectors,
         ignoreSelectors: settings.ignoreSelectors,

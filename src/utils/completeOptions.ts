@@ -22,6 +22,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     rejectSession: DEFAULT_SESSION_REJECTION,
     enabledListeners: undefined,
     enableEventRecording: true,
+    enableSnapshotRecording: true,
     enableVideoRecording: true,
     enableVideoAnonymization: true,
     window: options.window ?? window,

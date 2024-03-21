@@ -158,6 +158,7 @@ class TestGravityClient extends NopGravityClient {
     recordingSettingsDispatcher.dispatch({
       enableEventRecording: true,
       enableVideoRecording: true,
+      enableSnapshotRecording: true,
       enableVideoAnonymization: true,
       anonymizeSelectors: undefined,
       ignoreSelectors: undefined,

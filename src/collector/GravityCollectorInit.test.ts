@@ -442,6 +442,7 @@ describe.each([
             settings: {
               sessionRecording: true,
               videoRecording: true,
+              snapshotRecording: true,
               videoAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,

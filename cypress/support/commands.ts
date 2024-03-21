@@ -104,6 +104,7 @@ Cypress.Commands.add('interceptGravityCollectionSettings', () => {
     settings: {
       sessionRecording: true,
       videoRecording: true,
+      snapshotRecording: true,
       videoAnonymization: true,
       anonymizeSelectors: undefined,
       ignoreSelectors: undefined,

@@ -271,6 +271,7 @@ export interface CollectorOptions {
   enabledListeners: Listener[] | undefined
   enableEventRecording: boolean
   enableVideoRecording: boolean
+  enableSnapshotRecording: boolean
   enableVideoAnonymization: boolean
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
@@ -282,6 +283,7 @@ export type RecordingSettings = Pick<
   CollectorOptions,
   | 'enableEventRecording'
   | 'enableVideoRecording'
+  | 'enableSnapshotRecording'
   | 'enableVideoAnonymization'
   | 'anonymizeSelectors'
   | 'ignoreSelectors'
@@ -289,6 +291,7 @@ export type RecordingSettings = Pick<
 export const NO_RECORDING_SETTINGS: RecordingSettings = {
   enableEventRecording: false,
   enableVideoRecording: false,
+  enableSnapshotRecording: false,
   enableVideoAnonymization: false,
   anonymizeSelectors: undefined,
   ignoreSelectors: undefined,
@@ -383,6 +386,7 @@ export enum AddSnapshotError {
 export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
+  snapshotRecording: boolean
   videoAnonymization: boolean
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined

@@ -149,6 +149,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
             mockFetchCollectionSettings({
               sessionRecording: true,
               videoRecording: true,
+              snapshotRecording: true,
               videoAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
@@ -171,6 +172,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
             mockFetchCollectionSettings({
               sessionRecording: true,
               videoRecording: false,
+              snapshotRecording: false,
               videoAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
@@ -193,6 +195,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
             mockFetchCollectionSettings({
               sessionRecording: true,
               videoRecording: true,
+              snapshotRecording: true,
               videoAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
@@ -210,6 +213,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
             mockFetchCollectionSettings({
               sessionRecording: true,
               videoRecording: true,
+              snapshotRecording: true,
               videoAnonymization: false,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
@@ -227,6 +231,7 @@ describe('Session recording (events & video) depends on remote Gravity settings'
             mockFetchCollectionSettings({
               sessionRecording: false,
               videoRecording: false,
+              snapshotRecording: true,
               videoAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
