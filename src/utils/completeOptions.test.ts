@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
+import { CollectorOptions, CookieStrategy, CreateSelectorsOptions, QueryType } from '../types'
 import completeOptions, { DEFAULT_SESSION_REJECTION } from './completeOptions'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 
@@ -145,6 +145,8 @@ describe('completeOptions', () => {
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
         useHashInUrlAsPathname: false,
+        cookieStrategy: CookieStrategy.default,
+        cookieWriter: null,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -177,6 +179,8 @@ describe('completeOptions', () => {
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
         useHashInUrlAsPathname: false,
+        cookieStrategy: CookieStrategy.default,
+        cookieWriter: null,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -213,6 +217,8 @@ describe('completeOptions', () => {
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
           useHashInUrlAsPathname: false,
+          cookieStrategy: CookieStrategy.default,
+          cookieWriter: null,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -243,6 +249,8 @@ describe('completeOptions', () => {
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
           useHashInUrlAsPathname: false,
+          cookieStrategy: CookieStrategy.default,
+          cookieWriter: null,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -273,6 +281,8 @@ describe('completeOptions', () => {
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
           useHashInUrlAsPathname: false,
+          cookieStrategy: CookieStrategy.default,
+          cookieWriter: null,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -303,6 +313,8 @@ describe('completeOptions', () => {
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
           useHashInUrlAsPathname: false,
+          cookieStrategy: CookieStrategy.default,
+          cookieWriter: null,
         }
         expect(completed).toStrictEqual(expected)
       })

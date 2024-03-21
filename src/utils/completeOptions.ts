@@ -1,4 +1,4 @@
-import { CollectorOptions, CreateSelectorsOptions, QueryType } from '../types'
+import { CollectorOptions, CookieStrategy, CreateSelectorsOptions, QueryType } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { checkCssSelector } from './cssSelectorUtils'
 
@@ -32,6 +32,8 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     anonymizeSelectors: undefined,
     ignoreSelectors: undefined,
     useHashInUrlAsPathname: false,
+    cookieStrategy: CookieStrategy.default,
+    cookieWriter: null,
   }
 
   const debugDefaultOptions = {

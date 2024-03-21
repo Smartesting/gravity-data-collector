@@ -43,10 +43,11 @@ import {
   buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
 } from '../../src/gravityEndPoints'
+import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
 const DEFAULT_GRAVITY_SERVER_URL = 'https://api.gravity.smartesting.com'
 
-Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => {
+Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void) => {
   return cy
     .intercept(
       {
@@ -66,14 +67,14 @@ Cypress.Commands.add('interceptGravityPublish', (onReq?: (req: any) => void) => 
     .as('sendGravityRequest')
 })
 
-Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => {
+Cypress.Commands.add('interceptGravityIdentify', (onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void) => {
   cy.intercept(
     {
       method: 'POST',
       url: buildGravityTrackingIdentifySessionApiUrl('*', DEFAULT_GRAVITY_SERVER_URL, '*'),
     },
     (req) => {
-      onReq(req)
+      onReq && onReq(req)
       req.reply({
         statusCode: 200,
         body: { error: null },
@@ -82,7 +83,7 @@ Cypress.Commands.add('interceptGravityIdentify', (onReq: (req: any) => void) => 
   ).as('sendGravityIdentify')
 })
 
-Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: any) => void) => {
+Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void) => {
   cy.intercept(
     {
       method: 'POST',
@@ -119,6 +120,10 @@ Cypress.Commands.add('openBaseSite', (path?: string) => {
   return cy.visit(`http://my-site.com:3000/${path ?? ''}`)
 })
 
+Cypress.Commands.add('openAnotherSite', (path?: string) => {
+  return cy.visit(`http://another-site.com:3000/${path ?? ''}`)
+})
+
 Cypress.Commands.add('identifySession', () => {
   return cy.get('a.identify-link').click()
 })
@@ -149,15 +154,17 @@ declare global {
        * Intercepts publish requests to Gravity
        * @example cy.interceptGravityPublish()
        */
-      interceptGravityPublish(onReq?: (req: any) => void): Chainable
+      interceptGravityPublish(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
-      interceptGravityIdentify(onReq: (req: any) => void): Chainable
+      interceptGravityIdentify(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
-      interceptGravityRecord(onReq?: (req: any) => void): Chainable
+      interceptGravityRecord(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
       interceptGravityCollectionSettings(): Chainable
 
       openBaseSite(path?: string): Chainable
+
+      openAnotherSite(path?: string): Chainable
 
       identifySession(): Chainable
 

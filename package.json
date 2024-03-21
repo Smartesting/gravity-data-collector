@@ -1,6 +1,6 @@
 {
   "name": "@smartesting/gravity-data-collector",
-  "version": "4.1.0",
+  "version": "4.2.0-beta",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
@@ -16,7 +16,9 @@
     "lint-fix": "eslint --ext ts --max-warnings 0 src --fix",
     "test": "vitest",
     "make-test-site": "cp -r cypress/test-site/. dist-sandbox",
-    "start-e2e-test-site": "npm run build && npm run build-sandbox && npm run make-test-site && ./node_modules/.bin/serve dist-sandbox",
+    "start-e2e-test-site": "npm run build && npm run build-sandbox && npm run make-test-site && (npm run serve & npm run serve-secured)",
+    "serve": "serve dist-sandbox",
+    "serve-secured": "serve -p 3443 dist-sandbox --ssl-cert dist-sandbox/.cert/cert.pem --ssl-key dist-sandbox/.cert/key.pem",
     "cypress": "cypress open --e2e --browser=electron",
     "cypress-run": "cypress run",
     "coverage": "vitest run --coverage",

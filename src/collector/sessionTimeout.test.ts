@@ -8,6 +8,7 @@ import CollectorWrapper from './CollectorWrapper'
 import { createDummy } from '../test-utils/dummyFactory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import {
+  CookieStrategy,
   ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
@@ -161,7 +162,11 @@ describe.each([
 
 const memorySessionIdHandler = new MemorySessionIdHandler(uuid)
 const memoryTimeoutHandler = new MemoryTimeoutHandler(1000)
-const cookieTimeoutHandler = new CookieTimeoutHandler(1000, global.window)
+const cookieTimeoutHandler = new CookieTimeoutHandler(
+  1000,
+  { cookieWriter: null, cookieStrategy: CookieStrategy.default },
+  global.window,
+)
 describe.each([
   {
     context: 'with memory-based timeout',

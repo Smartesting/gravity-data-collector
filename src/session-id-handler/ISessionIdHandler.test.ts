@@ -5,6 +5,8 @@ import MemorySessionIdHandler from './MemorySessionIdHandler'
 import SessionStorageSessionIdHandler from './SessionStorageSessionIdHandler'
 import CookieSessionIdHandler from './CookieSessionIdHandler'
 import { nop } from '../utils/nop'
+import { CookieStrategy } from '../types'
+import { clearCookies } from '../test-utils/clearCookies'
 
 let i = 0
 
@@ -16,7 +18,12 @@ function incrementalIds() {
 describe.each([
   {
     implementation: 'CookieSessionIdHandler',
-    makeSessionIdHandler: () => new CookieSessionIdHandler(incrementalIds, global.window),
+    makeSessionIdHandler: () =>
+      new CookieSessionIdHandler(
+        incrementalIds,
+        { cookieWriter: null, cookieStrategy: CookieStrategy.default },
+        global.window,
+      ),
     cleanup: clearCookies,
   },
   {
@@ -62,9 +69,3 @@ describe.each([
     })
   })
 })
-
-function clearCookies() {
-  document.cookie.split(';').forEach(function (c) {
-    document.cookie = c.replace(/^ +/, '').replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`)
-  })
-}

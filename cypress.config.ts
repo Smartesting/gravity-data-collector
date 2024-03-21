@@ -14,6 +14,7 @@ export default defineConfig({
   hosts: {
     'my-site.com': '127.0.0.1',
     'app.my-site.com': '127.0.0.1',
+    'another-site.com': '127.0.0.1',
     'auth.another-site.com': '127.0.0.1',
   },
 })

@@ -1,18 +1,23 @@
-import { readCookie, setCookie } from '../utils/documentCookie'
+import DocumentCookie from '../utils/DocumentCookie'
 import ITimeoutHandler from './ITimeoutHandler'
+import { CookieSettings } from '../types'
 
 const GRAVITY_SESSION_TIMEOUT_COOKIE_KEY = 'gravity_session_timeout'
 
 export default class CookieTimeoutHandler implements ITimeoutHandler {
-  public constructor(private readonly sessionDuration: number, private readonly win: typeof window) {
-    const stored = readCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, this.win)
+  private readonly documentCookie: DocumentCookie
+
+  public constructor(private readonly sessionDuration: number, cookieSettings: CookieSettings, win: typeof window) {
+    this.documentCookie = new DocumentCookie(cookieSettings, win)
+
+    const stored = this.documentCookie.read(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY)
     if (stored === undefined) {
       this.reset()
     }
   }
 
   isExpired(): boolean {
-    const stored = readCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, this.win)
+    const stored = this.documentCookie.read(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY)
     if (stored === undefined) {
       return false
     }
@@ -21,6 +26,6 @@ export default class CookieTimeoutHandler implements ITimeoutHandler {
 
   reset() {
     const timeout = new Date().getTime() + this.sessionDuration
-    setCookie(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, timeout.toString(), this.win)
+    this.documentCookie.write(GRAVITY_SESSION_TIMEOUT_COOKIE_KEY, timeout.toString())
   }
 }

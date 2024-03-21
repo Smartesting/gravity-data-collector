@@ -39,7 +39,7 @@ export class CollectorInstaller {
   }
 
   withCookieSessionIdHandler(): CollectorInstaller {
-    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, this.options.window))
+    return this.withSessionIdHandler(new CookieSessionIdHandler(uuid, this.options, this.options.window))
   }
 
   withSessionIdHandler(handler: ISessionIdHandler): CollectorInstaller {
@@ -48,7 +48,7 @@ export class CollectorInstaller {
   }
 
   withCookieTimeoutHandler(sessionDuration: number): CollectorInstaller {
-    return this.withTimeoutHandler(new CookieTimeoutHandler(sessionDuration, this.options.window))
+    return this.withTimeoutHandler(new CookieTimeoutHandler(sessionDuration, this.options, this.options.window))
   }
 
   withTimeoutHandler(handler: ITimeoutHandler): CollectorInstaller {
