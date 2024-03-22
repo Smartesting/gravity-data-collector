@@ -98,6 +98,7 @@ class CollectorWrapper {
       ({
         enableEventRecording,
         enableVideoRecording,
+        enableSnapshotRecording,
         enableVideoAnonymization,
         ignoreSelectors,
         anonymizeSelectors,
@@ -115,6 +116,8 @@ class CollectorWrapper {
             ignoreSelectors,
             anonymizeSelectors,
           })
+        }
+        if (enableVideoRecording && enableSnapshotRecording) {
           this.snapshotRecorderHandler.initializeRecording({
             enableAnonymization: enableVideoAnonymization,
             ignoreSelectors,
