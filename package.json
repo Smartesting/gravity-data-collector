@@ -1,6 +1,6 @@
 {
   "name": "@smartesting/gravity-data-collector",
-  "version": "4.2.0-beta",
+  "version": "4.3.0-beta",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
