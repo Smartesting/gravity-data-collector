@@ -7,14 +7,31 @@ export function createSnapshot(forDocument: Document, inDocument: Document, opti
     if (!snapshot) return null
     if (!inDocument) return null
 
-    const node = rebuild(snapshot, {
+    // Note: we use a hash in order to be able to delete it when cleaning up.
+    const data: { node?: Node | null } = {}
+    const mirror = createMirror()
+
+    data.node = rebuild(snapshot, {
       doc: inDocument,
       cache: createCache(),
-      mirror: createMirror(),
+      mirror,
     })
-    if (node) return new XMLSerializer().serializeToString(node)
+    if (data.node) {
+      const serialized = new XMLSerializer().serializeToString(data.node)
+      removeAllChildren(data.node)
+      delete data.node
+      mirror.reset()
+
+      return serialized
+    }
   } catch (e) {
     console.error(e)
   }
   return null
+}
+
+function removeAllChildren(element: Node) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild)
+  }
 }
