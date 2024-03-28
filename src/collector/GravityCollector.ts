@@ -14,8 +14,13 @@ export default class GravityCollector {
     this.collectorWrapper = collectorWrapper
   }
 
-  static getInstance(_window: any = window) {
+  static getInstance(_window: any = window): GravityCollector {
     return _window._GravityCollector
+  }
+
+  static getSessionId(_window: any = window): string | undefined {
+    const instance = GravityCollector.getInstance(_window)
+    return instance.collectorWrapper?.getSessionId()
   }
 
   static init(options?: Partial<CollectorOptions>) {

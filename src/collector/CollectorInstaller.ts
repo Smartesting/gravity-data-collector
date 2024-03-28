@@ -4,8 +4,6 @@ import completeOptions from '../utils/completeOptions'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import CookieSessionIdHandler from '../session-id-handler/CookieSessionIdHandler'
-import SessionStorageTestNameHandler from '../test-name-handler/SessionStorageTestNameHandler'
-import TestNameHandler from '../test-name-handler/TestNameHandler'
 import crossfetch from 'cross-fetch'
 import { uuid } from '../utils/uuid'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
@@ -22,7 +20,6 @@ export class CollectorInstaller {
   private options: CollectorOptions
   private sessionIdHandler: ISessionIdHandler = new MemorySessionIdHandler(uuid)
   private sessionTimeoutHandler: ITimeoutHandler = new MemoryTimeoutHandler(1000)
-  private testNameHandler: TestNameHandler = new SessionStorageTestNameHandler()
   private fetch = crossfetch
 
   constructor(options?: Partial<CollectorOptions>) {
@@ -56,11 +53,6 @@ export class CollectorInstaller {
     return this
   }
 
-  withTestNameHandler(testNameHandler: TestNameHandler): CollectorInstaller {
-    this.testNameHandler = testNameHandler
-    return this
-  }
-
   withFetch(fetch: FetchType): CollectorInstaller {
     this.fetch = fetch
     this.options.window.fetch = fetch
@@ -71,7 +63,6 @@ export class CollectorInstaller {
     const collectorWrapper = new CollectorWrapper(
       this.options,
       this.sessionIdHandler,
-      this.testNameHandler,
       this.sessionTimeoutHandler,
       this.fetch,
     )
