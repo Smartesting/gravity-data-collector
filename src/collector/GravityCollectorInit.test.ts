@@ -9,14 +9,11 @@ import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vi
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import TestNameHandler from '../test-name-handler/TestNameHandler'
-import { mock } from 'vitest-mock-extended'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import CypressEventListener from '../event-listeners/CypressEventListener'
 import { Class } from '../test-utils/types'
 import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
@@ -94,22 +91,6 @@ describe.each([
     installer().withSessionIdHandler(sessionIdHandler).install()
     expect(handleUserAction).not.toHaveBeenCalled()
     expect(sessionIdHandler.get()).toEqual(sessionId)
-  })
-
-  it('a "sessionStarted" action is sent if session id exists but this is a new test', async () => {
-    const sessionIdHandler = new MemorySessionIdHandler(uuid)
-    const testNameHandler = mock<TestNameHandler>()
-    testNameHandler.isNewTest.mockReturnValue(false)
-    installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
-    expect(handleUserAction).toHaveBeenCalledOnce()
-    const sessionId = sessionIdHandler.get()
-
-    handleUserAction.mockClear()
-    testNameHandler.isNewTest.mockReturnValue(true)
-    installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
-    expect(handleUserAction).toHaveBeenCalledOnce()
-    expect(getLastCallFirstArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
-    expect(sessionIdHandler.get()).not.toEqual(sessionId)
   })
 
   describe('event listener initializing', () => {
@@ -264,46 +245,6 @@ describe.each([
         })
       })
     }
-  })
-
-  it('does not initialize CypressEventListener when window.Cypress is not available', async () => {
-    vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-    installer().install()
-    expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
-  })
-
-  describe('when window.Cypress is available', () => {
-    beforeEach(() => {
-      ;(window as any).Cypress = {}
-    })
-
-    afterEach(() => {
-      delete (window as any).Cypress
-    })
-
-    describe('initializes CypressEventListener:', () => {
-      it('if enabledListeners option is not set ', async () => {
-        vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-        installer().install()
-        expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-
-      it('if enabledListeners option is set and includes CypressCommands', async () => {
-        vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-        installer()
-          .withOptions({ enabledListeners: [Listener.CypressCommands] })
-          .install()
-        expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-    })
-
-    describe('does not initialize CypressEventListener:', () => {
-      it('if enabledListeners option is set but does not include CypressCommands', async () => {
-        vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-        installer().withOptions({ enabledListeners: [] }).install()
-        expect(CypressEventListener.prototype.init).not.toHaveBeenCalled()
-      })
-    })
   })
 
   describe('when recordRequestsFor is set', () => {

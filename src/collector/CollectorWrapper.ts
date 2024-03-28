@@ -1,7 +1,6 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import {
   CollectorOptions,
-  CypressObject,
   Listener,
   NO_RECORDING_SETTINGS,
   RecordingSettings,
@@ -11,7 +10,6 @@ import {
 
 import UserActionHandler from '../user-action/UserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import TestNameHandler from '../test-name-handler/TestNameHandler'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import ClickEventListener from '../event-listeners/ClickEventListener'
@@ -24,7 +22,6 @@ import { TargetEventListenerOptions } from '../event-listeners/TargetedEventList
 import createAsyncRequest from '../user-action/createAsyncRequest'
 import { trackingUrlStartPart } from '../gravityEndPoints'
 import { IEventListener } from '../event-listeners/IEventListener'
-import CypressEventListener from '../event-listeners/CypressEventListener'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
@@ -69,7 +66,6 @@ class CollectorWrapper {
   constructor(
     private readonly options: CollectorOptions,
     private readonly sessionIdHandler: ISessionIdHandler,
-    private readonly testNameHandler: TestNameHandler,
     private readonly timeoutHandler: ITimeoutHandler,
     fetch = crossfetch,
   ) {
@@ -129,8 +125,7 @@ class CollectorWrapper {
       console.log('[Gravity data collector] invalid URL for tracking: ', currentUrl)
       return
     }
-    const isNewSession =
-      reset || !this.sessionIdHandler.isSet() || this.testNameHandler.isNewTest() || this.timeoutHandler.isExpired()
+    const isNewSession = reset || !this.sessionIdHandler.isSet() || this.timeoutHandler.isExpired()
 
     if (isNewSession) {
       if (!keepSession(options)) {
@@ -141,11 +136,13 @@ class CollectorWrapper {
         this.userActionHandler.activate()
         this.sessionTraitHandler.activate()
       }
-      if (this.testNameHandler.isNewTest()) this.sessionIdHandler.generateNewSessionId()
       this.initSession(createSessionStartedUserAction(options.buildId))
     }
-    this.testNameHandler.refresh()
     this.eventListenerHandler.initializeEventListeners()
+  }
+
+  getSessionId(): string {
+    return this.sessionIdHandler.get()
   }
 
   async identifySession(traitName: string, traitValue: SessionTraitValue): Promise<void> {
@@ -252,12 +249,6 @@ class CollectorWrapper {
       )
     }
 
-    const cypress = ((window as any).Cypress as CypressObject) ?? undefined
-    if (cypress !== undefined && this.isListenerEnabled(Listener.CypressCommands)) {
-      eventListeners.push(
-        new CypressEventListener(cypress, this.userActionHandler, async () => await this.gravityClient.flush()),
-      )
-    }
     return eventListeners
   }
 

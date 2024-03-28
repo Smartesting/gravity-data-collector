@@ -72,41 +72,9 @@ export enum Listener {
   CypressCommands = 'cypressCommands',
 }
 
-export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest | TestCommand
-
-export type TestCommand = {
-  command: CypressCommand
-} & UserActionProperties
-
-export enum CypressEvent {
-  COMMAND_START = 'command:start',
-  COMMAND_END = 'command:end',
-}
-
-export interface CypressCommand {
-  event: CypressEvent
-  name: string
-  args: readonly any[]
-  id: string
-  chainerId: string
-  prevId?: string
-  nextId?: string
-  userInvocationStack: string
-  type?: string
-}
+export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
 
 export type ListenerFn = (...values: any[]) => void
-
-export interface CypressObject {
-  listeners: (event: string) => ReadonlyArray<ListenerFn>
-  removeListener: (event: string, listener: ListenerFn) => void
-  addListener: (event: string, listener: ListenerFn) => void
-  emit: (event: string, ...values: any[]) => boolean
-  currentTest?: {
-    title: string
-    titlePath: string[]
-  }
-}
 
 export type AsyncRequest = {
   url: string

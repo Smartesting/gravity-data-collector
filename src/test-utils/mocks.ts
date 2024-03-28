@@ -1,4 +1,4 @@
-import { CypressObject, GravityDocument, ListenerFn } from '../types'
+import { GravityDocument } from '../types'
 import { vi } from 'vitest'
 
 export function mockWindowScreen() {
@@ -65,36 +65,6 @@ export function mockKeyDown(target: HTMLElement, key: string, code: string): Key
     code,
     target,
   } as unknown as KeyboardEvent
-}
-
-export function mockCypressObject(attributes: Partial<CypressObject> = {}): CypressObject {
-  const listeners: Record<string, ListenerFn[]> = {}
-  return {
-    listeners(event: string) {
-      return listeners[event] ?? []
-    },
-    addListener(event: string, listener: ListenerFn) {
-      Array.isArray(listeners[event]) ? listeners[event].push(listener) : (listeners[event] = [listener])
-    },
-    removeListener(event: string, listener: ListenerFn) {
-      if (Array.isArray(listeners[event])) {
-        const index = listeners[event].indexOf(listener)
-        if (index !== -1) {
-          listeners[event].splice(index, 1)
-        }
-      }
-    },
-    emit(event: string, ...values: any[]): boolean {
-      if (Array.isArray(listeners[event])) {
-        for (const listener of listeners[event]) {
-          listener(...values)
-        }
-        return true
-      }
-      return false
-    },
-    ...attributes,
-  }
 }
 
 type MockFetchParams<T> = Partial<{
