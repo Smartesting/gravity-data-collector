@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols // some values are used/defined by Gravity server
+
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
@@ -328,11 +330,6 @@ export enum AddSessionUserActionsError {
   invalidFormat = 'invalid_format',
   projectNotFound = 'project_not_found',
   projectExpired = 'project_expired',
-
-  /** @deprecated Use projectNotFound instead. */
-  domainNotFound = 'domain_not_found',
-  /** @deprecated Use projectExpired instead. */
-  domainExpired = 'domain_expired',
 }
 
 export interface IdentifySessionResponse {
@@ -348,11 +345,6 @@ export enum IdentifySessionError {
   notUUID = 'not_a_uuid',
   projectNotFound = 'project_not_found',
   projectExpired = 'project_expired',
-
-  /** @deprecated Use projectNotFound instead. */
-  domainNotFound = 'domain_not_found',
-  /** @deprecated Use projectExpired instead. */
-  domainExpired = 'domain_expired',
 }
 
 export interface AddSessionRecordingResponse {
