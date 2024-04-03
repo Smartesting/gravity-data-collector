@@ -36,14 +36,12 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   ) {}
 
   initializeRecording(settings: ScreenRecordingOptions) {
-    console.log('[SRH] initialize recording', settings)
     this.snapshotOptions = settings.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : WITH_PARTIAL_ANONYMIZATION
     if (settings.anonymizeSelectors) {
       this.snapshotOptions.maskTextSelector = settings.anonymizeSelectors
     }
     this.snapshotOptions.blockSelector = settings.ignoreSelectors
     this.snapshotDocument = installSnapshotContainer(window.document)
-    console.log('[SRH] snapshotDocument', this.snapshotDocument)
     if (this.snapshotDocument) {
       this.observer.observe(window.document.body, { childList: true, subtree: true })
     }
@@ -61,14 +59,12 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
 
   onUserAction(userAction: UserAction) {
     if (isSnapshotTrigger(userAction)) {
-      console.log('[SRH] onUserAction')
       this.pendingUserAction = true
     }
   }
 
   handle() {
     if (this.timeoutHandler.isExpired()) return
-    console.log('[SRH] handle')
     if (this.pendingUserAction) {
       this.pendingUserAction = false
       this.buildAndSendSnapshot()
@@ -80,12 +76,9 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     const pathname = getLocationPathname(window, this.collectorOptions)
     this.debounce(() => {
       if (!this.snapshotOptions || !this.snapshotDocument) return
-      const startingDate = Date.now()
       const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions)
-      console.log(`[SRH] html= ${html?.length ?? 'null'}`)
       if (!html) return
       const documentSnapshot = this.createDocumentSnapshot(html, pathname)
-      console.log('send snapshot created in (ms)', Date.now() - startingDate)
       void this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
     })
   }
