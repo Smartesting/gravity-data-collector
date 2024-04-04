@@ -33,7 +33,9 @@
 
 <body>
 <div id="content">
-  <H1>Gravity Data Collector sample</H1>
+  <H1><img width="150"
+           src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting-bleu.svg"
+           alt="Smartesting" class="logo-primary"> Gravity Data Collector sample</H1>
   <p>
     Some data values are sanitized before to be sent to Gravity server (all the input texts for instance). Others
     are kept as they are.
@@ -255,8 +257,25 @@
       </div>
     </button>
   </fieldset>
+
+  <fieldset>
+    <legend>Dynamic elements</legend>
+    <button type="button" onclick="addItem()">
+      Add item
+    </button>
+    <ul id="item-list">
+    </ul>
+  </fieldset>
   <p>
 </div>
-<script>document.querySelector('#Samantha').addEventListener('click', ()=>console.log('Samantha'))</script>
+<script>
+  function addItem() {
+    const list = document.getElementById('item-list');
+    const item = document.createElement('li')
+    item.textContent = "item "+(list.childElementCount + 1)
+    list.appendChild(item)
+  }
+
+  document.querySelector("#Samantha").addEventListener("click", () => console.log("Samantha"));</script>
 </body>
 </html>

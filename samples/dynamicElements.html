@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Gravity Data Collector - Sandbox</title>
+    <script async id="logger" src="../dist-sandbox/bundle.js" type="text/javascript"></script>
+    <script type="text/javascript" src="config.js"></script>
+    <script>
+      const script = document.querySelector('#logger')
+      script.addEventListener('load', function () {
+        window.GravityCollector.init(config)
+      })
+    </script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body>
+    <div id="content">
+      <a href="./index.html">< back</a>
+
+      <h1>Dynamic elements</h1>
+      <fieldset>
+        <legend>Interactive list</legend>
+        <button type="button" onclick="addItem()">Add item</button>
+        <ul id="item-list"></ul>
+      </fieldset>
+    </div>
+    <script>
+      let nextIndex = 1
+
+      function addItem() {
+        const list = document.getElementById('item-list')
+        const li = document.createElement('li')
+        const span = document.createElement('span')
+        span.textContent = `item ${nextIndex++} `
+        const removeButton = document.createElement('button')
+        removeButton.textContent = 'remove'
+        removeButton.addEventListener('click', () => {
+          list.removeChild(li)
+        })
+        li.appendChild(span)
+        li.appendChild(removeButton)
+        list.appendChild(li)
+      }
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 import { TargetDisplayInfo } from '../types'
 import getDocument from '../utils/getDocument'
-import { maskText } from '../screen-recorder/recordingSettings'
+import { maskText } from '../utils/rrwebRecordingSettings'
 import { matchClosest } from '../utils/cssSelectorUtils'
 
 export function createTargetDisplayInfo(

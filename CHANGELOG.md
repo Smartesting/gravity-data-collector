@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- store screenshot of the visited pages.
+
 ### Changed
 
 ### Deprecated

@@ -10,6 +10,7 @@ import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import { computePathname } from '../utils/computePathname'
+import { ISnapshotRecorderHandler } from '../snapshot-recorder/SnapshotRecorderHandler'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
@@ -21,6 +22,7 @@ export default class UserActionHandler implements IUserActionHandler {
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly gravityClient: IGravityClient,
     private readonly useHashInUrlAsPathname: boolean,
+    private readonly snapshotHandler: ISnapshotRecorderHandler,
   ) {}
 
   getAnonymizationSettings(): AnonymizationSettings {
@@ -35,6 +37,7 @@ export default class UserActionHandler implements IUserActionHandler {
     if (!this.active) return
     if (!this.timeoutHandler.isExpired()) {
       await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
+      this.snapshotHandler.onUserAction(action)
     }
     this.listeners.forEach((listener) => listener())
   }

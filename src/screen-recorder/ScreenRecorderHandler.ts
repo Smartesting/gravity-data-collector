@@ -5,10 +5,11 @@ import RECORDING_SETTINGS, {
   WITH_DEFAULT_ANONYMIZATION,
   WITH_PARTIAL_ANONYMIZATION,
   WITH_TOTAL_ANONYMIZATION,
-} from './recordingSettings'
+} from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
+import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 
-interface ScreenRecordingOptions {
+export interface ScreenRecordingOptions {
   enableAnonymization?: boolean
   anonymizeSelectors?: string
   ignoreSelectors?: string
@@ -17,7 +18,11 @@ interface ScreenRecordingOptions {
 export default class ScreenRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
-  constructor(private readonly sessionIdHandler: ISessionIdHandler, private readonly gravityClient: IGravityClient) {}
+  constructor(
+    private readonly sessionIdHandler: ISessionIdHandler,
+    private readonly timeoutHandler: ITimeoutHandler,
+    private readonly gravityClient: IGravityClient,
+  ) {}
 
   initializeRecording(options?: ScreenRecordingOptions) {
     const handleRecord = this.handle.bind(this)
@@ -26,7 +31,6 @@ export default class ScreenRecorderHandler {
       : options?.anonymizeSelectors
       ? { ...WITH_DEFAULT_ANONYMIZATION, maskTextSelector: options.anonymizeSelectors }
       : { ...WITH_PARTIAL_ANONYMIZATION }
-    // @ts-expect-error
     this.stopRecording = record({
       emit(event) {
         void handleRecord(event)
@@ -42,6 +46,8 @@ export default class ScreenRecorderHandler {
   }
 
   async handle(screenRecord: eventWithTime) {
-    return await this.gravityClient.addScreenRecord(this.sessionIdHandler.get(), screenRecord)
+    if (!this.timeoutHandler.isExpired()) {
+      return await this.gravityClient.addScreenRecord(this.sessionIdHandler.get(), screenRecord)
+    }
   }
 }

@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols // some values are used/defined by Gravity server
+
 export enum UserActionType {
   SessionStarted = 'sessionStarted',
   Click = 'click',
@@ -256,23 +258,22 @@ export interface GravityDocument {
   title: string
 }
 
-export type CollectorOptions = RecordingSettings &
-  CookieSettings & {
-    authKey: string
-    requestInterval: number
-    gravityServerUrl: string
-    debug: boolean
-    maxDelay: number
-    selectorsOptions: Partial<CreateSelectorsOptions> | undefined
-    sessionsPercentageKept: number
-    rejectSession: () => boolean
-    onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
-    recordRequestsFor: string[] | undefined
-    window: typeof window
-    enabledListeners: Listener[] | undefined
-    buildId: string | undefined
-    useHashInUrlAsPathname: boolean
-  }
+export type CollectorOptions = CookieSettings & {
+  authKey: string
+  requestInterval: number
+  gravityServerUrl: string
+  debug: boolean
+  maxDelay: number
+  selectorsOptions: Partial<CreateSelectorsOptions> | undefined
+  sessionsPercentageKept: number
+  rejectSession: () => boolean
+  onPublish: ((userActions: ReadonlyArray<SessionUserAction>) => void) | undefined
+  recordRequestsFor: string[] | undefined
+  window: typeof window
+  enabledListeners: Listener[] | undefined
+  buildId: string | undefined
+  useHashInUrlAsPathname: boolean
+}
 
 export enum CookieStrategy {
   default = 'default',
@@ -292,27 +293,29 @@ export interface CookieSettings {
   cookieWriter: ((key: string, value: string, options: Partial<CookieOptions>) => string) | null
 }
 
-export interface RecordingSettings {
-  enableEventRecording: boolean
-  enableVideoRecording: boolean
-  enableVideoAnonymization: boolean
+export interface AnonymizationSettings {
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
 }
 
-export const NO_RECORDING_SETTINGS: RecordingSettings = {
-  enableEventRecording: false,
-  enableVideoRecording: false,
-  enableVideoAnonymization: false,
-  anonymizeSelectors: undefined,
-  ignoreSelectors: undefined,
-}
-
-export type AnonymizationSettings = Pick<RecordingSettings, 'anonymizeSelectors' | 'ignoreSelectors'>
+export type GravityRecordingSettings = {
+  enableEventRecording: boolean
+  enableVideoRecording: boolean
+  enableSnapshotRecording: boolean
+  enableVideoAnonymization: boolean
+} & AnonymizationSettings
 
 export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
   anonymizeSelectors: undefined,
   ignoreSelectors: undefined,
+}
+
+export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
+  enableEventRecording: false,
+  enableVideoRecording: false,
+  enableSnapshotRecording: false,
+  enableVideoAnonymization: false,
+  ...NO_ANONYMIZATION_SETTINGS,
 }
 
 export interface CreateSelectorsOptions {
@@ -339,11 +342,6 @@ export enum AddSessionUserActionsError {
   invalidFormat = 'invalid_format',
   projectNotFound = 'project_not_found',
   projectExpired = 'project_expired',
-
-  /** @deprecated Use projectNotFound instead. */
-  domainNotFound = 'domain_not_found',
-  /** @deprecated Use projectExpired instead. */
-  domainExpired = 'domain_expired',
 }
 
 export interface IdentifySessionResponse {
@@ -359,11 +357,6 @@ export enum IdentifySessionError {
   notUUID = 'not_a_uuid',
   projectNotFound = 'project_not_found',
   projectExpired = 'project_expired',
-
-  /** @deprecated Use projectNotFound instead. */
-  domainNotFound = 'domain_not_found',
-  /** @deprecated Use projectExpired instead. */
-  domainExpired = 'domain_expired',
 }
 
 export interface AddSessionRecordingResponse {
@@ -380,9 +373,24 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
+export interface AddSnapshotResponse {
+  error: AddSnapshotError | null
+}
+
+export enum AddSnapshotError {
+  accessDenied = 'no_access',
+  projectExpired = 'project_expired',
+  projectNotFound = 'project_not_found',
+  collectionNotFound = 'collection_not_found',
+  sessionNotFound = 'session_not_found',
+  notUUID = 'not_a_uuid',
+  invalidFormat = 'invalid_format',
+}
+
 export interface SessionCollectionSettings {
   sessionRecording: boolean
   videoRecording: boolean
+  snapshotRecording: boolean
   videoAnonymization: boolean
   anonymizeSelectors: string | undefined
   ignoreSelectors: string | undefined
@@ -400,3 +408,23 @@ export enum ReadSessionCollectionSettingsError {
   collectionNotFound = 'collection_not_found',
   incorrectSource = 'incorrect_source',
 }
+
+interface ViewportSize {
+  width: number
+  height: number
+}
+
+export interface DocumentSnapshot {
+  content: string
+  pathname: string
+  timestamp: number
+  viewport: ViewportSize
+}
+
+export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
+  'a',
+  'button',
+  'nav',
+  'input',
+  'li',
+]
