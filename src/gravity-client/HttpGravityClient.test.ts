@@ -32,10 +32,11 @@ describe('HttpGravityClient', () => {
           }),
         )
         recordingSettingsDispatcher.dispatch({
-          enableEventRecording: true,
-          enableVideoRecording: false,
-          enableSnapshotRecording: false,
-          enableVideoAnonymization: true,
+          sessionRecording: true,
+          videoRecording: false,
+          snapshotRecording: false,
+          videoAnonymization: true,
+          snapshotAnonymization: true,
           anonymizeSelectors: undefined,
           ignoreSelectors: undefined,
         })

@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Removed
 
+- all the recording options have been removed from the GravityCollector initialisation. These options are now exclusively accessible from the Gravity app.
+
 ### Fixed
 
 ## [4.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.1.0...v4.2.0)

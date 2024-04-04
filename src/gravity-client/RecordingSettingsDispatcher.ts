@@ -1,6 +1,6 @@
-import { NO_RECORDING_SETTINGS, RecordingSettings } from '../types'
+import { GravityRecordingSettings, NO_RECORDING_SETTINGS } from '../types'
 
-type RecordingSettingsListener = (settings: RecordingSettings) => void
+type RecordingSettingsListener = (settings: GravityRecordingSettings) => void
 
 export default class RecordingSettingsDispatcher {
   private readonly listeners: Array<RecordingSettingsListener> = []
@@ -9,7 +9,7 @@ export default class RecordingSettingsDispatcher {
     this.listeners.push(listener)
   }
 
-  dispatch(settings: RecordingSettings) {
+  dispatch(settings: GravityRecordingSettings) {
     this.listeners.forEach((listener) => listener(settings))
   }
 

@@ -23,13 +23,13 @@ describe.each([
   })
 
   it('delegates session trait to handler', async () => {
-    const collector = await installer().install()
+    const collector = installer().install()
     await collector.identifySession('connected', true)
     expect(handleSessionTrait).toHaveBeenCalledWith('connected', true)
   })
 
   it('prevents bad format of session trait value', async () => {
-    const collector = await installer().install()
+    const collector = installer().install()
     await collector.identifySession('connected', { badFormat: true } as unknown as string)
     expect(consoleWarn).toHaveBeenCalledWith(
       '[Gravity Data Collector] The following session trait value is not allowed: ',

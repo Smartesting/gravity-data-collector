@@ -15,7 +15,7 @@ export interface ScreenRecordingOptions {
   ignoreSelectors?: string
 }
 
-export default class ScreenRecorderHandler {
+export default class VideoRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
   constructor(

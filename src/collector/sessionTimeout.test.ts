@@ -2,19 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi, vitest } 
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
-import ScreenRecorderHandler from '../screen-recorder/ScreenRecorderHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import CollectorWrapper from './CollectorWrapper'
-import { createDummy } from '../test-utils/dummyFactory'
+import { createDummy, dummyDocumentSnapshot } from '../test-utils/dummyFactory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import {
-  CookieStrategy,
-  ReadSessionCollectionSettingsResponse,
-  SessionTraits,
-  SessionUserAction,
-  TargetedUserAction,
-  UserActionType,
-} from '../types'
+import { CookieStrategy, SessionTraits, SessionUserAction, TargetedUserAction, UserActionType } from '../types'
 import { eventWithTime } from '@rrweb/types'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
 import { uuid } from '../utils/uuid'
@@ -22,8 +14,10 @@ import AbstractGravityClient from '../gravity-client/AbstractGravityClient'
 import { waitFor } from '@testing-library/dom'
 import { getLastCallFirstArgument } from '../test-utils/spies'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
-import { mockFetch } from '../test-utils/mocks'
 import CookieTimeoutHandler from '../timeout-handler/CookieTimeoutHandler'
+import VideoRecorderHandler from '../video-recorder/VideoRecorderHandler'
+import { buildGravityRecordingSettingsResponse, mockBuildAndSendSnapshot } from '../test-utils/mocks'
+import SnapshotRecorderHandler, { isSnapshotTrigger } from '../snapshot-recorder/SnapshotRecorderHandler'
 
 describe.each([
   {
@@ -38,47 +32,45 @@ describe.each([
       collectorInstaller({
         debug: false,
         authKey: uuid(),
-      }).withFetch(
-        mockFetch<ReadSessionCollectionSettingsResponse>({
-          responseBody: {
-            error: null,
-            settings: {
-              sessionRecording: true,
-              videoRecording: true,
-              snapshotRecording: true,
-              videoAnonymization: true,
-              anonymizeSelectors: undefined,
-              ignoreSelectors: undefined,
-            },
-          },
-        }),
-      ),
+      }),
   },
 ])('Session timeout management on $context', ({ clientClass, installer }) => {
   let initializeEventListeners: SpyInstance
-  let initializeScreenRecording: SpyInstance
+  let initializeVideoRecording: SpyInstance
+  let initializeSnapshotRecording: SpyInstance
   let handleSessionUserActions: SpyInstance
   let handleSessionTraits: SpyInstance
-  let handleScreenRecords: SpyInstance
+  let handleVideoRecords: SpyInstance
+  let handleSnapshots: SpyInstance
 
   beforeEach(() => {
     vi.useFakeTimers()
+    vi.spyOn(clientClass.prototype, 'readSessionCollectionSettings').mockResolvedValue(
+      buildGravityRecordingSettingsResponse({ videoRecording: true, sessionRecording: true }),
+    )
     initializeEventListeners = vi.spyOn(EventListenersHandler.prototype, 'initializeEventListeners')
-    initializeScreenRecording = vi.spyOn(ScreenRecorderHandler.prototype, 'initializeRecording').mockImplementation(nop)
+    initializeVideoRecording = vi.spyOn(VideoRecorderHandler.prototype, 'initializeRecording').mockImplementation(nop)
+    initializeSnapshotRecording = vi
+      .spyOn(SnapshotRecorderHandler.prototype, 'initializeRecording')
+      .mockImplementation(nop)
     handleSessionUserActions = vi
       .spyOn(clientClass.prototype, 'handleSessionUserActions')
       .mockResolvedValue({ error: null })
     handleSessionTraits = vi.spyOn(clientClass.prototype, 'handleSessionTraits').mockResolvedValue({ error: null })
-    handleScreenRecords = vi.spyOn(clientClass.prototype, 'handleScreenRecords').mockResolvedValue({ error: null })
+    handleVideoRecords = vi.spyOn(clientClass.prototype, 'handleVideoRecords').mockResolvedValue({ error: null })
+    handleSnapshots = vi.spyOn(clientClass.prototype, 'handleSnapshots').mockResolvedValue({ error: null })
+    vi.spyOn(SnapshotRecorderHandler.prototype, 'buildAndSendSnapshot').mockImplementation(mockBuildAndSendSnapshot)
   })
 
   afterEach(() => {
     vi.useRealTimers()
     initializeEventListeners.mockRestore()
-    initializeScreenRecording.mockRestore()
+    initializeVideoRecording.mockRestore()
+    initializeSnapshotRecording.mockRestore()
     handleSessionUserActions.mockRestore()
     handleSessionTraits.mockRestore()
-    handleScreenRecords.mockRestore()
+    handleVideoRecords.mockRestore()
+    handleSnapshots.mockRestore()
   })
 
   it('flush events if timeout is handled', async () => {
@@ -111,13 +103,15 @@ describe.each([
       [
         {
           sessionId: 'sessionId-1',
+          type: UserActionType.Change,
           target: { element: 'wave-1' },
           location: {},
         },
       ],
     ])
     expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-1', { id: 'wave-1' }])
-    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'wave-1' }]])
+    expect(handleVideoRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'wave-1' }]])
+    expect(handleSnapshots.mock.lastCall).toStrictEqual(['sessionId-1', [dummyDocumentSnapshot()]])
 
     await vi.advanceTimersByTimeAsync(2000)
     await collector.userActionHandler.handle(
@@ -130,7 +124,7 @@ describe.each([
     // - EventListenersHandler must have been reset
     // the expired event is not saved
     await vi.advanceTimersByTimeAsync(300)
-    expect(initializeScreenRecording).toHaveBeenCalledTimes(2)
+    expect(initializeVideoRecording).toHaveBeenCalledTimes(2)
     expect(initializeEventListeners).toHaveBeenCalledTimes(2)
     expect(handleSessionUserActions).toHaveBeenCalledTimes(3)
     expect(handleSessionUserActions.mock.lastCall).toMatchObject([
@@ -157,7 +151,7 @@ describe.each([
       ],
     ])
     expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-2', { id: 'wave-2' }])
-    expect(handleScreenRecords.mock.lastCall).toStrictEqual(['sessionId-2', [{ data: 'wave-2' }]])
+    expect(handleVideoRecords.mock.lastCall).toStrictEqual(['sessionId-2', [{ data: 'wave-2' }]])
   })
 })
 
@@ -230,7 +224,10 @@ describe.each([
 })
 
 async function emitEachEventKind(collector: CollectorWrapper, tag: string) {
-  await collector.userActionHandler.handle(createDummy<TargetedUserAction>({ target: { element: tag } }))
+  const action = createDummy<TargetedUserAction>({ type: UserActionType.Change, target: { element: tag } })
+  assert(isSnapshotTrigger(action))
+  await collector.userActionHandler.handle(action)
   await collector.sessionTraitHandler.handle('id', tag)
-  await collector.screenRecorderHandler.handle(createDummy<eventWithTime>({ data: tag }))
+  await collector.videoRecorderHandler.handle(createDummy<eventWithTime>({ data: tag }))
+  collector.snapshotRecorderHandler.handle()
 }

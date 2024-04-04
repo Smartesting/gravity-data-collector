@@ -1,6 +1,5 @@
 import { CollectorOptions, CookieStrategy, CreateSelectorsOptions, QueryType } from '../types'
 import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
-import { checkCssSelector } from './cssSelectorUtils'
 
 export const DEFAULT_SESSION_REJECTION = () => false
 
@@ -21,17 +20,11 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     sessionsPercentageKept: 100,
     rejectSession: DEFAULT_SESSION_REJECTION,
     enabledListeners: undefined,
-    enableEventRecording: true,
-    enableSnapshotRecording: true,
-    enableVideoRecording: true,
-    enableVideoAnonymization: true,
     window: options.window ?? window,
     buildId: undefined,
     onPublish: undefined,
     recordRequestsFor: undefined,
     selectorsOptions: undefined,
-    anonymizeSelectors: undefined,
-    ignoreSelectors: undefined,
     useHashInUrlAsPathname: false,
     cookieStrategy: CookieStrategy.default,
     cookieWriter: null,
@@ -49,12 +42,6 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
 
   checkPropertyPercentage(completedOptions, 'sessionsPercentageKept')
   checkSelectorsOptions(completedOptions.selectorsOptions ?? {})
-  if (!checkCssSelector(completedOptions.anonymizeSelectors)) {
-    throw new Error("Option 'anonymizeSelectors' is not a valid CSS selector")
-  }
-  if (!checkCssSelector(completedOptions.ignoreSelectors)) {
-    throw new Error("Option 'ignoreSelectors' is not a valid CSS selector")
-  }
 
   if (!debug && (options.authKey === null || options.authKey === undefined)) {
     throw authKeyError

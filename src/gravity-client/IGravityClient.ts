@@ -1,4 +1,4 @@
-import { DocumentSnapshot, ReadSessionCollectionSettingsResponse, SessionTraits, SessionUserAction } from '../types'
+import { DocumentSnapshot, GravityRecordingSettingsResponse, SessionTraits, SessionUserAction } from '../types'
 import { eventWithTime } from '@rrweb/types'
 
 export interface IGravityClient {
@@ -10,7 +10,7 @@ export interface IGravityClient {
 
   identifySession: (sessionId: string, sessionTraits: SessionTraits) => Promise<void>
 
-  readSessionCollectionSettings: () => Promise<ReadSessionCollectionSettingsResponse>
+  readSessionCollectionSettings: () => Promise<GravityRecordingSettingsResponse>
 
   flush: () => Promise<void>
 

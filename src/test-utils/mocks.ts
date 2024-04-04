@@ -1,5 +1,17 @@
-import { CypressObject, GravityDocument, ListenerFn } from '../types'
+import {
+  CypressObject,
+  GravityDocument,
+  GravityRecordingSettings,
+  GravityRecordingSettingsError,
+  GravityRecordingSettingsResponse,
+  ListenerFn,
+} from '../types'
 import { vi } from 'vitest'
+import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
+import assert from 'assert'
+import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import { dummyDocumentSnapshot } from './dummyFactory'
+import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 
 export function mockWindowScreen() {
   Object.defineProperty(window, 'screen', {
@@ -105,8 +117,47 @@ type MockFetchParams<T> = Partial<{
 export function mockFetch<T>(params?: MockFetchParams<T>) {
   const status = params?.status ?? 200
   const responseBody = params?.responseBody ?? {}
-  return vi.fn().mockResolvedValue({
-    status,
-    json: async () => await Promise.resolve(responseBody),
+  return vi.fn().mockImplementation(() => {
+    return {
+      status,
+      json: async () => responseBody,
+    }
   })
+}
+
+export function mockBuildAndSendSnapshot(this: SnapshotRecorderHandler) {
+  // @ts-expect-error
+  const gravityClient = this.gravityClient
+  assert(gravityClient instanceof HttpGravityClient || gravityClient instanceof ConsoleGravityClient)
+  // @ts-expect-error
+  const sessionIdHandler = this.sessionIdHandler
+  void gravityClient.handleSnapshots(sessionIdHandler.get(), [dummyDocumentSnapshot()])
+}
+
+export function buildGravityRecordingSettings(settings: Partial<GravityRecordingSettings>) {
+  return {
+    sessionRecording: true,
+    videoRecording: false,
+    snapshotRecording: false,
+    videoAnonymization: false,
+    snapshotAnonymization: false,
+    anonymizeSelectors: undefined,
+    ignoreSelectors: undefined,
+    ...settings,
+  }
+}
+
+export function buildGravityRecordingSettingsResponse(
+  settings: Partial<GravityRecordingSettings> | null,
+): GravityRecordingSettingsResponse {
+  if (settings === null) {
+    return {
+      error: GravityRecordingSettingsError.accessDenied,
+      settings: null,
+    }
+  }
+  return {
+    error: null,
+    settings: buildGravityRecordingSettings(settings),
+  }
 }

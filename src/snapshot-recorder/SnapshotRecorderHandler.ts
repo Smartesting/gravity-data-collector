@@ -1,6 +1,6 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { ScreenRecordingOptions } from '../screen-recorder/ScreenRecorderHandler'
+import { ScreenRecordingOptions } from '../video-recorder/VideoRecorderHandler'
 import { SnapshotOptions, WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from '../utils/rrwebRecordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
@@ -104,7 +104,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   }
 }
 
-function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserAction {
+export function isSnapshotTrigger(userAction?: UserAction): userAction is TargetedUserAction {
   if (userAction && isTargetedUserAction(userAction)) {
     const target: UserActionTarget = userAction.interactiveTarget ?? userAction.target
     return (

@@ -4,7 +4,7 @@ import {
   AddSnapshotResponse,
   DocumentSnapshot,
   IdentifySessionResponse,
-  ReadSessionCollectionSettingsResponse,
+  GravityRecordingSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -52,11 +52,11 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     )
   }
 
-  async handleScreenRecords(
+  async handleVideoRecords(
     sessionId: string,
-    screenRecords: ReadonlyArray<eventWithTime>,
+    records: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    const screenRecordsNdjson = screenRecords.map((screenRecord) => JSON.stringify(screenRecord)).join('\n') + '\n'
+    const screenRecordsNdjson = records.map((record) => JSON.stringify(record)).join('\n') + '\n'
     const response = await this.fetch(
       buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
       {
@@ -92,7 +92,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     return responseBody
   }
 
-  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+  async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     const response = await this.fetch(
       buildGravityTrackingSessionCollectionSettingsApiUrl(this.options.authKey, this.options.gravityServerUrl),
       {
@@ -100,7 +100,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
         redirect: 'follow',
       },
     )
-    const responseBody: ReadSessionCollectionSettingsResponse = await response.json()
+    const responseBody: GravityRecordingSettingsResponse = await response.json()
     this.handleResponseStatus(response.status)
     return responseBody
   }

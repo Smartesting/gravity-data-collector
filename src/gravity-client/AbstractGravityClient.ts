@@ -3,8 +3,8 @@ import {
   AddSessionUserActionsResponse,
   AddSnapshotResponse,
   DocumentSnapshot,
+  GravityRecordingSettingsResponse,
   IdentifySessionResponse,
-  ReadSessionCollectionSettingsResponse,
   SessionTraits,
   SessionUserAction,
   UserActionType,
@@ -13,6 +13,7 @@ import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
 import { eventWithTime } from '@rrweb/types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
+import isDefined from '../utils/isDefined'
 
 export interface SessionTraitsWithSessionId {
   sessionId: string
@@ -47,8 +48,8 @@ export interface GravityClientOptions {
 export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
-  private readonly screenRecordBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
-  private readonly snapshotRecordBuffer: DataBuffering<SnapshotWithSessionId, AddSnapshotResponse>
+  private readonly videoBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
+  private readonly snapshotBuffer: DataBuffering<SnapshotWithSessionId, AddSnapshotResponse>
 
   protected constructor(options: GravityClientOptions, recordingSettingsDispatcher: RecordingSettingsDispatcher) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
@@ -56,9 +57,9 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       handleData: this.handleSessionUserActions.bind(this),
       onFlush: (buffer, response) => {
         options.onPublish?.(buffer)
-        if (response.error === null) {
-          this.screenRecordBuffer.unlock()
-          this.snapshotRecordBuffer.unlock()
+        if (!isDefined(response.error)) {
+          this.videoBuffer.unlock()
+          this.snapshotBuffer.unlock()
           this.sessionTraitsBuffer.unlock()
         }
       },
@@ -71,15 +72,15 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       },
       locked: true,
     })
-    this.screenRecordBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
+    this.videoBuffer = new DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>({
       handleInterval: options.requestInterval,
       handleData: async (screenRecordsWithSessionIds) => {
         const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
-        return await this.handleScreenRecords(sessionId, screenRecords)
+        return await this.handleVideoRecords(sessionId, screenRecords)
       },
       locked: true,
     })
-    this.snapshotRecordBuffer = new DataBuffering<SnapshotWithSessionId, AddSnapshotResponse>({
+    this.snapshotBuffer = new DataBuffering<SnapshotWithSessionId, AddSnapshotResponse>({
       handleInterval: options.requestInterval,
       handleData: async (snapshotsWithSessionIds) => {
         const { sessionId, snapshots } = this.extractSessionIdAndSnapshots(snapshotsWithSessionIds)
@@ -88,22 +89,24 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       locked: true,
     })
     recordingSettingsDispatcher.subscribe(
-      ({ enableEventRecording, enableVideoRecording, anonymizeSelectors, ignoreSelectors }) => {
+      ({ sessionRecording, videoRecording, snapshotRecording, anonymizeSelectors, ignoreSelectors }) => {
         if (!isBlank(ignoreSelectors) || !isBlank(anonymizeSelectors)) {
           // remove all buffered userActions and videos because they may have info to anonymize/ignore
           this.sessionUserActionBuffer.clear(
             (sessionUserAction) => sessionUserAction.type === UserActionType.SessionStarted,
           )
-          this.screenRecordBuffer.clear()
-          this.snapshotRecordBuffer.clear()
+          this.videoBuffer.clear()
+          this.snapshotBuffer.clear()
         }
-        if (enableEventRecording) {
+        if (sessionRecording) {
           this.sessionUserActionBuffer.activate()
           this.sessionTraitsBuffer.activate()
         }
-        if (enableVideoRecording) {
-          this.screenRecordBuffer.activate()
-          this.snapshotRecordBuffer.activate()
+        if (videoRecording) {
+          this.videoBuffer.activate()
+        }
+        if (snapshotRecording) {
+          this.snapshotBuffer.activate()
         }
       },
     )
@@ -111,7 +114,8 @@ export default abstract class AbstractGravityClient implements IGravityClient {
 
   reset() {
     this.sessionTraitsBuffer.lock()
-    this.screenRecordBuffer.lock()
+    this.videoBuffer.lock()
+    this.snapshotBuffer.lock()
   }
 
   async addSessionUserAction(sessionUserAction: SessionUserAction) {
@@ -119,14 +123,14 @@ export default abstract class AbstractGravityClient implements IGravityClient {
   }
 
   async addScreenRecord(sessionId: string, screenRecord: eventWithTime) {
-    await this.screenRecordBuffer.addData({
+    await this.videoBuffer.addData({
       sessionId,
       screenRecord,
     })
   }
 
   async addSnapshot(sessionId: string, snapshot: DocumentSnapshot): Promise<void> {
-    await this.snapshotRecordBuffer.addData({
+    await this.snapshotBuffer.addData({
       sessionId,
       snapshot,
     })
@@ -142,12 +146,13 @@ export default abstract class AbstractGravityClient implements IGravityClient {
   async flush(): Promise<void> {
     await Promise.all([
       this.sessionUserActionBuffer.flush(),
-      this.screenRecordBuffer.flush(),
+      this.videoBuffer.flush(),
+      this.snapshotBuffer.flush(),
       this.sessionTraitsBuffer.flush(),
     ])
   }
 
-  abstract readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse>
+  abstract readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse>
 
   protected abstract handleSessionUserActions(
     sessionUserActions: ReadonlyArray<SessionUserAction>,
@@ -158,7 +163,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
     sessionTraits: SessionTraits,
   ): Promise<IdentifySessionResponse>
 
-  protected abstract handleScreenRecords(
+  protected abstract handleVideoRecords(
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse>

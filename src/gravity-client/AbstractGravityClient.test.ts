@@ -1,4 +1,3 @@
-import { GRAVITY_SERVER_ADDRESS } from '../gravityEndPoints'
 import { expect, SpyInstance, vi } from 'vitest'
 import { EventType, eventWithTime } from '@rrweb/types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
@@ -7,20 +6,14 @@ import { GravityClientOptions } from './AbstractGravityClient'
 import {
   AddSessionUserActionsError,
   AddSessionUserActionsResponse,
-  ReadSessionCollectionSettingsResponse,
+  GravityRecordingSettingsResponse,
   SessionUserAction,
 } from '../types'
-import { uuid } from '../utils/uuid'
 import NopGravityClient from './NopGravityClient'
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS: GravityClientOptions = {
   requestInterval: 0,
-  authKey: uuid(),
-  gravityServerUrl: GRAVITY_SERVER_ADDRESS,
-  onError: vi.fn(),
   onPublish: vi.fn(),
-  enableEventRecording: true,
-  enableVideoRecording: true,
 }
 
 describe('AbstractGravityClient', () => {
@@ -51,7 +44,7 @@ describe('AbstractGravityClient', () => {
 
     it('does not handle screen records until user actions are sent', async () => {
       const gravityClient: TestGravityClient = new TestGravityClient(DEFAULT_OPTIONS)
-      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
+      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleVideoRecords')
 
       await gravityClient.addScreenRecord(sessionId, screenRecord)
       await gravityClient.flush()
@@ -71,7 +64,7 @@ describe('AbstractGravityClient', () => {
         }
       })(DEFAULT_OPTIONS)
 
-      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleScreenRecords')
+      const spyHandleScreenRecords = vi.spyOn(gravityClient, 'handleVideoRecords')
 
       await gravityClient.addSessionUserAction(createDummy())
       await gravityClient.addScreenRecord(sessionId, screenRecord)
@@ -156,16 +149,17 @@ class TestGravityClient extends NopGravityClient {
   ) {
     super(options, recordingSettingsDispatcher)
     recordingSettingsDispatcher.dispatch({
-      enableEventRecording: true,
-      enableVideoRecording: true,
-      enableSnapshotRecording: true,
-      enableVideoAnonymization: true,
+      sessionRecording: true,
+      videoRecording: true,
+      snapshotRecording: true,
+      videoAnonymization: true,
+      snapshotAnonymization: true,
       anonymizeSelectors: undefined,
       ignoreSelectors: undefined,
     })
   }
 
-  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+  async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     return {
       error: null,
       settings: null,

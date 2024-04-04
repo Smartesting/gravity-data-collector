@@ -299,10 +299,11 @@ export interface AnonymizationSettings {
 }
 
 export type GravityRecordingSettings = {
-  enableEventRecording: boolean
-  enableVideoRecording: boolean
-  enableSnapshotRecording: boolean
-  enableVideoAnonymization: boolean
+  sessionRecording: boolean
+  videoRecording: boolean
+  snapshotRecording: boolean
+  videoAnonymization: boolean
+  snapshotAnonymization: boolean
 } & AnonymizationSettings
 
 export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
@@ -311,10 +312,11 @@ export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
 }
 
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
-  enableEventRecording: false,
-  enableVideoRecording: false,
-  enableSnapshotRecording: false,
-  enableVideoAnonymization: false,
+  sessionRecording: false,
+  videoRecording: false,
+  snapshotRecording: false,
+  videoAnonymization: false,
+  snapshotAnonymization: false,
   ...NO_ANONYMIZATION_SETTINGS,
 }
 
@@ -387,21 +389,12 @@ export enum AddSnapshotError {
   invalidFormat = 'invalid_format',
 }
 
-export interface SessionCollectionSettings {
-  sessionRecording: boolean
-  videoRecording: boolean
-  snapshotRecording: boolean
-  videoAnonymization: boolean
-  anonymizeSelectors: string | undefined
-  ignoreSelectors: string | undefined
+export interface GravityRecordingSettingsResponse {
+  settings: GravityRecordingSettings | null
+  error: GravityRecordingSettingsError | null
 }
 
-export interface ReadSessionCollectionSettingsResponse {
-  settings: SessionCollectionSettings | null
-  error: ReadSessionCollectionSettingsError | null
-}
-
-export enum ReadSessionCollectionSettingsError {
+export enum GravityRecordingSettingsError {
   accessDenied = 'no_access',
   projectExpired = 'project_expired',
   projectNotFound = 'project_not_found',
