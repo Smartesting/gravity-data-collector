@@ -5,23 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.2.0...main)
-
-### Info
+## [5.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.2.0...v5.0.0)
 
 ### Added
 
 - store screenshot of the visited pages.
 
-### Changed
-
-### Deprecated
-
 ### Removed
 
-- all the recording options have been removed from the GravityCollector initialisation. These options are now exclusively accessible from the Gravity app.
-
-### Fixed
+- all the recording options have been removed from the GravityCollector initialization. These options are now exclusively settable from the Gravity app.
 
 ## [4.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.1.0...v4.2.0)
 
