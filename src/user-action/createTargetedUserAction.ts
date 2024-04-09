@@ -1,5 +1,6 @@
 import {
   AnonymizationSettings,
+  CLICKABLE_ELEMENT_TAG_NAMES,
   CreateSelectorsOptions,
   ElementPosition,
   KeyUserActionData,
@@ -19,14 +20,6 @@ import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
 import { matchClosest } from '../utils/cssSelectorUtils'
-
-const ANCESTOR_HOLDING_CLICK_LISTENER_TAGS: ReadonlyArray<keyof HTMLElementTagNameMap> = [
-  'a',
-  'button',
-  'nav',
-  'input',
-  'li',
-]
 
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
@@ -71,7 +64,7 @@ export function createTargetedUserAction(
     userActionData,
   }
   if (type === UserActionType.Click) {
-    const interactiveTarget = target.closest(ANCESTOR_HOLDING_CLICK_LISTENER_TAGS.join(','))
+    const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
       targetedUserAction.interactiveTarget = createActionTarget(
         interactiveTarget as HTMLElement,

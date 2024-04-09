@@ -1,4 +1,11 @@
-const RECORDING_SETTINGS = {
+import { recordOptions } from 'rrweb'
+import { eventWithTime } from '@rrweb/types'
+import { snapshot } from 'rrweb-snapshot'
+
+export type SnapshotOptions = Parameters<typeof snapshot>[1]
+export type VideoOptions = recordOptions<eventWithTime>
+
+const RECORDING_SETTINGS: VideoOptions = {
   sampling: {
     mousemove: false,
     scroll: 150,
@@ -20,7 +27,7 @@ const RECORDING_SETTINGS = {
 
 export default RECORDING_SETTINGS
 
-export const WITH_PARTIAL_ANONYMIZATION = {
+export const WITH_PARTIAL_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   maskInputOptions: {
     color: false,
     date: false,
@@ -43,7 +50,7 @@ export const WITH_PARTIAL_ANONYMIZATION = {
   maskTextFn: maskText,
 }
 
-export const WITH_DEFAULT_ANONYMIZATION = {
+export const WITH_DEFAULT_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   maskInputOptions: {
     color: true,
     date: true,
@@ -66,7 +73,7 @@ export const WITH_DEFAULT_ANONYMIZATION = {
   maskTextFn: maskText,
 }
 
-export const WITH_TOTAL_ANONYMIZATION = {
+export const WITH_TOTAL_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   maskAllInputs: true,
   maskInputFn: maskInput,
   maskTextSelector: '*',

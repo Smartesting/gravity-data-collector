@@ -1,10 +1,4 @@
-import {
-  Listener,
-  ReadSessionCollectionSettingsResponse,
-  SessionTraits,
-  SessionUserAction,
-  UserActionType,
-} from '../types'
+import { GravityRecordingSettingsResponse, Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
@@ -17,7 +11,7 @@ import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListe
 import { Class } from '../test-utils/types'
 import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
-import { mockFetch } from '../test-utils/mocks'
+import { buildGravityRecordingSettingsResponse, mockFetch } from '../test-utils/mocks'
 import AbstractGravityClient from '../gravity-client/AbstractGravityClient'
 import * as rrweb from 'rrweb'
 import { uuid } from '../utils/uuid'
@@ -47,11 +41,14 @@ import TouchStartEventListener from '../event-listeners/TouchStartEventListener'
 import TouchMoveEventListener from '../event-listeners/TouchMoveEventListener'
 import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
+import HttpGravityClient from '../gravity-client/HttpGravityClient'
+import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 
 describe.each([
   {
     context: 'dry run mode (debug=true)',
     installer: () => collectorInstaller({ debug: true }),
+    clientClass: ConsoleGravityClient,
   },
   {
     context: 'live mode (debug=false)',
@@ -60,14 +57,21 @@ describe.each([
         debug: false,
         authKey: uuid(),
       }),
+    clientClass: HttpGravityClient,
   },
-])('GravityCollector.init() in $context', ({ installer }) => {
+])('GravityCollector.init() in $context', ({ installer, clientClass }) => {
   let handleUserAction: SpyInstance<[SessionUserAction], Promise<void>>
   let handleSessionTrait: SpyInstance<[string, SessionTraits], Promise<void>>
 
   beforeEach(() => {
     handleUserAction = vi.spyOn(AbstractGravityClient.prototype, 'addSessionUserAction').mockImplementation(asyncNop)
     handleSessionTrait = vi.spyOn(AbstractGravityClient.prototype, 'identifySession').mockImplementation(asyncNop)
+    vi.spyOn(clientClass.prototype, 'readSessionCollectionSettings').mockResolvedValue(
+      buildGravityRecordingSettingsResponse({
+        videoRecording: true,
+        snapshotRecording: true,
+      }),
+    )
   })
 
   afterEach(() => {
@@ -377,13 +381,15 @@ describe.each([
     installer()
       .withSessionIdHandler(sessionIdHandler)
       .withFetch(
-        mockFetch<ReadSessionCollectionSettingsResponse>({
+        mockFetch<GravityRecordingSettingsResponse>({
           responseBody: {
             error: null,
             settings: {
               sessionRecording: true,
               videoRecording: true,
+              snapshotRecording: true,
               videoAnonymization: true,
+              snapshotAnonymization: true,
               anonymizeSelectors: undefined,
               ignoreSelectors: undefined,
             },

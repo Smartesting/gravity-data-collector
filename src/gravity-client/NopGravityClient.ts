@@ -1,19 +1,21 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
+  AddSnapshotResponse,
+  DocumentSnapshot,
   IdentifySessionResponse,
-  ReadSessionCollectionSettingsResponse,
+  GravityRecordingSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
-import AbstractGravityClient from './AbstractGravityClient'
+import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
-import { eventWithTime } from '@rrweb/types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
+import { eventWithTime } from '@rrweb/types'
 
 export default class NopGravityClient extends AbstractGravityClient implements IGravityClient {
-  constructor(requestInterval: number) {
-    super({ requestInterval }, new RecordingSettingsDispatcher())
+  constructor(options: GravityClientOptions, recordingSettingsDispatcher = new RecordingSettingsDispatcher()) {
+    super(options, recordingSettingsDispatcher)
   }
 
   async handleSessionUserActions(
@@ -26,14 +28,18 @@ export default class NopGravityClient extends AbstractGravityClient implements I
     return { error: null }
   }
 
-  async handleScreenRecords(
+  async handleVideoRecords(
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
     return { error: null }
   }
 
-  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
+    return { error: null }
+  }
+
+  async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     return { error: null, settings: null }
   }
 }

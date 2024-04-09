@@ -26,7 +26,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^4.2.0"
+    "@smartesting/gravity-data-collector": "^5.0.0"
   }
 }
 ```
@@ -42,11 +42,11 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@4.2.0/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@5.0.0/dist/gravity-logger-min.js"
 ></script>
 ```
 
-Please, look to [index.html](sample/index.html) to see how to use the script in HTML.
+Please, look to [index.html](samples/index.html) to see how to use the script in HTML.
 
 **Note:** The minified version of Gravity Data Collector is available only since release 2.1.5
 
@@ -63,27 +63,22 @@ GravityCollector.init(/*options*/)
 
 The `GravityCollector.init()` can take a `CollectorOptions` object with the following optional properties:
 
-| key                      | type                                                          | use                                                                                                                                                                                                                                                          | default value                       |
-| ------------------------ | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| authKey                  | String                                                        | The authentication key provided by Gravity to select the correct collection                                                                                                                                                                                  |                                     |
-| requestInterval          | Integer                                                       | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                                                                                 | 1000                                |
-| gravityServerUrl         | String                                                        | Gravity server URL                                                                                                                                                                                                                                           | https://api.gravity.smartesting.com |
-| debug                    | Boolean                                                       | Logs user action in the console instead of sending them to Gravity                                                                                                                                                                                           | false                               |
-| maxDelay                 | Integer                                                       | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                                                                                          | 500                                 |
-| selectorsOptions         | Object (optional)                                             | See [Work with selectors](#work-with-selectors).                                                                                                                                                                                                             | undefined                           |
-| sessionsPercentageKept   | [0..100]                                                      | Rate of sessions to be collected                                                                                                                                                                                                                             | 100                                 |
-| rejectSession            | function `() => boolean`                                      | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code>                                                              | `() => false`                       |
-| onPublish                | function (optional)                                           | Adds a function called after each publish to the gravity server.                                                                                                                                                                                             | undefined                           |
-| recordRequestsFor        | String[] (optional)                                           | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                                                                                      | undefined                           |
-| buildId                  | String (optional)                                             | The build reference when running tests                                                                                                                                                                                                                       | undefined                           |
-| enableEventRecording     | Boolean (optional)                                            | Set to `false` to deactivate any recording (event & video) (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                                                                              | true                                |
-| enableVideoRecording     | Boolean (optional)                                            | Set to `false` to deactivate video recording (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                                                                                            | true                                |
-| enableVideoAnonymization | Boolean (optional)                                            | Set to `false` to deactivate video anonymization (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                                                                                        | true                                |
-| anonymizeSelectors       | string (optional)                                             | HTML elements (and descendants) matching this CSS selector will be anonymized (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                                                           | undefined                           |
-| ignoreSelectors          | string (optional)                                             | HTML elements (and descendants) matching this CSS selector will not be recorded (only in debug mode, otherwise this option is controlled from the Gravity interface)                                                                                         | undefined                           |
-| useHashInUrlAsPathname   | Boolean (optional)                                            | Set to `true` to have a correct representation of pages in Gravity if your page URLs look like this: "http://mysite.com/#/something/else"                                                                                                                    | false                               |
-| cookieStrategy           | CookieStrategy ('default', 'subDomains' or 'iframeEmbedding') | Change the way the cookie is set: `default` works in most cases, `subDomains` should be used to track a single session accross multiple sub domains, `iframeEmbedding` should be used if your app is embedded as an iframe (eg: Jira or Azure DevOps plugin) | 'default'                           |
-| cookieWriter             | (key, value, options) => string (optional)                    | A function used to create the cookie alue (if you need to specify custom options)                                                                                                                                                                            | null                                |
+| key                    | type                                                          | use                                                                                                                                                                                                                                                          | default value                       |
+| ---------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| authKey                | String                                                        | The authentication key provided by Gravity to select the correct collection                                                                                                                                                                                  |                                     |
+| requestInterval        | Integer                                                       | Time (in ms) between two sends to Gravity server (buffering)                                                                                                                                                                                                 | 1000                                |
+| gravityServerUrl       | String                                                        | Gravity server URL                                                                                                                                                                                                                                           | https://api.gravity.smartesting.com |
+| debug                  | Boolean                                                       | Logs user action in the console instead of sending them to Gravity                                                                                                                                                                                           | false                               |
+| maxDelay               | Integer                                                       | In debug mode, adds a random delay (in ms) between 0 and this value before printing an user action.                                                                                                                                                          | 500                                 |
+| selectorsOptions       | Object (optional)                                             | See [Work with selectors](#work-with-selectors).                                                                                                                                                                                                             | undefined                           |
+| sessionsPercentageKept | [0..100]                                                      | Rate of sessions to be collected                                                                                                                                                                                                                             | 100                                 |
+| rejectSession          | function `() => boolean`                                      | Boolean function to ignore session tracking. For instance, to ignore sessions from some bots:<br /><code>rejectSession: () => /bot&#124;googlebot&#124;robot/i.test(navigator.userAgent)</code>                                                              | `() => false`                       |
+| onPublish              | function (optional)                                           | Adds a function called after each publish to the gravity server.                                                                                                                                                                                             | undefined                           |
+| recordRequestsFor      | String[] (optional)                                           | The Gravity Data Collector does not record requests by default. You must specify here the URL origin(s) of the requests to record. For example: "https://myserver.com/"                                                                                      | undefined                           |
+| buildId                | String (optional)                                             | The build reference when running tests                                                                                                                                                                                                                       | undefined                           |
+| useHashInUrlAsPathname | Boolean (optional)                                            | Set to `true` to have a correct representation of pages in Gravity if your page URLs look like this: "http://mysite.com/#/something/else"                                                                                                                    | false                               |
+| cookieStrategy         | CookieStrategy ('default', 'subDomains' or 'iframeEmbedding') | Change the way the cookie is set: `default` works in most cases, `subDomains` should be used to track a single session accross multiple sub domains, `iframeEmbedding` should be used if your app is embedded as an iframe (eg: Jira or Azure DevOps plugin) | 'default'                           |
+| cookieWriter           | (key, value, options) => string (optional)                    | A function used to create the cookie alue (if you need to specify custom options)                                                                                                                                                                            | null                                |
 
 ## Features
 
@@ -189,7 +184,7 @@ GravityCollector.init({
 
 ## Sandbox
 
-In order to test modifications on the library, a sandbox is accessible in [index.html](sample/index.html) file
+In order to test modifications on the library, a sandbox is accessible in [index.html](samples/index.html) file
 
 First, build the lib
 
@@ -204,7 +199,7 @@ npm run build-sandbox
 npm run watch-sandbox
 ```
 
-Finally, open [index.html](sample/index.html) with a browser, display the console (F12 with most browsers) and interact
+Finally, open [index.html](samples/index.html) with a browser, display the console (F12 with most browsers) and interact
 with the page to see collected user actions.
 
 **Note:** user actions may not show up in the console and be hidden by default. Ensure `Verbose` output are allowed by

@@ -134,13 +134,8 @@ describe('completeOptions', () => {
         sessionsPercentageKept: 100,
         rejectSession: DEFAULT_SESSION_REJECTION,
         window,
-        enableEventRecording: true,
-        enableVideoRecording: true,
-        enableVideoAnonymization: true,
         buildId: undefined,
         enabledListeners: undefined,
-        anonymizeSelectors: undefined,
-        ignoreSelectors: undefined,
         onPublish: undefined,
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
@@ -168,13 +163,8 @@ describe('completeOptions', () => {
         sessionsPercentageKept: 33.3,
         rejectSession: customSessionRejection,
         window,
-        enableEventRecording: true,
-        enableVideoRecording: true,
-        enableVideoAnonymization: true,
         buildId: undefined,
         enabledListeners: undefined,
-        anonymizeSelectors: undefined,
-        ignoreSelectors: undefined,
         onPublish: undefined,
         recordRequestsFor: undefined,
         selectorsOptions: undefined,
@@ -206,13 +196,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
-          enableEventRecording: true,
-          enableVideoRecording: true,
-          enableVideoAnonymization: true,
           buildId: undefined,
           enabledListeners: undefined,
-          anonymizeSelectors: undefined,
-          ignoreSelectors: undefined,
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
@@ -238,13 +223,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
-          enableEventRecording: true,
-          enableVideoRecording: true,
-          enableVideoAnonymization: true,
           buildId: undefined,
           enabledListeners: undefined,
-          anonymizeSelectors: undefined,
-          ignoreSelectors: undefined,
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
@@ -270,13 +250,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
-          enableEventRecording: true,
-          enableVideoRecording: true,
-          enableVideoAnonymization: true,
           buildId: undefined,
           enabledListeners: undefined,
-          anonymizeSelectors: undefined,
-          ignoreSelectors: undefined,
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
@@ -302,13 +277,8 @@ describe('completeOptions', () => {
           sessionsPercentageKept: 100,
           rejectSession: DEFAULT_SESSION_REJECTION,
           window,
-          enableEventRecording: true,
-          enableVideoRecording: true,
-          enableVideoAnonymization: true,
           buildId: undefined,
           enabledListeners: undefined,
-          anonymizeSelectors: undefined,
-          ignoreSelectors: undefined,
           onPublish: undefined,
           recordRequestsFor: undefined,
           selectorsOptions: undefined,
@@ -319,17 +289,5 @@ describe('completeOptions', () => {
         expect(completed).toStrictEqual(expected)
       })
     })
-  })
-
-  it('throws an error when provided an invalid "ignoreSelectors" option', () => {
-    expect(() => completeOptions({ ignoreSelectors: '42' })).toThrow(
-      "Option 'ignoreSelectors' is not a valid CSS selector",
-    )
-  })
-
-  it('throws an error when provided an invalid "anonymizeSelectors" option', () => {
-    expect(() => completeOptions({ anonymizeSelectors: '[s' })).toThrow(
-      "Option 'anonymizeSelectors' is not a valid CSS selector",
-    )
   })
 })

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v4.2.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v5.0.0...main)
 
 ### Info
 
@@ -23,17 +23,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+## [5.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.2.0...v5.0.0)
+
+### Added
+
+- store screenshot of the visited pages.
+
+### Removed
+
+- all the recording options have been removed from the GravityCollector initialization. These options are now
+  exclusively settable from the Gravity app.
+
 ## [4.2.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.1.0...v4.2.0)
 
 ### Added
 
-- options `cookieStrategy` and `cookieWriter` to enable various strategies for setting cookies. [#29](https://github.com/Smartesting/gravity-data-collector/pull/29)
+- options `cookieStrategy` and `cookieWriter` to enable various strategies for setting
+  cookies. [#29](https://github.com/Smartesting/gravity-data-collector/pull/29)
 
 ## [4.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.4...v4.1.0)
 
 ### Added
 
-- option `useHashInUrlAsPathname` which handles cases where the href of the pages looks like this `http://mysite.com/#/something/else`
+- option `useHashInUrlAsPathname` which handles cases where the href of the pages looks like
+  this `http://mysite.com/#/something/else`
 
 ## [4.0.4](https://github.com/Smartesting/gravity-data-collector/compare/v4.0.3...v4.0.4)
 

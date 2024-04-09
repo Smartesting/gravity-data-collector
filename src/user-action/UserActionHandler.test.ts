@@ -8,6 +8,7 @@ import IUserActionHandler from './IUserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import NopGravityClient from '../gravity-client/NopGravityClient'
 import MemoryTimeoutHandler from '../timeout-handler/MemoryTimeoutHandler'
+import { nop } from '../utils/nop'
 
 describe('UserActionHandler', () => {
   describe('handle', () => {
@@ -18,9 +19,10 @@ describe('UserActionHandler', () => {
     const sessionId = '123-456'
 
     beforeEach(() => {
-      client = new NopGravityClient(0)
+      client = new NopGravityClient({ requestInterval: 0 })
       sessionIdHandler = new MemorySessionIdHandler(() => sessionId)
-      userActionHandler = new UserActionHandler(sessionIdHandler, new MemoryTimeoutHandler(1000), client, true)
+      const timeoutHandler = new MemoryTimeoutHandler(1000)
+      userActionHandler = new UserActionHandler(sessionIdHandler, timeoutHandler, client, true, { onUserAction: nop })
     })
 
     it('adds a session id when handling a user action', async () => {

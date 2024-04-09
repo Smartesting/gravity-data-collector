@@ -1,8 +1,10 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
+  AddSnapshotResponse,
+  DocumentSnapshot,
   IdentifySessionResponse,
-  ReadSessionCollectionSettingsResponse,
+  GravityRecordingSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -35,7 +37,7 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     return { error: null }
   }
 
-  async handleScreenRecords(
+  async handleVideoRecords(
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
@@ -43,7 +45,12 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     return { error: null }
   }
 
-  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
+    this.log({ sessionId, snapshots })
+    return { error: null }
+  }
+
+  async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     return {
       settings: null,
       error: null,

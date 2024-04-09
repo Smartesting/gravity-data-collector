@@ -1,8 +1,10 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
+  AddSnapshotResponse,
+  DocumentSnapshot,
   IdentifySessionResponse,
-  ReadSessionCollectionSettingsResponse,
+  GravityRecordingSettingsResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -14,6 +16,7 @@ import {
   buildGravityTrackingPublishApiUrl,
   buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
+  buildGravityTrackingSnapshotApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@rrweb/types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
@@ -49,11 +52,11 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     )
   }
 
-  async handleScreenRecords(
+  async handleVideoRecords(
     sessionId: string,
-    screenRecords: ReadonlyArray<eventWithTime>,
+    records: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse> {
-    const screenRecordsNdjson = screenRecords.map((screenRecord) => JSON.stringify(screenRecord)).join('\n') + '\n'
+    const screenRecordsNdjson = records.map((record) => JSON.stringify(record)).join('\n') + '\n'
     const response = await this.fetch(
       buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
       {
@@ -71,7 +74,25 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     return responseBody
   }
 
-  async readSessionCollectionSettings(): Promise<ReadSessionCollectionSettingsResponse> {
+  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
+    const snapshotsNdjson = snapshots.map((snapshot) => JSON.stringify(snapshot)).join('\n') + '\n'
+    const response = await this.fetch(
+      buildGravityTrackingSnapshotApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
+      {
+        method: 'POST',
+        redirect: 'follow',
+        body: snapshotsNdjson,
+        headers: {
+          'Content-Type': 'application/x-ndjson',
+        },
+      },
+    )
+    const responseBody: AddSnapshotResponse = await response.json()
+    this.handleResponseStatus(response.status)
+    return responseBody
+  }
+
+  async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     const response = await this.fetch(
       buildGravityTrackingSessionCollectionSettingsApiUrl(this.options.authKey, this.options.gravityServerUrl),
       {
@@ -79,7 +100,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
         redirect: 'follow',
       },
     )
-    const responseBody: ReadSessionCollectionSettingsResponse = await response.json()
+    const responseBody: GravityRecordingSettingsResponse = await response.json()
     this.handleResponseStatus(response.status)
     return responseBody
   }

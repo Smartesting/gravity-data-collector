@@ -49,6 +49,29 @@ the:
 - `MINOR` version when you add functionality in a backwards compatible manner.
 - `PATCH` version when you make backwards compatible bug fixes.
 
+## Making beta releases
+
+Tag any commit as `vX.Y.Z-beta` to have it published on GitHub pages. This will be then available as:
+
+```json
+  "dependencies": {
+"@smartesting/gravity-data-collector": "https://smartesting.github.io/gravity-data-collector/vX.Y.Z-beta/smartesting-gravity-data-collector.tgz",
+}
+```
+
+Or, as an HTML snippet:
+
+```html
+<script
+  async
+  id="logger"
+  src="https://smartesting.github.io/gravity-data-collector/vX.Y.Z-beta/gravity-logger-min.js"
+  type="text/javascript"
+></script>
+```
+
+**Note:** you should update [package.json](package.json) and [config.ts](src/config.ts) to ensure that the correct version of the collector is initialized in `sessionStartedEvent`.
+
 ## Making test releases
 
 We use GitHub pages an as host for temporary/test releases and automatically provide `.tgz` and minified JS for the latest commits on branches `main` and `canary`.
@@ -83,7 +106,5 @@ Or directly as an HTML script tag:
   type="text/javascript"
 ></script>
 ```
-
-**Note:** any tag named `vX.Y.Z-beta` will be published on Github pages.
 
 **Warning:** do not remove the `main` and `canary` branches from the script and workflow trigger.

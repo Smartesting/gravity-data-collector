@@ -36,7 +36,7 @@
 //   }
 // }
 
-import { ReadSessionCollectionSettingsResponse } from '../../src/types'
+import { GravityRecordingSettingsResponse } from '../../src/types'
 import {
   buildGravityTrackingIdentifySessionApiUrl,
   buildGravityTrackingPublishApiUrl,
@@ -100,12 +100,14 @@ Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: CyHttpMessages.Inc
 })
 
 Cypress.Commands.add('interceptGravityCollectionSettings', () => {
-  const body: ReadSessionCollectionSettingsResponse = {
+  const body: GravityRecordingSettingsResponse = {
     error: null,
     settings: {
       sessionRecording: true,
       videoRecording: true,
+      snapshotRecording: true,
       videoAnonymization: true,
+      snapshotAnonymization: true,
       anonymizeSelectors: undefined,
       ignoreSelectors: undefined,
     },
