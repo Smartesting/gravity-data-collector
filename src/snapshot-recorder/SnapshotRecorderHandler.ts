@@ -15,17 +15,19 @@ import {
 } from '../types'
 import { createSnapshot } from './createSnapshot'
 import getLocationPathname from '../utils/getLocationPathname'
-import { dropSnapshotContainer, installSnapshotContainer } from './snapshotContainer'
+import { dropSnapshotContainer } from './snapshotContainer'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
+import createDefaultTextCompressor from '../text-compressor/createDefaultTextCompressor'
 
 export interface ISnapshotRecorderHandler {
   onUserAction: (action: UserAction) => void
 }
 
 export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler {
-  private snapshotOptions: SnapshotOptions | null = null
-  private snapshotDocument: Document | undefined
   private readonly observer = new MutationObserver(this.handle.bind(this))
+  private readonly textCompressor = createDefaultTextCompressor()
+
+  private snapshotOptions: SnapshotOptions | null = null
   private pendingUserAction = false
 
   constructor(
@@ -41,19 +43,13 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
       this.snapshotOptions.maskTextSelector = settings.anonymizeSelectors
     }
     this.snapshotOptions.blockSelector = settings.ignoreSelectors
-    this.snapshotDocument = installSnapshotContainer(window.document)
-    if (this.snapshotDocument) {
-      this.observer.observe(window.document.body, { childList: true, subtree: true })
-    }
+    this.observer.observe(window.document.body, { childList: true, subtree: true })
   }
 
   terminateRecording() {
     this.snapshotOptions = null
     dropSnapshotContainer(window.document)
-    if (this.snapshotDocument) {
-      this.observer.disconnect()
-      this.snapshotDocument = undefined
-    }
+    this.observer.disconnect()
     this.pendingUserAction = false
   }
 
@@ -72,13 +68,18 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   }
 
   buildAndSendSnapshot() {
-    const window = this.collectorOptions.window
-    const pathname = getLocationPathname(window, this.collectorOptions)
     this.debounce(() => {
-      if (!this.snapshotOptions || !this.snapshotDocument) return
-      const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions)
+      if (!this.snapshotOptions) return
+      const window = this.collectorOptions.window
+      const pathname = getLocationPathname(window, this.collectorOptions)
+      const html = createSnapshot(window.document, this.snapshotOptions)
       if (!html) return
-      const documentSnapshot = this.createDocumentSnapshot(html, pathname)
+      const documentSnapshot = this.createDocumentSnapshot(
+        this.textCompressor.compress(html),
+        pathname,
+        window.innerWidth,
+        window.innerHeight,
+      )
       void this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
     })
   }
@@ -92,9 +93,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     }, 150)
   }
 
-  createDocumentSnapshot(content: string, pathname: string): DocumentSnapshot {
-    const window = this.collectorOptions.window
-    const { innerWidth: width, innerHeight: height } = window
+  createDocumentSnapshot(content: string, pathname: string, width: number, height: number): DocumentSnapshot {
     return {
       content,
       pathname,
