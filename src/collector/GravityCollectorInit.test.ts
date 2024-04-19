@@ -1,4 +1,11 @@
-import { GravityRecordingSettingsResponse, Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
+import {
+  CollectorOptions,
+  GravityRecordingSettingsResponse,
+  Listener,
+  SessionTraits,
+  SessionUserAction,
+  UserActionType,
+} from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
@@ -43,17 +50,19 @@ import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
+import GravityCollector from './GravityCollector'
 
 describe.each([
   {
     context: 'dry run mode (debug=true)',
-    installer: () => collectorInstaller({ debug: true }),
+    installer: (opts?: Partial<CollectorOptions>) => collectorInstaller({ ...opts, debug: true }),
     clientClass: ConsoleGravityClient,
   },
   {
     context: 'live mode (debug=false)',
-    installer: () =>
+    installer: (opts?: Partial<CollectorOptions>) =>
       collectorInstaller({
+        ...opts,
         debug: false,
         authKey: uuid(),
       }),
@@ -421,5 +430,43 @@ describe.each([
       await collector.identifySession('logged', true)
       expect(handleSessionTrait).toHaveBeenCalled()
     })
+  })
+})
+
+describe('when an instance already exist on the window object', () => {
+  const fakeCollector = {
+    a: 1,
+    b: 2,
+  }
+
+  const win: Window & typeof globalThis & { _GravityCollector?: any } = global.window
+
+  beforeEach(() => {
+    win._GravityCollector = fakeCollector
+  })
+
+  afterEach(() => {
+    delete win._GravityCollector
+  })
+
+  it('GravityCollector.init does not override it', () => {
+    GravityCollector.init({
+      authKey: '',
+      window: win,
+    })
+
+    assert.deepStrictEqual(win._GravityCollector, fakeCollector)
+  })
+
+  it('GravityCollector.initWithOverride overrides it', () => {
+    GravityCollector.initWithOverride({
+      authKey: '',
+      window: win,
+    })
+
+    assert(
+      win._GravityCollector instanceof GravityCollector,
+      'The created collector is an instance of GravityCollector',
+    )
   })
 })

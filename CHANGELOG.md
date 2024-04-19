@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - `GravityCollector.getSessionId()` provides the current session id.
+- `GravityCollector.initWithOverride()` overrides potential existing instances.
 
 ### Changed
 
