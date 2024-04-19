@@ -33,7 +33,7 @@ jobs:
         uses: Smartesting/publish-on-pages@main
         with:
           branches: main canary development
-          tags: '*-beta' '*-beta.*'
+          tags: '*-beta'
           library_name: smartesting-gravity-data-collector
           bundle: gravity-logger-min.js
           npm_build_targets: build build-minified pack

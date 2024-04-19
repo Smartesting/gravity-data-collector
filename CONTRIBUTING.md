@@ -51,7 +51,7 @@ the:
 
 ## Making beta releases
 
-Tag any commit as `vX.Y.Z-beta` or `vX.Y.Z-beta.V` to have it published on GitHub pages. This will be then available as:
+Tag any commit as `vX.Y.Z-beta` to have it published on GitHub pages. This will be then available as:
 
 ```json
   "dependencies": {
