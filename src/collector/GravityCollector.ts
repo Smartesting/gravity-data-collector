@@ -40,7 +40,7 @@ export default class GravityCollector {
       throw new Error('Gravity Data Collector needs a `window` instance in order to work')
     }
     const installer = collectorInstaller(options)
-      .withCookieSessionIdHandler()
+      .withCookieSessionIdHandler(true)
       .withCookieTimeoutHandler(MAX_SESSION_DURATION)
     installer.window()._GravityCollector = new GravityCollector(installer.install())
   }

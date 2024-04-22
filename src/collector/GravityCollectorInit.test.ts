@@ -470,7 +470,7 @@ describe('when an instance already exist on the window object', () => {
     )
   })
 
-  it('@wip GravityCollector.initWithOverride forces usage of a new session', () => {
+  it('GravityCollector.initWithOverride forces usage of a new session', () => {
     GravityCollector.initWithOverride({
       authKey: uuid(),
       window: win,
