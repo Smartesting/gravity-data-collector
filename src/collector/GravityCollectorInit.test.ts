@@ -451,7 +451,7 @@ describe('when an instance already exist on the window object', () => {
 
   it('GravityCollector.init does not override it', () => {
     GravityCollector.init({
-      authKey: '',
+      authKey: uuid(),
       window: win,
     })
 
@@ -460,7 +460,7 @@ describe('when an instance already exist on the window object', () => {
 
   it('GravityCollector.initWithOverride overrides it', () => {
     GravityCollector.initWithOverride({
-      authKey: '',
+      authKey: uuid(),
       window: win,
     })
 
@@ -468,5 +468,22 @@ describe('when an instance already exist on the window object', () => {
       win._GravityCollector instanceof GravityCollector,
       'The created collector is an instance of GravityCollector',
     )
+  })
+
+  it('@wip GravityCollector.initWithOverride forces usage of a new session', () => {
+    GravityCollector.initWithOverride({
+      authKey: uuid(),
+      window: win,
+    })
+    const firstSessionId = GravityCollector.getSessionId(win)
+    GravityCollector.initWithOverride({
+      authKey: uuid(),
+      window: win,
+    })
+    const secondSessionId = GravityCollector.getSessionId()
+
+    assert(firstSessionId, 'First session ID was set')
+    assert(secondSessionId, 'Second session ID is set')
+    assert(firstSessionId !== secondSessionId, 'A new ID was generated')
   })
 })
