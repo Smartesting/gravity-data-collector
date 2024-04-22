@@ -48,13 +48,16 @@ describe('snapshots', () => {
     const benchmark = new Benchmark()
     for (const [name, content] of Object.entries(contents)) {
       const window = new JSDOM(content).window
-      benchmark.newRecord(name)
-      const snapshotStartingTime = benchmark.timestamp()
-      const snapshot = createSnapshot(window.document, {}, benchmark)
-      benchmark.recordDuration('snapshotTime', snapshotStartingTime)
-      if (snapshot === null) throw new AssertionError({ message: 'snapshot html should be defined' })
-      benchmark.recordSize('htmlSize', content.length)
-      benchmark.recordSize('snapshotSize', snapshot.length)
+      try {
+        const snapshotStartingTime = benchmark.newRecord(name)
+        const snapshot = createSnapshot(window.document, {}, benchmark)
+        benchmark.recordDuration('snapshotTime', snapshotStartingTime)
+        if (snapshot === null) throw new AssertionError({ message: 'snapshot html should be defined' })
+        benchmark.recordSize('htmlSize', content.length)
+        benchmark.recordSize('snapshotSize', snapshot.length)
+      } finally {
+        window.close()
+      }
     }
     benchmark.summarize()
   })

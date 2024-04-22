@@ -12,21 +12,21 @@ export function createSnapshot(forDocument: Document, options: SnapshotOptions, 
 
     const mirror = createMirror()
     const jsdom = new JSDOM()
-    const document = jsdom.window.document
-    benchmark?.timestamp()
-    const node = rebuild(snapshot, {
-      doc: document,
-      cache: createCache(),
-      mirror,
-    })
-    benchmark?.recordDuration('rebuild')
+    try {
+      const document = jsdom.window.document
+      benchmark?.timestamp()
+      const node = rebuild(snapshot, {
+        doc: document,
+        cache: createCache(),
+        mirror,
+      })
+      benchmark?.recordDuration('rebuild')
 
-    if (node) {
-      const serialized = jsdom.serialize()
+      if (node) return jsdom.serialize()
+    } finally {
       mirror.reset()
       jsdom.window.close()
       benchmark?.recordDuration('cleanup')
-      return serialized
     }
   } catch (e) {
     console.error(e)
