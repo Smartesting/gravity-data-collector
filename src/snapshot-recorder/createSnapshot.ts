@@ -24,7 +24,7 @@ export function createSnapshot(forDocument: Document, options: SnapshotOptions, 
     if (node) {
       const serialized = jsdom.serialize()
       mirror.reset()
-      jsdom.window.document.body.remove()
+      jsdom.window.close()
       benchmark?.recordDuration('cleanup')
       return serialized
     }

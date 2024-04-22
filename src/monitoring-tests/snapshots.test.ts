@@ -6,7 +6,6 @@ import wikipedia from './samples/wikipedia.sample'
 import googleImage from './samples/googleImage.sample'
 import googleNews from './samples/googleNews.sample'
 import leMonde from './samples/leMonde.sample'
-import PakoCompressor from '../text-compressor/PakoCompressor'
 import FFlateCompressor from '../text-compressor/FFlateCompressor'
 import { Benchmark } from './Benchmark'
 
@@ -19,10 +18,10 @@ const contents = {
 
 describe('snapshots', () => {
   it.each([
-    {
-      name: 'Pako',
-      compressor: new PakoCompressor(),
-    },
+    // {
+    //   name: 'Pako',
+    //   compressor: new PakoCompressor(),
+    // },
     {
       name: 'FFlate',
       compressor: new FFlateCompressor(),

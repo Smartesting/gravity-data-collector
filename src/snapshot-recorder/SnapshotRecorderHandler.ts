@@ -74,12 +74,8 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
       const pathname = getLocationPathname(window, this.collectorOptions)
       const html = createSnapshot(window.document, this.snapshotOptions)
       if (!html) return
-      const documentSnapshot = this.createDocumentSnapshot(
-        this.textCompressor.compress(html),
-        pathname,
-        window.innerWidth,
-        window.innerHeight,
-      )
+      const compressed = this.textCompressor.compress(html)
+      const documentSnapshot = this.createDocumentSnapshot(compressed, pathname, window.innerWidth, window.innerHeight)
       void this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
     })
   }
