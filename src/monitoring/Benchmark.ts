@@ -1,6 +1,8 @@
+import { IBenchmark } from './IBenchmark'
+
 type BenchmarkRecord = Record<string, any>
 
-export class Benchmark {
+export class Benchmark implements IBenchmark {
   private flag = performance.now()
   private currentRecord: BenchmarkRecord = {}
   private readonly records: BenchmarkRecord[] = []
@@ -19,10 +21,6 @@ export class Benchmark {
   record(property: string, info: any): number {
     this.currentRecord[property] = info
     return this.timestamp()
-  }
-
-  recordDuration(property: string, fromTimestamp?: number): number {
-    return this.recordTime(property, fromTimestamp)
   }
 
   recordTime(property: string, fromTimestamp?: number): number {

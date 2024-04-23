@@ -15,9 +15,11 @@ import {
 } from '../types'
 import { createSnapshot } from './createSnapshot'
 import getLocationPathname from '../utils/getLocationPathname'
-import { dropSnapshotContainer } from './snapshotContainer'
+import { dropSnapshotContainer, installSnapshotContainer } from './snapshotContainer'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
-import createDefaultTextCompressor from '../text-compressor/createDefaultTextCompressor'
+import { AtatusBenchmark } from '../monitoring/AtatusBenchmark'
+import ITextCompressor from '../text-compressor/ITextCompressor'
+import FFLateCompressor from '../text-compressor/FFlateCompressor'
 
 export interface ISnapshotRecorderHandler {
   onUserAction: (action: UserAction) => void
@@ -25,8 +27,7 @@ export interface ISnapshotRecorderHandler {
 
 export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler {
   private readonly observer = new MutationObserver(this.handle.bind(this))
-  private readonly textCompressor = createDefaultTextCompressor()
-
+  private snapshotDocument: Document | undefined
   private snapshotOptions: SnapshotOptions | null = null
   private pendingUserAction = false
 
@@ -35,6 +36,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly gravityClient: IGravityClient,
+    private readonly textCompressor: ITextCompressor = FFLateCompressor,
   ) {}
 
   initializeRecording(settings: ScreenRecordingOptions) {
@@ -43,13 +45,19 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
       this.snapshotOptions.maskTextSelector = settings.anonymizeSelectors
     }
     this.snapshotOptions.blockSelector = settings.ignoreSelectors
-    this.observer.observe(window.document.body, { childList: true, subtree: true })
+    this.snapshotDocument = installSnapshotContainer(window.document)
+    if (this.snapshotDocument) {
+      this.observer.observe(window.document.body, { childList: true, subtree: true })
+    }
   }
 
   terminateRecording() {
     this.snapshotOptions = null
     dropSnapshotContainer(window.document)
-    this.observer.disconnect()
+    if (this.snapshotDocument) {
+      this.observer.disconnect()
+      this.snapshotDocument = undefined
+    }
     this.pendingUserAction = false
   }
 
@@ -69,10 +77,10 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
 
   buildAndSendSnapshot() {
     this.debounce(() => {
-      if (!this.snapshotOptions) return
+      if (!this.snapshotOptions || !this.snapshotDocument) return
       const window = this.collectorOptions.window
       const pathname = getLocationPathname(window, this.collectorOptions)
-      const html = createSnapshot(window.document, this.snapshotOptions)
+      const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions, new AtatusBenchmark())
       if (!html) return
       const compressed = this.textCompressor.compress(html)
       const documentSnapshot = this.createDocumentSnapshot(compressed, pathname, window.innerWidth, window.innerHeight)

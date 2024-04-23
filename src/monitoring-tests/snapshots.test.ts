@@ -7,7 +7,7 @@ import googleImage from './samples/googleImage.sample'
 import googleNews from './samples/googleNews.sample'
 import leMonde from './samples/leMonde.sample'
 import FFlateCompressor from '../text-compressor/FFlateCompressor'
-import { Benchmark } from './Benchmark'
+import { Benchmark } from '../monitoring/Benchmark'
 
 const contents = {
   wikipedia,
@@ -31,10 +31,10 @@ describe('snapshots', () => {
     for (const [name, content] of Object.entries(contents)) {
       benchmark.newRecord(name)
       const compressed = compressor.compress(content)
-      benchmark.recordDuration('compressionTime')
+      benchmark.recordTime('compressionTime')
 
       const decompressed = compressor.decompress(compressed)
-      benchmark.recordDuration('decompressionTime')
+      benchmark.recordTime('decompressionTime')
       benchmark.recordSize('original', content.length)
       benchmark.recordSize('compressed', compressed.length)
       benchmark.record('ratio', ratio(compressed.length, content.length))
@@ -48,15 +48,17 @@ describe('snapshots', () => {
     const benchmark = new Benchmark()
     for (const [name, content] of Object.entries(contents)) {
       const window = new JSDOM(content).window
+      const snapshotWindow = new JSDOM().window
       try {
         const snapshotStartingTime = benchmark.newRecord(name)
-        const snapshot = createSnapshot(window.document, {}, benchmark)
-        benchmark.recordDuration('snapshotTime', snapshotStartingTime)
+        const snapshot = createSnapshot(window.document, snapshotWindow.document, {}, benchmark)
+        benchmark.recordTime('snapshotTime', snapshotStartingTime)
         if (snapshot === null) throw new AssertionError({ message: 'snapshot html should be defined' })
         benchmark.recordSize('htmlSize', content.length)
         benchmark.recordSize('snapshotSize', snapshot.length)
       } finally {
         window.close()
+        snapshotWindow.close()
       }
     }
     benchmark.summarize()
