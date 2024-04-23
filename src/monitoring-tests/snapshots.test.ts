@@ -24,7 +24,7 @@ describe('snapshots', () => {
     // },
     {
       name: 'FFlate',
-      compressor: new FFlateCompressor(),
+      compressor: FFlateCompressor,
     },
   ])('compress and decompress some samples with $name', ({ compressor, name }) => {
     const benchmark = new Benchmark()
