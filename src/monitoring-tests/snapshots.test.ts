@@ -18,10 +18,6 @@ const contents = {
 
 describe('snapshots', () => {
   it.each([
-    // {
-    //   name: 'Pako',
-    //   compressor: new PakoCompressor(),
-    // },
     {
       name: 'FFlate',
       compressor: FFlateCompressor,

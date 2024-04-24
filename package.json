@@ -1,6 +1,6 @@
 {
   "name": "@smartesting/gravity-data-collector",
-  "version": "5.1.0-4-beta",
+  "version": "5.1.0-5-beta",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
@@ -91,7 +91,7 @@
     "@rrweb/types": "2.0.0-alpha.12",
     "@types/uuid": "^8.3.4",
     "cross-fetch": "^3.1.5",
-    "fflate": "0.6.0",
+    "fflate": "^0.4.4",
     "get-xpath": "^3.1.0",
     "psl": "^1.9.0",
     "regenerator-runtime": "^0.13.9",

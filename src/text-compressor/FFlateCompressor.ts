@@ -1,5 +1,6 @@
-import { strFromU8, strToU8, unzlibSync, zlibSync } from 'fflate'
 import ITextCompressor from './ITextCompressor'
+
+import { strFromU8, strToU8, unzlibSync, zlibSync } from 'fflate'
 
 const FFLateCompressor: ITextCompressor = {
   compress(text: string): string {
