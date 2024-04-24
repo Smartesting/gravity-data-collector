@@ -35,8 +35,9 @@ export class CollectorInstaller {
     return this
   }
 
-  withCookieSessionIdHandler(forceNewSession?: boolean): CollectorInstaller {
-    const cookieSessionIdHandler = new CookieSessionIdHandler(uuid, this.options, this.options.window)
+  withCookieSessionIdHandler(forceNewSession?: boolean, sessionId?: string): CollectorInstaller {
+    const sessionIdGenerator = sessionId ? () => sessionId : uuid
+    const cookieSessionIdHandler = new CookieSessionIdHandler(sessionIdGenerator, this.options, this.options.window)
     if (forceNewSession) {
       cookieSessionIdHandler.generateNewSessionId()
     }

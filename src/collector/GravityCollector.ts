@@ -27,8 +27,8 @@ export default class GravityCollector {
     addCollector(options ?? {}, false)
   }
 
-  static initWithOverride(options?: Partial<CollectorOptions>) {
-    addCollector(options ?? {}, true)
+  static initWithOverride(options?: Partial<CollectorOptions>, sessionId?: string) {
+    addCollector(options ?? {}, true, sessionId)
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {
@@ -47,12 +47,12 @@ export default class GravityCollector {
   }
 }
 
-function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean) {
+function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean, sessionId?: string) {
   if (!windowExists() && options?.window === undefined) {
     throw new Error('Gravity Data Collector needs a `window` instance in order to work')
   }
   const installer = collectorInstaller(options)
-    .withCookieSessionIdHandler(overrideExisting)
+    .withCookieSessionIdHandler(overrideExisting, sessionId)
     .withCookieTimeoutHandler(MAX_SESSION_DURATION)
 
   if (installer.window()._GravityCollector && overrideExisting) {

@@ -52,6 +52,7 @@ import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import GravityCollector from './GravityCollector'
 import sinon from 'sinon'
+import { v4 as uuidv4 } from 'uuid'
 
 describe.each([
   {
@@ -499,6 +500,23 @@ describe('when an instance already exist on the window object', () => {
       assert(firstSessionId, 'First session ID was set')
       assert(secondSessionId, 'Second session ID is set')
       assert(firstSessionId !== secondSessionId, 'A new ID was generated')
+    })
+
+    it('uses the provided session id', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const firstSessionId = GravityCollector.getSessionId(win)
+      const sessionId = uuidv4()
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      }, sessionId)
+      const secondSessionId = GravityCollector.getSessionId()
+
+      assert(firstSessionId, 'First session ID was set')
+      assert.strictEqual(secondSessionId, sessionId)
     })
   })
 })
