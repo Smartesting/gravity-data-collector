@@ -24,25 +24,11 @@ export default class GravityCollector {
   }
 
   static init(options?: Partial<CollectorOptions>) {
-    if (!windowExists() && options?.window === undefined) {
-      throw new Error('Gravity Data Collector needs a `window` instance in order to work')
-    }
-    const installer = collectorInstaller(options)
-      .withCookieSessionIdHandler()
-      .withCookieTimeoutHandler(MAX_SESSION_DURATION)
-    if (!installer.window()._GravityCollector) {
-      installer.window()._GravityCollector = new GravityCollector(installer.install())
-    }
+    addCollector(options ?? {}, false)
   }
 
   static initWithOverride(options?: Partial<CollectorOptions>) {
-    if (!windowExists() && options?.window === undefined) {
-      throw new Error('Gravity Data Collector needs a `window` instance in order to work')
-    }
-    const installer = collectorInstaller(options)
-      .withCookieSessionIdHandler(true)
-      .withCookieTimeoutHandler(MAX_SESSION_DURATION)
-    installer.window()._GravityCollector = new GravityCollector(installer.install())
+    addCollector(options ?? {}, true)
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {
@@ -58,5 +44,22 @@ export default class GravityCollector {
       throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
     }
     void this.collectorWrapper.identifySession(traitName, traitValue)
+  }
+}
+
+function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean) {
+  if (!windowExists() && options?.window === undefined) {
+    throw new Error('Gravity Data Collector needs a `window` instance in order to work')
+  }
+  const installer = collectorInstaller(options)
+    .withCookieSessionIdHandler(overrideExisting)
+    .withCookieTimeoutHandler(MAX_SESSION_DURATION)
+
+  if (installer.window()._GravityCollector && overrideExisting) {
+    installer.window()._GravityCollector.collectorWrapper.terminateRecording(true, true, true)
+  }
+
+  if (!(installer.window()._GravityCollector && !overrideExisting)) {
+    installer.window()._GravityCollector = new GravityCollector(installer.install())
   }
 }

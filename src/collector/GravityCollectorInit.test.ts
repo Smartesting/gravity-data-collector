@@ -51,6 +51,7 @@ import TouchCancelEventListener from '../event-listeners/TouchCancelEventListene
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import GravityCollector from './GravityCollector'
+import sinon from 'sinon'
 
 describe.each([
   {
@@ -435,8 +436,9 @@ describe.each([
 
 describe('when an instance already exist on the window object', () => {
   const fakeCollector = {
-    a: 1,
-    b: 2,
+    collectorWrapper: {
+      terminateRecording: () => {},
+    },
   }
 
   const win: Window & typeof globalThis & { _GravityCollector?: any } = global.window
@@ -458,32 +460,45 @@ describe('when an instance already exist on the window object', () => {
     assert.deepStrictEqual(win._GravityCollector, fakeCollector)
   })
 
-  it('GravityCollector.initWithOverride overrides it', () => {
-    GravityCollector.initWithOverride({
-      authKey: uuid(),
-      window: win,
+  describe('GravityCollector.initWithOverride', () => {
+    it('overrides the existing collector', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+
+      assert(
+        win._GravityCollector instanceof GravityCollector,
+        'The created collector is an instance of GravityCollector',
+      )
     })
 
-    assert(
-      win._GravityCollector instanceof GravityCollector,
-      'The created collector is an instance of GravityCollector',
-    )
-  })
+    it('stops the recording on the existing collector', () => {
+      const spyTerminateRecording = sinon.spy()
+      fakeCollector.collectorWrapper.terminateRecording = spyTerminateRecording
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
 
-  it('GravityCollector.initWithOverride forces usage of a new session', () => {
-    GravityCollector.initWithOverride({
-      authKey: uuid(),
-      window: win,
+      sinon.assert.calledOnceWithExactly(spyTerminateRecording, true, true, true)
     })
-    const firstSessionId = GravityCollector.getSessionId(win)
-    GravityCollector.initWithOverride({
-      authKey: uuid(),
-      window: win,
-    })
-    const secondSessionId = GravityCollector.getSessionId()
 
-    assert(firstSessionId, 'First session ID was set')
-    assert(secondSessionId, 'Second session ID is set')
-    assert(firstSessionId !== secondSessionId, 'A new ID was generated')
+    it('forces usage of a new session', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const firstSessionId = GravityCollector.getSessionId(win)
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const secondSessionId = GravityCollector.getSessionId()
+
+      assert(firstSessionId, 'First session ID was set')
+      assert(secondSessionId, 'Second session ID is set')
+      assert(firstSessionId !== secondSessionId, 'A new ID was generated')
+    })
   })
 })
