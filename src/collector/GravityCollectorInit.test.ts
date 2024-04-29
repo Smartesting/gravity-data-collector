@@ -509,10 +509,13 @@ describe('when an instance already exist on the window object', () => {
       })
       const firstSessionId = GravityCollector.getSessionId(win)
       const sessionId = uuidv4()
-      GravityCollector.initWithOverride({
-        authKey: uuid(),
-        window: win,
-      }, sessionId)
+      GravityCollector.initWithOverride(
+        {
+          authKey: uuid(),
+          window: win,
+        },
+        sessionId,
+      )
       const secondSessionId = GravityCollector.getSessionId()
 
       assert(firstSessionId, 'First session ID was set')
