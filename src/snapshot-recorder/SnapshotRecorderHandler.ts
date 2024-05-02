@@ -6,6 +6,7 @@ import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
   CLICKABLE_ELEMENT_TAG_NAMES,
   CollectorOptions,
+  Compressor,
   DocumentSnapshot,
   KeyUserActionData,
   TargetedUserAction,
@@ -17,15 +18,18 @@ import { createSnapshot } from './createSnapshot'
 import getLocationPathname from '../utils/getLocationPathname'
 import { dropSnapshotContainer, installSnapshotContainer } from './snapshotContainer'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
+import { AtatusBenchmark } from '../monitoring/AtatusBenchmark'
+import ITextCompressor from '../text-compressor/ITextCompressor'
+import FFLateCompressor from '../text-compressor/FFlateCompressor'
 
 export interface ISnapshotRecorderHandler {
   onUserAction: (action: UserAction) => void
 }
 
 export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler {
-  private snapshotOptions: SnapshotOptions | null = null
-  private snapshotDocument: Document | undefined
   private readonly observer = new MutationObserver(this.handle.bind(this))
+  private snapshotDocument: Document | undefined
+  private snapshotOptions: SnapshotOptions | null = null
   private pendingUserAction = false
 
   constructor(
@@ -33,6 +37,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly gravityClient: IGravityClient,
+    private readonly textCompressor: ITextCompressor = FFLateCompressor,
   ) {}
 
   initializeRecording(settings: ScreenRecordingOptions) {
@@ -72,13 +77,20 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   }
 
   buildAndSendSnapshot() {
-    const window = this.collectorOptions.window
-    const pathname = getLocationPathname(window, this.collectorOptions)
     this.debounce(() => {
       if (!this.snapshotOptions || !this.snapshotDocument) return
-      const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions)
+      const window = this.collectorOptions.window
+      const pathname = getLocationPathname(window, this.collectorOptions)
+      const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions, new AtatusBenchmark())
       if (!html) return
-      const documentSnapshot = this.createDocumentSnapshot(html, pathname)
+      const { compressed, compressor } = this.textCompressor.compress(html)
+      const documentSnapshot = this.createDocumentSnapshot(
+        compressed,
+        compressor,
+        pathname,
+        window.innerWidth,
+        window.innerHeight,
+      )
       void this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
     })
   }
@@ -92,11 +104,16 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     }, 150)
   }
 
-  createDocumentSnapshot(content: string, pathname: string): DocumentSnapshot {
-    const window = this.collectorOptions.window
-    const { innerWidth: width, innerHeight: height } = window
+  createDocumentSnapshot(
+    content: string,
+    compressor: Compressor,
+    pathname: string,
+    width: number,
+    height: number,
+  ): DocumentSnapshot {
     return {
       content,
+      compressor,
       pathname,
       timestamp: Date.now(),
       viewport: { width, height },
