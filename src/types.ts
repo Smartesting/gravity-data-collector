@@ -409,10 +409,10 @@ interface ViewportSize {
 
 export interface DocumentSnapshot {
   content: string
-  compressor: Compressor
   pathname: string
   timestamp: number
   viewport: ViewportSize
+  compressor?: Compressor
 }
 
 export enum Compressor {
