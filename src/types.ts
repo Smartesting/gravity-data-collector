@@ -416,7 +416,7 @@ export interface DocumentSnapshot {
 }
 
 export enum Compressor {
-  fflate = 'fflate'
+  fflate = 'fflate',
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
