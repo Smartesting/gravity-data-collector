@@ -26,7 +26,7 @@ describe('snapshots', () => {
     const benchmark = new Benchmark()
     for (const [name, content] of Object.entries(contents)) {
       benchmark.newRecord(name)
-      const compressed = compressor.compress(content)
+      const { compressed } = compressor.compress(content)
       benchmark.recordTime('compressionTime')
 
       const decompressed = compressor.decompress(compressed)

@@ -5,7 +5,7 @@ import { SnapshotOptions, WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION }
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
   CLICKABLE_ELEMENT_TAG_NAMES,
-  CollectorOptions,
+  CollectorOptions, Compressor,
   DocumentSnapshot,
   KeyUserActionData,
   TargetedUserAction,
@@ -82,8 +82,8 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
       const pathname = getLocationPathname(window, this.collectorOptions)
       const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions, new AtatusBenchmark())
       if (!html) return
-      const compressed = this.textCompressor.compress(html)
-      const documentSnapshot = this.createDocumentSnapshot(compressed, pathname, window.innerWidth, window.innerHeight)
+      const { compressed, compressor } = this.textCompressor.compress(html)
+      const documentSnapshot = this.createDocumentSnapshot(compressed, compressor, pathname, window.innerWidth, window.innerHeight)
       void this.gravityClient.addSnapshot(this.sessionIdHandler.get(), documentSnapshot)
     })
   }
@@ -97,9 +97,10 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     }, 150)
   }
 
-  createDocumentSnapshot(content: string, pathname: string, width: number, height: number): DocumentSnapshot {
+  createDocumentSnapshot(content: string, compressor: Compressor, pathname: string, width: number, height: number): DocumentSnapshot {
     return {
       content,
+      compressor,
       pathname,
       timestamp: Date.now(),
       viewport: { width, height },

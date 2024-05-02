@@ -409,9 +409,14 @@ interface ViewportSize {
 
 export interface DocumentSnapshot {
   content: string
+  compressor: Compressor
   pathname: string
   timestamp: number
   viewport: ViewportSize
+}
+
+export enum Compressor {
+  fflate = 'fflate'
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
