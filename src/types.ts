@@ -380,6 +380,11 @@ export interface DocumentSnapshot {
   pathname: string
   timestamp: number
   viewport: ViewportSize
+  compressor?: Compressor
+}
+
+export enum Compressor {
+  fflate = 'fflate',
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v5.0.0...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v5.1.0...main)
 
 ### Info
 
@@ -23,6 +23,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - All code related to Cypress is gone in [gravity-cypress-plugin](https://github.com/Smartesting/gravity-cypress-plugin)
 
 ### Fixed
+
+## [5.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v5.0.0...v5.1.0)
+
+### Changed
+
+- compress snapshots before sending them to Gravity server
 
 ## [5.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v4.2.0...v5.0.0)
 
