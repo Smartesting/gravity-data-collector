@@ -1,16 +1,20 @@
-import { GravityRecordingSettingsResponse, Listener, SessionTraits, SessionUserAction, UserActionType } from '../types'
+import {
+  CollectorOptions,
+  GravityRecordingSettingsResponse,
+  Listener,
+  SessionTraits,
+  SessionUserAction,
+  UserActionType,
+} from '../types'
 import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
-import TestNameHandler from '../test-name-handler/TestNameHandler'
-import { mock } from 'vitest-mock-extended'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import KeyDownEventListener from '../event-listeners/KeyDownEventListener'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import BeforeUnloadEventListener from '../event-listeners/BeforeUnloadEventListener'
-import CypressEventListener from '../event-listeners/CypressEventListener'
 import { Class } from '../test-utils/types'
 import { IEventListener } from '../event-listeners/IEventListener'
 import { AssertionError } from 'assert'
@@ -46,17 +50,21 @@ import TouchEndEventListener from '../event-listeners/TouchEndEventListener'
 import TouchCancelEventListener from '../event-listeners/TouchCancelEventListener'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
+import GravityCollector from './GravityCollector'
+import sinon from 'sinon'
+import { v4 as uuidv4 } from 'uuid'
 
 describe.each([
   {
     context: 'dry run mode (debug=true)',
-    installer: () => collectorInstaller({ debug: true }),
+    installer: (opts?: Partial<CollectorOptions>) => collectorInstaller({ ...opts, debug: true }),
     clientClass: ConsoleGravityClient,
   },
   {
     context: 'live mode (debug=false)',
-    installer: () =>
+    installer: (opts?: Partial<CollectorOptions>) =>
       collectorInstaller({
+        ...opts,
         debug: false,
         authKey: uuid(),
       }),
@@ -98,22 +106,6 @@ describe.each([
     installer().withSessionIdHandler(sessionIdHandler).install()
     expect(handleUserAction).not.toHaveBeenCalled()
     expect(sessionIdHandler.get()).toEqual(sessionId)
-  })
-
-  it('a "sessionStarted" action is sent if session id exists but this is a new test', async () => {
-    const sessionIdHandler = new MemorySessionIdHandler(uuid)
-    const testNameHandler = mock<TestNameHandler>()
-    testNameHandler.isNewTest.mockReturnValue(false)
-    installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
-    expect(handleUserAction).toHaveBeenCalledOnce()
-    const sessionId = sessionIdHandler.get()
-
-    handleUserAction.mockClear()
-    testNameHandler.isNewTest.mockReturnValue(true)
-    installer().withSessionIdHandler(sessionIdHandler).withTestNameHandler(testNameHandler).install()
-    expect(handleUserAction).toHaveBeenCalledOnce()
-    expect(getLastCallFirstArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
-    expect(sessionIdHandler.get()).not.toEqual(sessionId)
   })
 
   describe('event listener initializing', () => {
@@ -268,46 +260,6 @@ describe.each([
         })
       })
     }
-  })
-
-  it('does not initialize CypressEventListener when window.Cypress is not available', async () => {
-    vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-    installer().install()
-    expect(CypressEventListener.prototype.init).not.toHaveBeenCalledOnce()
-  })
-
-  describe('when window.Cypress is available', () => {
-    beforeEach(() => {
-      ;(window as any).Cypress = {
-        removeListener: vi.fn(),
-      }
-      vi.spyOn(CypressEventListener.prototype, 'init').mockImplementation(nop)
-    })
-
-    afterEach(() => {
-      delete (window as any).Cypress
-    })
-
-    describe('initializes CypressEventListener:', () => {
-      it('if enabledListeners option is not set ', async () => {
-        installer().install()
-        expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-
-      it('if enabledListeners option is set and includes CypressCommands', async () => {
-        installer()
-          .withOptions({ enabledListeners: [Listener.CypressCommands] })
-          .install()
-        expect(CypressEventListener.prototype.init).toHaveBeenCalledOnce()
-      })
-    })
-
-    describe('does not initialize CypressEventListener:', () => {
-      it('if enabledListeners option is set but does not include CypressCommands', async () => {
-        installer().withOptions({ enabledListeners: [] }).install()
-        expect(CypressEventListener.prototype.init).not.toHaveBeenCalled()
-      })
-    })
   })
 
   describe('when recordRequestsFor is set', () => {
@@ -479,6 +431,95 @@ describe.each([
       expect(handleUserAction).toHaveBeenCalled()
       await collector.identifySession('logged', true)
       expect(handleSessionTrait).toHaveBeenCalled()
+    })
+  })
+})
+
+describe('when an instance already exist on the window object', () => {
+  const fakeCollector = {
+    collectorWrapper: {
+      terminateRecording: () => {},
+    },
+  }
+
+  const win: Window & typeof globalThis & { _GravityCollector?: any } = global.window
+
+  beforeEach(() => {
+    win._GravityCollector = fakeCollector
+  })
+
+  afterEach(() => {
+    delete win._GravityCollector
+  })
+
+  it('GravityCollector.init does not override it', () => {
+    GravityCollector.init({
+      authKey: uuid(),
+      window: win,
+    })
+
+    assert.deepStrictEqual(win._GravityCollector, fakeCollector)
+  })
+
+  describe('GravityCollector.initWithOverride', () => {
+    it('overrides the existing collector', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+
+      assert(
+        win._GravityCollector instanceof GravityCollector,
+        'The created collector is an instance of GravityCollector',
+      )
+    })
+
+    it('stops the recording on the existing collector', () => {
+      const spyTerminateRecording = sinon.spy()
+      fakeCollector.collectorWrapper.terminateRecording = spyTerminateRecording
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+
+      sinon.assert.calledOnceWithExactly(spyTerminateRecording, true, true, true)
+    })
+
+    it('forces usage of a new session', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const firstSessionId = GravityCollector.getSessionId(win)
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const secondSessionId = GravityCollector.getSessionId()
+
+      assert(firstSessionId, 'First session ID was set')
+      assert(secondSessionId, 'Second session ID is set')
+      assert(firstSessionId !== secondSessionId, 'A new ID was generated')
+    })
+
+    it('uses the provided session id', () => {
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      const firstSessionId = GravityCollector.getSessionId(win)
+      const sessionId = uuidv4()
+      GravityCollector.initWithOverride(
+        {
+          authKey: uuid(),
+          window: win,
+        },
+        sessionId,
+      )
+      const secondSessionId = GravityCollector.getSessionId()
+
+      assert(firstSessionId, 'First session ID was set')
+      assert.strictEqual(secondSessionId, sessionId)
     })
   })
 })

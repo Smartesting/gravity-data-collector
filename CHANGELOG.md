@@ -11,11 +11,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `GravityCollector.getSessionId()` provides the current session id.
+- `GravityCollector.initWithOverride()` overrides potential existing instances.
+
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+- All code related to Cypress is gone in [gravity-cypress-plugin](https://github.com/Smartesting/gravity-cypress-plugin)
 
 ### Fixed
 
