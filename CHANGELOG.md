@@ -5,24 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v5.1.0...main)
-
-### Info
+## [6.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v5.1.0...v6.0.0)
 
 ### Added
 
 - `GravityCollector.getSessionId()` provides the current session id.
 - `GravityCollector.initWithOverride()` overrides potential existing instances.
 
-### Changed
-
-### Deprecated
-
 ### Removed
 
 - All code related to Cypress is gone in [gravity-cypress-plugin](https://github.com/Smartesting/gravity-cypress-plugin)
-
-### Fixed
 
 ## [5.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v5.0.0...v5.1.0)
 
