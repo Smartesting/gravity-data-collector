@@ -56,7 +56,7 @@ export function createTargetedUserAction(
 
   const targetedUserAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, options, anonymizeSelectors),
+    target: createActionTarget(target, options),
     location: location(),
     document: gravityDocument(),
     recordedAt: new Date().toISOString(),
@@ -66,11 +66,7 @@ export function createTargetedUserAction(
   if (type === UserActionType.Click) {
     const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
-      targetedUserAction.interactiveTarget = createActionTarget(
-        interactiveTarget as HTMLElement,
-        options,
-        anonymizeSelectors,
-      )
+      targetedUserAction.interactiveTarget = createActionTarget(interactiveTarget as HTMLElement, options)
     }
   }
   return targetedUserAction
@@ -157,11 +153,7 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(
-  target: HTMLElement | Window,
-  options: CreateTargetedUserActionOptions,
-  anonymizeSelectors: string | undefined,
-): UserActionTarget {
+function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {
   const { document, selectorsOptions } = options
   const element = isHtmlElement(target) ? target.tagName.toLocaleLowerCase() : 'window'
   const actionTarget: UserActionTarget = { element }
@@ -176,7 +168,7 @@ function createActionTarget(
 
     actionTarget.selectors = createSelectors(target, selectorsOptions)
 
-    const displayInfo = createTargetDisplayInfo(target, document, anonymizeSelectors)
+    const displayInfo = createTargetDisplayInfo(target, document)
     if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
   }
 

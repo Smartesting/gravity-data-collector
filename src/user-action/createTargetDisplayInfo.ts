@@ -1,39 +1,32 @@
 import { TargetDisplayInfo } from '../types'
 import getDocument from '../utils/getDocument'
-import { maskText } from '../utils/rrwebRecordingSettings'
-import { matchClosest } from '../utils/cssSelectorUtils'
 
 export function createTargetDisplayInfo(
   element: HTMLElement,
   document: Document = getDocument(),
-  anonymizeSelectors?: string,
 ): TargetDisplayInfo | undefined {
   switch (element.tagName.toLowerCase()) {
     case 'a':
     case 'button':
-      return createHtmlClickableDisplayInfo(element, document, anonymizeSelectors)
+      return createHtmlClickableDisplayInfo(element, document)
     case 'textarea':
     case 'select':
     case 'input':
-      return createHTMLInputDisplayInfo(element as HTMLInputElement, document, anonymizeSelectors)
+      return createHTMLInputDisplayInfo(element as HTMLInputElement, document)
     default:
       return undefined
   }
 }
 
-function createHtmlClickableDisplayInfo(
-  element: HTMLElement,
-  document: Document,
-  anonymizeSelectors: string | undefined,
-) {
+function createHtmlClickableDisplayInfo(element: HTMLElement, document: Document) {
   const displayInfo: TargetDisplayInfo = {}
 
-  const text = element.textContent
-  if (text !== null && !isEmpty(text)) displayInfo.text = anonymizeText(element, text, anonymizeSelectors)
+  const text = element.textContent ?? ''
+  if (!isEmpty(text)) displayInfo.text = text
 
   const label: HTMLLabelElement | null = findLabelForElement(element, document)
-  if (label !== null && !isEmpty(label.textContent)) {
-    displayInfo.label = anonymizeText(label, label.textContent, anonymizeSelectors)
+  if (label?.textContent && !isEmpty(label.textContent)) {
+    displayInfo.label = label.textContent
   }
 
   return displayInfo
@@ -42,7 +35,6 @@ function createHtmlClickableDisplayInfo(
 function createHTMLInputDisplayInfo(
   element: HTMLInputElement,
   document: Document = getDocument(),
-  anonymizeSelectors: string | undefined,
 ): TargetDisplayInfo | undefined {
   const displayInfo: TargetDisplayInfo = {}
 
@@ -51,12 +43,12 @@ function createHTMLInputDisplayInfo(
 
   const label = findLabelForElement(element, document)
   if (label !== null && !isEmpty(label.textContent)) {
-    displayInfo.label = anonymizeText(label, label.textContent, anonymizeSelectors)
+    displayInfo.label = label.textContent ?? ''
   }
 
   if (element.type.toLowerCase() === 'button') {
     if (element.value !== undefined && !isEmpty(element.value)) {
-      displayInfo.text = anonymizeText(element, element.value, anonymizeSelectors)
+      displayInfo.text = element.value ?? ''
     }
   }
   return displayInfo
@@ -78,9 +70,4 @@ function findLabelForElement(element: HTMLElement, document: Document = getDocum
 
 function isEmpty(text: string | null): boolean {
   return !text || text.trim().length === 0
-}
-
-function anonymizeText(element: HTMLElement, text: string | null, anonymizeSelectors: string | undefined) {
-  if (!text) return ''
-  return matchClosest(element, anonymizeSelectors) ? maskText(text) : text
 }
