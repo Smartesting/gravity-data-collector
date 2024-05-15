@@ -10,7 +10,11 @@
     <script>
       const script = document.querySelector('#logger')
       script.addEventListener('load', function () {
-        window.GravityCollector.init(config)
+        const innerWindow = document.querySelector('#inner-iframe').contentWindow
+        window.GravityCollector.init({
+          ...config,
+          //window: innerWindow,
+        })
       })
 
       function fetchSomething() {
@@ -241,6 +245,12 @@
         <legend>Dynamic elements</legend>
         <a href="./dynamicElements.html">dedicated page</a>
       </fieldset>
+
+      <fieldset>
+        <legend>Inner window</legend>
+        <iframe id="inner-iframe" src="./inner.html"></iframe>
+      </fieldset>
+
       <p></p>
     </div>
 

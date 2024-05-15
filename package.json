@@ -90,9 +90,10 @@
     "watchify": "^4.0.0"
   },
   "dependencies": {
-    "@smartesting/rrweb-types": "^2.0.0-alpha.18",
-    "@smartesting/rrweb-snapshot": "^2.0.0-alpha.18",
-    "@smartesting/rrweb": "^2.0.0-alpha.18",
+    "@smartesting/rrdom": "^2.0.0-alpha.20",
+    "@smartesting/rrweb": "^2.0.0-alpha.20",
+    "@smartesting/rrweb-snapshot": "^2.0.0-alpha.20",
+    "@smartesting/rrweb-types": "^2.0.0-alpha.20",
     "@types/uuid": "^8.3.4",
     "cross-fetch": "^3.1.5",
     "fflate": "^0.4.4",

@@ -93,10 +93,10 @@ class CollectorWrapper {
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.videoRecorderHandler = new VideoRecorderHandler(
+      options,
       sessionIdHandler,
       timeoutHandler,
       this.gravityClient,
-      options.window,
       () => this.anonymizationSettings,
     )
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
