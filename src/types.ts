@@ -261,22 +261,12 @@ export interface CookieSettings {
   cookieWriter: ((key: string, value: string, options: Partial<CookieOptions>) => string) | null
 }
 
-export interface AnonymizationSettings {
-  anonymizeSelectors: string | undefined
-  ignoreSelectors: string | undefined
-}
-
-export type GravityRecordingSettings = {
+export interface GravityRecordingSettings {
   sessionRecording: boolean
   videoRecording: boolean
   snapshotRecording: boolean
   videoAnonymization: boolean
   snapshotAnonymization: boolean
-} & AnonymizationSettings
-
-export const NO_ANONYMIZATION_SETTINGS: AnonymizationSettings = {
-  anonymizeSelectors: undefined,
-  ignoreSelectors: undefined,
 }
 
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
@@ -285,7 +275,6 @@ export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
   snapshotRecording: false,
   videoAnonymization: false,
   snapshotAnonymization: false,
-  ...NO_ANONYMIZATION_SETTINGS,
 }
 
 export interface CreateSelectorsOptions {

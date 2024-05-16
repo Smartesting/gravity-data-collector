@@ -98,8 +98,6 @@ class CollectorWrapper {
         snapshotRecording,
         videoAnonymization,
         snapshotAnonymization,
-        ignoreSelectors,
-        anonymizeSelectors,
       }) => {
         if (!sessionRecording || !videoRecording || !snapshotRecording) {
           this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
@@ -108,15 +106,11 @@ class CollectorWrapper {
         if (videoRecording) {
           this.videoRecorderHandler.initializeRecording({
             enableAnonymization: videoAnonymization,
-            ignoreSelectors,
-            anonymizeSelectors,
           })
         }
         if (snapshotRecording) {
           this.snapshotRecorderHandler.initializeRecording({
             enableAnonymization: snapshotAnonymization,
-            ignoreSelectors,
-            anonymizeSelectors,
           })
         }
       },

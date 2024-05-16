@@ -154,8 +154,6 @@ class TestGravityClient extends NopGravityClient {
       snapshotRecording: true,
       videoAnonymization: true,
       snapshotAnonymization: true,
-      anonymizeSelectors: undefined,
-      ignoreSelectors: undefined,
     })
   }
 

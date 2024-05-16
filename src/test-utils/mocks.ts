@@ -109,8 +109,6 @@ export function buildGravityRecordingSettings(settings: Partial<GravityRecording
     snapshotRecording: false,
     videoAnonymization: false,
     snapshotAnonymization: false,
-    anonymizeSelectors: undefined,
-    ignoreSelectors: undefined,
     ...settings,
   }
 }

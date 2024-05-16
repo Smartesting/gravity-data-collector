@@ -401,8 +401,6 @@ describe.each([
               snapshotRecording: true,
               videoAnonymization: true,
               snapshotAnonymization: true,
-              anonymizeSelectors: undefined,
-              ignoreSelectors: undefined,
             },
           },
         }),

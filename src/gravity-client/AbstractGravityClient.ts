@@ -7,7 +7,6 @@ import {
   IdentifySessionResponse,
   SessionTraits,
   SessionUserAction,
-  UserActionType,
 } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
@@ -89,15 +88,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       locked: true,
     })
     recordingSettingsDispatcher.subscribe(
-      ({ sessionRecording, videoRecording, snapshotRecording, anonymizeSelectors, ignoreSelectors }) => {
-        if (!isBlank(ignoreSelectors) || !isBlank(anonymizeSelectors)) {
-          // remove all buffered userActions and videos because they may have info to anonymize/ignore
-          this.sessionUserActionBuffer.clear(
-            (sessionUserAction) => sessionUserAction.type === UserActionType.SessionStarted,
-          )
-          this.videoBuffer.clear()
-          this.snapshotBuffer.clear()
-        }
+      ({ sessionRecording, videoRecording, snapshotRecording }) => {
         if (sessionRecording) {
           this.sessionUserActionBuffer.activate()
           this.sessionTraitsBuffer.activate()
@@ -232,10 +223,4 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       snapshots,
     }
   }
-}
-
-function isBlank(text: string | undefined) {
-  if (text === undefined) return true
-  if (text === null) return true
-  return text.length === 0
 }
