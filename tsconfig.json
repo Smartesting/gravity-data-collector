@@ -12,5 +12,5 @@
     "types": ["node"]
   },
   "include": ["src/**/*.ts", "cypress/**/*.ts"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+  "exclude": ["node_modules", "**/__tests__/*", "gravity-chrome-extension"]
 }
