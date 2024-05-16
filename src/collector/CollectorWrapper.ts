@@ -91,20 +91,18 @@ class CollectorWrapper {
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.videoRecorderHandler = new VideoRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
-    this.recordingSettingsHandler.subscribe(
-      ({ sessionRecording, videoRecording, snapshotRecording }) => {
-        if (!sessionRecording || !videoRecording || !snapshotRecording) {
-          this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
-        }
+    this.recordingSettingsHandler.subscribe(({ sessionRecording, videoRecording, snapshotRecording }) => {
+      if (!sessionRecording || !videoRecording || !snapshotRecording) {
+        this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
+      }
 
-        if (videoRecording) {
-          this.videoRecorderHandler.initializeRecording()
-        }
-        if (snapshotRecording) {
-          this.snapshotRecorderHandler.initializeRecording()
-        }
-      },
-    )
+      if (videoRecording) {
+        this.videoRecorderHandler.initializeRecording()
+      }
+      if (snapshotRecording) {
+        this.snapshotRecorderHandler.initializeRecording()
+      }
+    })
   }
 
   init(reset = false): void {
