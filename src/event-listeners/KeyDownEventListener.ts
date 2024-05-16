@@ -16,7 +16,6 @@ class KeyDownEventListener extends TargetedEventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.userActionHandler.getAnonymizationSettings(),
       this.options,
     )
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
@@ -25,7 +24,6 @@ class KeyDownEventListener extends TargetedEventListener {
       const changeUserAction = createTargetedUserAction(
         event,
         UserActionType.Change,
-        this.userActionHandler.getAnonymizationSettings(),
         this.options,
       )
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {

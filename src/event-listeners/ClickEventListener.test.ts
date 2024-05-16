@@ -4,7 +4,7 @@ import ClickEventListener from '../event-listeners/ClickEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
-import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
+import { QueryType } from '../types'
 
 describe('ClickEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -38,7 +38,6 @@ describe('ClickEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new MouseEvent('click'),
         'click',
-        NO_ANONYMIZATION_SETTINGS,
         {
           selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
         },

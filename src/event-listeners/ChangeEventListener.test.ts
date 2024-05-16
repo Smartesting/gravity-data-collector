@@ -5,7 +5,7 @@ import ChangeEventListener from '../event-listeners/ChangeEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
-import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
+import { QueryType } from '../types'
 
 describe('ChangeEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -41,7 +41,6 @@ describe('ChangeEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new Event('change'),
         'change',
-        NO_ANONYMIZATION_SETTINGS,
         {
           selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
         },

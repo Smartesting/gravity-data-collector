@@ -1,4 +1,4 @@
-import { NO_ANONYMIZATION_SETTINGS, TargetedUserAction, UserActionType } from '../types'
+import { TargetedUserAction, UserActionType } from '../types'
 import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { mockClick, mockKeyDown, mockKeyUp } from './mocks'
 import { AssertionError } from 'assert'
@@ -13,7 +13,6 @@ export function createClickUserAction(
   const userAction = createTargetedUserAction(
     mockClick(element, clientX, clientY),
     UserActionType.Click,
-    NO_ANONYMIZATION_SETTINGS,
     { document },
   )
   if (userAction === null) {
@@ -31,7 +30,6 @@ export function createKeyUpUserAction(
   const userAction = createTargetedUserAction(
     mockKeyUp(element, key, code),
     UserActionType.KeyUp,
-    NO_ANONYMIZATION_SETTINGS,
     { document },
   )
   if (userAction === null) {
@@ -49,7 +47,6 @@ export function createKeyDownUserAction(
   const userAction = createTargetedUserAction(
     mockKeyDown(element, key, code),
     UserActionType.KeyDown,
-    NO_ANONYMIZATION_SETTINGS,
     { document },
   )
   if (userAction === null) {
@@ -69,7 +66,6 @@ export function createHashChangeUserAction(window: Window): TargetedUserAction {
   const userAction = createTargetedUserAction(
     hashChangeEvent,
     UserActionType.HashChange,
-    { anonymizeSelectors: undefined, ignoreSelectors: undefined },
     {
       document,
     },

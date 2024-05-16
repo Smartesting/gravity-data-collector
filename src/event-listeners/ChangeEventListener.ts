@@ -19,7 +19,6 @@ class ChangeEventListener extends TargetedEventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.userActionHandler.getAnonymizationSettings(),
       this.options,
     )
     if (userAction != null) {

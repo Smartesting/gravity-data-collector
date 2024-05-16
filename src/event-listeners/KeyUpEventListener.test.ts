@@ -4,7 +4,7 @@ import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
 import IUserActionHandler, { NopUserActionHandler } from '../user-action/IUserActionHandler'
-import { NO_ANONYMIZATION_SETTINGS, QueryType } from '../types'
+import { QueryType } from '../types'
 
 describe('KeyUpEventListener', () => {
   let userActionHandler: IUserActionHandler
@@ -39,7 +39,6 @@ describe('KeyUpEventListener', () => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
           new KeyboardEvent('keyup'),
           'keyup',
-          NO_ANONYMIZATION_SETTINGS,
           {
             selectorsOptions: {
               queries: [QueryType.id],

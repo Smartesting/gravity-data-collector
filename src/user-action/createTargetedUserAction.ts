@@ -1,5 +1,4 @@
 import {
-  AnonymizationSettings,
   CLICKABLE_ELEMENT_TAG_NAMES,
   CreateSelectorsOptions,
   ElementPosition,
@@ -19,7 +18,6 @@ import location from '../utils/location'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
-import { matchClosest } from '../utils/cssSelectorUtils'
 
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
@@ -34,7 +32,6 @@ const CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS: CreateTargetedUserActionOptio
 export function createTargetedUserAction(
   event: Event,
   type: UserActionType,
-  { anonymizeSelectors, ignoreSelectors }: AnonymizationSettings,
   customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
   const options = {
@@ -44,8 +41,6 @@ export function createTargetedUserAction(
 
   const target = event.target as HTMLElement
   if (target === null || target === undefined || event.target === options.document) return null
-
-  if (matchClosest(target, ignoreSelectors)) return null
 
   const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
     ? {

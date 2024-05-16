@@ -3,7 +3,7 @@ import { fireEvent, getByRole, getByTestId, waitFor } from '@testing-library/dom
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyDownEventListener from './KeyDownEventListener'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import { NO_ANONYMIZATION_SETTINGS, QueryType, TargetedUserAction, UserAction, UserActionType } from '../types'
+import { QueryType, TargetedUserAction, UserAction, UserActionType } from '../types'
 import UserActionHandler from '../user-action/UserActionHandler'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
@@ -56,7 +56,6 @@ describe('KeyDownEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
         new KeyboardEvent('keydown'),
         'keydown',
-        NO_ANONYMIZATION_SETTINGS,
         {
           selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
         },

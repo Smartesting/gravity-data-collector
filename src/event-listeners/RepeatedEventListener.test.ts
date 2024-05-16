@@ -41,7 +41,6 @@ describe('RepeatedEventListener', () => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
           new MouseEvent('click'),
           'click',
-          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
           {},
         )
       })
@@ -69,7 +68,6 @@ describe('RepeatedEventListener', () => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
           new MouseEvent('click'),
           'click',
-          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
           {},
         )
       })
@@ -100,7 +98,6 @@ describe('RepeatedEventListener', () => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
           new MouseEvent('click'),
           'click',
-          { anonymizeSelectors: undefined, ignoreSelectors: undefined },
           {},
         )
       })

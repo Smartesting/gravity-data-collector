@@ -10,7 +10,6 @@ class KeyUpEventListener extends TargetedEventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.userActionHandler.getAnonymizationSettings(),
       this.options,
     )
     if (userAction === null) return

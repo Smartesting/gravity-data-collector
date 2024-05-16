@@ -20,7 +20,6 @@ export default abstract class TargetedEventListener extends EventListener {
     const userAction = createTargetedUserAction(
       event,
       this.userActionType,
-      this.userActionHandler.getAnonymizationSettings(),
       this.options,
     )
     if (userAction !== null) {

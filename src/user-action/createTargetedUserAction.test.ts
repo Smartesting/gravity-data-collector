@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockClick, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import viewport from '../utils/viewport'
 import location from '../utils/location'
-import { GravityDocument, NO_ANONYMIZATION_SETTINGS, QueryType, UserActionType } from '../types'
+import { GravityDocument, QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import {
   createClickUserAction,
@@ -125,7 +125,6 @@ describe('createTargetedUserAction', () => {
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
         UserActionType.Click,
-        NO_ANONYMIZATION_SETTINGS,
         {
           document: domWindow.document,
         },
@@ -150,7 +149,6 @@ describe('createTargetedUserAction', () => {
       const action = createTargetedUserAction(
         mockClick(element, 0, 0),
         UserActionType.Click,
-        NO_ANONYMIZATION_SETTINGS,
         {
           document: domWindow.document,
           selectorsOptions: {
@@ -266,50 +264,5 @@ describe('createTargetedUserAction', () => {
       },
       scrollableAncestors: [],
     })
-  })
-
-  it('returns null if the target element matches option "ignoreSelectors"', () => {
-    const { element, domWindow } = createElementInJSDOM('<button class="personalInfo">Click Me</button>', 'button')
-
-    const action = createTargetedUserAction(
-      mockClick(element, 0, 0),
-      UserActionType.Click,
-      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
-      { document: domWindow.document },
-    )
-
-    expect(action).toBeNull()
-  })
-
-  it('returns null if the target is a descendant of an element matching option "ignoreSelectors"', () => {
-    const { element, domWindow } = createElementInJSDOM(
-      '<div class="personalInfo"><div><button>Click Me</button></div></div>',
-      'button',
-    )
-
-    const action = createTargetedUserAction(
-      mockClick(element, 0, 0),
-      UserActionType.Click,
-      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
-      { document: domWindow.document },
-    )
-
-    expect(action).toBeNull()
-  })
-
-  it('returns action if the target is an ascendant of an element matching option "ignoreSelectors"', () => {
-    const { element, domWindow } = createElementInJSDOM(
-      '<div><button class="personalInfo">Click Me</button></div>',
-      'div',
-    )
-
-    const action = createTargetedUserAction(
-      mockClick(element, 0, 0),
-      UserActionType.Click,
-      { anonymizeSelectors: undefined, ignoreSelectors: '.personalInfo' },
-      { document: domWindow.document },
-    )
-
-    expect(action).not.toBeNull()
   })
 })
