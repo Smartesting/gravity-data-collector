@@ -1,7 +1,5 @@
 import {
-  AnonymizationSettings,
   GravityLocation,
-  NO_ANONYMIZATION_SETTINGS,
   SessionUserAction,
   UserAction,
 } from '../types'
@@ -15,7 +13,6 @@ import { ISnapshotRecorderHandler } from '../snapshot-recorder/SnapshotRecorderH
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
   private readonly listeners: Array<Function> = []
-  private anonymizationSettings: AnonymizationSettings = NO_ANONYMIZATION_SETTINGS
 
   constructor(
     private readonly sessionIdHandler: ISessionIdHandler,
@@ -24,14 +21,6 @@ export default class UserActionHandler implements IUserActionHandler {
     private readonly useHashInUrlAsPathname: boolean,
     private readonly snapshotHandler: ISnapshotRecorderHandler,
   ) {}
-
-  getAnonymizationSettings(): AnonymizationSettings {
-    return this.anonymizationSettings
-  }
-
-  setAnonymizationSettings(anonymizationSettings: AnonymizationSettings) {
-    this.anonymizationSettings = anonymizationSettings
-  }
 
   async handle(action: UserAction): Promise<void> {
     if (!this.active) return

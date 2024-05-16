@@ -104,10 +104,7 @@ class CollectorWrapper {
         if (!sessionRecording || !videoRecording || !snapshotRecording) {
           this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
         }
-        this.userActionHandler.setAnonymizationSettings({
-          anonymizeSelectors,
-          ignoreSelectors,
-        })
+
         if (videoRecording) {
           this.videoRecorderHandler.initializeRecording({
             enableAnonymization: videoAnonymization,
