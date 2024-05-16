@@ -2,7 +2,7 @@ import GravityCollector from '../../src'
 import { CollectorOptions } from '../../src/types'
 
 const authorizedSites = [
-    'neolink.link',
+    'localhost',
 ]
 
 const options: Partial<CollectorOptions> = {
@@ -11,5 +11,5 @@ const options: Partial<CollectorOptions> = {
 }
 
 if (authorizedSites.some(authorized => window.location.href.includes(authorized))) {
-    GravityCollector.init(options)
+    GravityCollector.initWithOverride(options)
 }
