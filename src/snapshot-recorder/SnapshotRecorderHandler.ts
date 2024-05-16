@@ -1,7 +1,6 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
-import { ScreenRecordingOptions } from '../video-recorder/VideoRecorderHandler'
-import { SnapshotOptions, WITH_PARTIAL_ANONYMIZATION, WITH_TOTAL_ANONYMIZATION } from '../utils/rrwebRecordingSettings'
+import { SnapshotOptions } from '../utils/rrwebRecordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
   CLICKABLE_ELEMENT_TAG_NAMES,
@@ -40,8 +39,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     private readonly textCompressor: ITextCompressor = FFLateCompressor,
   ) {}
 
-  initializeRecording(settings: ScreenRecordingOptions) {
-    this.snapshotOptions = settings.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : WITH_PARTIAL_ANONYMIZATION
+  initializeRecording() {
     this.snapshotDocument = installSnapshotContainer(window.document)
     if (this.snapshotDocument) {
       this.observer.observe(window.document.body, { childList: true, subtree: true })

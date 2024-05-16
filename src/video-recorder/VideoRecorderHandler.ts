@@ -1,16 +1,9 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import { record } from 'rrweb'
 import { eventWithTime, listenerHandler } from '@rrweb/types'
-import RECORDING_SETTINGS, {
-  WITH_PARTIAL_ANONYMIZATION,
-  WITH_TOTAL_ANONYMIZATION,
-} from '../utils/rrwebRecordingSettings'
+import RECORDING_SETTINGS from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
-
-export interface ScreenRecordingOptions {
-  enableAnonymization?: boolean
-}
 
 export default class VideoRecorderHandler {
   private stopRecording: listenerHandler | undefined
@@ -21,15 +14,13 @@ export default class VideoRecorderHandler {
     private readonly gravityClient: IGravityClient,
   ) {}
 
-  initializeRecording(options?: ScreenRecordingOptions) {
+  initializeRecording() {
     const handleRecord = this.handle.bind(this)
-    const anonymization = options?.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : { ...WITH_PARTIAL_ANONYMIZATION }
     this.stopRecording = record({
       emit(event) {
         void handleRecord(event)
       },
       ...RECORDING_SETTINGS,
-      ...anonymization,
     })
   }
 

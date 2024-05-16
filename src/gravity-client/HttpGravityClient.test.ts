@@ -35,8 +35,6 @@ describe('HttpGravityClient', () => {
           sessionRecording: true,
           videoRecording: false,
           snapshotRecording: false,
-          videoAnonymization: true,
-          snapshotAnonymization: true,
         })
         await gravityClient.addSessionUserAction(createDummy())
         await gravityClient.flush()

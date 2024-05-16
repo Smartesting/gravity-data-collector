@@ -399,8 +399,6 @@ describe.each([
               sessionRecording: true,
               videoRecording: true,
               snapshotRecording: true,
-              videoAnonymization: true,
-              snapshotAnonymization: true,
             },
           },
         }),

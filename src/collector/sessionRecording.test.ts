@@ -9,7 +9,6 @@ import CollectorWrapper from './CollectorWrapper'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import { buildGravityRecordingSettingsResponse, mockBuildAndSendSnapshot } from '../test-utils/mocks'
 import { createDummy } from '../test-utils/dummyFactory'
-import { getLastCallFirstArgument } from '../test-utils/spies'
 import SnapshotRecorderHandler, { isSnapshotTrigger } from '../snapshot-recorder/SnapshotRecorderHandler'
 import assert from 'assert'
 
@@ -108,50 +107,6 @@ describe('Session recording (events & video & snapshots) depends on remote Gravi
       expect(terminateEventRecording).not.toHaveBeenCalled()
       expect(terminateVideoRecording).toHaveBeenCalled()
       expect(terminateSnapshotRecording).not.toHaveBeenCalled()
-    })
-
-    it('records anonymized videos', async () => {
-      mockClientGravitySessionRecordingSettings({
-        videoRecording: true,
-        videoAnonymization: true,
-      })
-      const collector = installer().install()
-
-      await emitEachEventKind(collector)
-      expect(getLastCallFirstArgument(initializeVideoRecording).enableAnonymization).toBeTruthy()
-    })
-
-    it('records non-anonymized videos', async () => {
-      mockClientGravitySessionRecordingSettings({
-        videoRecording: true,
-        videoAnonymization: false,
-      })
-      const collector = installer().install()
-
-      await emitEachEventKind(collector)
-      expect(getLastCallFirstArgument(initializeVideoRecording).enableAnonymization).toBeFalsy()
-    })
-
-    it('records anonymized snapshots', async () => {
-      mockClientGravitySessionRecordingSettings({
-        snapshotRecording: true,
-        snapshotAnonymization: true,
-      })
-      const collector = installer().install()
-
-      await emitEachEventKind(collector)
-      expect(getLastCallFirstArgument(initializeSnapshotRecording).enableAnonymization).toBeTruthy()
-    })
-
-    it('records non-anonymized snapshots', async () => {
-      mockClientGravitySessionRecordingSettings({
-        snapshotRecording: true,
-        snapshotAnonymization: false,
-      })
-      const collector = installer().install()
-
-      await emitEachEventKind(collector)
-      expect(getLastCallFirstArgument(initializeSnapshotRecording).enableAnonymization).toBeFalsy()
     })
 
     it('records nothing', async () => {

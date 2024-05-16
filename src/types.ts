@@ -265,16 +265,12 @@ export interface GravityRecordingSettings {
   sessionRecording: boolean
   videoRecording: boolean
   snapshotRecording: boolean
-  videoAnonymization: boolean
-  snapshotAnonymization: boolean
 }
 
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
   sessionRecording: false,
   videoRecording: false,
   snapshotRecording: false,
-  videoAnonymization: false,
-  snapshotAnonymization: false,
 }
 
 export interface CreateSelectorsOptions {
