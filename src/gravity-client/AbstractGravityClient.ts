@@ -87,20 +87,18 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       },
       locked: true,
     })
-    recordingSettingsDispatcher.subscribe(
-      ({ sessionRecording, videoRecording, snapshotRecording }) => {
-        if (sessionRecording) {
-          this.sessionUserActionBuffer.activate()
-          this.sessionTraitsBuffer.activate()
-        }
-        if (videoRecording) {
-          this.videoBuffer.activate()
-        }
-        if (snapshotRecording) {
-          this.snapshotBuffer.activate()
-        }
-      },
-    )
+    recordingSettingsDispatcher.subscribe(({ sessionRecording, videoRecording, snapshotRecording }) => {
+      if (sessionRecording) {
+        this.sessionUserActionBuffer.activate()
+        this.sessionTraitsBuffer.activate()
+      }
+      if (videoRecording) {
+        this.videoBuffer.activate()
+      }
+      if (snapshotRecording) {
+        this.snapshotBuffer.activate()
+      }
+    })
   }
 
   reset() {

@@ -16,11 +16,7 @@ class ChangeEventListener extends TargetedEventListener {
     if (isTextField(event.target)) return
 
     const elementTarget = event.target as HTMLInputWithValue
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction != null) {
       userAction.target.value = sanitizeHTMLElementValue(elementTarget)
       this.userActionHandler.handle(userAction)

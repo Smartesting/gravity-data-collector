@@ -10,11 +10,7 @@ export default abstract class RepeatedEventListener extends TargetedEventListene
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
 
   public listener(event: Event) {
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
 
     if (userAction !== null) {
       if (!this.sameActionThanLast(userAction)) {

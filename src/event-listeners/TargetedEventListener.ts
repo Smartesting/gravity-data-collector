@@ -17,11 +17,7 @@ export default abstract class TargetedEventListener extends EventListener {
   }
 
   public listener(event: Event) {
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction !== null) {
       this.userActionHandler.handle(userAction)
     }

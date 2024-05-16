@@ -122,13 +122,9 @@ describe('createTargetedUserAction', () => {
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(
-        mockClick(element, 0, 0),
-        UserActionType.Click,
-        {
-          document: domWindow.document,
-        },
-      )
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        document: domWindow.document,
+      })
       expect(action?.target.selectors).toEqual({
         attributes: { 'data-testid': 'userName' },
         query: {
@@ -146,17 +142,13 @@ describe('createTargetedUserAction', () => {
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(
-        mockClick(element, 0, 0),
-        UserActionType.Click,
-        {
-          document: domWindow.document,
-          selectorsOptions: {
-            excludedQueries: [QueryType.id],
-            attributes: ['data-testid'],
-          },
+      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
+        document: domWindow.document,
+        selectorsOptions: {
+          excludedQueries: [QueryType.id],
+          attributes: ['data-testid'],
         },
-      )
+      })
       expect(action?.target.selectors).toEqual({
         attributes: {
           'data-testid': 'userName',

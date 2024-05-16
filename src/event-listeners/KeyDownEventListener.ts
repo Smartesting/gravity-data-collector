@@ -13,19 +13,11 @@ class KeyDownEventListener extends TargetedEventListener {
   userActionType = UserActionType.KeyDown
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(
-      event,
-      this.userActionType,
-      this.options,
-    )
+    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
 
     if (recordChangeEvent(event.code, event.target)) {
-      const changeUserAction = createTargetedUserAction(
-        event,
-        UserActionType.Change,
-        this.options,
-      )
+      const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
         changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue)
         this.userActionHistory.push(changeUserAction)

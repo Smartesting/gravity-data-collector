@@ -23,9 +23,7 @@ export default class VideoRecorderHandler {
 
   initializeRecording(options?: ScreenRecordingOptions) {
     const handleRecord = this.handle.bind(this)
-    const anonymization = options?.enableAnonymization
-      ? WITH_TOTAL_ANONYMIZATION
-      : { ...WITH_PARTIAL_ANONYMIZATION }
+    const anonymization = options?.enableAnonymization ? WITH_TOTAL_ANONYMIZATION : { ...WITH_PARTIAL_ANONYMIZATION }
     this.stopRecording = record({
       emit(event) {
         void handleRecord(event)

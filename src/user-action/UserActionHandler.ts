@@ -1,8 +1,4 @@
-import {
-  GravityLocation,
-  SessionUserAction,
-  UserAction,
-} from '../types'
+import { GravityLocation, SessionUserAction, UserAction } from '../types'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'

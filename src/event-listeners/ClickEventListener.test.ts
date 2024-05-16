@@ -35,13 +35,9 @@ describe('ClickEventListener', () => {
     fireEvent.click(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new MouseEvent('click'),
-        'click',
-        {
-          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
-        },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
+        selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+      })
     })
   })
 

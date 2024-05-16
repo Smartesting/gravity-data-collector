@@ -53,13 +53,9 @@ describe('KeyDownEventListener', () => {
     fireEvent.keyDown(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
-        new KeyboardEvent('keydown'),
-        'keydown',
-        {
-          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
-        },
-      )
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
+        selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+      })
     })
   })
 
