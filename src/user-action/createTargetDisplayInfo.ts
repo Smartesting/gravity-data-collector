@@ -1,20 +1,45 @@
-import { TargetDisplayInfo } from '../types'
+import { AnonymizationSettings, TargetDisplayInfo } from '../types'
 import getDocument from '../utils/getDocument'
+import maskText from '../utils/maskText'
+import { matchClosest } from '../utils/cssSelectorUtils'
 
 export function createTargetDisplayInfo(
   element: HTMLElement,
+  anonymizationSettings: AnonymizationSettings,
   document: Document = getDocument(),
 ): TargetDisplayInfo | undefined {
+  const anonymize =
+    anonymizationSettings.anonymize &&
+    !anonymizationSettings.allowList.some(({ pageMatcher, allowedSelectors }) => {
+      return (
+        document.location.pathname.match(pageMatcher) !== null &&
+        allowedSelectors.some((selector) => matchClosest(element, selector))
+      )
+    })
+
   switch (element.tagName.toLowerCase()) {
     case 'a':
     case 'button':
-      return createHtmlClickableDisplayInfo(element, document)
+      return anonymizeTargetDisplayInfo(createHtmlClickableDisplayInfo(element, document), anonymize)
     case 'textarea':
     case 'select':
     case 'input':
-      return createHTMLInputDisplayInfo(element as HTMLInputElement, document)
+      return anonymizeTargetDisplayInfo(createHTMLInputDisplayInfo(element as HTMLInputElement, document), anonymize)
     default:
       return undefined
+  }
+}
+
+function anonymizeTargetDisplayInfo(
+  targetDisplayInfo: TargetDisplayInfo | undefined,
+  anonymize: boolean,
+): TargetDisplayInfo | undefined {
+  if (!anonymize || !targetDisplayInfo) return targetDisplayInfo
+
+  return {
+    label: targetDisplayInfo.label ? maskText(targetDisplayInfo.label) : undefined,
+    placeholder: targetDisplayInfo.placeholder ? maskText(targetDisplayInfo.placeholder) : undefined,
+    text: targetDisplayInfo.text ? maskText(targetDisplayInfo.text) : undefined,
   }
 }
 

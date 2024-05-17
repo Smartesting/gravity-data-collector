@@ -261,10 +261,25 @@ export interface CookieSettings {
   cookieWriter: ((key: string, value: string, options: Partial<CookieOptions>) => string) | null
 }
 
+export interface NoAnonymizationSettings {
+  anonymize: false
+}
+
+export interface WithAnonymizationSettings {
+  anonymize: true
+  allowList: ReadonlyArray<{
+    pageMatcher: string
+    allowedSelectors: ReadonlyArray<string>
+  }>
+}
+
+export type AnonymizationSettings = NoAnonymizationSettings | WithAnonymizationSettings
+
 export interface GravityRecordingSettings {
   sessionRecording: boolean
   videoRecording: boolean
   snapshotRecording: boolean
+  anonymizationSettings?: AnonymizationSettings
 }
 
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {

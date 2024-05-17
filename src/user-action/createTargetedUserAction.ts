@@ -163,7 +163,7 @@ function createActionTarget(target: HTMLElement | Window, options: CreateTargete
 
     actionTarget.selectors = createSelectors(target, selectorsOptions)
 
-    const displayInfo = createTargetDisplayInfo(target, document)
+    const displayInfo = createTargetDisplayInfo(target, { anonymize: false }, document)
     if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
   }
 
