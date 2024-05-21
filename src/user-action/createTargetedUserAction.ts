@@ -1,6 +1,8 @@
 import {
+  AnonymizationSettings,
   CLICKABLE_ELEMENT_TAG_NAMES,
   CreateSelectorsOptions,
+  DEFAULT_ANONYMIZATION_SETTINGS,
   ElementPosition,
   KeyUserActionData,
   MouseActionData,
@@ -22,11 +24,13 @@ import { createSelectors } from '../utils/createSelectors'
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
   document: Document
+  anonymizationSettings: AnonymizationSettings
 }
 
 const CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS: CreateTargetedUserActionOptions = {
   selectorsOptions: undefined,
   document: getDocument(),
+  anonymizationSettings: DEFAULT_ANONYMIZATION_SETTINGS,
 }
 
 export function createTargetedUserAction(
@@ -34,9 +38,11 @@ export function createTargetedUserAction(
   type: UserActionType,
   customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
-  const options = {
-    ...CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS,
-    ...customOptions,
+  const options: CreateTargetedUserActionOptions = {
+    selectorsOptions: customOptions?.selectorsOptions ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.selectorsOptions,
+    document: customOptions?.document ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.document,
+    anonymizationSettings:
+      customOptions?.anonymizationSettings ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.anonymizationSettings,
   }
 
   const target = event.target as HTMLElement
@@ -163,7 +169,7 @@ function createActionTarget(target: HTMLElement | Window, options: CreateTargete
 
     actionTarget.selectors = createSelectors(target, selectorsOptions)
 
-    const displayInfo = createTargetDisplayInfo(target, { anonymize: false }, document)
+    const displayInfo = createTargetDisplayInfo(target, options.anonymizationSettings, document)
     if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo
   }
 

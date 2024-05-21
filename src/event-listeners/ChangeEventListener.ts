@@ -1,4 +1,3 @@
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { HTMLInputWithValue, UserActionType } from '../types'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
@@ -16,7 +15,7 @@ class ChangeEventListener extends TargetedEventListener {
     if (isTextField(event.target)) return
 
     const elementTarget = event.target as HTMLInputWithValue
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = this.createTargetedUserAction(event)
     if (userAction != null) {
       userAction.target.value = sanitizeHTMLElementValue(elementTarget, { anonymize: false })
       this.userActionHandler.handle(userAction)
