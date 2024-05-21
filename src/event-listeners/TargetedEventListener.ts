@@ -1,10 +1,11 @@
 import EventListener from '../event-listeners/EventListener'
-import { CreateSelectorsOptions } from '../types'
+import { AnonymizationSettings, CreateSelectorsOptions, UserActionType } from '../types'
 import IUserActionHandler from '../user-action/IUserActionHandler'
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
+import { createTargetedUserAction, CreateTargetedUserActionOptions } from '../user-action/createTargetedUserAction'
 
 export interface TargetEventListenerOptions {
   selectorsOptions?: Partial<CreateSelectorsOptions>
+  getAnonymizationSettings?: () => AnonymizationSettings | undefined
 }
 
 export default abstract class TargetedEventListener extends EventListener {
@@ -17,9 +18,24 @@ export default abstract class TargetedEventListener extends EventListener {
   }
 
   public listener(event: Event) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = this.createTargetedUserAction(event)
     if (userAction !== null) {
       this.userActionHandler.handle(userAction)
+    }
+  }
+
+  public createTargetedUserAction(event: Event, userActionType?: UserActionType) {
+    return createTargetedUserAction(
+      event,
+      userActionType ?? this.userActionType,
+      this.getCreateTargetedUserActionOptions(),
+    )
+  }
+
+  private getCreateTargetedUserActionOptions(): Partial<CreateTargetedUserActionOptions> {
+    return {
+      selectorsOptions: this.options.selectorsOptions,
+      anonymizationSettings: this.options.getAnonymizationSettings?.(),
     }
   }
 }

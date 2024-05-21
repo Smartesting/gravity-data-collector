@@ -3,14 +3,13 @@ import UserActionsHistory from '../user-actions-history/UserActionsHistory'
 import MemoryUserActionsHistory from '../user-actions-history/MemoryUserActionsHistory'
 import { TargetedUserAction } from '../types'
 import isTargetedUserAction from '../utils/isTargetedUserAction'
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { sameJSONObjects } from '../utils/SameJSONObjects'
 
 export default abstract class RepeatedEventListener extends TargetedEventListener {
   private readonly userActionHistory: UserActionsHistory = new MemoryUserActionsHistory()
 
   public listener(event: Event) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = this.createTargetedUserAction(event)
 
     if (userAction !== null) {
       if (!this.sameActionThanLast(userAction)) {

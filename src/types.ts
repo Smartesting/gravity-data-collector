@@ -282,6 +282,8 @@ export interface GravityRecordingSettings {
   anonymizationSettings?: AnonymizationSettings
 }
 
+export const DEFAULT_ANONYMIZATION_SETTINGS: AnonymizationSettings = { anonymize: true, allowList: [] }
+
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
   sessionRecording: false,
   videoRecording: false,

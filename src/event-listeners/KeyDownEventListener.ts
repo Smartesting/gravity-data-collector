@@ -1,4 +1,3 @@
-import { createTargetedUserAction } from '../user-action/createTargetedUserAction'
 import { HTMLInputWithValue, KeyUserActionData, TargetedUserAction, UserActionType } from '../types'
 import { isKeyAllowedByKeyListeners, isTargetAllowedByKeyListeners, recordChangeEvent } from '../utils/listeners'
 import UserActionsHistory from '../user-actions-history/UserActionsHistory'
@@ -13,11 +12,11 @@ class KeyDownEventListener extends TargetedEventListener {
   userActionType = UserActionType.KeyDown
 
   listener(event: KeyboardEvent) {
-    const userAction = createTargetedUserAction(event, this.userActionType, this.options)
+    const userAction = this.createTargetedUserAction(event)
     if (userAction === null || this.actionIsTheSameThanLast(userAction)) return
 
     if (recordChangeEvent(event.code, event.target)) {
-      const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
+      const changeUserAction = this.createTargetedUserAction(event, UserActionType.Change)
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
         changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue, {
           anonymize: false,

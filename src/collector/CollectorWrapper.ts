@@ -1,5 +1,6 @@
 import { createSessionStartedUserAction } from '../user-action/createSessionStartedUserAction'
 import {
+  AnonymizationSettings,
   CollectorOptions,
   GravityRecordingSettings,
   Listener,
@@ -65,6 +66,7 @@ class CollectorWrapper {
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
   private readonly gravityClient: IGravityClient
+  private anonymizationSettings: AnonymizationSettings | undefined
 
   constructor(
     private readonly options: CollectorOptions,
@@ -91,18 +93,22 @@ class CollectorWrapper {
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
     this.videoRecorderHandler = new VideoRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
-    this.recordingSettingsHandler.subscribe(({ sessionRecording, videoRecording, snapshotRecording }) => {
-      if (!sessionRecording || !videoRecording || !snapshotRecording) {
-        this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
-      }
+    this.recordingSettingsHandler.subscribe(
+      ({ sessionRecording, videoRecording, snapshotRecording, anonymizationSettings }) => {
+        this.anonymizationSettings = anonymizationSettings
 
-      if (videoRecording) {
-        this.videoRecorderHandler.initializeRecording()
-      }
-      if (snapshotRecording) {
-        this.snapshotRecorderHandler.initializeRecording()
-      }
-    })
+        if (!sessionRecording || !videoRecording || !snapshotRecording) {
+          this.terminateRecording(!sessionRecording, !videoRecording, !snapshotRecording)
+        }
+
+        if (videoRecording) {
+          this.videoRecorderHandler.initializeRecording()
+        }
+        if (snapshotRecording) {
+          this.snapshotRecorderHandler.initializeRecording()
+        }
+      },
+    )
   }
 
   init(reset = false): void {
@@ -207,6 +213,7 @@ class CollectorWrapper {
     const { window, selectorsOptions } = this.options
     const targetedEventListenerOptions: TargetEventListenerOptions = {
       selectorsOptions,
+      getAnonymizationSettings: () => this.anonymizationSettings,
     }
 
     const eventListeners: IEventListener[] = []
