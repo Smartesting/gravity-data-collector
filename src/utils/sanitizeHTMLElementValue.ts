@@ -1,18 +1,11 @@
-import { HTMLInputWithValue } from '../types'
+import { AnonymizationSettings, HTMLInputWithValue } from '../types'
+import elementShouldBeAnonymized from './elementShouldBeAnonymized'
 
-const INPUT_TYPES_SKIPPING_SANITIZING = ['color', 'button', 'reset', 'submit']
+export function sanitizeHTMLElementValue(element: HTMLInputWithValue, anonymizationSettings: AnonymizationSettings) {
+  if (getInputType(element) === 'password') return '{{hidden}}'
 
-export function sanitizeHTMLElementValue(element: HTMLInputWithValue) {
-  if (INPUT_TYPES_SKIPPING_SANITIZING.includes(element.type)) {
-    return element.value
-  }
-  switch (element.type) {
-    case 'checkbox':
-    case 'radio':
-      return (element as HTMLInputElement).checked.toString()
-    default:
-      return `{{${getInputType(element)}}}`
-  }
+  const anonymize = elementShouldBeAnonymized(element, anonymizationSettings)
+  return anonymize ? '{{hidden}}' : element.value
 }
 
 function getInputType(element: HTMLInputWithValue) {

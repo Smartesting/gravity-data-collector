@@ -1,116 +1,203 @@
 import { describe, expect, it } from 'vitest'
 import { sanitizeHTMLElementValue } from './sanitizeHTMLElementValue'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
+import { HTMLInputWithValue } from '../types'
+
+function expectedSanitizedValue(
+  title: string,
+  elementHtml: string,
+  selectElementInDom: (html: string) => HTMLInputWithValue,
+  expected: {
+    withAnonymization: string
+    withoutAnonymization: string
+  },
+) {
+  describe(title, () => {
+    describe('when anonymization is deactivated', () => {
+      it(`it returns ${expected.withoutAnonymization}`, () => {
+        expect(
+          sanitizeHTMLElementValue(selectElementInDom(`<div class='allow-list'>${elementHtml}</div>`), {
+            anonymize: false,
+          }),
+        ).toEqual(expected.withoutAnonymization)
+      })
+    })
+
+    describe('when anonymization is activated', () => {
+      describe('when the element belongs to the allowList', () => {
+        const anonymizationSettings = {
+          anonymize: true,
+          allowList: [
+            {
+              pageMatcher: '.*',
+              allowedSelectors: ['.allow-list'],
+            },
+          ],
+        }
+
+        it(`it returns ${expected.withoutAnonymization}`, () => {
+          expect(
+            sanitizeHTMLElementValue(
+              selectElementInDom(`<div class='allow-list'>${elementHtml}</div>`),
+              anonymizationSettings,
+            ),
+          ).toEqual(expected.withoutAnonymization)
+        })
+      })
+
+      describe('when the element does not belongs to the allowList', () => {
+        const anonymizationSettings = {
+          anonymize: true,
+          allowList: [],
+        }
+
+        it(`it returns ${JSON.stringify(expected.withAnonymization)}`, () => {
+          expect(
+            sanitizeHTMLElementValue(
+              selectElementInDom(`<div class='allow-list'>${elementHtml}</div>`),
+              anonymizationSettings,
+            ),
+          ).toEqual(expected.withAnonymization)
+        })
+      })
+    })
+  })
+}
 
 describe('sanitizeHTMLElementValue', () => {
-  it('sanitizes any text input', () => {
-    const element = selectTextAreaInDom('<textarea/>secret text to be kept confidential</textarea>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{textarea}}')
+  expectedSanitizedValue(
+    'sanitizes textarea',
+    '<textarea/>secret text to be kept confidential</textarea>',
+    selectTextAreaInDom,
+    {
+      withoutAnonymization: 'secret text to be kept confidential',
+      withAnonymization: '{{hidden}}',
+    },
+  )
+
+  expectedSanitizedValue('sanitizes text input', '<input value="s3cr3t"/>', selectInputInDom, {
+    withoutAnonymization: 's3cr3t',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any text input', () => {
-    const element = selectInputInDom('<input value="s3cr3t"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{text}}')
+  expectedSanitizedValue('sanitizes email input', '<input value="s3.cr3t@mail.com"/>', selectInputInDom, {
+    withoutAnonymization: 's3.cr3t@mail.com',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any email input', () => {
-    const element = selectInputInDom('<input type="email" value="s3.cr3t@mail.com"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{email}}')
+  expectedSanitizedValue('sanitizes any file input', '<input type="file" value="s3cr3t.txt"/>', selectInputInDom, {
+    withoutAnonymization: '', // Note: Javascript does not allow reading the value of file inputs.
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any file input', () => {
-    const element = selectInputInDom('<input type="file" value="s3cr3t.txt"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{file}}')
+  expectedSanitizedValue('sanitizes any password input', '<input type="password" value="s3cr3t"/>', selectInputInDom, {
+    withoutAnonymization: '{{hidden}}',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any password input', () => {
-    const element = selectInputInDom('<input type="password" value="s3cr3t"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{password}}')
+  expectedSanitizedValue('sanitizes any tel input', '<input type="tel" value="0123456789"/>', selectInputInDom, {
+    withoutAnonymization: '0123456789',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any tel input', () => {
-    const element = selectInputInDom('<input type="tel" value="0123456789"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{tel}}')
+  expectedSanitizedValue('sanitizes any url input', '<input type="url" value="www.s3cr3t.com"/>', selectInputInDom, {
+    withoutAnonymization: 'www.s3cr3t.com',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any url input', () => {
-    const element = selectInputInDom('<input type="url" value="www.s3cr3t.com"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{url}}')
+  expectedSanitizedValue('sanitizes any number input', '<input type="number" value="42"/>', selectInputInDom, {
+    withoutAnonymization: '42',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any hidden input', () => {
-    const element = selectInputInDom('<input type="hidden" value="s3cr3t"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{hidden}}')
+  expectedSanitizedValue(
+    'sanitizes any checkbox input',
+    '<input type="checkbox" value="accept all" checked/>',
+    selectInputInDom,
+    {
+      withoutAnonymization: 'accept all',
+      withAnonymization: '{{hidden}}',
+    },
+  )
+
+  expectedSanitizedValue('sanitizes any radio input', '<input type="radio" value="red" checked/>', selectInputInDom, {
+    withoutAnonymization: 'red',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes any number input', () => {
-    const element = selectInputInDom('<input type="number" value="42"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{number}}')
+  expectedSanitizedValue(
+    'sanitizes any search input',
+    '<input type="search" value="the best test automation solution"/>',
+    selectInputInDom,
+    {
+      withoutAnonymization: 'the best test automation solution',
+      withAnonymization: '{{hidden}}',
+    },
+  )
+
+  expectedSanitizedValue('sanitizes any date input', '<input type="date" value="2022-07-12"/>', selectInputInDom, {
+    withoutAnonymization: '2022-07-12',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('does not sanitize checkbox inputs', () => {
-    const element = selectInputInDom('<input type="checkbox" value="accept all" checked/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('true')
+  expectedSanitizedValue(
+    'sanitizes any date-time input',
+    '<input type="datetime-local" value="2022-07-12T15:30"/>',
+    selectInputInDom,
+    {
+      withoutAnonymization: '2022-07-12T15:30',
+      withAnonymization: '{{hidden}}',
+    },
+  )
+
+  expectedSanitizedValue('sanitizes any time input', '<input type="time" value="13:30"/>', selectInputInDom, {
+    withoutAnonymization: '13:30',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('does not sanitize radio inputs', () => {
-    const element = selectInputInDom('<input type="radio" value="red" checked/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('true')
+  expectedSanitizedValue('sanitizes any month input', '<input type="month" value="2022-07"/>', selectInputInDom, {
+    withoutAnonymization: '2022-07',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes search inputs', () => {
-    const element = selectInputInDom('<input type="search" value="the best test automation solution"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{search}}')
+  expectedSanitizedValue('sanitizes any week input', '<input type="week" value="2017-W01"/>', selectInputInDom, {
+    withoutAnonymization: '2017-W01',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes date inputs', () => {
-    const element = selectInputInDom('<input type="date" value="2022-07-12"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{date}}')
+  expectedSanitizedValue('sanitizes any color input', '<input type="color" value="#f6b73c"/>', selectInputInDom, {
+    withoutAnonymization: '#f6b73c',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes date-time inputs', () => {
-    const element = selectInputInDom('<input type="datetime-local" value="2022-07-12T15:30"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{datetime-local}}')
+  expectedSanitizedValue('sanitizes any button input', '<input type="button" value="Click here"/>', selectInputInDom, {
+    withoutAnonymization: 'Click here',
+    withAnonymization: '{{hidden}}',
   })
 
-  it('sanitizes time inputs', () => {
-    const element = selectInputInDom('<input type="time" value="13:30"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{time}}')
-  })
+  expectedSanitizedValue(
+    'sanitizes any submit input',
+    '<input type="submit" value="Click to submit"/>',
+    selectInputInDom,
+    {
+      withoutAnonymization: 'Click to submit',
+      withAnonymization: '{{hidden}}',
+    },
+  )
 
-  it('sanitizes month inputs', () => {
-    const element = selectInputInDom('<input type="month" value="2022-07"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{month}}')
-  })
+  expectedSanitizedValue(
+    'sanitizes any reset input',
+    '<input type="reset" value="Click to reset"/>',
+    selectInputInDom,
+    {
+      withoutAnonymization: 'Click to reset',
+      withAnonymization: '{{hidden}}',
+    },
+  )
 
-  it('sanitize week inputs', () => {
-    const element = selectInputInDom('<input type="week" value="2017-W01"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{week}}')
-  })
-
-  it('does not sanitize color inputs', () => {
-    const element = selectInputInDom('<input type="color" value="#f6b73c"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('#f6b73c')
-  })
-
-  it('does not sanitize button inputs', () => {
-    const element = selectInputInDom('<input type="button" value="Click here"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('Click here')
-  })
-
-  it('does not sanitize submit inputs', () => {
-    const element = selectInputInDom('<input type="submit" value="Click to submit"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('Click to submit')
-  })
-
-  it('does not sanitize reset inputs', () => {
-    const element = selectInputInDom('<input type="reset" value="Click to reset"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('Click to reset')
-  })
-
-  it('sanitizes range inputs', () => {
-    const element = selectInputInDom('<input type="range" value="90"/>')
-    expect(sanitizeHTMLElementValue(element)).toBe('{{range}}')
+  expectedSanitizedValue('sanitizes any range inputs', '<input type="range" value="90"/>', selectInputInDom, {
+    withoutAnonymization: '90',
+    withAnonymization: '{{hidden}}',
   })
 })
 
