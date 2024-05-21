@@ -102,13 +102,11 @@ export function mockBuildAndSendSnapshot(this: SnapshotRecorderHandler) {
   void gravityClient.handleSnapshots(sessionIdHandler.get(), [dummyDocumentSnapshot()])
 }
 
-export function buildGravityRecordingSettings(settings: Partial<GravityRecordingSettings>) {
+export function buildGravityRecordingSettings(settings: Partial<GravityRecordingSettings>): GravityRecordingSettings {
   return {
     sessionRecording: true,
     videoRecording: false,
     snapshotRecording: false,
-    videoAnonymization: false,
-    snapshotAnonymization: false,
     ...settings,
   }
 }
