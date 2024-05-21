@@ -19,7 +19,9 @@ class KeyDownEventListener extends TargetedEventListener {
     if (recordChangeEvent(event.code, event.target)) {
       const changeUserAction = createTargetedUserAction(event, UserActionType.Change, this.options)
       if (changeUserAction != null && !this.changeActionIsSame(changeUserAction)) {
-        changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue)
+        changeUserAction.target.value = sanitizeHTMLElementValue(event.target as HTMLInputWithValue, {
+          anonymize: false,
+        })
         this.userActionHistory.push(changeUserAction)
         return this.userActionHandler.handle(changeUserAction)
       }

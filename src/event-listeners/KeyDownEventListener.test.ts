@@ -205,14 +205,34 @@ describe('KeyDownEventListener', () => {
 
     describe('when input is a text field', () => {
       const fields = [
-        { type: 'text', html: `<input type="text" data-testid="${inputTestId}" />` },
-        { type: 'search', html: `<input type="search" data-testid="${inputTestId}" />` },
-        { type: 'email', html: `<input type="email" data-testid="${inputTestId}" />` },
-        { type: 'password', html: `<input type="password" data-testid="${inputTestId}" />` },
-        { type: 'textarea', html: `<textarea data-testid="${inputTestId}"></textarea>` },
+        {
+          type: 'text',
+          html: `<input type="text" data-testid="${inputTestId}" value="some text"/>`,
+          expected: 'some text',
+        },
+        {
+          type: 'search',
+          html: `<input type="search" data-testid="${inputTestId}" value="search stuff"/>`,
+          expected: 'search stuff',
+        },
+        {
+          type: 'email',
+          html: `<input type="email" data-testid="${inputTestId}" value="me@example.com" />`,
+          expected: 'me@example.com',
+        },
+        {
+          type: 'password',
+          html: `<input type="password" data-testid="${inputTestId}" value="s3cr3t" />`,
+          expected: '{{hidden}}',
+        },
+        {
+          type: 'textarea',
+          html: `<textarea data-testid="${inputTestId}">Lorem ipsum, at dolorem etc</textarea>`,
+          expected: 'Lorem ipsum, at dolorem etc',
+        },
       ]
 
-      for (const { type, html } of fields) {
+      for (const { type, html, expected } of fields) {
         it(`does triggers a Change event when typing in ${type}`, async () => {
           const { element, domWindow } = createElementInJSDOM(
             `
@@ -267,7 +287,7 @@ describe('KeyDownEventListener', () => {
           await waitFor(() => {
             const changeEvents = listHandledUserActionsByType(UserActionType.Change)
             const targetedUserAction = changeEvents[0] as TargetedUserAction
-            expect(targetedUserAction.target.value).to.eq(`{{${type}}}`)
+            expect(targetedUserAction.target.value).to.eq(expected)
           })
         })
       }

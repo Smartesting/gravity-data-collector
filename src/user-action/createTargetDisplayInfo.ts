@@ -1,21 +1,14 @@
 import { AnonymizationSettings, TargetDisplayInfo } from '../types'
 import getDocument from '../utils/getDocument'
 import maskText from '../utils/maskText'
-import { matchClosest } from '../utils/cssSelectorUtils'
+import elementShouldBeAnonymized from '../utils/elementShouldBeAnonymized'
 
 export function createTargetDisplayInfo(
   element: HTMLElement,
   anonymizationSettings: AnonymizationSettings,
   document: Document = getDocument(),
 ): TargetDisplayInfo | undefined {
-  const anonymize =
-    anonymizationSettings.anonymize &&
-    !anonymizationSettings.allowList.some(({ pageMatcher, allowedSelectors }) => {
-      return (
-        document.location.pathname.match(pageMatcher) !== null &&
-        allowedSelectors.some((selector) => matchClosest(element, selector))
-      )
-    })
+  const anonymize = elementShouldBeAnonymized(element, anonymizationSettings)
 
   switch (element.tagName.toLowerCase()) {
     case 'a':
