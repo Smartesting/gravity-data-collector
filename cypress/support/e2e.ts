@@ -23,6 +23,7 @@ import GravityCollector from '../../src'
 
 beforeEach(() => {
   cy.task('getCollectorOptions').then((collectorOptions) => {
+    if (!isPartialCollectorOptions(collectorOptions)) return
     return cy.on('window:load', (win) => {
       function waitForPageToLoad(collectorOptions: Partial<CollectorOptions>) {
         const url = win.document.URL
@@ -41,3 +42,11 @@ beforeEach(() => {
     })
   })
 })
+
+function isPartialCollectorOptions(toBeDetermined: unknown): toBeDetermined is Partial<CollectorOptions> {
+  return (
+    toBeDetermined !== undefined &&
+    typeof toBeDetermined === 'object' &&
+    (toBeDetermined as CollectorOptions).authKey !== undefined
+  )
+}

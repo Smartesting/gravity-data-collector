@@ -1,5 +1,7 @@
 import ITextCompressor from '../../src/text-compressor/ITextCompressor'
 import FFLateCompressor from '../../src/text-compressor/FFlateCompressor'
+import { CyHttpMessages } from 'cypress/types/net-stubbing'
+import IncomingHttpRequest = CyHttpMessages.IncomingHttpRequest
 
 describe('Inline resources data collector option', () => {
   beforeEach(() => {
@@ -16,7 +18,7 @@ describe('Inline resources data collector option', () => {
     })
 
     it('stores the recorded snapshot style into the snapshot DOM', () => {
-      const snapshotRequests = []
+      const snapshotRequests: IncomingHttpRequest[] = []
       cy.interceptGravitySnapshot((req) => snapshotRequests.push(req))
       cy.openBaseSite('form/')
       cy.get('#text-input').type('Some content')
@@ -37,7 +39,7 @@ describe('Inline resources data collector option', () => {
     })
 
     it('adds a link to the recorded snapshot style into the snapshot DOM', () => {
-      const snapshotRequests = []
+      const snapshotRequests: IncomingHttpRequest[] = []
       cy.interceptGravitySnapshot((req) => snapshotRequests.push(req))
       cy.openBaseSite('form/')
       cy.get('#text-input').type('Some content')
