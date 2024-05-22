@@ -46,15 +46,17 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
       this.snapshotOptions.maskTextSelector = settings.anonymizeSelectors
     }
     this.snapshotOptions.blockSelector = settings.ignoreSelectors
-    this.snapshotDocument = installSnapshotContainer(window.document)
+    this.snapshotOptions.inlineStylesheet = this.collectorOptions.inlineResources
+    this.snapshotOptions.inlineImages = this.collectorOptions.inlineResources
+    this.snapshotDocument = installSnapshotContainer(this.collectorOptions.window.document)
     if (this.snapshotDocument) {
-      this.observer.observe(window.document.body, { childList: true, subtree: true })
+      this.observer.observe(this.collectorOptions.window.document.body, { childList: true, subtree: true })
     }
   }
 
   terminateRecording() {
     this.snapshotOptions = null
-    dropSnapshotContainer(window.document)
+    dropSnapshotContainer(this.collectorOptions.window.document)
     if (this.snapshotDocument) {
       this.observer.disconnect()
       this.snapshotDocument = undefined

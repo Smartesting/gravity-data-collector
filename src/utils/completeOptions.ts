@@ -28,6 +28,7 @@ export default function completeOptions(options?: Partial<CollectorOptions>): Co
     useHashInUrlAsPathname: false,
     cookieStrategy: CookieStrategy.default,
     cookieWriter: null,
+    inlineResources: true,
   }
 
   const debugDefaultOptions = {
