@@ -91,7 +91,7 @@ class CollectorWrapper {
       this.snapshotRecorderHandler,
     )
     this.sessionTraitHandler = new SessionTraitHandler(sessionIdHandler, this.gravityClient)
-    this.videoRecorderHandler = new VideoRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient)
+    this.videoRecorderHandler = new VideoRecorderHandler(sessionIdHandler, timeoutHandler, this.gravityClient, options.window, () => this.anonymizationSettings)
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
     this.recordingSettingsHandler.subscribe(
       ({ sessionRecording, videoRecording, snapshotRecording, anonymizationSettings }) => {
