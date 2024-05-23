@@ -2,7 +2,7 @@ import GravityCollector from '../../src'
 import { CollectorOptions } from '../../src/types'
 
 const authorizedSites = [
-    'neolink.link',
+    '*********.com',
 ]
 
 const options: Partial<CollectorOptions> = {
