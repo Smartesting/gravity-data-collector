@@ -28,7 +28,7 @@ export interface ISnapshotRecorderHandler {
 export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler {
   private readonly observer = new MutationObserver(this.handle.bind(this))
   private snapshotDocument: Document | undefined
-  private snapshotOptions: SnapshotOptions | null = null
+  private snapshotOptions: SnapshotOptions | null = {}
   private pendingUserAction = false
 
   constructor(
@@ -40,15 +40,20 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   ) {}
 
   initializeRecording() {
-    this.snapshotDocument = installSnapshotContainer(window.document)
+    if (this.snapshotOptions) {
+      this.snapshotOptions.inlineStylesheet = this.collectorOptions.inlineResources
+      this.snapshotOptions.inlineImages = this.collectorOptions.inlineResources
+    }
+    this.snapshotDocument = installSnapshotContainer(this.collectorOptions.window.document)
+
     if (this.snapshotDocument) {
-      this.observer.observe(window.document.body, { childList: true, subtree: true })
+      this.observer.observe(this.collectorOptions.window.document.body, { childList: true, subtree: true })
     }
   }
 
   terminateRecording() {
     this.snapshotOptions = null
-    dropSnapshotContainer(window.document)
+    dropSnapshotContainer(this.collectorOptions.window.document)
     if (this.snapshotDocument) {
       this.observer.disconnect()
       this.snapshotDocument = undefined

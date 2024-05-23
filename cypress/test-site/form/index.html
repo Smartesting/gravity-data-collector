@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Gravity Data Collector - Sandbox</title>
+    <script type="text/javascript">
+      function sendForm() {
+        document.body.innerHTML += 'Form sent!'
+      }
+    </script>
+    <link rel="stylesheet" href="form-style.css" />
   </head>
   <body>
     <h1>Some form</h1>
@@ -16,6 +22,8 @@
 
       <label for="textarea">A textarea</label>
       <textarea id="textarea"></textarea>
+
+      <input id="send-form-button" type="button" value="Send form" onclick="sendForm()" />
     </form>
   </body>
 </html>

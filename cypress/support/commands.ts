@@ -42,6 +42,7 @@ import {
   buildGravityTrackingPublishApiUrl,
   buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
+  buildGravityTrackingSnapshotApiUrl,
 } from '../../src/gravityEndPoints'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
@@ -97,6 +98,22 @@ Cypress.Commands.add('interceptGravityRecord', (onReq?: (req: CyHttpMessages.Inc
       })
     },
   ).as('sendGravityRecord')
+})
+
+Cypress.Commands.add('interceptGravitySnapshot', (onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void) => {
+  cy.intercept(
+    {
+      method: 'POST',
+      url: buildGravityTrackingSnapshotApiUrl('*', DEFAULT_GRAVITY_SERVER_URL, '*'),
+    },
+    (req) => {
+      onReq && onReq(req)
+      req.reply({
+        statusCode: 200,
+        body: { error: null },
+      })
+    },
+  ).as('sendGravitySnapshot')
 })
 
 Cypress.Commands.add('interceptGravityCollectionSettings', () => {
@@ -157,6 +174,8 @@ declare global {
       interceptGravityIdentify(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
       interceptGravityRecord(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
+
+      interceptGravitySnapshot(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
       interceptGravityCollectionSettings(): Chainable
 

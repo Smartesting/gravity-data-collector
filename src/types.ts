@@ -241,6 +241,7 @@ export type CollectorOptions = CookieSettings & {
   enabledListeners: Listener[] | undefined
   buildId: string | undefined
   useHashInUrlAsPathname: boolean
+  inlineResources: boolean
 }
 
 export enum CookieStrategy {
