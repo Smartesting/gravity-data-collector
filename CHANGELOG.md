@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `inlineResources` option to inline (or not) the style of the recorded snapshots
+
 ### Changed
 
 ### Deprecated

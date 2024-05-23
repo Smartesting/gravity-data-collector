@@ -15,19 +15,38 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import { CollectorOptions } from '../../src/types'
 import GravityCollector from '../../src'
-import { CookieStrategy, Listener } from '../../src/types'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-Cypress.on('window:load', (win) => {
-  GravityCollector.init({
-    authKey: '1234',
-    requestInterval: 100,
-    gravityServerUrl: 'https://api.gravity.smartesting.com',
-    window: win,
-    enabledListeners: [Listener.Click, Listener.KeyUp, Listener.KeyDown, Listener.Change],
-    cookieStrategy: CookieStrategy.subDomains,
+beforeEach(() => {
+  cy.task('getCollectorOptions').then((collectorOptions) => {
+    if (!isPartialCollectorOptions(collectorOptions)) return
+    return cy.on('window:load', (win) => {
+      function waitForPageToLoad(collectorOptions: Partial<CollectorOptions>) {
+        const url = win.document.URL
+
+        if (url === undefined || url.startsWith('about:')) {
+          setTimeout(() => waitForPageToLoad(collectorOptions), 5)
+        } else {
+          GravityCollector.init({
+            window: win,
+            ...collectorOptions,
+          })
+        }
+      }
+
+      waitForPageToLoad(collectorOptions)
+    })
   })
 })
+
+function isPartialCollectorOptions(toBeDetermined: unknown): toBeDetermined is Partial<CollectorOptions> {
+  return (
+    toBeDetermined !== undefined &&
+    typeof toBeDetermined === 'object' &&
+    (toBeDetermined as CollectorOptions).authKey !== undefined
+  )
+}
