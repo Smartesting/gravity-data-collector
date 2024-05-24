@@ -6,5 +6,6 @@ export default defineConfig({
     environment: 'jsdom',
     restoreMocks: true,
     retry: 3,
+    exclude: ['./rrweb/**', 'node_modules/**']
   },
 })

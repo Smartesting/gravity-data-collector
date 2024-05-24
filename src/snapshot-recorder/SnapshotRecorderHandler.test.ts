@@ -23,7 +23,7 @@ describe('SnapshotRecorderHandler', () => {
 
   it('sets snapshot inline options to true when "inlineResources" collector option is set to true', () => {
     const snapshotRecorderHandler = createSnapshotRecorderHandler({ inlineResources: true })
-    snapshotRecorderHandler.initializeRecording({})
+    snapshotRecorderHandler.initializeRecording()
     snapshotRecorderHandler.buildAndSendSnapshot()
     vi.advanceTimersByTime(200)
     expect(spiedCreateSnapshotMethod).toBeCalled()
@@ -34,7 +34,7 @@ describe('SnapshotRecorderHandler', () => {
 
   it('sets snapshot inline options to false when "inlineResources" collector option is set to false', () => {
     const snapshotRecorderHandler = createSnapshotRecorderHandler({ inlineResources: false })
-    snapshotRecorderHandler.initializeRecording({})
+    snapshotRecorderHandler.initializeRecording()
     snapshotRecorderHandler.buildAndSendSnapshot()
     vi.advanceTimersByTime(200)
     expect(spiedCreateSnapshotMethod).toBeCalled()

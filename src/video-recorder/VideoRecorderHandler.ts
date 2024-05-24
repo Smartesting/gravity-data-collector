@@ -19,7 +19,7 @@ export default class VideoRecorderHandler {
   ) {}
 
   initializeRecording() {
-    this.instanciateVideoRecorder()
+    this.instantiateVideoRecorder()
 
     window.addEventListener('load', () => {
       let oldHref = document.location.href
@@ -31,7 +31,7 @@ export default class VideoRecorderHandler {
           oldHref = document.location.href
 
           this.terminateRecording()
-          this.instanciateVideoRecorder()
+          this.instantiateVideoRecorder()
         }
       })
       observer.observe(body, {
@@ -51,7 +51,7 @@ export default class VideoRecorderHandler {
     }
   }
 
-  private instanciateVideoRecorder() {
+  private instantiateVideoRecorder() {
     const location = this.win.location
     const anonymizationSettings = this.getAnonymizationSettings() ?? DEFAULT_ANONYMIZATION_SETTINGS
     const handleRecord = this.handle.bind(this)
@@ -64,7 +64,7 @@ export default class VideoRecorderHandler {
         }
         return acc
       }, [])
-      recordingSettings.maskTextSelector = allowedList.map(selector => `:not(${selector})`).join(', ')
+      recordingSettings.maskTextExcludeSelector = allowedList.join(', ')
       recordingSettings.maskTextFn = maskText
     }
 

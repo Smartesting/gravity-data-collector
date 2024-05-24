@@ -59,7 +59,7 @@ describe('isCheckableElement', () => {
   })
 
   it('does not detect fieldSet item as a checkable element', () => {
-    const { element } = createElementInJSDOM('<fieldSet/>', 'fieldSet')
+    const { element } = createElementInJSDOM('<fieldset/>', 'fieldset')
     expect(isCheckableElement(element)).toBeFalsy()
   })
 })

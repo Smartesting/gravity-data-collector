@@ -1,0 +1,4 @@
+[submodule "rrweb"]
+	path = rrweb
+	url = git@github.com:Smartesting/rrweb.git
+    branch = option-maskTextExclusion

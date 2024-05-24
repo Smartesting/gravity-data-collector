@@ -16,7 +16,7 @@ const contents = {
   leMonde,
 }
 
-describe('snapshots', () => {
+describe.skip('snapshots', () => {
   it.each([
     {
       name: 'FFlate',

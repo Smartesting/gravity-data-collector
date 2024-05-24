@@ -25,12 +25,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run tsc
-      - run: npm run build
-      - run: npm run lint
+      - run: yarn install
+      - run: yarn run tsc
+      - run: yarn run build
+      - run: yarn run lint
       - run: ./node_modules/.bin/prettier --check .
-      - run: npm test
+      - run: yarn test
       - name: Run cypress tests
         uses: cypress-io/github-action@v4
         with:
