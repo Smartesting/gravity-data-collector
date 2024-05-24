@@ -27,8 +27,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: yarn install
       - run: (cd rrweb && yarn install && yarn build:all)
+      - run: yarn install
       - run: yarn run tsc
       - run: yarn run build
       - run: yarn run lint
