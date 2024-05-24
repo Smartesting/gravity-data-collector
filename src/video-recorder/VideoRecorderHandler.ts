@@ -26,7 +26,7 @@ export default class VideoRecorderHandler {
       const body = document.querySelector('body')
       if (!body) return
 
-      const observer = new MutationObserver(mutations => {
+      const observer = new MutationObserver((mutations) => {
         if (oldHref !== document.location.href) {
           oldHref = document.location.href
 

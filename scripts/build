@@ -1,0 +1,10 @@
+#!/bin/sh
+
+rm -rf node_modules
+cd rrweb
+yarn install
+yarn build:all
+cd ..
+yarn install
+cd gravity-chrome-extension
+yarn run build
