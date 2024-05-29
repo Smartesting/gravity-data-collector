@@ -64,12 +64,31 @@ export default class VideoRecorderHandler {
         }
         return acc
       }, [])
-      recordingSettings.maskTextExcludeSelector = allowedList.join(', ')
+      recordingSettings.maskTextSelector = '*'
+      recordingSettings.allowList = allowedList.join(', ')
       recordingSettings.maskTextFn = maskText
+      recordingSettings.maskInputOptions = {
+        color: true,
+        date: true,
+        email: true,
+        month: true,
+        number: true,
+        tel: true,
+        url: true,
+        text: true,
+        password: true,
+        range: true,
+        search: true,
+        select: true,
+        time: true,
+        week: true,
+        textarea: true,
+        'datetime-local': true,
+      }
     }
 
     this.stopRecording = record({
-      emit(event) {
+      emit(event: eventWithTime) {
         void handleRecord(event)
       },
       ...recordingSettings,
