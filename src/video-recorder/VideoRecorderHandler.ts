@@ -5,7 +5,7 @@ import RECORDING_SETTINGS from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import { AnonymizationSettings, DEFAULT_ANONYMIZATION_SETTINGS } from '../types'
-import maskText from '../utils/maskText'
+import { getRRWebAnonymizationSettings } from '../utils/getRRWebAnonymizationSettings'
 
 export default class VideoRecorderHandler {
   private stopRecording: listenerHandler | undefined
@@ -52,39 +52,12 @@ export default class VideoRecorderHandler {
   }
 
   private instantiateVideoRecorder() {
-    const location = this.win.location
     const anonymizationSettings = this.getAnonymizationSettings() ?? DEFAULT_ANONYMIZATION_SETTINGS
     const handleRecord = this.handle.bind(this)
 
-    const recordingSettings: recordOptions<eventWithTime> = { ...RECORDING_SETTINGS }
-    if (anonymizationSettings.anonymize) {
-      const allowedList = anonymizationSettings.allowList.reduce<string[]>((acc, { pageMatcher, allowedSelectors }) => {
-        if (location.href.match(pageMatcher)) {
-          acc.push(...allowedSelectors)
-        }
-        return acc
-      }, [])
-      recordingSettings.maskTextSelector = '*'
-      recordingSettings.allowList = allowedList.join(', ')
-      recordingSettings.maskTextFn = maskText
-      recordingSettings.maskInputOptions = {
-        color: true,
-        date: true,
-        email: true,
-        month: true,
-        number: true,
-        tel: true,
-        url: true,
-        text: true,
-        password: true,
-        range: true,
-        search: true,
-        select: true,
-        time: true,
-        week: true,
-        textarea: true,
-        'datetime-local': true,
-      }
+    const recordingSettings: recordOptions<eventWithTime> = {
+      ...RECORDING_SETTINGS,
+      ...getRRWebAnonymizationSettings(anonymizationSettings, this.win.location),
     }
 
     this.stopRecording = record({

@@ -3,9 +3,10 @@ import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import { SnapshotOptions } from '../utils/rrwebRecordingSettings'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import {
+  AnonymizationSettings,
   CLICKABLE_ELEMENT_TAG_NAMES,
   CollectorOptions,
-  Compressor,
+  Compressor, DEFAULT_ANONYMIZATION_SETTINGS,
   DocumentSnapshot,
   KeyUserActionData,
   TargetedUserAction,
@@ -20,6 +21,7 @@ import isTargetedUserAction from '../utils/isTargetedUserAction'
 import { AtatusBenchmark } from '../monitoring/AtatusBenchmark'
 import ITextCompressor from '../text-compressor/ITextCompressor'
 import FFLateCompressor from '../text-compressor/FFlateCompressor'
+import { getRRWebAnonymizationSettings } from '../utils/getRRWebAnonymizationSettings'
 
 export interface ISnapshotRecorderHandler {
   onUserAction: (action: UserAction) => void
@@ -36,6 +38,7 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly gravityClient: IGravityClient,
+    private readonly getAnonymizationSettings: () => AnonymizationSettings | undefined = () => undefined,
     private readonly textCompressor: ITextCompressor = FFLateCompressor,
   ) {}
 
@@ -78,9 +81,19 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   buildAndSendSnapshot() {
     this.debounce(() => {
       if (!this.snapshotOptions || !this.snapshotDocument) return
+      const anonymizationSettings = this.getAnonymizationSettings() ?? DEFAULT_ANONYMIZATION_SETTINGS
+
       const window = this.collectorOptions.window
       const pathname = getLocationPathname(window, this.collectorOptions)
-      const html = createSnapshot(window.document, this.snapshotDocument, this.snapshotOptions, new AtatusBenchmark())
+      const html = createSnapshot(
+        window.document,
+        this.snapshotDocument,
+        {
+            ...this.snapshotOptions,
+            ...getRRWebAnonymizationSettings(anonymizationSettings, window.location),
+        },
+        new AtatusBenchmark(),
+      )
       if (!html) return
       const { compressed, compressor } = this.textCompressor.compress(html)
       const documentSnapshot = this.createDocumentSnapshot(

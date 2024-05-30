@@ -82,6 +82,7 @@ class CollectorWrapper {
       timeoutHandler,
       sessionIdHandler,
       this.gravityClient,
+      () => this.anonymizationSettings,
     )
     this.userActionHandler = new UserActionHandler(
       sessionIdHandler,
