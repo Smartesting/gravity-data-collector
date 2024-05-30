@@ -4,8 +4,10 @@
       "module": "commonjs",
       "target": "es6",
       "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
       "sourceMap": true,
       "outDir": "dist/js",
+      "jsx": "react",
       "noEmitOnError": true,
       "typeRoots": [
          "node_modules/@types"

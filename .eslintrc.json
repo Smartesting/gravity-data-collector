@@ -7,7 +7,7 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "project": ["./tsconfig.json", "./cypress/tsconfig.json", "./gravity-chrome-extension/tsconfig.json"]
+    "project": ["./tsconfig.json", "./cypress/tsconfig.json"]
   },
   "plugins": ["@typescript-eslint"],
   "rules": {

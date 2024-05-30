@@ -1,0 +1,67 @@
+:root {
+  --indigo: rgb(91, 0, 107);
+  --electric-violet: rgb(127, 63, 255);
+  --electric-violet-alt: #6732d0;
+  --fuchsia: rgb(235, 14, 149);
+  --onyx: rgb(55, 57, 58);
+  --periwinkle-crayola: rgb(197, 200, 230);
+  --periwinkle-crayola-dark: rgb(153, 155, 179);
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body * {
+  font-family: "Heebo";
+  font-weight: 400;
+  font-size: 16px;
+}
+
+body h4 {
+  font-family: "Heebo";
+  font-weight: 600;
+  color: var(--onyx);
+}
+
+#panel {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.gravity-data-collector-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+
+button {
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 400;
+  height: 32px;
+  width: fit-content;
+  letter-spacing: 0.3px;
+  line-height: 100%;
+  padding: 8px;
+  background-color: var(--electric-violet);
+  border: 1px solid var(--electric-violet);
+  color: #fff;
+  margin: 4px;
+  cursor: pointer;
+}
+
+.gravity-data-collector-authentication-key {
+  width: 350px;
+}
+
+button,
+.gravity-data-collector-authentication-key {
+  margin: 8px !important;
+}
