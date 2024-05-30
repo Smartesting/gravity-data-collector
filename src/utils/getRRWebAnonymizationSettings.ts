@@ -7,7 +7,7 @@ const HTML_IMAGE_VIDEO_TAGS = ['img', 'map', 'area', 'canvas', 'figure', 'pictur
 
 type RRWebAnonymizationSettings = Pick<
   recordOptions<eventWithTime>,
-  'allowList' | 'maskTextSelector' | 'maskTextFn' | 'maskInputOptions' | 'blockSelector' | 'blockExtraStyle'
+  'allowList' | 'maskTextSelector' | 'maskTextFn' | 'blockSelector' | 'blockExtraStyle' | 'maskAllInputs'
 >
 
 export function getRRWebAnonymizationSettings(
@@ -23,26 +23,9 @@ export function getRRWebAnonymizationSettings(
       return acc
     }, [])
     recordingSettings.maskTextSelector = '*'
-    recordingSettings.allowList = allowedList.join(', ')
+    recordingSettings.allowList = allowedList.length > 0 ? allowedList.join(', ') : null
     recordingSettings.maskTextFn = maskText
-    recordingSettings.maskInputOptions = {
-      color: true,
-      date: true,
-      email: true,
-      month: true,
-      number: true,
-      tel: true,
-      url: true,
-      text: true,
-      password: true,
-      range: true,
-      search: true,
-      select: true,
-      time: true,
-      week: true,
-      textarea: true,
-      'datetime-local': true,
-    }
+    recordingSettings.maskAllInputs = true
     recordingSettings.blockSelector = HTML_IMAGE_VIDEO_TAGS.join(', ')
     recordingSettings.blockExtraStyle = 'background-color: #6732d0;'
   }

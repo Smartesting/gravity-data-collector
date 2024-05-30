@@ -4,48 +4,70 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>Gravity Data Collector - Anonymization system</title>
+    <style>
+      article {
+        display: flex;
+        flex-direction: row;
+      }
+
+      label,
+      input,
+      textarea {
+        display: block;
+      }
+    </style>
+    <script>
+      function submitForm(fieldsetId) {
+        const successMessage = document.createElement('p')
+        successMessage.innerHTML = 'The form was submitted'
+        document.getElementById(fieldsetId).appendChild(successMessage)
+      }
+    </script>
   </head>
   <body>
     <header>
       <h1>Anonymization system</h1>
     </header>
-    <fieldset class="allow-list">
-      <p>This is some text shown here</p>
+    <article>
+      <fieldset id="fieldset1" class="allow-list">
+        <p>This is some text shown here</p>
 
-      <label>
-        An input field
-        <input type="text" placeholder="type some text here" />
-      </label>
+        <label for="textField"> An input field </label>
+        <input id="textField" type="text" placeholder="type some text here" />
 
-      <label>
-        A password field
-        <input type="password" placeholder="this is a password" />
-      </label>
+        <label for="passwordField"> A password field </label>
+        <input id="passwordField" type="password" placeholder="this is a password" />
 
-      <img
-        src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting.svg"
-        alt="some image"
-      />
-    </fieldset>
+        <label for="textAreaField"> A textarea </label>
+        <textarea id="textAreaField"> </textarea>
 
-    <fieldset>
-      <p>This is some text shown here</p>
+        <img
+          src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting.svg"
+          alt="some image"
+        />
 
-      <label>
-        An input field
-        <input type="text" placeholder="type some text here" />
-      </label>
+        <input type="submit" onclick="submitForm('fieldset1')" value="Submit the form" />
+      </fieldset>
 
-      <label>
-        A password field
-        <input type="password" placeholder="this is a password" />
-      </label>
+      <fieldset id="fieldset2">
+        <p>This is some text shown here</p>
 
-      <img
-        src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting.svg"
-        alt="some image"
-      />
-    </fieldset>
+        <label for="textField1"> An input field </label>
+        <input id="textField1" type="text" placeholder="type some text here" />
+
+        <label for="passwordField1"> A password field </label>
+        <input id="passwordField1" type="password" placeholder="this is a password" />
+
+        <label for="textAreaField1"> A textarea </label>
+        <textarea id="textAreaField1"> </textarea>
+
+        <img
+          src="https://www.smartesting.com/wp-content/themes/wp_smartesting/dist/images/logo-smartesting.svg"
+          alt="some image"
+        />
+        <input type="submit" onclick="submitForm('fieldset2')" value="Submit the form" />
+      </fieldset>
+    </article>
     <footer>
       <a href="index.html">Back to the index</a>
     </footer>

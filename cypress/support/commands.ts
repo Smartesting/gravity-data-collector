@@ -116,7 +116,7 @@ Cypress.Commands.add('interceptGravitySnapshot', (onReq?: (req: CyHttpMessages.I
   ).as('sendGravitySnapshot')
 })
 
-Cypress.Commands.add('interceptGravityCollectionSettings', () => {
+Cypress.Commands.add('interceptGravityCollectionSettings', (response?: Partial<GravityRecordingSettingsResponse>) => {
   const body: GravityRecordingSettingsResponse = {
     error: null,
     settings: {
@@ -124,6 +124,7 @@ Cypress.Commands.add('interceptGravityCollectionSettings', () => {
       videoRecording: true,
       snapshotRecording: true,
     },
+    ...response,
   }
   cy.intercept('GET', buildGravityTrackingSessionCollectionSettingsApiUrl('*', DEFAULT_GRAVITY_SERVER_URL), {
     statusCode: 200,
@@ -177,7 +178,7 @@ declare global {
 
       interceptGravitySnapshot(onReq?: (req: CyHttpMessages.IncomingHttpRequest) => void): Chainable
 
-      interceptGravityCollectionSettings(): Chainable
+      interceptGravityCollectionSettings(response?: Partial<GravityRecordingSettingsResponse>): Chainable
 
       openBaseSite(path?: string): Chainable
 
