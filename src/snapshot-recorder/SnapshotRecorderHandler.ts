@@ -6,7 +6,8 @@ import {
   AnonymizationSettings,
   CLICKABLE_ELEMENT_TAG_NAMES,
   CollectorOptions,
-  Compressor, DEFAULT_ANONYMIZATION_SETTINGS,
+  Compressor,
+  DEFAULT_ANONYMIZATION_SETTINGS,
   DocumentSnapshot,
   KeyUserActionData,
   TargetedUserAction,
@@ -89,8 +90,8 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
         window.document,
         this.snapshotDocument,
         {
-            ...this.snapshotOptions,
-            ...getRRWebAnonymizationSettings(anonymizationSettings, window.location),
+          ...this.snapshotOptions,
+          ...getRRWebAnonymizationSettings(anonymizationSettings, window.location),
         },
         new AtatusBenchmark(),
       )
