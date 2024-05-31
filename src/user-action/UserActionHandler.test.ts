@@ -15,7 +15,7 @@ describe('UserActionHandler', () => {
     let client: IGravityClient
     let sessionIdHandler: ISessionIdHandler
     let userActionHandler: IUserActionHandler
-    const userAction: UserAction = createSessionStartedUserAction()
+    const userAction: UserAction = createSessionStartedUserAction(window)
     const sessionId = '123-456'
 
     beforeEach(() => {

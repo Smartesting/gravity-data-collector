@@ -36,6 +36,7 @@ describe('ClickEventListener', () => {
 
     await waitFor(() => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+        domWindow,
         new MouseEvent('click'),
         'click',
         NO_ANONYMIZATION_SETTINGS,

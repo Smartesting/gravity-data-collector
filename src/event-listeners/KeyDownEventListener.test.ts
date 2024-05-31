@@ -40,13 +40,17 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
 
     new KeyDownEventListener(userActionHandler, domWindow, {
-      selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+      selectorsOptions: {
+        queries: [QueryType.id],
+        excludedQueries: [QueryType.tag],
+        attributes: ['myAttribute'],
+      },
     }).init()
     const search = await waitFor(() => getByRole(element, 'searchbox'))
 
@@ -54,11 +58,16 @@ describe('KeyDownEventListener', () => {
 
     await waitFor(() => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+        domWindow,
         new KeyboardEvent('keydown'),
         'keydown',
         NO_ANONYMIZATION_SETTINGS,
         {
-          selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+          selectorsOptions: {
+            queries: [QueryType.id],
+            excludedQueries: [QueryType.tag],
+            attributes: ['myAttribute'],
+          },
         },
       )
     })
@@ -68,7 +77,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <input type="checkbox" id="checkbox1" name="checkbox1"/>
+                    <input type='checkbox' id='checkbox1' name='checkbox1'/>
                 </div>`,
       'div',
     )
@@ -87,7 +96,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
         <div>
-            <div role="cell"/>
+            <div role='cell'/>
         </div>`,
       'div',
     )
@@ -106,7 +115,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
         <div>
-            <div role="cell"/>
+            <div role='cell'/>
         </div>`,
       'div',
     )
@@ -190,7 +199,7 @@ describe('KeyDownEventListener', () => {
           const { element, domWindow } = createElementInJSDOM(
             `
               <div>
-                  <input data-testid="${inputTestId}" type="${inputType}" />
+                  <input data-testid='${inputTestId}' type='${inputType}' />
               </div>`,
             'div',
           )
@@ -210,11 +219,26 @@ describe('KeyDownEventListener', () => {
 
     describe('when input is a text field', () => {
       const fields = [
-        { type: 'text', html: `<input type="text" data-testid="${inputTestId}" />` },
-        { type: 'search', html: `<input type="search" data-testid="${inputTestId}" />` },
-        { type: 'email', html: `<input type="email" data-testid="${inputTestId}" />` },
-        { type: 'password', html: `<input type="password" data-testid="${inputTestId}" />` },
-        { type: 'textarea', html: `<textarea data-testid="${inputTestId}"></textarea>` },
+        {
+          type: 'text',
+          html: `<input type='text' data-testid='${inputTestId}' />`,
+        },
+        {
+          type: 'search',
+          html: `<input type='search' data-testid='${inputTestId}' />`,
+        },
+        {
+          type: 'email',
+          html: `<input type='email' data-testid='${inputTestId}' />`,
+        },
+        {
+          type: 'password',
+          html: `<input type='password' data-testid='${inputTestId}' />`,
+        },
+        {
+          type: 'textarea',
+          html: `<textarea data-testid='${inputTestId}'></textarea>`,
+        },
       ]
 
       for (const { type, html } of fields) {

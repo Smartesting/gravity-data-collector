@@ -23,13 +23,13 @@ function rejectBlankString(value: string | undefined): string | null {
   return null
 }
 
-export function createSessionStartedUserAction(buildId?: string): SessionStartedUserAction {
+export function createSessionStartedUserAction(windowInstance: Window, buildId?: string): SessionStartedUserAction {
   const action: SessionStartedUserAction = {
     type: UserActionType.SessionStarted,
     recordedAt: new Date().toISOString(),
-    location: location(),
-    document: gravityDocument(),
-    viewportData: viewport(),
+    location: location(windowInstance),
+    document: gravityDocument(windowInstance),
+    viewportData: viewport(windowInstance),
     version: config.COLLECTOR_VERSION,
     agent: navigator.userAgent,
     buildId: buildId ?? discoverBuildId(),

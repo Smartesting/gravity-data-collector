@@ -14,6 +14,7 @@ class KeyDownEventListener extends TargetedEventListener {
 
   listener(event: KeyboardEvent) {
     const userAction = createTargetedUserAction(
+      this.window,
       event,
       this.userActionType,
       this.userActionHandler.getAnonymizationSettings(),
@@ -23,6 +24,7 @@ class KeyDownEventListener extends TargetedEventListener {
 
     if (recordChangeEvent(event.code, event.target)) {
       const changeUserAction = createTargetedUserAction(
+        this.window,
         event,
         UserActionType.Change,
         this.userActionHandler.getAnonymizationSettings(),

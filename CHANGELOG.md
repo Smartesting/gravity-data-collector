@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- if a `window` is passed as an option, it is now used to complete certain information on user actions, such as the title or the path of the page for example
+
 ## [6.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v6.0.0...v6.1.0)
 
 ### Added

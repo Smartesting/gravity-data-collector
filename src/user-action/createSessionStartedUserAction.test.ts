@@ -8,6 +8,8 @@ import { config } from '../config'
 import assert from 'assert'
 
 describe('action', () => {
+  const windowInstance = window
+
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
@@ -19,23 +21,23 @@ describe('action', () => {
 
   describe('createSessionStartedUserAction', () => {
     it('returns a SessionStartedUserAction', () => {
-      expect(createSessionStartedUserAction().type).toBe(UserActionType.SessionStarted)
+      expect(createSessionStartedUserAction(windowInstance).type).toBe(UserActionType.SessionStarted)
     })
 
     it('returns viewportData', () => {
-      expect(createSessionStartedUserAction().viewportData).toEqual(viewport())
+      expect(createSessionStartedUserAction(windowInstance).viewportData).toEqual(viewport(windowInstance))
     })
 
     it('returns collector version', () => {
-      expect(createSessionStartedUserAction().version).toEqual(config.COLLECTOR_VERSION)
+      expect(createSessionStartedUserAction(windowInstance).version).toEqual(config.COLLECTOR_VERSION)
     })
 
     it('returns user agent', () => {
-      expect(createSessionStartedUserAction().agent).toEqual(navigator.userAgent)
+      expect(createSessionStartedUserAction(windowInstance).agent).toEqual(navigator.userAgent)
     })
 
     it('returns locationData', () => {
-      expect(createSessionStartedUserAction().location).toEqual(location())
+      expect(createSessionStartedUserAction(windowInstance).location).toEqual(location(windowInstance))
     })
 
     it('returns recordedAt', () => {
@@ -43,7 +45,7 @@ describe('action', () => {
       vi.useFakeTimers()
       vi.setSystemTime(Date.parse('2022-05-12'))
 
-      expect(createSessionStartedUserAction().recordedAt).toEqual(now)
+      expect(createSessionStartedUserAction(windowInstance).recordedAt).toEqual(now)
     })
 
     describe('when GRAVITY_BUILD_ID env var is set', () => {
@@ -56,13 +58,13 @@ describe('action', () => {
       })
 
       it('sets buildId field from env', () => {
-        expect(createSessionStartedUserAction().buildId).toEqual('51')
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual('51')
       })
     })
 
     it('sets buildId field when GRAVITY_BUILD_ID is set on the window', () => {
       withPatchedProperties(window, { GRAVITY_BUILD_ID: '123' }, () =>
-        expect(createSessionStartedUserAction().buildId).toEqual('123'),
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual('123'),
       )
     })
 
@@ -76,7 +78,7 @@ describe('action', () => {
       })
 
       it('does not set buildId field', () => {
-        expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual(undefined)
       })
     })
 
@@ -90,7 +92,7 @@ describe('action', () => {
       })
 
       it('sets buildId field', () => {
-        expect(createSessionStartedUserAction().buildId).toEqual('42')
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual('42')
       })
     })
 
@@ -104,7 +106,7 @@ describe('action', () => {
       })
 
       it('does not set buildId field', () => {
-        expect(createSessionStartedUserAction().buildId).toEqual(undefined)
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual(undefined)
       })
     })
 
@@ -119,23 +121,23 @@ describe('action', () => {
       })
 
       it('sets buildId field from GRAVITY_BUILD_ID', () => {
-        expect(createSessionStartedUserAction().buildId).toEqual('12')
+        expect(createSessionStartedUserAction(windowInstance).buildId).toEqual('12')
       })
     })
 
     it('returns Cypress current test if any', () => {
-      expect(createSessionStartedUserAction().test).toBeUndefined()
+      expect(createSessionStartedUserAction(windowInstance).test).toBeUndefined()
       ;(window as any).Cypress = {
         currentTest: {
           titlePath: ['foo', 'bar', 'testing stuff'],
         },
       }
 
-      expect(createSessionStartedUserAction().test).toEqual('foo > bar > testing stuff')
+      expect(createSessionStartedUserAction(windowInstance).test).toEqual('foo > bar > testing stuff')
     })
 
     it('returns Cypress current test context if any', () => {
-      expect(createSessionStartedUserAction().testContext).toBeUndefined()
+      expect(createSessionStartedUserAction(windowInstance).testContext).toBeUndefined()
 
       Object.defineProperty(window, 'Cypress', {
         value: {
@@ -164,7 +166,7 @@ describe('action', () => {
           title: 'My suite',
         },
       }
-      assert.deepStrictEqual(createSessionStartedUserAction().testContext, expectedTestContext)
+      assert.deepStrictEqual(createSessionStartedUserAction(windowInstance).testContext, expectedTestContext)
     })
   })
 })
@@ -180,7 +182,11 @@ function withPatchedProperties<T extends { [key: string]: any }>(
     }),
   )
   Object.entries(properties).map(([key, value]) =>
-    Object.defineProperty(toPatch, key, { value, writable: true, configurable: true }),
+    Object.defineProperty(toPatch, key, {
+      value,
+      writable: true,
+      configurable: true,
+    }),
   )
 
   try {

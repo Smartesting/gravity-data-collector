@@ -1,6 +1,5 @@
 import { GravityDocument } from '../types'
-import windowExists from './windowExists'
 
-export default function gravityDocument(): GravityDocument {
-  return { title: windowExists() ? window.document.title : '' }
+export default function gravityDocument(windowInstance: Window): GravityDocument {
+  return { title: windowInstance.document.title }
 }
