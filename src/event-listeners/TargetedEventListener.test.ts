@@ -67,6 +67,7 @@ describe('TargetedEventListener', () => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledOnce()
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(event, UserActionType.Reset, {
         anonymizationSettings: undefined,
+        document: window.document,
       })
     })
   })
@@ -81,6 +82,9 @@ describe('TargetedEventListener', () => {
     })
     eventListener.listener(event)
     expect(createTargetedUserActionSpy).toHaveBeenCalledOnce()
-    expect(createTargetedUserActionSpy).toHaveBeenCalledWith(event, UserActionType.Reset, { anonymizationSettings })
+    expect(createTargetedUserActionSpy).toHaveBeenCalledWith(event, UserActionType.Reset, {
+      anonymizationSettings,
+      document: window.document,
+    })
   })
 })

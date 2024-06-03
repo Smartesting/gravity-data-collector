@@ -40,6 +40,8 @@ describe('ChangeEventListener', () => {
     await waitFor(() => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', {
         selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+        anonymizationSettings: undefined,
+        document: domWindow.document,
       })
     })
   })
@@ -78,7 +80,7 @@ describe('ChangeEventListener', () => {
     },
   ]
   for (const { inputType, html } of textInputs) {
-    it(`does not call handler on ${inputType} inputs`, async () => {
+    it(`calls handler on ${inputType} inputs`, async () => {
       const { element, domWindow } = createElementInJSDOM(
         `
           <div>
@@ -92,7 +94,7 @@ describe('ChangeEventListener', () => {
       await userEvent.type(input, 'Something{Tab}')
 
       await waitFor(() => {
-        expect(handleSpy).not.toHaveBeenCalled()
+        expect(handleSpy).toHaveBeenCalled()
       })
     })
   }

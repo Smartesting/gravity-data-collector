@@ -75,13 +75,8 @@ function createHTMLInputDisplayInfo(
 function findLabelForElement(element: HTMLElement, document: Document = getDocument()): HTMLLabelElement | null {
   const id = element.id
   if (id !== null && !isEmpty(id)) {
-    const labels = document.getElementsByTagName('label')
-    for (let i = 0; i < labels.length; i++) {
-      const label = labels.item(i)
-      if (label !== null && label.htmlFor === id) {
-        return label
-      }
-    }
+    const label = document.querySelector(`label[for=${id}]`) as HTMLLabelElement
+    if (label) return label
   }
   return null
 }

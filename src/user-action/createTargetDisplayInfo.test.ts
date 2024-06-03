@@ -167,7 +167,7 @@ describe('user action', () => {
     })
 
     expectedDisplayInfo(
-      'does not return label if not exists',
+      'does not return label if it does not exists',
       `<input type="text" placeholder="${placeholder}"/>`,
       'input',
       {

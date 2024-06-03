@@ -1,7 +1,6 @@
-import { HTMLInputWithValue, UserActionType } from '../types'
+import { DEFAULT_ANONYMIZATION_SETTINGS, HTMLInputWithValue, UserActionType } from '../types'
 import { sanitizeHTMLElementValue } from '../utils/sanitizeHTMLElementValue'
 import TargetedEventListener, { TargetEventListenerOptions } from './TargetedEventListener'
-import { isTextField } from '../utils/listeners'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
 class ChangeEventListener extends TargetedEventListener {
@@ -12,12 +11,13 @@ class ChangeEventListener extends TargetedEventListener {
   }
 
   listener(event: InputEvent) {
-    if (isTextField(event.target)) return
-
     const elementTarget = event.target as HTMLInputWithValue
     const userAction = this.createTargetedUserAction(event)
     if (userAction != null) {
-      userAction.target.value = sanitizeHTMLElementValue(elementTarget, { anonymize: false })
+      userAction.target.value = sanitizeHTMLElementValue(
+        elementTarget,
+        this.options.getAnonymizationSettings?.() ?? DEFAULT_ANONYMIZATION_SETTINGS,
+      )
       this.userActionHandler.handle(userAction)
     }
   }

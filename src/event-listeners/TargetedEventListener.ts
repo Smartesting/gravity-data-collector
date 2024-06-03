@@ -36,6 +36,7 @@ export default abstract class TargetedEventListener extends EventListener {
     return {
       selectorsOptions: this.options.selectorsOptions,
       anonymizationSettings: this.options.getAnonymizationSettings?.(),
+      document: this.window.document,
     }
   }
 }

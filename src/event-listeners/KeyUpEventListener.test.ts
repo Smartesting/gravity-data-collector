@@ -42,6 +42,8 @@ describe('KeyUpEventListener', () => {
             excludedQueries: [QueryType.tag],
             attributes: ['myAttribute'],
           },
+          anonymizationSettings: undefined,
+          document: domWindow.document,
         })
       })
     })

@@ -37,6 +37,8 @@ describe('ClickEventListener', () => {
     await waitFor(() => {
       expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
         selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+        document: domWindow.document,
+        anonymizationSettings: undefined,
       })
     })
   })
