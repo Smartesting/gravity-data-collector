@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import { createSessionStartedUserAction } from './createSessionStartedUserAction'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { TestContext, TestingTool, UserActionType } from '../types'
 import { config } from '../config'
 import assert from 'assert'
@@ -37,7 +37,7 @@ describe('action', () => {
     })
 
     it('returns locationData', () => {
-      expect(createSessionStartedUserAction(windowInstance).location).toEqual(location(windowInstance))
+      expect(createSessionStartedUserAction(windowInstance).location).toEqual(gravityLocation(windowInstance.location))
     })
 
     it('returns recordedAt', () => {

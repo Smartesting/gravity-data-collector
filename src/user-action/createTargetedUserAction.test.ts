@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockClick, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { NO_ANONYMIZATION_SETTINGS, QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import {
@@ -31,7 +31,7 @@ describe('createTargetedUserAction', () => {
 
     const action = createClickUserAction(element, 0, 0, domWindow)
 
-    expect(action?.location).toEqual(location(domWindow))
+    expect(action?.location).toEqual(gravityLocation(domWindow.location))
   })
 
   it('returns document data', () => {

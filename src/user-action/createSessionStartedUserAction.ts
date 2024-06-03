@@ -1,5 +1,5 @@
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { SessionStartedUserAction, UserActionType } from '../types'
 import { config } from '../config'
 import gravityDocument from '../utils/gravityDocument'
@@ -27,8 +27,8 @@ export function createSessionStartedUserAction(windowInstance: Window, buildId?:
   const action: SessionStartedUserAction = {
     type: UserActionType.SessionStarted,
     recordedAt: new Date().toISOString(),
-    location: location(windowInstance),
-    document: gravityDocument(windowInstance),
+    location: gravityLocation(windowInstance.location),
+    document: gravityDocument(windowInstance.document),
     viewportData: viewport(windowInstance),
     version: config.COLLECTOR_VERSION,
     agent: navigator.userAgent,

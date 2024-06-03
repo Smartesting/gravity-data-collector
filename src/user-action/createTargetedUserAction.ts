@@ -15,7 +15,7 @@ import {
 import { isCheckableElement } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
 import { createSelectors } from '../utils/createSelectors'
 import { matchClosest } from '../utils/cssSelectorUtils'
@@ -33,7 +33,8 @@ export function createTargetedUserAction(
 ): TargetedUserAction | null {
   const selectorsOptions = customOptions?.selectorsOptions ?? undefined
   const target = event.target as HTMLElement
-  if (target === null || target === undefined || event.target === windowInstance.document) return null
+  const document = windowInstance.document
+  if (target === null || target === undefined || event.target === document) return null
 
   if (matchClosest(target, ignoreSelectors)) return null
 
@@ -46,9 +47,9 @@ export function createTargetedUserAction(
 
   const targetedUserAction: TargetedUserAction = {
     type,
-    target: createActionTarget(windowInstance.document, target, selectorsOptions, anonymizeSelectors),
-    location: location(windowInstance),
-    document: gravityDocument(windowInstance),
+    target: createActionTarget(document, target, selectorsOptions, anonymizeSelectors),
+    location: gravityLocation(windowInstance.location),
+    document: gravityDocument(document),
     recordedAt: new Date().toISOString(),
     viewportData: viewport(windowInstance),
     userActionData,
@@ -58,7 +59,7 @@ export function createTargetedUserAction(
     const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
       targetedUserAction.interactiveTarget = createActionTarget(
-        windowInstance.document,
+        document,
         interactiveTarget as HTMLElement,
         selectorsOptions,
         anonymizeSelectors,
