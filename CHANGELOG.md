@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Info
 
+- send snapshot when initialize recording to prevent missing snapshots
+
 ### Added
 
 ### Changed
