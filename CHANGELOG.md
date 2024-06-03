@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- if the `initWithOverride` method is used, a session started user action is now sent
+
 ## [6.1.1](https://github.com/Smartesting/gravity-data-collector/compare/v6.1.0...v6.1.1)
 
 ### Fixed
