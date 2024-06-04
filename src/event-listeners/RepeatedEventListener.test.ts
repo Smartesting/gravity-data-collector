@@ -9,6 +9,7 @@ import { UserActionType } from '../types'
 class FakeListener extends RepeatedEventListener {
   userActionType = UserActionType.Click
 }
+
 describe('RepeatedEventListener', () => {
   let userActionHandler: IUserActionHandler
   let handleSpy: SpyInstance
@@ -26,7 +27,7 @@ describe('RepeatedEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
         'div',
       )
@@ -38,8 +39,7 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
-          document: domWindow.document,
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
           anonymizationSettings: undefined,
         })
       })
@@ -49,7 +49,7 @@ describe('RepeatedEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
         'div',
       )
@@ -64,7 +64,7 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
           document: domWindow.document,
           anonymizationSettings: undefined,
         })
@@ -75,7 +75,7 @@ describe('RepeatedEventListener', () => {
       const { element, domWindow } = createElementInJSDOM(
         `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
                 <button />
             </div>`,
         'div',
@@ -93,7 +93,7 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledTimes(3)
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new MouseEvent('click'), 'click', {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
           document: domWindow.document,
           anonymizationSettings: undefined,
         })

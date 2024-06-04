@@ -184,12 +184,16 @@ describe('Anonymizing context', () => {
   }
 
   function fillAllInputs() {
-    for (const inputId of ['#textField', '#passwordField', '#textAreaField']) {
+    const inputIds = ['#textField', '#passwordField', '#textAreaField']
+
+    for (const inputId of inputIds) {
       cy.get(inputId).clear().type('Some stuff here')
       cy.get(`${inputId}1`).clear().type('Some other stuff there')
     }
     cy.get('#fieldset1 input[type=submit]').click()
     cy.get('#fieldset2 input[type=submit]').click()
+
+    return cy.wait(500)
   }
 
   function runTest(
@@ -219,11 +223,11 @@ describe('Anonymizing context', () => {
     })
 
     cy.openBaseSite('anonymization.html')
-    fillAllInputs()
-
-    cy.wait('@sendGravitySnapshot').then(() => {
-      expectValuesInScreenshot(snapshotContent, expectedScreenshotContent)
-      expectValuesInSessionUserActions(publishedUserActions, expectedUserActions)
+    fillAllInputs().then(() => {
+      cy.wait('@sendGravitySnapshot').then(() => {
+        expectValuesInScreenshot(snapshotContent, expectedScreenshotContent)
+        expectValuesInSessionUserActions(publishedUserActions, expectedUserActions)
+      })
     })
   }
 

@@ -26,6 +26,7 @@ export default abstract class TargetedEventListener extends EventListener {
 
   public createTargetedUserAction(event: Event, userActionType?: UserActionType) {
     return createTargetedUserAction(
+      this.window,
       event,
       userActionType ?? this.userActionType,
       this.getCreateTargetedUserActionOptions(),
@@ -36,7 +37,6 @@ export default abstract class TargetedEventListener extends EventListener {
     return {
       selectorsOptions: this.options.selectorsOptions,
       anonymizationSettings: this.options.getAnonymizationSettings?.(),
-      document: this.window.document,
     }
   }
 }

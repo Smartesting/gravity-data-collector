@@ -36,7 +36,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
             <div>
-                <input id="text-5" type="search" />
+                <input id='text-5' type='search' />
             </div>`,
       'div',
     )
@@ -50,9 +50,8 @@ describe('KeyDownEventListener', () => {
     fireEvent.keyDown(search)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keydown'), 'keydown', {
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new KeyboardEvent('keydown'), 'keydown', {
         selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
-        document: domWindow.document,
         anonymizationSettings: undefined,
       })
     })
@@ -62,7 +61,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
                 <div>
-                    <input type="checkbox" id="checkbox1" name="checkbox1"/>
+                    <input type='checkbox' id='checkbox1' name='checkbox1'/>
                 </div>`,
       'div',
     )
@@ -81,7 +80,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
         <div>
-            <div role="cell"/>
+            <div role='cell'/>
         </div>`,
       'div',
     )
@@ -100,7 +99,7 @@ describe('KeyDownEventListener', () => {
     const { element, domWindow } = createElementInJSDOM(
       `
         <div>
-            <div role="cell"/>
+            <div role='cell'/>
         </div>`,
       'div',
     )

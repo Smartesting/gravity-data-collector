@@ -16,37 +16,35 @@ import {
 import { isCheckableElement } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
-import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
 
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
-  document: Document
   anonymizationSettings: AnonymizationSettings
 }
 
 const CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS: CreateTargetedUserActionOptions = {
   selectorsOptions: undefined,
-  document: getDocument(),
   anonymizationSettings: DEFAULT_ANONYMIZATION_SETTINGS,
 }
 
 export function createTargetedUserAction(
+  windowInstance: Window,
   event: Event,
   type: UserActionType,
   customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
   const options: CreateTargetedUserActionOptions = {
     selectorsOptions: customOptions?.selectorsOptions ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.selectorsOptions,
-    document: customOptions?.document ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.document,
     anonymizationSettings:
       customOptions?.anonymizationSettings ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.anonymizationSettings,
   }
 
   const target = event.target as HTMLElement
-  if (target === null || target === undefined || event.target === options.document) return null
+  const document = windowInstance.document
+  if (target === null || target === undefined || event.target === document) return null
 
   const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
     ? {
@@ -57,19 +55,21 @@ export function createTargetedUserAction(
 
   const targetedUserAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, options),
-    location: location(),
-    document: gravityDocument(),
+    target: createActionTarget(document, target, options),
+    location: gravityLocation(windowInstance.location),
+    document: gravityDocument(document),
     recordedAt: new Date().toISOString(),
-    viewportData: viewport(),
+    viewportData: viewport(windowInstance),
     userActionData,
   }
+
   if (type === UserActionType.Click) {
     const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
-      targetedUserAction.interactiveTarget = createActionTarget(interactiveTarget as HTMLElement, options)
+      targetedUserAction.interactiveTarget = createActionTarget(document, interactiveTarget as HTMLElement, options)
     }
   }
+
   return targetedUserAction
 }
 
@@ -154,8 +154,11 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
   }
 }
 
-function createActionTarget(target: HTMLElement | Window, options: CreateTargetedUserActionOptions): UserActionTarget {
-  const { document, selectorsOptions } = options
+function createActionTarget(
+  document: Document,
+  target: HTMLElement | Window,
+  options: CreateTargetedUserActionOptions,
+): UserActionTarget {
   const element = isHtmlElement(target) ? target.tagName.toLocaleLowerCase() : 'window'
   const actionTarget: UserActionTarget = { element }
 
@@ -167,7 +170,7 @@ function createActionTarget(target: HTMLElement | Window, options: CreateTargete
       actionTarget.value = (target as HTMLInputElement).checked.toString()
     }
 
-    actionTarget.selectors = createSelectors(target, selectorsOptions)
+    actionTarget.selectors = createSelectors(target, options.selectorsOptions)
 
     const displayInfo = createTargetDisplayInfo(target, options.anonymizationSettings, document)
     if (displayInfo !== undefined) actionTarget.displayInfo = displayInfo

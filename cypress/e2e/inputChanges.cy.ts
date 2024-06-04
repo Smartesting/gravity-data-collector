@@ -1,8 +1,11 @@
+import { Listener } from '../../src/types'
+
 describe('Handling input Changes', () => {
   let sessionUserActionTypes: any[] = []
   const inputIds = ['text-input', 'search-input', 'textarea']
 
   beforeEach(() => {
+    cy.task('setCollectorOptions', { enabledListeners: [Listener.Change] })
     cy.clearCookies()
     sessionUserActionTypes = []
     cy.interceptGravitySnapshot()
@@ -20,14 +23,18 @@ describe('Handling input Changes', () => {
   for (const inputId of inputIds) {
     it(`triggers a change event when ${inputId} is left`, () => {
       cy.openBaseSite('form/')
-      cy.get(`#${inputId}`).type('Some content')
-      cy.get('h1').click()
+      cy.get(`#${inputId}`)
+        .type('Some content')
+        .blur()
+        .then(() => {
+          cy.wait('@sendGravityRequest').then(() => {
+            cy.wait(500).then(() => {
+              const changes = sessionUserActionTypes.filter((type) => type === 'change')
 
-      cy.wait('@sendGravityRequest').then(() => {
-        const changes = sessionUserActionTypes.filter((type) => type === 'change')
-
-        expect(changes.length).to.eq(1)
-      })
+              expect(changes.length).to.eq(1)
+            })
+          })
+        })
     })
   }
 })

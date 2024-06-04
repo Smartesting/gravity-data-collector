@@ -145,7 +145,7 @@ class CollectorWrapper {
         this.userActionHandler.activate()
         this.sessionTraitHandler.activate()
       }
-      this.initSession(createSessionStartedUserAction(options.buildId))
+      this.initSession(createSessionStartedUserAction(options.window, options.buildId))
     }
     this.eventListenerHandler.initializeEventListeners()
   }
@@ -187,9 +187,9 @@ class CollectorWrapper {
   }
 
   private patchFetch() {
-    const { gravityServerUrl, recordRequestsFor, window } = this.options
-    const originalFetch = window.fetch
-    window.fetch = async (input: any /* should be RequestInfo|URL, but TSC failed */, init?: RequestInit) => {
+    const { gravityServerUrl, recordRequestsFor, window: windowInstance } = this.options
+    const originalFetch = windowInstance.fetch
+    windowInstance.fetch = async (input: any /* should be RequestInfo|URL, but TSC failed */, init?: RequestInit) => {
       const url = retrieveUrl(input)
 
       if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor)) {
@@ -197,7 +197,7 @@ class CollectorWrapper {
         if (init?.method != null) {
           method = init.method
         }
-        void this.userActionHandler.handle(createAsyncRequest(url, method))
+        void this.userActionHandler.handle(createAsyncRequest(url, method, windowInstance))
       }
 
       return await originalFetch(input, init)
@@ -209,7 +209,7 @@ class CollectorWrapper {
       const url = arguments[1]
 
       if (requestCanBeRecorded(url, gravityServerUrl, recordRequestsFor)) {
-        void userActionHandler.handle(createAsyncRequest(url, method))
+        void userActionHandler.handle(createAsyncRequest(url, method, windowInstance))
       }
 
       return originalXHROpen.apply(this, Array.prototype.slice.call(arguments) as any)
@@ -217,7 +217,7 @@ class CollectorWrapper {
   }
 
   private makeEventListeners() {
-    const { window, selectorsOptions } = this.options
+    const { window: windowInstance, selectorsOptions } = this.options
     const targetedEventListenerOptions: TargetEventListenerOptions = {
       selectorsOptions,
       getAnonymizationSettings: () => this.anonymizationSettings,
@@ -257,13 +257,17 @@ class CollectorWrapper {
 
     for (const [listener, ListenerClass] of Object.entries(eventListenersClassByListener)) {
       if (this.isListenerEnabled(listener as Listener)) {
-        eventListeners.push(new ListenerClass(this.userActionHandler, window, targetedEventListenerOptions))
+        eventListeners.push(new ListenerClass(this.userActionHandler, windowInstance, targetedEventListenerOptions))
       }
     }
 
     if (this.isListenerEnabled(Listener.BeforeUnload)) {
       eventListeners.push(
-        new BeforeUnloadEventListener(this.userActionHandler, window, async () => await this.gravityClient.flush()),
+        new BeforeUnloadEventListener(
+          this.userActionHandler,
+          windowInstance,
+          async () => await this.gravityClient.flush(),
+        ),
       )
     }
 

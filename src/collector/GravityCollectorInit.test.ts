@@ -517,5 +517,18 @@ describe('when an instance already exist on the window object', () => {
       assert(firstSessionId, 'First session ID was set')
       assert.strictEqual(secondSessionId, sessionId)
     })
+
+    it('a "sessionStarted" action is sent when initialized', async () => {
+      const handleUserAction = vi
+        .spyOn(AbstractGravityClient.prototype, 'addSessionUserAction')
+        .mockImplementation(asyncNop)
+      GravityCollector.initWithOverride({
+        authKey: uuid(),
+        window: win,
+      })
+      expect(handleUserAction).toHaveBeenCalledOnce()
+      expect(getLastCallFirstArgument(handleUserAction).type).toBe(UserActionType.SessionStarted)
+      handleUserAction.mockRestore()
+    })
   })
 })

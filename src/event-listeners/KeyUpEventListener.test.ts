@@ -36,14 +36,13 @@ describe('KeyUpEventListener', () => {
       fireEvent.keyUp(search)
 
       await waitFor(() => {
-        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new KeyboardEvent('keyup'), 'keyup', {
+        expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new KeyboardEvent('keyup'), 'keyup', {
           selectorsOptions: {
             queries: [QueryType.id],
             excludedQueries: [QueryType.tag],
             attributes: ['myAttribute'],
           },
           anonymizationSettings: undefined,
-          document: domWindow.document,
         })
       })
     })

@@ -7,7 +7,7 @@ export default function createElementInJSDOM(
   element: HTMLElement
   domWindow: Window
 } {
-  const dom = new JSDOM(elementHTML)
+  const dom = new JSDOM(elementHTML, { url: 'https://example.org/' })
   const element = dom.window.document.querySelector(querySelector)
   if (element == null) throw new Error(`Element not found with query "${querySelector}" in dom: "${elementHTML}"`)
 

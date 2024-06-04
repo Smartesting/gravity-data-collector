@@ -12,7 +12,7 @@ describe('Inline resources data collector option', () => {
     cy.interceptGravityRecord()
   })
 
-  describe('when it is true', () => {
+  describe('when "inlineResources" is true', () => {
     before(() => {
       cy.task('setCollectorOptions', { inlineResources: true })
     })
@@ -24,7 +24,7 @@ describe('Inline resources data collector option', () => {
       cy.get('#text-input').type('Some content')
       cy.get('#send-form-button').click()
       cy.wait('@sendGravitySnapshot').then(() => {
-        expect(snapshotRequests.length).to.eq(1)
+        expect(snapshotRequests.length).to.be.gte(1)
         const compressedSnapshotContent = snapshotRequests[0].body.content
         const textCompressor: ITextCompressor = FFLateCompressor
         const snapshotContent = textCompressor.decompress(compressedSnapshotContent)
@@ -33,9 +33,9 @@ describe('Inline resources data collector option', () => {
     })
   })
 
-  describe('when it is false', () => {
+  describe('when "inlineResources" is false', () => {
     before(() => {
-      cy.task('setCollectorOptions', { inlineResources: false })
+      return cy.task('setCollectorOptions', { inlineResources: false })
     })
 
     it('adds a link to the recorded snapshot style into the snapshot DOM', () => {
@@ -45,7 +45,7 @@ describe('Inline resources data collector option', () => {
       cy.get('#text-input').type('Some content')
       cy.get('#send-form-button').click()
       cy.wait('@sendGravitySnapshot').then(() => {
-        expect(snapshotRequests.length).to.eq(1)
+        expect(snapshotRequests.length).to.be.gte(1)
         const compressedSnapshotContent = snapshotRequests[0].body.content
         const textCompressor: ITextCompressor = FFLateCompressor
         const snapshotContent = textCompressor.decompress(compressedSnapshotContent)

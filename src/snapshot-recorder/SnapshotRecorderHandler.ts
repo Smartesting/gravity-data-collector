@@ -44,13 +44,13 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
   ) {}
 
   initializeRecording() {
-    if (this.snapshotOptions) {
-      this.snapshotOptions.inlineStylesheet = this.collectorOptions.inlineResources
-      this.snapshotOptions.inlineImages = this.collectorOptions.inlineResources
-    }
+    this.snapshotOptions = this.snapshotOptions ?? {}
+    this.snapshotOptions.inlineStylesheet = this.collectorOptions.inlineResources
+    this.snapshotOptions.inlineImages = this.collectorOptions.inlineResources
     this.snapshotDocument = installSnapshotContainer(this.collectorOptions.window.document)
 
     if (this.snapshotDocument) {
+      this.buildAndSendSnapshot()
       this.observer.observe(this.collectorOptions.window.document.body, { childList: true, subtree: true })
     }
   }
@@ -86,15 +86,12 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
 
       const window = this.collectorOptions.window
       const pathname = getLocationPathname(window, this.collectorOptions)
-      const html = createSnapshot(
-        window.document,
-        this.snapshotDocument,
-        {
-          ...this.snapshotOptions,
-          ...getRRWebAnonymizationSettings(anonymizationSettings, window.location),
-        },
-        new AtatusBenchmark(),
-      )
+      const snapshotOptions = {
+        ...this.snapshotOptions,
+        ...getRRWebAnonymizationSettings(anonymizationSettings, window.location),
+      }
+
+      const html = createSnapshot(window.document, this.snapshotDocument, snapshotOptions, new AtatusBenchmark())
       if (!html) return
       const { compressed, compressor } = this.textCompressor.compress(html)
       const documentSnapshot = this.createDocumentSnapshot(

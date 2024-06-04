@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockClick, mockWindowDocument, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
+import { mockClick, mockWindowLocation, mockWindowScreen } from '../test-utils/mocks'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
-import { GravityDocument, QueryType, UserActionType } from '../types'
+import gravityLocation from '../utils/gravityLocation'
+import { QueryType, UserActionType } from '../types'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import {
   createClickUserAction,
@@ -13,18 +13,15 @@ import {
 import { createTargetedUserAction } from './createTargetedUserAction'
 
 describe('createTargetedUserAction', () => {
-  let document: GravityDocument
-
   beforeEach(() => {
     mockWindowScreen()
     mockWindowLocation()
-    document = mockWindowDocument()
   })
 
   it('returns the specified "type"', () => {
     const { element, domWindow } = createElementInJSDOM('<button>Click Me</button>', 'button')
 
-    const action = createClickUserAction(element, 0, 0, domWindow.document)
+    const action = createClickUserAction(element, 0, 0, domWindow)
 
     expect(action?.type).toEqual(UserActionType.Click)
   })
@@ -32,16 +29,19 @@ describe('createTargetedUserAction', () => {
   it('returns location data', () => {
     const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-    const action = createClickUserAction(element, 0, 0, domWindow.document)
+    const action = createClickUserAction(element, 0, 0, domWindow)
 
-    expect(action?.location).toEqual(location())
+    expect(action?.location).toEqual(gravityLocation(domWindow.location))
   })
 
   it('returns document data', () => {
+    const documentTitle = 'Hello world!'
     const { element, domWindow } = createElementInJSDOM(
       '<html lang="en">' +
         ' <head>' +
-        '   <title></title>' +
+        '   <title>' +
+        documentTitle +
+        '</title>' +
         ' </head>' +
         ' <body>' +
         '   <div>Click Me</div>' +
@@ -50,17 +50,17 @@ describe('createTargetedUserAction', () => {
       'html',
     )
 
-    const action = createClickUserAction(element, 0, 0, domWindow.document)
+    const action = createClickUserAction(element, 0, 0, domWindow)
 
-    expect(action?.document.title).toEqual(document.title)
+    expect(action?.document.title).toEqual(documentTitle)
   })
 
   it('returns viewport data', () => {
     const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-    const action = createClickUserAction(element, 0, 0, domWindow.document)
+    const action = createClickUserAction(element, 0, 0, domWindow)
 
-    expect(action?.viewportData).toEqual(viewport())
+    expect(action?.viewportData).toEqual(viewport(domWindow))
   })
 
   it('returns recordedAt', () => {
@@ -70,7 +70,7 @@ describe('createTargetedUserAction', () => {
 
     const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-    const action = createClickUserAction(element, 0, 0, domWindow.document)
+    const action = createClickUserAction(element, 0, 0, domWindow)
 
     expect(action?.recordedAt).toEqual(now)
   })
@@ -79,7 +79,7 @@ describe('createTargetedUserAction', () => {
     it('tag name', () => {
       const { element, domWindow } = createElementInJSDOM('<div>Click Me</div>', 'div')
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
 
       expect(action?.target.element).toEqual('div')
     })
@@ -87,14 +87,14 @@ describe('createTargetedUserAction', () => {
     it('interactiveTarget if event is click on a nested element', () => {
       const { element, domWindow } = createElementInJSDOM('<button><span>Click Me</span></button>', 'span')
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
       expect(action?.interactiveTarget?.element).toEqual('button')
     })
 
     it('undefined interactiveTarget if event is click on an interactive element', () => {
       const { element, domWindow } = createElementInJSDOM('<button><span>Click Me</span></button>', 'button')
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
       expect(action?.interactiveTarget).toBeUndefined()
       expect(action?.target.element).toEqual('button')
     })
@@ -112,7 +112,7 @@ describe('createTargetedUserAction', () => {
         'input',
       )
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
 
       expect(action?.target.type).toEqual('text')
     })
@@ -122,9 +122,8 @@ describe('createTargetedUserAction', () => {
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        document: domWindow.document,
-      })
+      const action = createTargetedUserAction(domWindow, mockClick(element, 0, 0), UserActionType.Click, {})
+
       expect(action?.target.selectors).toEqual({
         attributes: { 'data-testid': 'userName' },
         query: {
@@ -142,8 +141,7 @@ describe('createTargetedUserAction', () => {
         '<input type="text" class="inline-form__input" data-testid="userName"/>',
         'input',
       )
-      const action = createTargetedUserAction(mockClick(element, 0, 0), UserActionType.Click, {
-        document: domWindow.document,
+      const action = createTargetedUserAction(domWindow, mockClick(element, 0, 0), UserActionType.Click, {
         selectorsOptions: {
           excludedQueries: [QueryType.id],
           attributes: ['data-testid'],
@@ -168,7 +166,7 @@ describe('createTargetedUserAction', () => {
         'input',
       )
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
 
       expect(action?.target?.value).toBeUndefined()
     })
@@ -176,7 +174,7 @@ describe('createTargetedUserAction', () => {
     it('"true" is recorded if input is a checked checkbox', () => {
       const { element, domWindow } = createElementInJSDOM('<input type="checkbox" class="size-lg" checked/>', 'input')
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
 
       expect(action?.target?.value).equals('true')
     })
@@ -184,7 +182,7 @@ describe('createTargetedUserAction', () => {
     it('"false" is recorded if input is a checked checkbox', () => {
       const { element, domWindow } = createElementInJSDOM('<input type="checkbox" class="size-lg"/>', 'input')
 
-      const action = createClickUserAction(element, 0, 0, domWindow.document)
+      const action = createClickUserAction(element, 0, 0, domWindow)
 
       expect(action?.target?.value).equals('false')
     })
@@ -196,7 +194,7 @@ describe('createTargetedUserAction', () => {
       'input',
     )
 
-    const action = createClickUserAction(element, 12, 34, domWindow.document)
+    const action = createClickUserAction(element, 12, 34, domWindow)
 
     const eltBounds = element?.getBoundingClientRect()
 
@@ -219,7 +217,7 @@ describe('createTargetedUserAction', () => {
 
   it('key data when the event is a keyup', () => {
     const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
-    const action = createKeyUpUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
+    const action = createKeyUpUserAction(element, 'Shift', 'ShiftLeft', domWindow)
 
     const eltBounds = element?.getBoundingClientRect()
 
@@ -240,7 +238,7 @@ describe('createTargetedUserAction', () => {
 
   it('key data when the event is a keydown', () => {
     const { element, domWindow } = createElementInJSDOM('<div/>', 'div')
-    const action = createKeyDownUserAction(element, 'Shift', 'ShiftLeft', domWindow.document)
+    const action = createKeyDownUserAction(element, 'Shift', 'ShiftLeft', domWindow)
 
     const eltBounds = element?.getBoundingClientRect()
     expect(action.userActionData).toEqual({

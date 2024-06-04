@@ -31,17 +31,20 @@ describe('ChangeEventListener', () => {
     )
 
     new ChangeEventListener(userActionHandler, domWindow, {
-      selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
+      selectorsOptions: {
+        queries: [QueryType.id],
+        excludedQueries: [QueryType.tag],
+        attributes: ['myAttribute'],
+      },
     }).init()
 
     const checkbox = await waitFor(() => getByRole(element, 'checkbox'))
     fireEvent.change(checkbox)
 
     await waitFor(() => {
-      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(new Event('change'), 'change', {
+      expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new Event('change'), 'change', {
         selectorsOptions: { queries: [QueryType.id], excludedQueries: [QueryType.tag], attributes: ['myAttribute'] },
         anonymizationSettings: undefined,
-        document: domWindow.document,
       })
     })
   })
