@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- revert sending snapshot when recording is initialized: this was causing a problem when running Cypress tests
+
 ## [6.1.2](https://github.com/Smartesting/gravity-data-collector/compare/v6.1.1...v6.1.2)
 
 ### Info
