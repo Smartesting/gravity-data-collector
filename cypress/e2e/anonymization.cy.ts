@@ -293,6 +293,8 @@ describe('Anonymizing context', () => {
 
 function expectValuesInScreenshot(html: string, expected: Partial<ExpectedSnapshotContent>) {
   const iframe = window.document.createElement('iframe')
+  if (!iframe.contentDocument) return
+
   window.document.body.appendChild(iframe)
   iframe.contentDocument.write(html)
 
@@ -302,15 +304,19 @@ function expectValuesInScreenshot(html: string, expected: Partial<ExpectedSnapsh
     const element = iframe.contentDocument.querySelector(selector)
 
     if (isValuedElement(element)) {
-      actual[selector] = element.value
+      actual[selector as keyof ExpectedSnapshotContent] = element.value
     } else if (isTextElement(element)) {
-      actual[selector] = element.textContent
+      actual[selector as keyof ExpectedSnapshotContent] = element.textContent
     } else {
       throw new Error(`Unable to compare value for ${String(element)}`)
     }
   }
 
-  expectDeepStrictEqual(expected, actual, trimRecordValues)
+  expectDeepStrictEqual(expected, actual, (v) => {
+    const cleaned = trimRecordValues(v)
+    if (cleaned) return cleaned
+    throw new Error('...')
+  })
 }
 
 function isValuedElement(tbd: any): tbd is { value: string } {
@@ -336,9 +342,9 @@ function expectValuesInSessionUserActions(
 function makeComparableExpectedUserActionsContent(
   expectedUserActionsContent: Partial<ExpectedUserActionsContent>,
 ): Partial<ExpectedUserActionsContent> {
-  return Object.entries(expectedUserActionsContent).reduce((acc, [key, { displayInfo, value }]) => {
-    acc[key] = {
-      displayInfo: trimRecordValues(displayInfo),
+  return Object.entries(expectedUserActionsContent).reduce<Partial<ExpectedUserActionsContent>>((acc, [key, { displayInfo, value }]) => {
+    acc[key as keyof Partial<ExpectedUserActionsContent>] = {
+      displayInfo: displayInfo ? trimRecordValues(displayInfo as Record<string, unknown>) : displayInfo,
       value: value ? value.trim() : value,
     }
 
@@ -346,26 +352,29 @@ function makeComparableExpectedUserActionsContent(
   }, {})
 }
 
-function trimRecordValues<T extends Object | undefined>(record: T | undefined): T | undefined {
-  if (!record) return
-
+function trimRecordValues<T extends Record<string, string | unknown>>(record: T): T {
   return Object.entries(record).reduce((acc, [k, v]) => {
-    acc[k] = v.trim()
+    // @ts-expect-error
+    acc[k] = respondToTrim(v) ? v.trim() : v
     return acc
   }, {}) as T
+}
+
+function respondToTrim(tbd: unknown): tbd is {trim: () => string} {
+  return tbd !== null && (tbd as string).trim !== undefined
 }
 
 function findUserActionAnonymizedFields(
   targets: string[],
   publishedUserActions: TargetedUserAction[],
-): Record<string, UserActionAnonymizedFields> {
-  return publishedUserActions.reduce((acc, userAction) => {
+): Partial<ExpectedUserActionsContent> {
+  return publishedUserActions.reduce<Partial<ExpectedUserActionsContent>>((acc, userAction) => {
     const { target } = userAction
     if (!target.selectors) return acc
 
     const matchingTarget = Object.values(target.selectors.query).find((value) => targets.includes(value))
     if (matchingTarget) {
-      acc[matchingTarget] = {
+      acc[matchingTarget as keyof ExpectedUserActionsContent] = {
         displayInfo: target.displayInfo,
         value: target.value,
       }
@@ -375,7 +384,7 @@ function findUserActionAnonymizedFields(
   }, {})
 }
 
-function expectDeepStrictEqual<T>(expected: T, actual: T, clean: (x: T) => T = (x) => x, key?: string) {
+function expectDeepStrictEqual<T extends {}>(expected: T, actual: T, clean: (x: T) => T = (x) => x, key?: string) {
   try {
     expect(clean(actual)).to.deep.equal(clean(expected))
   } catch (e) {
@@ -384,7 +393,7 @@ function expectDeepStrictEqual<T>(expected: T, actual: T, clean: (x: T) => T = (
   }
 }
 
-function compareRecords<T>(expected: T, actual: T, path?: string): string[] {
+function compareRecords<T extends Record<string, unknown>>(expected: T, actual: T, path?: string): string[] {
   const errors: string[] = []
   const allKeys = new Set([...Object.keys(expected), ...Object.keys(actual)])
 
@@ -401,7 +410,7 @@ function compareRecords<T>(expected: T, actual: T, path?: string): string[] {
     }
 
     if (typeof actualValue === 'object') {
-      errors.push(...compareRecords(expectedValue, actualValue, path ? `${path}/${key}` : key))
+      errors.push(...compareRecords(expectedValue as Record<string, unknown>, actualValue as Record<string, unknown>, path ? `${path}/${key}` : key))
     } else if (actualValue !== expectedValue) {
       errors.push(`[${path ?? ''}] Expected ${String(expectedValue)} to equal ${String(actualValue)}`)
     }
