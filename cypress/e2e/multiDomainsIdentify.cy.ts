@@ -5,7 +5,7 @@ describe('Handling sessions identification on multi-domain', () => {
   })
 
   it('uses another sessions ID when navigating to another domain', () => {
-    const requests: { sessionId: string, href: string }[] = []
+    const requests: { sessionId: string; href: string }[] = []
 
     cy.interceptGravityPublish()
     cy.interceptGravityRecord()

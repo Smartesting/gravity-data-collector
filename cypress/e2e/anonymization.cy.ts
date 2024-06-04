@@ -342,14 +342,17 @@ function expectValuesInSessionUserActions(
 function makeComparableExpectedUserActionsContent(
   expectedUserActionsContent: Partial<ExpectedUserActionsContent>,
 ): Partial<ExpectedUserActionsContent> {
-  return Object.entries(expectedUserActionsContent).reduce<Partial<ExpectedUserActionsContent>>((acc, [key, { displayInfo, value }]) => {
-    acc[key as keyof Partial<ExpectedUserActionsContent>] = {
-      displayInfo: displayInfo ? trimRecordValues(displayInfo as Record<string, unknown>) : displayInfo,
-      value: value ? value.trim() : value,
-    }
+  return Object.entries(expectedUserActionsContent).reduce<Partial<ExpectedUserActionsContent>>(
+    (acc, [key, { displayInfo, value }]) => {
+      acc[key as keyof Partial<ExpectedUserActionsContent>] = {
+        displayInfo: displayInfo ? trimRecordValues(displayInfo as Record<string, unknown>) : displayInfo,
+        value: value ? value.trim() : value,
+      }
 
-    return acc
-  }, {})
+      return acc
+    },
+    {},
+  )
 }
 
 function trimRecordValues<T extends Record<string, string | unknown>>(record: T): T {
@@ -360,7 +363,7 @@ function trimRecordValues<T extends Record<string, string | unknown>>(record: T)
   }, {}) as T
 }
 
-function respondToTrim(tbd: unknown): tbd is {trim: () => string} {
+function respondToTrim(tbd: unknown): tbd is { trim: () => string } {
   return tbd !== null && (tbd as string).trim !== undefined
 }
 
@@ -410,7 +413,13 @@ function compareRecords<T extends Record<string, unknown>>(expected: T, actual: 
     }
 
     if (typeof actualValue === 'object') {
-      errors.push(...compareRecords(expectedValue as Record<string, unknown>, actualValue as Record<string, unknown>, path ? `${path}/${key}` : key))
+      errors.push(
+        ...compareRecords(
+          expectedValue as Record<string, unknown>,
+          actualValue as Record<string, unknown>,
+          path ? `${path}/${key}` : key,
+        ),
+      )
     } else if (actualValue !== expectedValue) {
       errors.push(`[${path ?? ''}] Expected ${String(expectedValue)} to equal ${String(actualValue)}`)
     }
