@@ -23,7 +23,6 @@ describe('Handling sessions on multi-domain', () => {
         console.log({ userActions })
       })
     })
-
   })
 
   it.skip('uses another session ID when navigating to another domain', () => {

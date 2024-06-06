@@ -35,4 +35,3 @@ describe('Handling input Changes', () => {
     })
   }
 })
-
