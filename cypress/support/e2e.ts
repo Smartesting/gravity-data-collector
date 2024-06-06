@@ -15,13 +15,21 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-import { CollectorOptions } from '../../src/types'
+import { CollectorOptions, CookieStrategy, Listener } from '../../src/types'
 import GravityCollector from '../../src'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 beforeEach(() => {
+  cy.clearCookies()
+  cy.clearLocalStorage()
+  cy.interceptGravityCollectionSettings()
+  cy.interceptGravityPublish()
+  cy.interceptGravityIdentify()
+  cy.interceptGravityRecord()
+  cy.interceptGravitySnapshot()
+
   cy.task('getCollectorOptions').then((collectorOptions) => {
     if (!isPartialCollectorOptions(collectorOptions)) return
     return cy.on('window:load', (win) => {
@@ -40,6 +48,16 @@ beforeEach(() => {
 
       waitForPageToLoad(collectorOptions)
     })
+  })
+})
+
+afterEach(() => {
+  cy.task('setCollectorOptions', {
+    authKey: '1234',
+    requestInterval: 100,
+    gravityServerUrl: 'https://api.gravity.smartesting.com',
+    enabledListeners: [Listener.Click, Listener.KeyUp, Listener.KeyDown, Listener.Change],
+    cookieStrategy: CookieStrategy.subDomains,
   })
 })
 

@@ -4,14 +4,6 @@ import { CyHttpMessages } from 'cypress/types/net-stubbing'
 import IncomingHttpRequest = CyHttpMessages.IncomingHttpRequest
 
 describe('Inline resources data collector option', () => {
-  beforeEach(() => {
-    cy.clearCookies()
-    cy.clearLocalStorage()
-    cy.interceptGravityCollectionSettings()
-    cy.interceptGravityPublish()
-    cy.interceptGravityRecord()
-  })
-
   describe('when "inlineResources" is true', () => {
     before(() => {
       cy.task('setCollectorOptions', { inlineResources: true })

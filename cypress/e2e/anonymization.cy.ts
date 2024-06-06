@@ -215,7 +215,6 @@ describe('Anonymizing context', () => {
       publishedUserActions.push(...body.filter(isTargetedUserAction))
     })
 
-    cy.interceptGravityRecord()
     cy.interceptGravitySnapshot((req) => {
       const compressedSnapshotContent = req.body.content
       const textCompressor: ITextCompressor = FFLateCompressor

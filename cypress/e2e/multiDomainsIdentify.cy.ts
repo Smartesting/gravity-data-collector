@@ -1,18 +1,10 @@
 describe('Handling sessions identification on multi-domain', () => {
-  beforeEach(() => {
-    cy.clearCookies()
-    cy.clearLocalStorage()
-  })
-
   it('uses another sessions ID when navigating to another domain', () => {
     const requests: { sessionId: string; href: string }[] = []
 
-    cy.interceptGravityPublish()
-    cy.interceptGravityRecord()
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })
-    cy.interceptGravityCollectionSettings()
 
     cy.openBaseSite()
     cy.identifySession()
@@ -32,12 +24,9 @@ describe('Handling sessions identification on multi-domain', () => {
   it('finds back the original session ID when coming back to the source site', () => {
     const requests: { sessionId: string; href: string }[] = []
 
-    cy.interceptGravityPublish()
-    cy.interceptGravityRecord()
     cy.interceptGravityIdentify((req) => {
       requests.push(extractSessionIdAndHref(req))
     })
-    cy.interceptGravityCollectionSettings()
 
     cy.openBaseSite()
     cy.identifySession()

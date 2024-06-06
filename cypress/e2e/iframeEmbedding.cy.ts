@@ -1,13 +1,7 @@
 describe('Handling sessions identification on iframes', () => {
-  beforeEach(() => {
-    cy.clearCookies()
-    cy.clearLocalStorage()
-  })
-
   it('properly stores the session id when the tracked site is embedded in an iframe', () => {
     const sessionIds: string[] = []
 
-    cy.interceptGravityCollectionSettings()
     cy.interceptGravityPublish((req) => {
       if (req.url.includes('5678')) {
         req.body.forEach((sessionUserAction: { sessionId: string }) => {
@@ -15,8 +9,6 @@ describe('Handling sessions identification on iframes', () => {
         })
       }
     })
-    cy.interceptGravityIdentify()
-    cy.interceptGravityRecord()
 
     cy.openBaseSite('iframeEmbedding.html')
     getIframeBody().find('a.simple-link').should('have.text', 'A simple link which does nothing').click()

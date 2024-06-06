@@ -6,10 +6,8 @@ describe('Handling input Changes', () => {
 
   beforeEach(() => {
     cy.task('setCollectorOptions', { enabledListeners: [Listener.Change] })
-    cy.clearCookies()
     sessionUserActionTypes = []
-    cy.interceptGravitySnapshot()
-    cy.interceptGravityRecord()
+
     cy.interceptGravityPublish((req) => {
       const { body } = req
 
@@ -17,7 +15,6 @@ describe('Handling input Changes', () => {
         sessionUserActionTypes.push(sessionUserAction.type)
       }
     })
-    cy.interceptGravityCollectionSettings()
   })
 
   for (const inputId of inputIds) {
@@ -38,3 +35,4 @@ describe('Handling input Changes', () => {
     })
   }
 })
+
