@@ -39,6 +39,7 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
+      }).then(() => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
           anonymizationSettings: undefined,
         })
@@ -64,8 +65,8 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledOnce()
+      }).then(() => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
-          document: domWindow.document,
           anonymizationSettings: undefined,
         })
       })
@@ -93,8 +94,8 @@ describe('RepeatedEventListener', () => {
 
       await waitFor(() => {
         expect(handleSpy).toHaveBeenCalledTimes(3)
+      }).then(() => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(domWindow, new MouseEvent('click'), 'click', {
-          document: domWindow.document,
           anonymizationSettings: undefined,
         })
       })
