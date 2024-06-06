@@ -50,7 +50,6 @@ export default class SnapshotRecorderHandler implements ISnapshotRecorderHandler
     this.snapshotDocument = installSnapshotContainer(this.collectorOptions.window.document)
 
     if (this.snapshotDocument) {
-      this.buildAndSendSnapshot()
       this.observer.observe(this.collectorOptions.window.document.body, { childList: true, subtree: true })
     }
   }

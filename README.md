@@ -26,7 +26,7 @@ In your `package.json`, add the following:
 ```json
 {
   "dependencies": {
-    "@smartesting/gravity-data-collector": "^6.1.2"
+    "@smartesting/gravity-data-collector": "^6.1.3"
   }
 }
 ```
@@ -42,7 +42,7 @@ Put this tag in each page that must use Gravity Data Collector.
   async
   id="logger"
   type="text/javascript"
-  src="https://unpkg.com/@smartesting/gravity-data-collector@6.1.2/dist/gravity-logger-min.js"
+  src="https://unpkg.com/@smartesting/gravity-data-collector@6.1.3/dist/gravity-logger-min.js"
 ></script>
 ```
 
