@@ -1,6 +1,6 @@
 import { AnonymizationSettings } from '../types'
-import { recordOptions } from 'rrweb'
-import { eventWithTime } from '@rrweb/types'
+import { recordOptions } from '@smartesting/rrweb'
+import { eventWithTime } from '@smartesting/rrweb-types'
 import maskText from './maskText'
 
 const HTML_IMAGE_VIDEO_TAGS = ['img', 'map', 'area', 'canvas', 'figure', 'picture', 'svg', 'audio', 'video']

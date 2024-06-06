@@ -1,6 +1,6 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
-import { record, recordOptions } from 'rrweb'
-import { eventWithTime, listenerHandler } from '@rrweb/types'
+import { record, recordOptions } from '@smartesting/rrweb'
+import { eventWithTime, listenerHandler } from '@smartesting/rrweb-types'
 import RECORDING_SETTINGS from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'

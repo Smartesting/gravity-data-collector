@@ -10,7 +10,7 @@ import {
 } from '../types'
 import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
-import { eventWithTime } from '@rrweb/types'
+import { eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 
 type ConsoleGravityClientOptions = GravityClientOptions & {

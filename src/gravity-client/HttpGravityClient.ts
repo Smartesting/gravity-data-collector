@@ -18,7 +18,7 @@ import {
   buildGravityTrackingSessionRecordingApiUrl,
   buildGravityTrackingSnapshotApiUrl,
 } from '../gravityEndPoints'
-import { eventWithTime } from '@rrweb/types'
+import { eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { config } from '../config'
 

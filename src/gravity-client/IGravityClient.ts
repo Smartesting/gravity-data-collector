@@ -1,5 +1,5 @@
 import { DocumentSnapshot, GravityRecordingSettingsResponse, SessionTraits, SessionUserAction } from '../types'
-import { eventWithTime } from '@rrweb/types'
+import { eventWithTime } from '@smartesting/rrweb-types'
 
 export interface IGravityClient {
   addSessionUserAction: (sessionUserAction: SessionUserAction) => Promise<void>
