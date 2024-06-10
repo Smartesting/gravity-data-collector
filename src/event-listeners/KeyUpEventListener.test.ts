@@ -37,6 +37,7 @@ describe('KeyUpEventListener', () => {
 
       await waitFor(() => {
         expect(createTargetedUserActionSpy).toHaveBeenCalledWith(
+          domWindow,
           new KeyboardEvent('keyup'),
           'keyup',
           NO_ANONYMIZATION_SETTINGS,

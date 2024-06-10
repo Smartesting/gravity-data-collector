@@ -17,6 +17,7 @@ class ChangeEventListener extends TargetedEventListener {
 
     const elementTarget = event.target as HTMLInputWithValue
     const userAction = createTargetedUserAction(
+      this.window,
       event,
       this.userActionType,
       this.userActionHandler.getAnonymizationSettings(),

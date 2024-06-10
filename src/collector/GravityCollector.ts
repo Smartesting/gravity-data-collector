@@ -60,6 +60,6 @@ function addCollector(options: Partial<CollectorOptions>, overrideExisting: bool
   }
 
   if (!(installer.window()._GravityCollector && !overrideExisting)) {
-    installer.window()._GravityCollector = new GravityCollector(installer.install())
+    installer.window()._GravityCollector = new GravityCollector(installer.install(overrideExisting))
   }
 }

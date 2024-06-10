@@ -1,17 +1,12 @@
 import { ViewportData } from '../types'
-import windowExists from './windowExists'
 
-export default function viewport(): ViewportData {
-  if (!windowExists()) {
-    return {}
-  }
-
+export default function viewport(windowInstance: Window): ViewportData {
   const {
     innerWidth: viewportWidth,
     innerHeight: viewportHeight,
     outerWidth: windowWidth,
     outerHeight: windowHeight,
-  } = window
+  } = windowInstance
 
   const {
     colorDepth,
@@ -21,7 +16,7 @@ export default function viewport(): ViewportData {
     height: screenHeight,
     availWidth: availScreenWidth,
     availHeight: availScreenHeight,
-  } = window.screen
+  } = windowInstance.screen
 
   return {
     viewportWidth,

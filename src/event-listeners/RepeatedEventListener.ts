@@ -11,6 +11,7 @@ export default abstract class RepeatedEventListener extends TargetedEventListene
 
   public listener(event: Event) {
     const userAction = createTargetedUserAction(
+      this.window,
       event,
       this.userActionType,
       this.userActionHandler.getAnonymizationSettings(),

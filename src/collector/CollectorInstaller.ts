@@ -64,14 +64,14 @@ export class CollectorInstaller {
     return this
   }
 
-  install(): CollectorWrapper {
+  install(overrideExisting: boolean = false): CollectorWrapper {
     const collectorWrapper = new CollectorWrapper(
       this.options,
       this.sessionIdHandler,
       this.sessionTimeoutHandler,
       this.fetch,
     )
-    collectorWrapper.init()
+    collectorWrapper.init(overrideExisting)
     return collectorWrapper
   }
 }

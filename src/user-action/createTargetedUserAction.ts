@@ -15,35 +15,26 @@ import {
 import { isCheckableElement } from '../utils/dom'
 import gravityDocument from '../utils/gravityDocument'
 import viewport from '../utils/viewport'
-import location from '../utils/location'
+import gravityLocation from '../utils/gravityLocation'
 import { createTargetDisplayInfo } from './createTargetDisplayInfo'
-import getDocument from '../utils/getDocument'
 import { createSelectors } from '../utils/createSelectors'
 import { matchClosest } from '../utils/cssSelectorUtils'
 
 export interface CreateTargetedUserActionOptions {
   selectorsOptions: Partial<CreateSelectorsOptions> | undefined
-  document: Document
-}
-
-const CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS: CreateTargetedUserActionOptions = {
-  selectorsOptions: undefined,
-  document: getDocument(),
 }
 
 export function createTargetedUserAction(
+  windowInstance: Window,
   event: Event,
   type: UserActionType,
   { anonymizeSelectors, ignoreSelectors }: AnonymizationSettings,
   customOptions?: Partial<CreateTargetedUserActionOptions>,
 ): TargetedUserAction | null {
-  const options = {
-    ...CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS,
-    ...customOptions,
-  }
-
+  const selectorsOptions = customOptions?.selectorsOptions ?? undefined
   const target = event.target as HTMLElement
-  if (target === null || target === undefined || event.target === options.document) return null
+  const document = windowInstance.document
+  if (target === null || target === undefined || event.target === document) return null
 
   if (matchClosest(target, ignoreSelectors)) return null
 
@@ -56,23 +47,26 @@ export function createTargetedUserAction(
 
   const targetedUserAction: TargetedUserAction = {
     type,
-    target: createActionTarget(target, options, anonymizeSelectors),
-    location: location(),
-    document: gravityDocument(),
+    target: createActionTarget(document, target, selectorsOptions, anonymizeSelectors),
+    location: gravityLocation(windowInstance.location),
+    document: gravityDocument(document),
     recordedAt: new Date().toISOString(),
-    viewportData: viewport(),
+    viewportData: viewport(windowInstance),
     userActionData,
   }
+
   if (type === UserActionType.Click) {
     const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
       targetedUserAction.interactiveTarget = createActionTarget(
+        document,
         interactiveTarget as HTMLElement,
-        options,
+        selectorsOptions,
         anonymizeSelectors,
       )
     }
   }
+
   return targetedUserAction
 }
 
@@ -158,11 +152,11 @@ function createKeyUserActionData(event: KeyboardEvent): KeyUserActionData {
 }
 
 function createActionTarget(
+  document: Document,
   target: HTMLElement | Window,
-  options: CreateTargetedUserActionOptions,
+  selectorsOptions: Partial<CreateSelectorsOptions> | undefined,
   anonymizeSelectors: string | undefined,
 ): UserActionTarget {
-  const { document, selectorsOptions } = options
   const element = isHtmlElement(target) ? target.tagName.toLocaleLowerCase() : 'window'
   const actionTarget: UserActionTarget = { element }
 
