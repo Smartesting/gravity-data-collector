@@ -33,14 +33,14 @@ function Panel() {
 
   useEffect(() => {
     // @ts-ignore
-    chrome.storage.local.set({ authenticationKey });
+    chrome.storage.local.set({ authenticationKey: authenticationKey });
     // @ts-ignore
     chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, { action: 'newAuthenticationKey', value: authenticationKey })
   }, [authenticationKey])
 
   useEffect(() => {
     // @ts-ignore
-    chrome.storage.local.set({ authorizedSites });
+    chrome.storage.local.set({ authorizedSites: authorizedSites });
     // @ts-ignore
     chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, { action: 'newAuthorizedSites', value: authorizedSites })
   }, [authorizedSites])
@@ -61,7 +61,7 @@ function Panel() {
           value={authenticationKey}
           type="password"
           autoComplete="current-auth-key"
-          onBlur={(e) => setAuthenticationKey(e.target.value)}
+          onChange={(e) => setAuthenticationKey(e.target.value)}
         />
         <h4>Authorized Sites</h4>
         <div className="gravity-data-collector__authorized-sites">

@@ -11,6 +11,7 @@ export type MESSAGE_TYPE = {
 let authorizedSites: string[] = []
 
 const options: Partial<CollectorOptions> = {
+    gravityServerUrl: 'http://localhost:3000/',
     requestInterval: 0
 }
 
@@ -30,6 +31,7 @@ chrome.storage.local.get(
         }
         if (options.authKey && options.authKey.length > 0 && authorizedSites.some(authorized => window.location.href.includes(authorized))) {
             GravityCollector.init(options)
+            console.log(options.authKey)
         }
     }
 );
