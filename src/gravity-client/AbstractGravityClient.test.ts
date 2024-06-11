@@ -1,5 +1,5 @@
 import { expect, SpyInstance, vi } from 'vitest'
-import { EventType, eventWithTime } from '@rrweb/types'
+import { EventType, eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
 import { GravityClientOptions } from './AbstractGravityClient'

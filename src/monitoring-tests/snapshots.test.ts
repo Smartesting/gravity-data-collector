@@ -47,7 +47,7 @@ describe('snapshots', () => {
       const snapshotWindow = new JSDOM().window
       try {
         const snapshotStartingTime = benchmark.newRecord(name)
-        const snapshot = createSnapshot(window.document, snapshotWindow.document, {}, benchmark)
+        const snapshot = createSnapshot(window.document, snapshotWindow.document, { blockExtraStyle: null }, benchmark)
         benchmark.recordTime('snapshotTime', snapshotStartingTime)
         if (snapshot === null) throw new AssertionError({ message: 'snapshot html should be defined' })
         benchmark.recordSize('htmlSize', content.length)

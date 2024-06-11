@@ -11,7 +11,7 @@ import {
 } from '../types'
 import { IGravityClient } from './IGravityClient'
 import { DataBuffering } from './DataBuffering'
-import { eventWithTime } from '@rrweb/types'
+import { eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import isDefined from '../utils/isDefined'
 

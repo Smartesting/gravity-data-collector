@@ -1,6 +1,6 @@
-import { recordOptions } from 'rrweb'
-import { eventWithTime } from '@rrweb/types'
-import { snapshot } from 'rrweb-snapshot'
+import { recordOptions } from '@smartesting/rrweb'
+import { eventWithTime } from '@smartesting/rrweb-types'
+import { snapshot } from '@smartesting/rrweb-snapshot'
 
 export type SnapshotOptions = Parameters<typeof snapshot>[1]
 export type VideoOptions = recordOptions<eventWithTime>
@@ -48,6 +48,7 @@ export const WITH_PARTIAL_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   },
   maskInputFn: maskInput,
   maskTextFn: maskText,
+  blockExtraStyle: null,
 }
 
 export const WITH_DEFAULT_ANONYMIZATION: SnapshotOptions & VideoOptions = {
@@ -71,6 +72,7 @@ export const WITH_DEFAULT_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   },
   maskInputFn: maskInput,
   maskTextFn: maskText,
+  blockExtraStyle: null,
 }
 
 export const WITH_TOTAL_ANONYMIZATION: SnapshotOptions & VideoOptions = {
@@ -78,6 +80,7 @@ export const WITH_TOTAL_ANONYMIZATION: SnapshotOptions & VideoOptions = {
   maskInputFn: maskInput,
   maskTextSelector: '*',
   maskTextFn: maskText,
+  blockExtraStyle: null,
 }
 
 export function maskText(text: string) {

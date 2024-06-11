@@ -1,6 +1,6 @@
 import { IGravityClient } from '../gravity-client/IGravityClient'
-import { record } from 'rrweb'
-import { eventWithTime, listenerHandler } from '@rrweb/types'
+import { record } from '@smartesting/rrweb'
+import { eventWithTime, listenerHandler } from '@smartesting/rrweb-types'
 import RECORDING_SETTINGS, {
   WITH_DEFAULT_ANONYMIZATION,
   WITH_PARTIAL_ANONYMIZATION,
@@ -8,6 +8,7 @@ import RECORDING_SETTINGS, {
 } from '../utils/rrwebRecordingSettings'
 import ISessionIdHandler from '../session-id-handler/ISessionIdHandler'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
+import { CollectorOptions } from '../types'
 
 export interface ScreenRecordingOptions {
   enableAnonymization?: boolean
@@ -19,6 +20,7 @@ export default class VideoRecorderHandler {
   private stopRecording: listenerHandler | undefined
 
   constructor(
+    private readonly options: CollectorOptions,
     private readonly sessionIdHandler: ISessionIdHandler,
     private readonly timeoutHandler: ITimeoutHandler,
     private readonly gravityClient: IGravityClient,
@@ -38,6 +40,7 @@ export default class VideoRecorderHandler {
       ...RECORDING_SETTINGS,
       ...anonymization,
       blockSelector: options?.ignoreSelectors,
+      window: this.options.window,
     })
   }
 

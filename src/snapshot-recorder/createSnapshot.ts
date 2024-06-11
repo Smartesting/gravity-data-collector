@@ -1,4 +1,4 @@
-import { createCache, createMirror, rebuild, snapshot as doSnapshot } from 'rrweb-snapshot'
+import { createCache, createMirror, rebuild, snapshot as doSnapshot } from '@smartesting/rrweb-snapshot'
 import { SnapshotOptions } from '../utils/rrwebRecordingSettings'
 import { IBenchmark } from '../monitoring/IBenchmark'
 

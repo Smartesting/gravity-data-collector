@@ -11,7 +11,7 @@ import {
 import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
-import { eventWithTime } from '@rrweb/types'
+import { eventWithTime } from '@smartesting/rrweb-types'
 
 export default class NopGravityClient extends AbstractGravityClient implements IGravityClient {
   constructor(options: GravityClientOptions, recordingSettingsDispatcher = new RecordingSettingsDispatcher()) {

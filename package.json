@@ -90,15 +90,16 @@
     "watchify": "^4.0.0"
   },
   "dependencies": {
-    "@rrweb/types": "2.0.0-alpha.12",
+    "@smartesting/rrdom": "^2.0.0-alpha.19",
+    "@smartesting/rrweb": "^2.0.0-alpha.19",
+    "@smartesting/rrweb-snapshot": "^2.0.0-alpha.19",
+    "@smartesting/rrweb-types": "^2.0.0-alpha.19",
     "@types/uuid": "^8.3.4",
     "cross-fetch": "^3.1.5",
     "fflate": "^0.4.4",
     "get-xpath": "^3.1.0",
     "psl": "^1.9.0",
     "regenerator-runtime": "^0.13.9",
-    "rrweb": "2.0.0-alpha.12",
-    "rrweb-snapshot": "2.0.0-alpha.12",
     "to-readable-stream": "^4.0.0",
     "unique-selector": "^0.5.0",
     "uuid": "^8.3.2"
