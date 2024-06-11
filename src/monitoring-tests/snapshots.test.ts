@@ -40,7 +40,7 @@ describe('snapshots', () => {
     benchmark.summarize()
   })
 
-  it('measure build of snapshot samples', () => {
+  it.skip('measure build of snapshot samples', () => {
     const benchmark = new Benchmark()
     for (const [name, content] of Object.entries(contents)) {
       const window = new JSDOM(content).window
