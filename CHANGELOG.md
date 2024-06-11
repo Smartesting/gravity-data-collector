@@ -8,8 +8,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [6.1.4-beta](https://github.com/Smartesting/gravity-data-collector/compare/v6.1.3...main)
 
 ### Info
- - use @smartesting/rrweb-XXX packages
- - pass window from collectorOptions to video recorder 
+
+- use @smartesting/rrweb-XXX packages
+- pass window from collectorOptions to video recorder
 
 ### Added
 
