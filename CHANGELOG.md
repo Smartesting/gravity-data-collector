@@ -5,14 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [6.1.4-1-beta](https://github.com/Smartesting/gravity-data-collector/compare/v6.1.3...main)
+## [7.0.0](https://github.com/Smartesting/gravity-data-collector/compare/v7.0.0...main)
 
 ### Info
 
+- new anonymization consideration: all texts/images are systematically anonymized. Exceptions are set via Gravity through the parameter `allowList` (see type `AnonymizationSettings`)
 - use @smartesting/rrweb-XXX packages
 - pass window from collectorOptions to video recorder
 
 ### Added
+
+- option `allowList` to control anonymization exceptions (set via Gravity client)
 
 ### Changed
 
@@ -20,7 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Removed
 
-### Fixed
+- options `videoAnonymization`, `snapshotAnonymization`, `anonymizeSelectors` & `ignoreSelectors` removed
 
 ## [6.1.3](https://github.com/Smartesting/gravity-data-collector/compare/v6.1.2...v6.1.3)
 
