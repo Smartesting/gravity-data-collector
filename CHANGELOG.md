@@ -17,10 +17,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - option `allowList` to control anonymization exceptions (set via Gravity client)
 
-### Changed
-
-### Deprecated
-
 ### Removed
 
 - options `videoAnonymization`, `snapshotAnonymization`, `anonymizeSelectors` & `ignoreSelectors` removed
