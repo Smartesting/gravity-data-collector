@@ -1,12 +1,11 @@
 import { AnonymizationSettings, TargetDisplayInfo } from '../types'
-import getDocument from '../utils/getDocument'
 import maskText from '../utils/maskText'
 import elementShouldBeAnonymized from '../utils/elementShouldBeAnonymized'
 
 export function createTargetDisplayInfo(
   element: HTMLElement,
   anonymizationSettings: AnonymizationSettings,
-  document: Document = getDocument(),
+  document: Document,
 ): TargetDisplayInfo | undefined {
   const anonymize = elementShouldBeAnonymized(element, anonymizationSettings)
 
@@ -50,10 +49,7 @@ function createHtmlClickableDisplayInfo(element: HTMLElement, document: Document
   return displayInfo
 }
 
-function createHTMLInputDisplayInfo(
-  element: HTMLInputElement,
-  document: Document = getDocument(),
-): TargetDisplayInfo | undefined {
+function createHTMLInputDisplayInfo(element: HTMLInputElement, document: Document): TargetDisplayInfo | undefined {
   const displayInfo: TargetDisplayInfo = {}
 
   const placeholder = element.placeholder
@@ -72,11 +68,15 @@ function createHTMLInputDisplayInfo(
   return displayInfo
 }
 
-function findLabelForElement(element: HTMLElement, document: Document = getDocument()): HTMLLabelElement | null {
+function findLabelForElement(element: HTMLElement, document: Document): HTMLLabelElement | null {
   const id = element.id
   if (id !== null && !isEmpty(id)) {
-    const label = document.querySelector(`label[for=${id}]`) as HTMLLabelElement
-    if (label) return label
+    try {
+      const label = document.querySelector(`label[for=${id}]`) as HTMLLabelElement
+      if (label) return label
+    } catch (e) {
+      return null
+    }
   }
   return null
 }

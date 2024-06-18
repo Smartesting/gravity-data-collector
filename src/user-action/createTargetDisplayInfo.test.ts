@@ -199,17 +199,17 @@ describe('user action', () => {
       const anonymizationSettings: AnonymizationSettings = { anonymize: false }
 
       it('returns display infos of the body', () => {
-        const { element } = createElementInJSDOM('<body>Click Me</body>', 'body')
+        const { element, domWindow } = createElementInJSDOM('<body>Click Me</body>', 'body')
 
-        const displayInfo = createTargetDisplayInfo(element, anonymizationSettings)
+        const displayInfo = createTargetDisplayInfo(element, anonymizationSettings, domWindow.document)
 
         expect(displayInfo).toBeUndefined()
       })
 
       it('returns display infos of the html element', () => {
-        const { element } = createElementInJSDOM('<html lang="fr">Click Me</html>', 'html')
+        const { element, domWindow } = createElementInJSDOM('<html lang="fr">Click Me</html>', 'html')
 
-        const displayInfo = createTargetDisplayInfo(element, anonymizationSettings)
+        const displayInfo = createTargetDisplayInfo(element, anonymizationSettings, domWindow.document)
 
         expect(displayInfo).toBeUndefined()
       })
