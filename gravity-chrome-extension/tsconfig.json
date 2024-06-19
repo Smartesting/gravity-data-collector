@@ -1,0 +1,27 @@
+{
+   "compilerOptions": {
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "strict": true,
+      "module": "commonjs",
+      "target": "es6",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "outDir": "dist/js",
+      "jsx": "react-jsx",
+      "noEmitOnError": true,
+      "typeRoots": [
+         "node_modules/@types"
+      ]
+   },
+   "include": [
+      "./**/*.ts",
+      "../src/**/*.ts",
+   ],
+   "exclude": [
+      "**/__tests__/*",
+      "node_modules",
+      "../src/test-utils",
+      "../src/**/*.test.ts",
+   ]
+}
