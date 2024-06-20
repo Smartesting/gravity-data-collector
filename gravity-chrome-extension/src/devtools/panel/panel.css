@@ -120,6 +120,7 @@ button.secondary:hover {
 }
 
 .gravity-data-collector__authorized-site,
+.gravity-data-collector__gravity-server-url,
 .gravity-data-collector__authentication-key {
   width: 350px;
 }
