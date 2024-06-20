@@ -104,7 +104,7 @@ function Panel() {
             className="gravity-data-collector__authorized-site"
             label="Add authorized site"
             value={newSite}
-            onChange={(e:React.ChangeEvent<HTMLInputElement>) => setNewSite(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSite(e.target.value)}
             onBlur={(e) => {
               if (e.target.value.length > 0) {
                 const newSites = authorizedSites.slice()
