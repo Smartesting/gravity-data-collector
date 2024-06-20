@@ -1,16 +1,7 @@
 import GravityCollector from '../../src'
 import { CollectorOptions } from '../../src/types'
 import { uuid } from '../../src/utils/uuid'
-
-export type MESSAGE_TYPE = {
-  action: string
-  authKey: string
-  gravityServerUrl: string
-  requestInterval: number
-  authorizedSites: string[]
-  useHashInUrlAsPathname: boolean
-  inlineResources: boolean
-}
+import { Message } from './types'
 
 let authorizedSites: string[] = []
 
@@ -59,9 +50,9 @@ chrome.storage.local.get(
   },
 )
 
-chrome.runtime.onMessage.addListener((message: MESSAGE_TYPE) => {
+chrome.runtime.onMessage.addListener((message: Message) => {
   switch (message.action) {
-    case 'newSession':
+    case 'startNewSession':
       if (authorizedSites.some((authorized) => window.location.href.includes(authorized))) {
         GravityCollector.initWithOverride(options, uuid())
         console.log('Init Gravity collector after new session', { options })
@@ -69,30 +60,26 @@ chrome.runtime.onMessage.addListener((message: MESSAGE_TYPE) => {
         console.log('Current location no in the authorized sites')
       }
       break
-    case 'newAuthenticationKey':
-      if (message.authKey !== undefined) {
-        options.authKey = message.authKey
-        options.debug = !options.authKey || options.authKey.length === 0
-      }
+    case 'updateAuthKey':
+      options.authKey = message.authKey
+      options.debug = !options.authKey || options.authKey.length === 0
       break
-    case 'newGravityServerUrl':
-      options.gravityServerUrl = message.gravityServerUrl
+    case 'updateGravityServerUrl':
+      options.gravityServerUrl = message.url
       break
-    case 'newRequestInterval':
-      options.requestInterval = message.requestInterval
+    case 'updateRequestInterval':
+      options.requestInterval = message.interval
       break
-    case 'newInlineResources':
-      options.inlineResources = message.inlineResources
+    case 'updateInlineResources':
+      options.inlineResources = message.value
       break
-    case 'newUseHashInUrlAsPathname':
-      options.useHashInUrlAsPathname = message.useHashInUrlAsPathname
+    case 'updateUseHashInUrlAsPathname':
+      options.useHashInUrlAsPathname = message.value
       break
-    case 'newAuthorizedSites':
-      if (message.authorizedSites !== undefined) {
-        authorizedSites = message.authorizedSites
-      }
+    case 'updateAuthorisedSites':
+      authorizedSites = message.sites
       break
     default:
-      console.log('Unknown gravity chrome extension action: ' + message.action)
+      console.log('Unknown gravity chrome extension action: ' + message)
   }
 })

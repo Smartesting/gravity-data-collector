@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './panel.css'
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
+import { Message } from '../../types'
 
 const container = document.getElementById('panel')
 if (container) {
@@ -48,49 +49,49 @@ function Panel() {
 
   useEffect(() => {
     void chrome.storage.local.set({ authenticationKey })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newAuthenticationKey',
-      value: authenticationKey,
+    sendMessageAction({
+      action: 'updateAuthKey',
+      authKey: authenticationKey,
     })
   }, [authenticationKey])
 
   useEffect(() => {
     void chrome.storage.local.set({ gravityServerUrl })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newGravityServerUrl',
-      value: gravityServerUrl,
+    sendMessageAction({
+      action: 'updateGravityServerUrl',
+      url: gravityServerUrl,
     })
   }, [gravityServerUrl])
 
   useEffect(() => {
     void chrome.storage.local.set({ requestInterval })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newRequestInterval',
-      value: requestInterval,
+    sendMessageAction({
+      action: 'updateRequestInterval',
+      interval: requestInterval,
     })
   }, [requestInterval])
 
   useEffect(() => {
     void chrome.storage.local.set({ useHashInUrlAsPathname })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newUseHashInUrlAsPathname',
+    sendMessageAction({
+      action: 'updateUseHashInUrlAsPathname',
       value: useHashInUrlAsPathname,
     })
   }, [useHashInUrlAsPathname])
 
   useEffect(() => {
     void chrome.storage.local.set({ inlineResources })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newInlineResources',
+    sendMessageAction({
+      action: 'updateInlineResources',
       value: inlineResources,
     })
   }, [inlineResources])
 
   useEffect(() => {
     void chrome.storage.local.set({ authorizedSites })
-    void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, {
-      action: 'newAuthorizedSites',
-      value: authorizedSites,
+    sendMessageAction({
+      action: 'updateAuthorisedSites',
+      sites: authorizedSites,
     })
   }, [authorizedSites])
 
@@ -100,7 +101,7 @@ function Panel() {
         <button
           className="primary"
           onClick={() => {
-            void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, { action: 'newSession' })
+            sendMessageAction({ action: 'startNewSession' })
             toast.info('New session')
           }}
         >
@@ -215,4 +216,8 @@ function Panel() {
       <ToastContainer />
     </div>
   )
+}
+
+function sendMessageAction(message: Message) {
+  void chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, message)
 }
