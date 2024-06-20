@@ -10,7 +10,7 @@
     "outDir": "dist/js",
     "jsx": "react-jsx",
     "noEmitOnError": true,
-    "typeRoots": ["node_modules/@types"]
+    "skipLibCheck": true
   },
   "include": ["./**/*.ts", "../src/**/*.ts"],
   "exclude": ["**/__tests__/*", "node_modules", "../src/test-utils", "../src/**/*.test.ts"]

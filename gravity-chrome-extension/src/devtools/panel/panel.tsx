@@ -53,7 +53,7 @@ function Panel() {
       <div className="gravity-data-collector-panel__left">
         <button
           className="primary"
-          onClick={(e) => {
+          onClick={() => {
             // @ts-ignore
             chrome.tabs.sendMessage(chrome.devtools.inspectedWindow.tabId, { action: 'newSession' })
             toast.info('New session')
@@ -88,7 +88,7 @@ function Panel() {
                 />
                 <button
                   className="secondary"
-                  onClick={(e) => {
+                  onClick={() => {
                     const newSites = authorizedSites.slice()
                     newSites.splice(index, 1)
                     setAuthorizedSites(newSites)
@@ -104,7 +104,7 @@ function Panel() {
             className="gravity-data-collector__authorized-site"
             label="Add authorized site"
             value={newSite}
-            onChange={(e) => setNewSite(e.target.value)}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>) => setNewSite(e.target.value)}
             onBlur={(e) => {
               if (e.target.value.length > 0) {
                 const newSites = authorizedSites.slice()
