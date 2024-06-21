@@ -3,6 +3,10 @@ export type Message =
       action: 'startNewSession'
     }
   | {
+      action: 'updateDebugMode'
+      value: boolean
+    }
+  | {
       action: 'updateGravityServerUrl'
       url: string
     }

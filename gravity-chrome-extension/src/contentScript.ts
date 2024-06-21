@@ -9,6 +9,7 @@ const options: Partial<CollectorOptions> = {}
 
 chrome.storage.local.get(
   [
+    'debugMode',
     'gravityServerUrl',
     'authenticationKey',
     'authorizedSites',
@@ -17,23 +18,25 @@ chrome.storage.local.get(
     'inlineResources',
   ],
   (settings) => {
-    if (settings.authenticationKey) {
-      options.authKey = settings.authenticationKey
-      options.debug = !options.authKey || options.authKey.length === 0
+    if (settings.hasOwnProperty('debugMode')) {
+      options.debug = Boolean(settings.debugMode)
     }
-    if (settings.authorizedSites) {
+    if (settings.hasOwnProperty('authenticationKey')) {
+      options.authKey = settings.authenticationKey
+    }
+    if (settings.hasOwnProperty('authorizedSites')) {
       authorizedSites = settings.authorizedSites
     }
-    if (settings.gravityServerUrl) {
+    if (settings.hasOwnProperty('gravityServerUrl')) {
       options.gravityServerUrl = settings.gravityServerUrl
     }
-    if (settings.requestInterval) {
+    if (settings.hasOwnProperty('requestInterval')) {
       options.requestInterval = settings.requestInterval
     }
-    if (settings.useHashInUrlAsPathname) {
+    if (settings.hasOwnProperty('useHashInUrlAsPathname')) {
       options.useHashInUrlAsPathname = settings.useHashInUrlAsPathname
     }
-    if (settings.inlineResources) {
+    if (settings.hasOwnProperty('inlineResources')) {
       options.inlineResources = settings.inlineResources
     }
     console.log({ options })
@@ -52,6 +55,9 @@ chrome.storage.local.get(
 
 chrome.runtime.onMessage.addListener((message: Message) => {
   switch (message.action) {
+    case 'updateDebugMode':
+      options.debug = message.value
+      break
     case 'startNewSession':
       if (authorizedSites.some((authorized) => window.location.href.includes(authorized))) {
         GravityCollector.initWithOverride(options, uuid())
@@ -62,7 +68,6 @@ chrome.runtime.onMessage.addListener((message: Message) => {
       break
     case 'updateAuthKey':
       options.authKey = message.authKey
-      options.debug = !options.authKey || options.authKey.length === 0
       break
     case 'updateGravityServerUrl':
       options.gravityServerUrl = message.url

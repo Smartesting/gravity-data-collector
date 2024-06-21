@@ -14,6 +14,7 @@ if (container) {
 }
 
 function Panel() {
+  const [debugMode, setDebugMode] = useState(false)
   const [gravityServerUrl, setGravityServerUrl] = useState('http://localhost:3000/')
   const [authenticationKey, setAuthenticationKey] = useState('')
   const [authorizedSites, setAuthorizedSites] = useState<string[]>([])
@@ -25,6 +26,7 @@ function Panel() {
   useEffect(() => {
     void chrome.storage.local.get(
       [
+        'debugMode',
         'authenticationKey',
         'authorizedSites',
         'gravityServerUrl',
@@ -33,6 +35,7 @@ function Panel() {
         'inlineResources',
       ],
       function (settings: any) {
+        setDebugMode(Boolean(settings.debugMode) ?? false)
         if (settings.authenticationKey) {
           setAuthenticationKey(settings.authenticationKey)
         }
@@ -46,6 +49,14 @@ function Panel() {
       },
     )
   }, [])
+
+  useEffect(() => {
+    void chrome.storage.local.set({ debugMode })
+    sendMessageAction({
+      action: 'updateDebugMode',
+      value: debugMode,
+    })
+  }, [debugMode])
 
   useEffect(() => {
     void chrome.storage.local.set({ authenticationKey })
@@ -108,25 +119,40 @@ function Panel() {
           New session
         </button>
         <h4>Gravity collector Settings</h4>
-        <TextField
-          size="small"
-          id="gravity-server-url"
-          className="gravity-data-collector__gravity-server-url"
-          label="Gravity Server Url"
-          value={gravityServerUrl}
-          onChange={(e) => setGravityServerUrl(e.target.value)}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={debugMode}
+              onChange={(_event, checked) => {
+                setDebugMode(checked)
+              }}
+            />
+          }
+          label="Debug mode"
         />
-        <TextField
-          size="small"
-          style={{ marginTop: '10px' }}
-          id="authentication-key"
-          className="gravity-data-collector__authentication-key"
-          label="Authentication Key"
-          value={authenticationKey}
-          type="password"
-          autoComplete="current-auth-key"
-          onChange={(e) => setAuthenticationKey(e.target.value)}
-        />
+        {!debugMode && (
+          <>
+            <TextField
+              size="small"
+              id="gravity-server-url"
+              className="gravity-data-collector__gravity-server-url"
+              label="Gravity Server Url"
+              value={gravityServerUrl}
+              onChange={(e) => setGravityServerUrl(e.target.value)}
+            />
+            <TextField
+              size="small"
+              style={{ marginTop: '10px' }}
+              id="authentication-key"
+              className="gravity-data-collector__authentication-key"
+              label="Authentication Key"
+              value={authenticationKey}
+              type="password"
+              autoComplete="current-auth-key"
+              onChange={(e) => setAuthenticationKey(e.target.value)}
+            />
+          </>
+        )}
         <h4>Authorized Sites</h4>
         <div className="gravity-data-collector__authorized-sites">
           {authorizedSites.map((site, index) => {
@@ -178,7 +204,7 @@ function Panel() {
           label="Request interval"
           value={requestInterval}
           type="number"
-          style={{ marginTop: '10px', width: '200px' }}
+          style={{ marginTop: '10px', width: '150px' }}
           onChange={(e) => {
             let stringValue = e.target.value
             try {
@@ -188,7 +214,7 @@ function Panel() {
             }
           }}
         />
-        <FormGroup>
+        <FormGroup row>
           <FormControlLabel
             control={
               <Checkbox
