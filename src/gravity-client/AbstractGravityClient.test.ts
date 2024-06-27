@@ -10,6 +10,7 @@ import {
   SessionUserAction,
 } from '../types'
 import NopGravityClient from './NopGravityClient'
+import { nop } from '../utils/nop'
 
 const DEFAULT_OPTIONS: GravityClientOptions = {
   requestInterval: 0,
@@ -145,7 +146,7 @@ describe('AbstractGravityClient', () => {
 class TestGravityClient extends NopGravityClient {
   constructor(
     options: GravityClientOptions,
-    recordingSettingsDispatcher: RecordingSettingsDispatcher = new RecordingSettingsDispatcher(),
+    recordingSettingsDispatcher: RecordingSettingsDispatcher = new RecordingSettingsDispatcher(nop),
   ) {
     super(options, recordingSettingsDispatcher)
     recordingSettingsDispatcher.dispatch({

@@ -3,8 +3,8 @@ import {
   AddSessionUserActionsResponse,
   AddSnapshotResponse,
   DocumentSnapshot,
-  IdentifySessionResponse,
   GravityRecordingSettingsResponse,
+  IdentifySessionResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -12,10 +12,11 @@ import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityCl
 import { IGravityClient } from './IGravityClient'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { eventWithTime } from '@smartesting/rrweb-types'
+import { nop } from '../utils/nop'
 
 export default class NopGravityClient extends AbstractGravityClient implements IGravityClient {
-  constructor(options: GravityClientOptions, recordingSettingsDispatcher = new RecordingSettingsDispatcher()) {
-    super(options, recordingSettingsDispatcher)
+  constructor(options: GravityClientOptions, recordingSettingsDispatcher = new RecordingSettingsDispatcher(nop)) {
+    super(options, recordingSettingsDispatcher, nop)
   }
 
   async handleSessionUserActions(

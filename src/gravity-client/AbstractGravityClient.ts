@@ -5,6 +5,7 @@ import {
   DocumentSnapshot,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
+  Logger,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -50,10 +51,18 @@ export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly videoBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
   private readonly snapshotBuffer: DataBuffering<SnapshotWithSessionId, AddSnapshotResponse>
 
-  protected constructor(options: GravityClientOptions, recordingSettingsDispatcher: RecordingSettingsDispatcher) {
+  protected constructor(
+    options: GravityClientOptions,
+    recordingSettingsDispatcher: RecordingSettingsDispatcher,
+    logger: Logger,
+  ) {
     this.sessionUserActionBuffer = new DataBuffering<SessionUserAction, AddSessionUserActionsResponse>({
       handleInterval: options.requestInterval,
-      handleData: this.handleSessionUserActions.bind(this),
+      handleData: async (sessionUserActions) => {
+        const response = await this.handleSessionUserActions(sessionUserActions)
+        logger(`send ${sessionUserActions.length} user actions`, { response })
+        return response
+      },
       onFlush: (buffer, response) => {
         options.onPublish?.(buffer)
         if (!isDefined(response.error)) {
@@ -67,7 +76,9 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       handleInterval: options.requestInterval,
       handleData: async (sessionTraitsWithSessionIds) => {
         const { sessionId, sessionTraits } = this.extractSessionIdAndSessionTraits(sessionTraitsWithSessionIds)
-        return await this.handleSessionTraits(sessionId, sessionTraits)
+        const response = await this.handleSessionTraits(sessionId, sessionTraits)
+        logger('send traits', { response })
+        return response
       },
       locked: true,
     })
@@ -75,7 +86,9 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       handleInterval: options.requestInterval,
       handleData: async (screenRecordsWithSessionIds) => {
         const { sessionId, screenRecords } = this.extractSessionIdAndScreenRecords(screenRecordsWithSessionIds)
-        return await this.handleVideoRecords(sessionId, screenRecords)
+        const response = await this.handleVideoRecords(sessionId, screenRecords)
+        logger(`send ${screenRecords.length} video events`, { response })
+        return response
       },
       locked: true,
     })
@@ -83,7 +96,9 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       handleInterval: options.requestInterval,
       handleData: async (snapshotsWithSessionIds) => {
         const { sessionId, snapshots } = this.extractSessionIdAndSnapshots(snapshotsWithSessionIds)
-        return await this.handleSnapshots(sessionId, snapshots)
+        const response = await this.handleSnapshots(sessionId, snapshots)
+        logger(`send ${snapshots.length} snapshots`, { response })
+        return response
       },
       locked: true,
     })

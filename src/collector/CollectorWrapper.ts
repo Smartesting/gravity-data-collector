@@ -4,6 +4,7 @@ import {
   CollectorOptions,
   GravityRecordingSettings,
   Listener,
+  Logger,
   NO_RECORDING_SETTINGS,
   SessionStartedUserAction,
   SessionTraitValue,
@@ -57,9 +58,10 @@ import TouchCancelEventListener from '../event-listeners/TouchCancelEventListene
 import RecordingSettingsDispatcher from '../gravity-client/RecordingSettingsDispatcher'
 import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
 import isDefined from '../utils/isDefined'
+import { nop } from '../utils/nop'
 
 class CollectorWrapper {
-  private readonly recordingSettingsHandler = new RecordingSettingsDispatcher()
+  private readonly recordingSettingsHandler: RecordingSettingsDispatcher
   readonly userActionHandler: UserActionHandler
   readonly videoRecorderHandler: VideoRecorderHandler
   readonly snapshotRecorderHandler: SnapshotRecorderHandler
@@ -67,6 +69,7 @@ class CollectorWrapper {
   readonly eventListenerHandler: EventListenersHandler
   private readonly gravityClient: IGravityClient
   private anonymizationSettings: AnonymizationSettings | undefined
+  private readonly logger: Logger
 
   constructor(
     private readonly options: CollectorOptions,
@@ -74,9 +77,11 @@ class CollectorWrapper {
     private readonly timeoutHandler: ITimeoutHandler,
     fetch = crossfetch,
   ) {
+    this.logger = options.logger ?? nop
+    this.recordingSettingsHandler = new RecordingSettingsDispatcher(this.logger)
     this.gravityClient = options.debug
       ? new ConsoleGravityClient(options, this.recordingSettingsHandler)
-      : new HttpGravityClient(options, this.recordingSettingsHandler, fetch)
+      : new HttpGravityClient(options, this.recordingSettingsHandler, this.logger, fetch)
     this.snapshotRecorderHandler = new SnapshotRecorderHandler(
       options,
       timeoutHandler,

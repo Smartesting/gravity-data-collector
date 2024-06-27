@@ -6,6 +6,7 @@ import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
 import { config } from '../config'
 import { uuid } from '../utils/uuid'
+import { nop } from '../utils/nop'
 
 const DEFAULT_OPTIONS = {
   requestInterval: 0,
@@ -21,11 +22,12 @@ describe('HttpGravityClient', () => {
   describe('handles recording termination when received some error codes', () => {
     for (const statusCode of config.ERRORS_TERMINATE_TRACKING) {
       it(`received statusCode=${statusCode}`, async () => {
-        const recordingSettingsDispatcher = new RecordingSettingsDispatcher()
+        const recordingSettingsDispatcher = new RecordingSettingsDispatcher(nop)
         const spyOnTerminate = vi.spyOn(recordingSettingsDispatcher, 'terminate')
         const gravityClient = new HttpGravityClient(
           DEFAULT_OPTIONS,
           recordingSettingsDispatcher,
+          nop,
           mockFetch({
             status: statusCode,
             responseBody: { error: `error with code=${statusCode}` },

@@ -3,8 +3,8 @@ import {
   AddSessionUserActionsResponse,
   AddSnapshotResponse,
   DocumentSnapshot,
-  IdentifySessionResponse,
   GravityRecordingSettingsResponse,
+  IdentifySessionResponse,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -22,7 +22,7 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     private readonly options: ConsoleGravityClientOptions,
     recordingSettingsDispatcher: RecordingSettingsDispatcher,
   ) {
-    super(options, recordingSettingsDispatcher)
+    super(options, recordingSettingsDispatcher, console.log)
   }
 
   async handleSessionUserActions(

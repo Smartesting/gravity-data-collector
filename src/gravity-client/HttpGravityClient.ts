@@ -3,8 +3,9 @@ import {
   AddSessionUserActionsResponse,
   AddSnapshotResponse,
   DocumentSnapshot,
-  IdentifySessionResponse,
   GravityRecordingSettingsResponse,
+  IdentifySessionResponse,
+  Logger,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -31,9 +32,10 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
   constructor(
     private readonly options: HttpGravityClientOptions,
     private readonly recordingSettingsDispatcher: RecordingSettingsDispatcher,
+    logger: Logger,
     private readonly fetch = crossfetch,
   ) {
-    super(options, recordingSettingsDispatcher)
+    super(options, recordingSettingsDispatcher, logger)
   }
 
   async handleSessionUserActions(

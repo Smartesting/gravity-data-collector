@@ -242,6 +242,7 @@ export type CollectorOptions = CookieSettings & {
   buildId: string | undefined
   useHashInUrlAsPathname: boolean
   inlineResources: boolean
+  logger?: typeof console.log
 }
 
 export enum CookieStrategy {
@@ -397,3 +398,5 @@ export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagName
   'input',
   'li',
 ]
+
+export type Logger = typeof console.log
