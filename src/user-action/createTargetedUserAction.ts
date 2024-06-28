@@ -42,12 +42,12 @@ export function createTargetedUserAction(
       customOptions?.anonymizationSettings ?? CREATE_TARGETED_USER_ACTION_DEFAULT_OPTIONS.anonymizationSettings,
   }
 
-  const target = event.target as HTMLElement
+  const target = event.target
   const document = windowInstance.document
   if (target === null || target === undefined || event.target === document) return null
-  if (target.closest('.rr-ignore') ?? target.closest('.rr-block')) return null
+  if (isHtmlElement(target) && (target.closest('.rr-ignore') ?? target.closest('.rr-block'))) return null
 
-  const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
+  const userActionData: UserActionData | undefined = isHtmlElement(target)
     ? {
         ...getTargetActionData(target),
         ...createActionData(target, event, type),
@@ -56,7 +56,7 @@ export function createTargetedUserAction(
 
   const targetedUserAction: TargetedUserAction = {
     type,
-    target: createActionTarget(document, target, options),
+    target: createActionTarget(document, target as HTMLElement, options),
     location: gravityLocation(windowInstance.location),
     document: gravityDocument(document),
     recordedAt: new Date().toISOString(),
@@ -64,7 +64,7 @@ export function createTargetedUserAction(
     userActionData,
   }
 
-  if (type === UserActionType.Click) {
+  if (isHtmlElement(target) && type === UserActionType.Click) {
     const interactiveTarget = target.closest(CLICKABLE_ELEMENT_TAG_NAMES.join(','))
     if (interactiveTarget && interactiveTarget !== target) {
       targetedUserAction.interactiveTarget = createActionTarget(document, interactiveTarget as HTMLElement, options)
@@ -72,10 +72,6 @@ export function createTargetedUserAction(
   }
 
   return targetedUserAction
-}
-
-function hasGetBoundingClientRect(target: HTMLElement): boolean {
-  return target.getBoundingClientRect !== undefined
 }
 
 function getTargetActionData(target: HTMLElement): TargetActionData {
