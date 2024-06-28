@@ -45,6 +45,7 @@ export function createTargetedUserAction(
   const target = event.target as HTMLElement
   const document = windowInstance.document
   if (target === null || target === undefined || event.target === document) return null
+  if (target.closest('.rr-ignore') ?? target.closest('.rr-block')) return null
 
   const userActionData: UserActionData | undefined = hasGetBoundingClientRect(target)
     ? {

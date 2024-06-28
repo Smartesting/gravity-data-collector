@@ -14,6 +14,20 @@ export default class GravityCollector {
     this.collectorWrapper = collectorWrapper
   }
 
+  static async stop(): Promise<void> {
+    return await new Promise((resolve, reject) => {
+      const collector: GravityCollector = (window as any)._GravityCollector
+      if (!collector) {
+        return reject(new Error('No Gravity Data Collector found in window'))
+      }
+      if (!collector.collectorWrapper) {
+        return reject(new Error('No Wrapper found in Gravity Data Collector'))
+      }
+      collector.collectorWrapper.terminateRecording(true)
+      resolve()
+    })
+  }
+
   static getInstance(_window: any = window): GravityCollector {
     return _window._GravityCollector
   }
@@ -23,12 +37,12 @@ export default class GravityCollector {
     return instance.collectorWrapper?.getSessionId()
   }
 
-  static init(options?: Partial<CollectorOptions>) {
-    addCollector(options ?? {}, false)
+  static async init(options?: Partial<CollectorOptions>) {
+    return await addCollector(options ?? {}, false)
   }
 
-  static initWithOverride(options?: Partial<CollectorOptions>, sessionId?: string) {
-    addCollector(options ?? {}, true, sessionId)
+  static async initWithOverride(options?: Partial<CollectorOptions>, sessionId?: string) {
+    return await addCollector(options ?? {}, true, sessionId)
   }
 
   static identifySession(traitName: string, traitValue: SessionTraitValue) {
@@ -47,7 +61,7 @@ export default class GravityCollector {
   }
 }
 
-function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean, sessionId?: string) {
+async function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean, sessionId?: string) {
   if (!windowExists() && options?.window === undefined) {
     throw new Error('Gravity Data Collector needs a `window` instance in order to work')
   }
@@ -56,7 +70,7 @@ function addCollector(options: Partial<CollectorOptions>, overrideExisting: bool
     .withCookieTimeoutHandler(MAX_SESSION_DURATION)
 
   if (installer.window()._GravityCollector && overrideExisting) {
-    installer.window()._GravityCollector.collectorWrapper.terminateRecording(true, true, true)
+    installer.window()._GravityCollector.collectorWrapper?.terminateRecording(true, true, true)
   }
 
   if (!(installer.window()._GravityCollector && !overrideExisting)) {

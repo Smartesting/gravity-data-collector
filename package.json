@@ -1,6 +1,6 @@
 {
   "name": "@smartesting/gravity-data-collector",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Browser lib to collect your users behaviors and push the data in your Gravity project",
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
@@ -22,6 +22,7 @@
     "cypress": "cypress open --e2e --browser=electron",
     "cypress-run": "cypress run",
     "coverage": "vitest run --coverage",
+    "pack-tgz": "npm run build && npm pack",
     "prepare": "husky install",
     "prettier-check": "prettier --check .",
     "prettier-write": "prettier --write .",

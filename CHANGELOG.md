@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.2-Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v7.0.1...v7.0.2)
+
+### Info
+
+- add logger in collector options
+- add `stop` function to stop recording
+- don't record userActions on elements having (or having parent having) `rr-ignore` or `rr-block` classnames
+
 ## [7.0.1](https://github.com/Smartesting/gravity-data-collector/compare/v7.0.0...v7.0.1)
 
 ### Fixed
@@ -15,7 +23,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Info
 
-- new anonymization consideration: all texts/images are systematically anonymized. Exceptions are set via Gravity through the parameter `allowList` (see type `AnonymizationSettings`)
+- new anonymization consideration: all texts/images are systematically anonymized. Exceptions are set via Gravity
+  through the parameter `allowList` (see type `AnonymizationSettings`)
 - use @smartesting/rrweb-XXX packages
 - pass window from collectorOptions to video recorder
 
@@ -47,7 +56,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- if a `window` is passed as an option, it is now used to complete certain information on user actions, such as the title or the path of the page for example
+- if a `window` is passed as an option, it is now used to complete certain information on user actions, such as the
+  title or the path of the page for example
 
 ## [6.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v6.0.0...v6.1.0)
 

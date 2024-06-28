@@ -448,8 +448,8 @@ describe('when an instance already exist on the window object', () => {
     delete win._GravityCollector
   })
 
-  it('GravityCollector.init does not override it', () => {
-    GravityCollector.init({
+  it('GravityCollector.init does not override it', async () => {
+    await GravityCollector.init({
       authKey: uuid(),
       window: win,
     })
@@ -458,8 +458,8 @@ describe('when an instance already exist on the window object', () => {
   })
 
   describe('GravityCollector.initWithOverride', () => {
-    it('overrides the existing collector', () => {
-      GravityCollector.initWithOverride({
+    it('overrides the existing collector', async () => {
+      await GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
@@ -470,10 +470,10 @@ describe('when an instance already exist on the window object', () => {
       )
     })
 
-    it('stops the recording on the existing collector', () => {
+    it('stops the recording on the existing collector', async () => {
       const spyTerminateRecording = sinon.spy()
       fakeCollector.collectorWrapper.terminateRecording = spyTerminateRecording
-      GravityCollector.initWithOverride({
+      await GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
@@ -481,13 +481,13 @@ describe('when an instance already exist on the window object', () => {
       sinon.assert.calledOnceWithExactly(spyTerminateRecording, true, true, true)
     })
 
-    it('forces usage of a new session', () => {
-      GravityCollector.initWithOverride({
+    it('forces usage of a new session', async () => {
+      await GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
       const firstSessionId = GravityCollector.getSessionId(win)
-      GravityCollector.initWithOverride({
+      await GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
@@ -498,14 +498,14 @@ describe('when an instance already exist on the window object', () => {
       assert(firstSessionId !== secondSessionId, 'A new ID was generated')
     })
 
-    it('uses the provided session id', () => {
-      GravityCollector.initWithOverride({
+    it('uses the provided session id', async () => {
+      await GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
       const firstSessionId = GravityCollector.getSessionId(win)
       const sessionId = uuidv4()
-      GravityCollector.initWithOverride(
+      await GravityCollector.initWithOverride(
         {
           authKey: uuid(),
           window: win,
@@ -522,7 +522,7 @@ describe('when an instance already exist on the window object', () => {
       const handleUserAction = vi
         .spyOn(AbstractGravityClient.prototype, 'addSessionUserAction')
         .mockImplementation(asyncNop)
-      GravityCollector.initWithOverride({
+      void GravityCollector.initWithOverride({
         authKey: uuid(),
         window: win,
       })
