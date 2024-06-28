@@ -255,4 +255,16 @@ describe('createTargetedUserAction', () => {
       scrollableAncestors: [],
     })
   })
+
+  it('returns null if element is enclosed to ignored element', () => {
+    const { element, domWindow } = createElementInJSDOM('<div class="rr-ignore"><span>Click Me</span></div>', 'span')
+    const action = createTargetedUserAction(domWindow, mockClick(element), UserActionType.Click)
+    expect(action).toBeNull()
+  })
+
+  it('returns null if element is enclosed to blocked element', () => {
+    const { element, domWindow } = createElementInJSDOM('<div class="rr-block"><span>Click Me</span></div>', 'span')
+    const action = createTargetedUserAction(domWindow, mockClick(element), UserActionType.Click)
+    expect(action).toBeNull()
+  })
 })
