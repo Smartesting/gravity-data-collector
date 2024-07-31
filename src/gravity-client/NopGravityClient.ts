@@ -1,17 +1,12 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
-  AddSnapshotResponse,
-  DocumentSnapshot,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
-  SessionTraits,
-  SessionUserAction,
 } from '../types'
 import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityClient'
 import { IGravityClient } from './IGravityClient'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
-import { eventWithTime } from '@smartesting/rrweb-types'
 import { nop } from '../utils/nop'
 
 export default class NopGravityClient extends AbstractGravityClient implements IGravityClient {
@@ -19,24 +14,15 @@ export default class NopGravityClient extends AbstractGravityClient implements I
     super(options, recordingSettingsDispatcher, nop)
   }
 
-  async handleSessionUserActions(
-    sessionUserActions: readonly SessionUserAction[],
-  ): Promise<AddSessionUserActionsResponse> {
+  async handleSessionUserActions(): Promise<AddSessionUserActionsResponse> {
     return { error: null }
   }
 
-  async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
+  async handleSessionTraits(): Promise<IdentifySessionResponse> {
     return { error: null }
   }
 
-  async handleVideoRecords(
-    sessionId: string,
-    screenRecords: ReadonlyArray<eventWithTime>,
-  ): Promise<AddSessionRecordingResponse> {
-    return { error: null }
-  }
-
-  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
+  async handleVideoRecords(): Promise<AddSessionRecordingResponse> {
     return { error: null }
   }
 

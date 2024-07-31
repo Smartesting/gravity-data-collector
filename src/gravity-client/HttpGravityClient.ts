@@ -1,8 +1,6 @@
 import {
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
-  AddSnapshotResponse,
-  DocumentSnapshot,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
   Logger,
@@ -17,7 +15,6 @@ import {
   buildGravityTrackingPublishApiUrl,
   buildGravityTrackingSessionCollectionSettingsApiUrl,
   buildGravityTrackingSessionRecordingApiUrl,
-  buildGravityTrackingSnapshotApiUrl,
 } from '../gravityEndPoints'
 import { eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
@@ -73,24 +70,6 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     const responseBody: AddSessionRecordingResponse = await response.json()
     this.handleResponseStatus(response.status)
 
-    return responseBody
-  }
-
-  async handleSnapshots(sessionId: string, snapshots: ReadonlyArray<DocumentSnapshot>): Promise<AddSnapshotResponse> {
-    const snapshotsNdjson = snapshots.map((snapshot) => JSON.stringify(snapshot)).join('\n') + '\n'
-    const response = await this.fetch(
-      buildGravityTrackingSnapshotApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
-      {
-        method: 'POST',
-        redirect: 'follow',
-        body: snapshotsNdjson,
-        headers: {
-          'Content-Type': 'application/x-ndjson',
-        },
-      },
-    )
-    const responseBody: AddSnapshotResponse = await response.json()
-    this.handleResponseStatus(response.status)
     return responseBody
   }
 

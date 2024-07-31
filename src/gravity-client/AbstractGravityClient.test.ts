@@ -1,14 +1,9 @@
-import { expect, SpyInstance, vi } from 'vitest'
+import { expect, MockInstance, vi } from 'vitest'
 import { EventType, eventWithTime } from '@smartesting/rrweb-types'
 import RecordingSettingsDispatcher from './RecordingSettingsDispatcher'
 import { createDummy } from '../test-utils/dummyFactory'
 import { GravityClientOptions } from './AbstractGravityClient'
-import {
-  AddSessionUserActionsError,
-  AddSessionUserActionsResponse,
-  GravityRecordingSettingsResponse,
-  SessionUserAction,
-} from '../types'
+import { AddSessionUserActionsError, AddSessionUserActionsResponse, GravityRecordingSettingsResponse } from '../types'
 import NopGravityClient from './NopGravityClient'
 import { nop } from '../utils/nop'
 
@@ -58,9 +53,7 @@ describe('AbstractGravityClient', () => {
 
     it('does not handle screen records when user actions are sent with error', async () => {
       const gravityClient = new (class extends TestGravityClient {
-        async handleSessionUserActions(
-          sessionUserActions: ReadonlyArray<SessionUserAction>,
-        ): Promise<AddSessionUserActionsResponse> {
+        async handleSessionUserActions(): Promise<AddSessionUserActionsResponse> {
           return { error: AddSessionUserActionsError.invalidFormat }
         }
       })(DEFAULT_OPTIONS)
@@ -76,7 +69,7 @@ describe('AbstractGravityClient', () => {
 
   describe('handle session traits', () => {
     let gravityClient: TestGravityClient
-    let handleSessionTraits: SpyInstance
+    let handleSessionTraits: MockInstance
 
     beforeEach(async () => {
       gravityClient = new TestGravityClient({
@@ -152,7 +145,6 @@ class TestGravityClient extends NopGravityClient {
     recordingSettingsDispatcher.dispatch({
       sessionRecording: true,
       videoRecording: true,
-      snapshotRecording: true,
     })
   }
 

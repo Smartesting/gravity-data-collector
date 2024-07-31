@@ -6,7 +6,7 @@ import {
   SessionUserAction,
   UserActionType,
 } from '../types'
-import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
@@ -71,8 +71,8 @@ describe.each([
     clientClass: HttpGravityClient,
   },
 ])('GravityCollector.init() in $context', ({ installer, clientClass }) => {
-  let handleUserAction: SpyInstance<[SessionUserAction], Promise<void>>
-  let handleSessionTrait: SpyInstance<[string, SessionTraits], Promise<void>>
+  let handleUserAction: MockInstance<(userAction: SessionUserAction) => Promise<void>>
+  let handleSessionTrait: MockInstance<(sessionId: string, sessionTraits: SessionTraits) => Promise<void>>
 
   beforeEach(() => {
     handleUserAction = vi.spyOn(AbstractGravityClient.prototype, 'addSessionUserAction').mockImplementation(asyncNop)
@@ -80,7 +80,6 @@ describe.each([
     vi.spyOn(clientClass.prototype, 'readSessionCollectionSettings').mockResolvedValue(
       buildGravityRecordingSettingsResponse({
         videoRecording: true,
-        snapshotRecording: true,
       }),
     )
   })
@@ -398,7 +397,6 @@ describe.each([
             settings: {
               sessionRecording: true,
               videoRecording: true,
-              snapshotRecording: true,
             },
           },
         }),

@@ -1,10 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi, vitest } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, MockInstance, vi, vitest } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import EventListenersHandler from '../event-listeners-handler/EventListenersHandler'
 import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 import CollectorWrapper from './CollectorWrapper'
-import { createDummy, dummyDocumentSnapshot } from '../test-utils/dummyFactory'
+import { createDummy } from '../test-utils/dummyFactory'
 import MemorySessionIdHandler from '../session-id-handler/MemorySessionIdHandler'
 import { CookieStrategy, SessionTraits, SessionUserAction, TargetedUserAction, UserActionType } from '../types'
 import { eventWithTime } from '@smartesting/rrweb-types'
@@ -16,8 +16,7 @@ import { getLastCallFirstArgument } from '../test-utils/spies'
 import HttpGravityClient from '../gravity-client/HttpGravityClient'
 import CookieTimeoutHandler from '../timeout-handler/CookieTimeoutHandler'
 import VideoRecorderHandler from '../video-recorder/VideoRecorderHandler'
-import { buildGravityRecordingSettingsResponse, mockBuildAndSendSnapshot } from '../test-utils/mocks'
-import SnapshotRecorderHandler, { isSnapshotTrigger } from '../snapshot-recorder/SnapshotRecorderHandler'
+import { buildGravityRecordingSettingsResponse } from '../test-utils/mocks'
 
 describe.each([
   {
@@ -35,13 +34,11 @@ describe.each([
       }),
   },
 ])('Session timeout management on $context', ({ clientClass, installer }) => {
-  let initializeEventListeners: SpyInstance
-  let initializeVideoRecording: SpyInstance
-  let initializeSnapshotRecording: SpyInstance
-  let handleSessionUserActions: SpyInstance
-  let handleSessionTraits: SpyInstance
-  let handleVideoRecords: SpyInstance
-  let handleSnapshots: SpyInstance
+  let initializeEventListeners: MockInstance
+  let initializeVideoRecording: MockInstance
+  let handleSessionUserActions: MockInstance
+  let handleSessionTraits: MockInstance
+  let handleVideoRecords: MockInstance
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -50,27 +47,20 @@ describe.each([
     )
     initializeEventListeners = vi.spyOn(EventListenersHandler.prototype, 'initializeEventListeners')
     initializeVideoRecording = vi.spyOn(VideoRecorderHandler.prototype, 'initializeRecording').mockImplementation(nop)
-    initializeSnapshotRecording = vi
-      .spyOn(SnapshotRecorderHandler.prototype, 'initializeRecording')
-      .mockImplementation(nop)
     handleSessionUserActions = vi
       .spyOn(clientClass.prototype, 'handleSessionUserActions')
       .mockResolvedValue({ error: null })
     handleSessionTraits = vi.spyOn(clientClass.prototype, 'handleSessionTraits').mockResolvedValue({ error: null })
     handleVideoRecords = vi.spyOn(clientClass.prototype, 'handleVideoRecords').mockResolvedValue({ error: null })
-    handleSnapshots = vi.spyOn(clientClass.prototype, 'handleSnapshots').mockResolvedValue({ error: null })
-    vi.spyOn(SnapshotRecorderHandler.prototype, 'buildAndSendSnapshot').mockImplementation(mockBuildAndSendSnapshot)
   })
 
   afterEach(() => {
     vi.useRealTimers()
     initializeEventListeners.mockRestore()
     initializeVideoRecording.mockRestore()
-    initializeSnapshotRecording.mockRestore()
     handleSessionUserActions.mockRestore()
     handleSessionTraits.mockRestore()
     handleVideoRecords.mockRestore()
-    handleSnapshots.mockRestore()
   })
 
   it('flush events if timeout is handled', async () => {
@@ -111,7 +101,6 @@ describe.each([
     ])
     expect(handleSessionTraits.mock.lastCall).toStrictEqual(['sessionId-1', { id: 'wave-1' }])
     expect(handleVideoRecords.mock.lastCall).toStrictEqual(['sessionId-1', [{ data: 'wave-1' }]])
-    expect(handleSnapshots.mock.lastCall).toStrictEqual(['sessionId-1', [dummyDocumentSnapshot()]])
 
     await vi.advanceTimersByTimeAsync(2000)
     await collector.userActionHandler.handle(
@@ -182,8 +171,8 @@ describe.each([
         .withTimeoutHandler(cookieTimeoutHandler),
   },
 ])('timeout in context $context', ({ installer, timeoutHandler }) => {
-  let handleUserAction: SpyInstance<[SessionUserAction], Promise<void>>
-  let handleSessionTrait: SpyInstance<[string, SessionTraits], Promise<void>>
+  let handleUserAction: MockInstance<(userAction: SessionUserAction) => Promise<void>>
+  let handleSessionTrait: MockInstance<(sessionId: string, sessionTraits: SessionTraits) => Promise<void>>
 
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true })
@@ -225,9 +214,7 @@ describe.each([
 
 async function emitEachEventKind(collector: CollectorWrapper, tag: string) {
   const action = createDummy<TargetedUserAction>({ type: UserActionType.Change, target: { element: tag } })
-  assert(isSnapshotTrigger(action))
   await collector.userActionHandler.handle(action)
   await collector.sessionTraitHandler.handle('id', tag)
   await collector.videoRecorderHandler.handle(createDummy<eventWithTime>({ data: tag }))
-  collector.snapshotRecorderHandler.handle()
 }

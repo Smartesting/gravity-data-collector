@@ -1,8 +1,6 @@
 import { recordOptions } from '@smartesting/rrweb'
 import { eventWithTime } from '@smartesting/rrweb-types'
-import { snapshot } from '@smartesting/rrweb-snapshot'
 
-export type SnapshotOptions = Parameters<typeof snapshot>[1]
 export type VideoOptions = recordOptions<eventWithTime>
 
 const RECORDING_SETTINGS: VideoOptions = {

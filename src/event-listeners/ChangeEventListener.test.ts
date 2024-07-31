@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, MockInstance, vitest } from 'vitest'
 import { fireEvent, getByRole, getByTestId, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 import ChangeEventListener from '../event-listeners/ChangeEventListener'
@@ -9,8 +9,8 @@ import { QueryType } from '../types'
 
 describe('ChangeEventListener', () => {
   let userActionHandler: IUserActionHandler
-  let handleSpy: SpyInstance
-  let createTargetedUserActionSpy: SpyInstance
+  let handleSpy: MockInstance
+  let createTargetedUserActionSpy: MockInstance
 
   const dataTestId = 'my-data-testId'
 

@@ -15,7 +15,6 @@ chrome.storage.local.get(
     'authorizedSites',
     'requestInterval',
     'useHashInUrlAsPathname',
-    'inlineResources',
   ],
   (settings) => {
     if (settings.hasOwnProperty('debugMode')) {
@@ -35,9 +34,6 @@ chrome.storage.local.get(
     }
     if (settings.hasOwnProperty('useHashInUrlAsPathname')) {
       options.useHashInUrlAsPathname = settings.useHashInUrlAsPathname
-    }
-    if (settings.hasOwnProperty('inlineResources')) {
-      options.inlineResources = settings.inlineResources
     }
     console.log({ options })
     if (
@@ -74,9 +70,6 @@ chrome.runtime.onMessage.addListener((message: Message) => {
       break
     case 'updateRequestInterval':
       options.requestInterval = message.interval
-      break
-    case 'updateInlineResources':
-      options.inlineResources = message.value
       break
     case 'updateUseHashInUrlAsPathname':
       options.useHashInUrlAsPathname = message.value

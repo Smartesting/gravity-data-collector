@@ -28,7 +28,6 @@ beforeEach(() => {
   cy.interceptGravityPublish()
   cy.interceptGravityIdentify()
   cy.interceptGravityRecord()
-  cy.interceptGravitySnapshot()
 
   cy.task('getCollectorOptions').then((collectorOptions) => {
     if (!isPartialCollectorOptions(collectorOptions)) return

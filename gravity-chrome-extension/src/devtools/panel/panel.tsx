@@ -20,7 +20,6 @@ function Panel() {
   const [authorizedSites, setAuthorizedSites] = useState<string[]>([])
   const [requestInterval, setRequestInterval] = useState(0)
   const [useHashInUrlAsPathname, setUseHashInUrlAsPathname] = useState(false)
-  const [inlineResources, setInlineResources] = useState(true)
   const [newSite, setNewSite] = useState<string>('')
 
   useEffect(() => {
@@ -32,7 +31,6 @@ function Panel() {
         'gravityServerUrl',
         'requestInterval',
         'useHashInUrlAsPathname',
-        'inlineResources',
       ],
       function (settings: any) {
         setDebugMode(Boolean(settings.debugMode) ?? false)
@@ -45,7 +43,6 @@ function Panel() {
         setGravityServerUrl(settings.gravityServerUrl ?? 'http://localhost:3000/')
         setRequestInterval(Number(settings.requestInterval) ?? 0)
         setUseHashInUrlAsPathname(Boolean(settings.useHashInUrlAsPathname) ?? false)
-        setInlineResources(Boolean(settings.inlineResources) ?? true)
       },
     )
   }, [])
@@ -89,14 +86,6 @@ function Panel() {
       value: useHashInUrlAsPathname,
     })
   }, [useHashInUrlAsPathname])
-
-  useEffect(() => {
-    void chrome.storage.local.set({ inlineResources })
-    sendMessageAction({
-      action: 'updateInlineResources',
-      value: inlineResources,
-    })
-  }, [inlineResources])
 
   useEffect(() => {
     void chrome.storage.local.set({ authorizedSites })
@@ -225,17 +214,6 @@ function Panel() {
               />
             }
             label="use # in URL as pathname"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={inlineResources}
-                onChange={(_event, checked) => {
-                  setInlineResources(checked)
-                }}
-              />
-            }
-            label="inline resources (CSS/images)"
           />
         </FormGroup>
       </div>

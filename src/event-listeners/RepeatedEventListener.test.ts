@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, MockInstance, vitest } from 'vitest'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
@@ -12,8 +12,8 @@ class FakeListener extends RepeatedEventListener {
 
 describe('RepeatedEventListener', () => {
   let userActionHandler: IUserActionHandler
-  let handleSpy: SpyInstance
-  let createTargetedUserActionSpy: SpyInstance
+  let handleSpy: MockInstance
+  let createTargetedUserActionSpy: MockInstance
 
   describe('listener', () => {
     beforeEach(() => {

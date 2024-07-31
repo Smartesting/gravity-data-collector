@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, MockInstance, vitest } from 'vitest'
 import { fireEvent, getByRole, waitFor } from '@testing-library/dom'
 import ClickEventListener from '../event-listeners/ClickEventListener'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
@@ -8,8 +8,8 @@ import { QueryType } from '../types'
 
 describe('ClickEventListener', () => {
   let userActionHandler: IUserActionHandler
-  let handleSpy: SpyInstance
-  let createTargetedUserActionSpy: SpyInstance
+  let handleSpy: MockInstance
+  let createTargetedUserActionSpy: MockInstance
 
   beforeEach(() => {
     vitest.restoreAllMocks()

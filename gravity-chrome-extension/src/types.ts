@@ -26,7 +26,3 @@ export type Message =
       action: 'updateUseHashInUrlAsPathname'
       value: boolean
     }
-  | {
-      action: 'updateInlineResources'
-      value: boolean
-    }

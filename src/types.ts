@@ -241,7 +241,6 @@ export type CollectorOptions = CookieSettings & {
   enabledListeners: Listener[] | undefined
   buildId: string | undefined
   useHashInUrlAsPathname: boolean
-  inlineResources: boolean
   logger?: typeof console.log
 }
 
@@ -280,7 +279,6 @@ export type AnonymizationSettings = NoAnonymizationSettings | WithAnonymizationS
 export interface GravityRecordingSettings {
   sessionRecording: boolean
   videoRecording: boolean
-  snapshotRecording: boolean
   anonymizationSettings?: AnonymizationSettings
 }
 
@@ -289,7 +287,6 @@ export const DEFAULT_ANONYMIZATION_SETTINGS: AnonymizationSettings = { anonymize
 export const NO_RECORDING_SETTINGS: GravityRecordingSettings = {
   sessionRecording: false,
   videoRecording: false,
-  snapshotRecording: false,
 }
 
 export interface CreateSelectorsOptions {
@@ -347,20 +344,6 @@ export enum AddSessionRecordingError {
   invalidFormat = 'invalid_format',
 }
 
-export interface AddSnapshotResponse {
-  error: AddSnapshotError | null
-}
-
-export enum AddSnapshotError {
-  accessDenied = 'no_access',
-  projectExpired = 'project_expired',
-  projectNotFound = 'project_not_found',
-  collectionNotFound = 'collection_not_found',
-  sessionNotFound = 'session_not_found',
-  notUUID = 'not_a_uuid',
-  invalidFormat = 'invalid_format',
-}
-
 export interface GravityRecordingSettingsResponse {
   settings: GravityRecordingSettings | null
   error: GravityRecordingSettingsError | null
@@ -372,23 +355,6 @@ export enum GravityRecordingSettingsError {
   projectNotFound = 'project_not_found',
   collectionNotFound = 'collection_not_found',
   incorrectSource = 'incorrect_source',
-}
-
-interface ViewportSize {
-  width: number
-  height: number
-}
-
-export interface DocumentSnapshot {
-  content: string
-  pathname: string
-  timestamp: number
-  viewport: ViewportSize
-  compressor?: Compressor
-}
-
-export enum Compressor {
-  fflate = 'fflate',
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [

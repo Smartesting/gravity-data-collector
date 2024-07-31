@@ -1,15 +1,5 @@
-import {
-  GravityDocument,
-  GravityRecordingSettings,
-  GravityRecordingSettingsError,
-  GravityRecordingSettingsResponse,
-} from '../types'
+import { GravityRecordingSettings, GravityRecordingSettingsError, GravityRecordingSettingsResponse } from '../types'
 import { vi } from 'vitest'
-import SnapshotRecorderHandler from '../snapshot-recorder/SnapshotRecorderHandler'
-import assert from 'assert'
-import HttpGravityClient from '../gravity-client/HttpGravityClient'
-import { dummyDocumentSnapshot } from './dummyFactory'
-import ConsoleGravityClient from '../gravity-client/ConsoleGravityClient'
 
 export function mockWindowScreen() {
   Object.defineProperty(window, 'screen', {
@@ -24,18 +14,6 @@ export function mockWindowScreen() {
     },
     writable: true,
   })
-}
-
-export function mockWindowDocument(): GravityDocument {
-  const document = {
-    title: 'Hello world!',
-    cookie: '',
-    location: {
-      hostname: 'https://www.foo.com',
-    },
-  }
-  Object.defineProperty(window, 'document', { value: document })
-  return document
 }
 
 export function mockWindowLocation() {
@@ -93,20 +71,10 @@ export function mockFetch<T>(params?: MockFetchParams<T>) {
   })
 }
 
-export function mockBuildAndSendSnapshot(this: SnapshotRecorderHandler) {
-  // @ts-expect-error
-  const gravityClient = this.gravityClient
-  assert(gravityClient instanceof HttpGravityClient || gravityClient instanceof ConsoleGravityClient)
-  // @ts-expect-error
-  const sessionIdHandler = this.sessionIdHandler
-  void gravityClient.handleSnapshots(sessionIdHandler.get(), [dummyDocumentSnapshot()])
-}
-
 export function buildGravityRecordingSettings(settings: Partial<GravityRecordingSettings>): GravityRecordingSettings {
   return {
     sessionRecording: true,
     videoRecording: false,
-    snapshotRecording: false,
     ...settings,
   }
 }

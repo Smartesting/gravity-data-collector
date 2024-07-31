@@ -3,7 +3,7 @@ import { AnonymizationSettings, UserActionType } from '../types'
 import IUserActionHandler from '../user-action/IUserActionHandler'
 
 import * as createTargetedUserActionModule from '../user-action/createTargetedUserAction'
-import { expect, vi, SpyInstance } from 'vitest'
+import { expect, MockInstance, vi } from 'vitest'
 
 class CustomEventListener extends TargetedEventListener {
   userActionType = UserActionType.Reset
@@ -47,7 +47,7 @@ describe('TargetedEventListener', () => {
     CAPTURING_PHASE: 0,
     NONE: 0,
   }
-  let createTargetedUserActionSpy: SpyInstance
+  let createTargetedUserActionSpy: MockInstance
 
   beforeEach(() => {
     createTargetedUserActionSpy = vi

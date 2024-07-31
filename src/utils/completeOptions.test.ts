@@ -142,7 +142,6 @@ describe('completeOptions', () => {
         useHashInUrlAsPathname: false,
         cookieStrategy: CookieStrategy.default,
         cookieWriter: null,
-        inlineResources: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -172,7 +171,6 @@ describe('completeOptions', () => {
         useHashInUrlAsPathname: false,
         cookieStrategy: CookieStrategy.default,
         cookieWriter: null,
-        inlineResources: true,
       }
       expect(completed).toStrictEqual(expected)
     })
@@ -206,7 +204,6 @@ describe('completeOptions', () => {
           useHashInUrlAsPathname: false,
           cookieStrategy: CookieStrategy.default,
           cookieWriter: null,
-          inlineResources: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -234,7 +231,6 @@ describe('completeOptions', () => {
           useHashInUrlAsPathname: false,
           cookieStrategy: CookieStrategy.default,
           cookieWriter: null,
-          inlineResources: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -262,7 +258,6 @@ describe('completeOptions', () => {
           useHashInUrlAsPathname: false,
           cookieStrategy: CookieStrategy.default,
           cookieWriter: null,
-          inlineResources: true,
         }
         expect(completed).toStrictEqual(expected)
       })
@@ -290,7 +285,6 @@ describe('completeOptions', () => {
           useHashInUrlAsPathname: false,
           cookieStrategy: CookieStrategy.default,
           cookieWriter: null,
-          inlineResources: true,
         }
         expect(completed).toStrictEqual(expected)
       })

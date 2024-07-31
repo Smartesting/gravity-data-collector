@@ -1,31 +1,11 @@
-import ITextCompressor from '../../src/text-compressor/ITextCompressor'
-import FFLateCompressor from '../../src/text-compressor/FFlateCompressor'
 import { AnonymizationSettings, TargetDisplayInfo, TargetedUserAction } from '../../src/types'
 import isTargetedUserAction from '../../src/utils/isTargetedUserAction'
-
-interface ExpectedSnapshotContent {
-  '#fieldset1 p': string
-  'label[for=textField]': string
-  '#textField': string
-  'label[for=passwordField]': string
-  '#passwordField': string
-  'label[for=textAreaField]': string
-  '#textAreaField': string
-  '#fieldset1 input[type=submit]': string
-  '#fieldset2 p': string
-  'label[for=textField1]': string
-  '#textField1': string
-  'label[for=passwordField1]': string
-  '#passwordField1': string
-  'label[for=textAreaField1]': string
-  '#textAreaField1': string
-  '#fieldset2 input[type=submit]': string
-}
 
 interface UserActionAnonymizedFields {
   displayInfo?: TargetDisplayInfo
   value?: string
 }
+
 interface ExpectedUserActionsContent {
   '#textField': UserActionAnonymizedFields
   '#passwordField': UserActionAnonymizedFields
@@ -38,7 +18,6 @@ interface ExpectedUserActionsContent {
 }
 
 describe('Anonymizing context', () => {
-  let snapshotContent: string
   let publishedUserActions: TargetedUserAction[]
 
   beforeEach(() => {
@@ -46,17 +25,6 @@ describe('Anonymizing context', () => {
     cy.clearLocalStorage()
     publishedUserActions = []
   })
-
-  const firstFormClear: Partial<ExpectedSnapshotContent> = {
-    '#fieldset1 p': 'This is some text shown here',
-    'label[for=textField]': 'An input field',
-    '#textField': 'Some stuff here',
-    'label[for=passwordField]': 'A password field',
-    '#passwordField': '***************',
-    'label[for=textAreaField]': 'A textarea',
-    '#textAreaField': 'Some stuff here',
-    '#fieldset1 input[type=submit]': 'Submit the form',
-  }
 
   const firstFormUserActionsClear: Partial<ExpectedUserActionsContent> = {
     '#textField': {
@@ -102,28 +70,6 @@ describe('Anonymizing context', () => {
         label: '# ########',
       },
     },
-  }
-
-  const firstFormAnonymized: Partial<ExpectedSnapshotContent> = {
-    '#fieldset1 p': '#### ## #### #### ##### ####',
-    'label[for=textField]': '## ##### #####',
-    '#textField': '***************',
-    'label[for=passwordField]': '# ######## #####',
-    '#passwordField': '***************',
-    'label[for=textAreaField]': '# ########',
-    '#textAreaField': '***************',
-    '#fieldset1 input[type=submit]': '##### ### ####',
-  }
-
-  const secondFormClear: Partial<ExpectedSnapshotContent> = {
-    '#fieldset2 p': 'This is some text shown here',
-    'label[for=textField1]': 'An input field',
-    '#textField1': 'Some other stuff there',
-    'label[for=passwordField1]': 'A password field',
-    '#passwordField1': '**********************',
-    'label[for=textAreaField1]': 'A textarea',
-    '#textAreaField1': 'Some other stuff there',
-    '#fieldset2 input[type=submit]': 'Submit the form',
   }
 
   const secondFormUserActionsClear: Partial<ExpectedUserActionsContent> = {
@@ -172,17 +118,6 @@ describe('Anonymizing context', () => {
     },
   }
 
-  const secondFormAnonymized: Partial<ExpectedSnapshotContent> = {
-    '#fieldset2 p': '#### ## #### #### ##### ####',
-    'label[for=textField1]': '## ##### #####',
-    '#textField1': '**********************',
-    'label[for=passwordField1]': '# ######## #####',
-    '#passwordField1': '**********************',
-    'label[for=textAreaField1]': '# ########',
-    '#textAreaField1': '**********************',
-    '#fieldset2 input[type=submit]': '###### ### #####',
-  }
-
   function fillAllInputs() {
     const inputIds = ['#textField', '#passwordField', '#textAreaField']
 
@@ -198,14 +133,12 @@ describe('Anonymizing context', () => {
 
   function runTest(
     anonymizationSettings: AnonymizationSettings,
-    expectedScreenshotContent: Partial<ExpectedSnapshotContent>,
     expectedUserActions: Partial<ExpectedUserActionsContent>,
   ) {
     cy.interceptGravityCollectionSettings({
       settings: {
         sessionRecording: true,
         videoRecording: true,
-        snapshotRecording: true,
         anonymizationSettings,
       },
     })
@@ -215,16 +148,9 @@ describe('Anonymizing context', () => {
       publishedUserActions.push(...body.filter(isTargetedUserAction))
     })
 
-    cy.interceptGravitySnapshot((req) => {
-      const compressedSnapshotContent = req.body.content
-      const textCompressor: ITextCompressor = FFLateCompressor
-      snapshotContent = textCompressor.decompress(compressedSnapshotContent)
-    })
-
     cy.openBaseSite('anonymization.html')
     fillAllInputs().then(() => {
-      cy.wait('@sendGravitySnapshot').then(() => {
-        expectValuesInScreenshot(snapshotContent, expectedScreenshotContent)
+      cy.wait('@sendGravityRequest').then(() => {
         expectValuesInSessionUserActions(publishedUserActions, expectedUserActions)
       })
     })
@@ -233,10 +159,6 @@ describe('Anonymizing context', () => {
   it('does not anonymize anything when anonymizationSettings.anonymize is false', () => {
     runTest(
       { anonymize: false },
-      {
-        ...firstFormClear,
-        ...secondFormClear,
-      },
       {
         ...firstFormUserActionsClear,
         ...secondFormUserActionsClear,
@@ -249,13 +171,6 @@ describe('Anonymizing context', () => {
       {
         anonymize: true,
         allowList: [],
-      },
-      {
-        ...firstFormAnonymized,
-        ...secondFormAnonymized,
-        // Note: apparently, rrweb does not anonymize input[type=submit] - should it be fixed?
-        '#fieldset1 input[type=submit]': 'Submit the form',
-        '#fieldset2 input[type=submit]': 'Submit the form',
       },
       {
         ...firstFormUserActionsAnonymized,
@@ -276,55 +191,12 @@ describe('Anonymizing context', () => {
         ],
       },
       {
-        ...firstFormClear,
-        ...secondFormAnonymized,
-        // Note: apparently, rrweb does not anonymize input[type=submit] - should it be fixed?
-        '#fieldset1 input[type=submit]': 'Submit the form',
-        '#fieldset2 input[type=submit]': 'Submit the form',
-      },
-      {
         ...firstFormUserActionsClear,
         ...secondFormUserActionsAnonymized,
       },
     )
   })
 })
-
-function expectValuesInScreenshot(html: string, expected: Partial<ExpectedSnapshotContent>) {
-  const iframe = window.document.createElement('iframe')
-  if (!iframe.contentDocument) return
-
-  window.document.body.appendChild(iframe)
-  iframe.contentDocument.write(html)
-
-  const actual: Partial<ExpectedSnapshotContent> = {}
-
-  for (const selector of Object.keys(expected)) {
-    const element = iframe.contentDocument.querySelector(selector)
-
-    if (isValuedElement(element)) {
-      actual[selector as keyof ExpectedSnapshotContent] = element.value
-    } else if (isTextElement(element)) {
-      actual[selector as keyof ExpectedSnapshotContent] = element.textContent
-    } else {
-      throw new Error(`Unable to compare value for ${String(element)}`)
-    }
-  }
-
-  expectDeepStrictEqual(expected, actual, (v) => {
-    const cleaned = trimRecordValues(v)
-    if (cleaned) return cleaned
-    throw new Error('...')
-  })
-}
-
-function isValuedElement(tbd: any): tbd is { value: string } {
-  return tbd !== null && (tbd as { value: string }).value !== undefined
-}
-
-function isTextElement(tbd: any): tbd is { textContent: string } {
-  return tbd !== null && (tbd as { textContent: string }).textContent !== undefined
-}
 
 function expectValuesInSessionUserActions(
   publishedUserActions: TargetedUserAction[],
@@ -333,7 +205,10 @@ function expectValuesInSessionUserActions(
   const targets = Object.keys(expected)
   const actual = findUserActionAnonymizedFields(targets, publishedUserActions)
 
-  console.log({ expected, actual })
+  console.log({
+    expected,
+    actual,
+  })
 
   expectDeepStrictEqual(expected, actual, makeComparableExpectedUserActionsContent)
 }

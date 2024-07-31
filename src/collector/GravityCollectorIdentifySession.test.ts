@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { SessionTraitValue } from '../types'
-import { afterEach, beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, MockInstance, vi } from 'vitest'
 import { collectorInstaller } from './CollectorInstaller'
 import { asyncNop, nop } from '../utils/nop'
 import SessionTraitHandler from '../session-trait/SessionTraitHandler'
@@ -9,8 +9,8 @@ describe.each([
   { context: 'dry run mode (debug=true)', installer: () => collectorInstaller({ debug: true }) },
   { context: 'live mode (debug=false)', installer: () => collectorInstaller({ debug: false, authKey: uuid() }) },
 ])('GravityCollector.identifySession() in $context', ({ installer }) => {
-  let handleSessionTrait: SpyInstance<[traitName: string, traitValue: SessionTraitValue], Promise<void>>
-  let consoleWarn: SpyInstance<any[], void>
+  let handleSessionTrait: MockInstance<(traitName: string, traitValue: SessionTraitValue) => Promise<void>>
+  let consoleWarn: MockInstance<(...args: any[]) => void>
 
   beforeEach(() => {
     handleSessionTrait = vi.spyOn(SessionTraitHandler.prototype, 'handle').mockImplementation(asyncNop)

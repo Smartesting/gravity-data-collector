@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, SpyInstance, vitest } from 'vitest'
+import { beforeEach, describe, expect, it, MockInstance, vitest } from 'vitest'
 import { fireEvent, getAllByRole, getByRole, waitFor } from '@testing-library/dom'
 import createElementInJSDOM from '../test-utils/createElementInJSDOM'
 import KeyUpEventListener from '../event-listeners/KeyUpEventListener'
@@ -8,8 +8,8 @@ import { QueryType } from '../types'
 
 describe('KeyUpEventListener', () => {
   let userActionHandler: IUserActionHandler
-  let handleSpy: SpyInstance
-  let createTargetedUserActionSpy: SpyInstance
+  let handleSpy: MockInstance
+  let createTargetedUserActionSpy: MockInstance
 
   describe('listener', () => {
     beforeEach(() => {
