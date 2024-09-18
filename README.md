@@ -96,7 +96,6 @@ By default, the following selectors are computed:
   - `tag`: selection based on the tags (eg: `html body div ul li`)
   - `nthChild`: selection based on nth-child (eg: `:nth-child(2) > :nth-child(4)`)
   - `attributes`: if available, selection based on the nodes attributes (eg: `[name=]`)
-  - `combined`: a combination of the previous selectors (eg: `#menu nav :nth-child(2)`)
 - `attributes`: a hash of attributes provided by the user (default: `['data-testid']`)
 
 #### Tweaking selectors
@@ -115,7 +114,9 @@ the `role` attributes of the HTML element with which the user
 interacts.
 
 ```typescript
-GravityCollector.init({ selectorsOptions: { queries: ['class', 'tag'] } })
+import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+
+GravityCollector.init({ selectorsOptions: { queries: [QueryType.class, QueryType.tag] } })
 ```
 
 This configuration will collect the CSS `class`(es), the `tag` and the `data-testid` (default if `attributes` is not
@@ -126,9 +127,11 @@ Alternatively, you can also exclude some
 selectors of the `queries` field. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
+import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+
 GravityCollector.init({
   selectorsOptions: {
-    excludedQueries: ['id'],
+    excludedQueries: [QueryType.id],
   },
 })
 ```
@@ -136,9 +139,11 @@ GravityCollector.init({
 You can specify both `queries` and `attributes` fields:
 
 ```typescript
+import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+
 GravityCollector.init({
   selectorsOptions: {
-    queries: ['class', 'tag'],
+    queries: [QueryType.class, QueryType.tag],
     attributes: ['data-testid', 'role'],
   },
 })
