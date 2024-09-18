@@ -114,7 +114,7 @@ the `role` attributes of the HTML element with which the user
 interacts.
 
 ```typescript
-import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+import { QueryType } from '@smartesting/gravity-data-collector/dist/types'
 
 GravityCollector.init({ selectorsOptions: { queries: [QueryType.class, QueryType.tag] } })
 ```
@@ -127,7 +127,7 @@ Alternatively, you can also exclude some
 selectors of the `queries` field. For example, if you do not want id-based selectors, you can specify it this way:
 
 ```typescript
-import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+import { QueryType } from '@smartesting/gravity-data-collector/dist/types'
 
 GravityCollector.init({
   selectorsOptions: {
@@ -139,7 +139,7 @@ GravityCollector.init({
 You can specify both `queries` and `attributes` fields:
 
 ```typescript
-import { QueryType } from "@smartesting/gravity-data-collector/dist/types"
+import { QueryType } from '@smartesting/gravity-data-collector/dist/types'
 
 GravityCollector.init({
   selectorsOptions: {
