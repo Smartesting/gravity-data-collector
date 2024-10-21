@@ -313,6 +313,8 @@ export enum AddSessionUserActionsError {
   invalidFormat = 'invalid_format',
   projectNotFound = 'project_not_found',
   projectExpired = 'project_expired',
+  subscriptionNotFound = 'subscription_not_found',
+  sessionsCountExceeded = 'sessions_count_exceeded',
 }
 
 export interface IdentifySessionResponse {
@@ -355,6 +357,8 @@ export enum GravityRecordingSettingsError {
   projectNotFound = 'project_not_found',
   collectionNotFound = 'collection_not_found',
   incorrectSource = 'incorrect_source',
+  subscriptionNotFound = 'subscription_not_found',
+  sessionsCountExceeded = 'sessions_count_exceeded',
 }
 
 export const CLICKABLE_ELEMENT_TAG_NAMES: ReadonlyArray<keyof HTMLElementTagNameMap> = [
