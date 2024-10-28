@@ -1,23 +1,23 @@
 export const GRAVITY_SERVER_ADDRESS = 'https://api.gravity.smartesting.com'
 
-export function buildGravityTrackingPublishApiUrl(authKey: string, gravityServerUrl: string) {
-  return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/publish`
+export function buildGravityTrackingPublishApiUrl(authKey: string, collectorServerUrl: string) {
+  return `${trackingUrlStartPart(collectorServerUrl)}/${authKey}/publish`
 }
 
 export function buildGravityTrackingIdentifySessionApiUrl(
   authKey: string,
-  gravityServerUrl: string,
+  collectorServerUrl: string,
   sessionId: string,
 ) {
-  return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/identify/${sessionId}`
+  return `${trackingUrlStartPart(collectorServerUrl)}/${authKey}/identify/${sessionId}`
 }
 
 export function buildGravityTrackingSessionRecordingApiUrl(
   authKey: string,
-  gravityServerUrl: string,
+  collectorServerUrl: string,
   sessionId: string,
 ) {
-  return `${trackingUrlStartPart(gravityServerUrl)}/${authKey}/record/${sessionId}`
+  return `${trackingUrlStartPart(collectorServerUrl)}/${authKey}/record/${sessionId}`
 }
 
 export function buildGravityTrackingSessionCollectionSettingsApiUrl(authKey: string, gravityServerUrl: string) {

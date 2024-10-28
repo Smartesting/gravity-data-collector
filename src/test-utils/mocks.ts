@@ -55,18 +55,17 @@ export function mockKeyDown(target: HTMLElement, key: string, code: string): Key
   } as unknown as KeyboardEvent
 }
 
-type MockFetchParams<T> = Partial<{
+type MockFetchParams<BODY> = Partial<{
   status: number
-  responseBody: T
+  responseBody: (...args: any[]) => BODY
 }>
 
 export function mockFetch<T>(params?: MockFetchParams<T>) {
   const status = params?.status ?? 200
-  const responseBody = params?.responseBody ?? {}
-  return vi.fn().mockImplementation(() => {
+  return vi.fn().mockImplementation((args) => {
     return {
       status,
-      json: async () => responseBody,
+      json: async () => params?.responseBody?.(args) ?? {},
     }
   })
 }

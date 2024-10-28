@@ -279,6 +279,7 @@ export type AnonymizationSettings = NoAnonymizationSettings | WithAnonymizationS
 export interface GravityRecordingSettings {
   sessionRecording: boolean
   videoRecording: boolean
+  collectorApiUrl?: string
   anonymizationSettings?: AnonymizationSettings
 }
 

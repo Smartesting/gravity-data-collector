@@ -31,22 +31,26 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     private readonly recordingSettingsDispatcher: RecordingSettingsDispatcher,
     logger: Logger,
     private readonly fetch = crossfetch,
+    private collectorApiUrl: string = options.gravityServerUrl,
   ) {
     super(options, recordingSettingsDispatcher, logger)
+    recordingSettingsDispatcher.subscribe(({ collectorApiUrl }) => {
+      if (collectorApiUrl) this.collectorApiUrl = collectorApiUrl
+    })
   }
 
   async handleSessionUserActions(
     sessionUserActions: readonly SessionUserAction[],
   ): Promise<AddSessionUserActionsResponse> {
     return await this.sendRequest<AddSessionUserActionsResponse>(
-      buildGravityTrackingPublishApiUrl(this.options.authKey, this.options.gravityServerUrl),
+      buildGravityTrackingPublishApiUrl(this.options.authKey, this.collectorApiUrl),
       sessionUserActions,
     )
   }
 
   async handleSessionTraits(sessionId: string, sessionTraits: SessionTraits): Promise<IdentifySessionResponse> {
     return await this.sendRequest<IdentifySessionResponse>(
-      buildGravityTrackingIdentifySessionApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
+      buildGravityTrackingIdentifySessionApiUrl(this.options.authKey, this.collectorApiUrl, sessionId),
       sessionTraits,
     )
   }
@@ -57,7 +61,7 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
   ): Promise<AddSessionRecordingResponse> {
     const screenRecordsNdjson = records.map((record) => JSON.stringify(record)).join('\n') + '\n'
     const response = await this.fetch(
-      buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.options.gravityServerUrl, sessionId),
+      buildGravityTrackingSessionRecordingApiUrl(this.options.authKey, this.collectorApiUrl, sessionId),
       {
         method: 'POST',
         redirect: 'follow',
