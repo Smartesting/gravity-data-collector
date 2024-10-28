@@ -392,13 +392,14 @@ describe.each([
       .withSessionIdHandler(sessionIdHandler)
       .withFetch(
         mockFetch<GravityRecordingSettingsResponse>({
-          responseBody: {
+          responseBody: () => ({
             error: null,
             settings: {
               sessionRecording: true,
               videoRecording: true,
+              collectorApiUrl: 'https://test-collector-api.example.com',
             },
-          },
+          }),
         }),
       )
       .install()
