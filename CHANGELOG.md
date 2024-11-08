@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 ### Fixed
+- catch potential errors due to the "unique" method from the "unique-selector" library
 
 ## [8.1.0](https://github.com/Smartesting/gravity-data-collector/compare/v8.0.2...v8.1.0)
 

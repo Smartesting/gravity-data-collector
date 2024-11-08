@@ -27,21 +27,25 @@ function makeQuery(element: Element, queries: QueryType[], excludedQueries: Quer
 
   const queryMap = filteredQueries.reduce<Query>((acc, query) => {
     const selectorTypes: SelectorType[] = [queryTypeToSelectorType(query)]
-    const selector = unique(element, { selectorTypes })
-    if (selector !== null) {
-      selectors.push(selector)
-      acc[query] = selector
-    }
+    try {
+      const selector = unique(element, { selectorTypes })
+      if (selector !== null) {
+        selectors.push(selector)
+        acc[query] = selector
+      }
+    } catch {}
     return acc
   }, {})
 
-  const combined = unique(element, { selectorTypes: filteredQueries.map(queryTypeToSelectorType) })
-  if (combined !== null && !selectors.includes(combined)) {
-    return {
-      ...queryMap,
-      combined,
+  try {
+    const combined = unique(element, { selectorTypes: filteredQueries.map(queryTypeToSelectorType) })
+    if (combined !== null && !selectors.includes(combined)) {
+      return {
+        ...queryMap,
+        combined,
+      }
     }
-  }
+  } catch {}
 
   return queryMap
 }
