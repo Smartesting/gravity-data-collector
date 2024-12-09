@@ -1,4 +1,5 @@
 import {
+  AddPageConsumptionsResponse,
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   GravityRecordingSettingsResponse,
@@ -15,6 +16,10 @@ export default class NopGravityClient extends AbstractGravityClient implements I
   }
 
   async handleSessionUserActions(): Promise<AddSessionUserActionsResponse> {
+    return { error: null }
+  }
+
+  async handlePageConsumptions(): Promise<AddPageConsumptionsResponse> {
     return { error: null }
   }
 

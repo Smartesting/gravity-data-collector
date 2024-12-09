@@ -76,6 +76,14 @@ export enum Listener {
 
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
 
+export interface PageConsumption {
+  page: string
+  consumption: {
+    resourcesTransferSize: number
+  }
+  recordedAt: string
+}
+
 export type ListenerFn = (...values: any[]) => void
 
 export type AsyncRequest = {
@@ -337,6 +345,10 @@ export interface AddSessionRecordingResponse {
   error: AddSessionRecordingError | null
 }
 
+export interface AddPageConsumptionsResponse {
+  error: AddPageConsumptionsError | null
+}
+
 export enum AddSessionRecordingError {
   accessDenied = 'no_access',
   projectExpired = 'project_expired',
@@ -345,6 +357,10 @@ export enum AddSessionRecordingError {
   sessionNotFound = 'session_not_found',
   notUUID = 'not_a_uuid',
   invalidFormat = 'invalid_format',
+}
+
+export enum AddPageConsumptionsError {
+  error = 'page_consumptions_error',
 }
 
 export interface GravityRecordingSettingsResponse {

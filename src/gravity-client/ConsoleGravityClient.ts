@@ -1,8 +1,10 @@
 import {
+  AddPageConsumptionsResponse,
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
+  PageConsumption,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -27,6 +29,13 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
     sessionUserActions: ReadonlyArray<SessionUserAction>,
   ): Promise<AddSessionUserActionsResponse> {
     this.log({ sessionUserActions })
+    return { error: null }
+  }
+
+  async handlePageConsumptions(
+    pageConsumptions: ReadonlyArray<PageConsumption>,
+  ): Promise<AddPageConsumptionsResponse> {
+    this.log({ pageConsumptions })
     return { error: null }
   }
 

@@ -4,6 +4,10 @@ export function buildGravityTrackingPublishApiUrl(authKey: string, collectorServ
   return `${trackingUrlStartPart(collectorServerUrl)}/${authKey}/publish`
 }
 
+export function buildGravityTrackingConsumptionApiUrl(authKey: string, collectorServerUrl: string) {
+  return `${trackingUrlStartPart(collectorServerUrl)}/${authKey}/consumption`
+}
+
 export function buildGravityTrackingIdentifySessionApiUrl(
   authKey: string,
   collectorServerUrl: string,

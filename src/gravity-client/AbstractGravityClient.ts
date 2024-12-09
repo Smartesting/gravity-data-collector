@@ -1,9 +1,11 @@
 import {
+  AddPageConsumptionsResponse,
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
   Logger,
+  PageConsumption,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -37,6 +39,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
   private readonly sessionUserActionBuffer: DataBuffering<SessionUserAction, AddSessionUserActionsResponse>
   private readonly sessionTraitsBuffer: DataBuffering<SessionTraitsWithSessionId, IdentifySessionResponse>
   private readonly videoBuffer: DataBuffering<ScreenRecordWithSessionId, AddSessionRecordingResponse>
+  private readonly pageConsumptionBuffer: DataBuffering<PageConsumption, AddPageConsumptionsResponse>
 
   protected constructor(
     options: GravityClientOptions,
@@ -55,6 +58,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
         if (!isDefined(response.error)) {
           this.videoBuffer.unlock()
           this.sessionTraitsBuffer.unlock()
+          this.pageConsumptionBuffer.unlock()
         }
       },
     })
@@ -78,6 +82,15 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       },
       locked: true,
     })
+    this.pageConsumptionBuffer = new DataBuffering<PageConsumption, AddPageConsumptionsResponse>({
+      handleInterval: options.requestInterval,
+      handleData: async (pageConsumptions) => {
+        const response = await this.handlePageConsumptions(pageConsumptions)
+        logger(`send ${pageConsumptions.length} page consumption records ${JSON.stringify(pageConsumptions)}`, { response })
+        return response
+      },
+      locked: true,
+    })
     recordingSettingsDispatcher.subscribe(({ sessionRecording, videoRecording }) => {
       if (sessionRecording) {
         this.sessionUserActionBuffer.activate()
@@ -86,6 +99,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       if (videoRecording) {
         this.videoBuffer.activate()
       }
+      this.pageConsumptionBuffer.activate()
     })
   }
 
@@ -96,6 +110,10 @@ export default abstract class AbstractGravityClient implements IGravityClient {
 
   async addSessionUserAction(sessionUserAction: SessionUserAction) {
     await this.sessionUserActionBuffer.addData(sessionUserAction)
+  }
+
+  async addPageConsumption(pageConsumption: PageConsumption) {
+    await this.pageConsumptionBuffer.addData(pageConsumption)
   }
 
   async addScreenRecord(sessionId: string, screenRecord: eventWithTime) {
@@ -117,6 +135,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       this.sessionUserActionBuffer.flush(),
       this.videoBuffer.flush(),
       this.sessionTraitsBuffer.flush(),
+      this.pageConsumptionBuffer.flush(),
     ])
   }
 
@@ -135,6 +154,10 @@ export default abstract class AbstractGravityClient implements IGravityClient {
     sessionId: string,
     screenRecords: ReadonlyArray<eventWithTime>,
   ): Promise<AddSessionRecordingResponse>
+
+  protected abstract handlePageConsumptions(
+    pageConsumptions: ReadonlyArray<PageConsumption>,
+  ): Promise<AddPageConsumptionsResponse>
 
   private extractSessionIdAndSessionTraits(
     sessionTraitsWithSessionIds: ReadonlyArray<SessionTraitsWithSessionId>,

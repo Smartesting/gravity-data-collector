@@ -6,6 +6,7 @@ import {
   Listener,
   Logger,
   NO_RECORDING_SETTINGS,
+  PageConsumption,
   SessionStartedUserAction,
   SessionTraitValue,
 } from '../types'
@@ -58,6 +59,7 @@ import TouchCancelEventListener from '../event-listeners/TouchCancelEventListene
 import RecordingSettingsDispatcher from '../gravity-client/RecordingSettingsDispatcher'
 import isDefined from '../utils/isDefined'
 import { nop } from '../utils/nop'
+import PageConsumptionHandler from '../consumption/PageConsumptionHandler'
 
 class CollectorWrapper {
   private readonly recordingSettingsHandler: RecordingSettingsDispatcher
@@ -65,6 +67,7 @@ class CollectorWrapper {
   readonly videoRecorderHandler: VideoRecorderHandler
   readonly sessionTraitHandler: SessionTraitHandler
   readonly eventListenerHandler: EventListenersHandler
+  readonly pageConsumptionHandler: PageConsumptionHandler
   private readonly gravityClient: IGravityClient
   private anonymizationSettings: AnonymizationSettings | undefined
   private readonly logger: Logger
@@ -95,6 +98,7 @@ class CollectorWrapper {
       () => this.anonymizationSettings,
     )
     this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
+    this.pageConsumptionHandler = new PageConsumptionHandler(timeoutHandler, this.gravityClient)
     this.recordingSettingsHandler.subscribe(({ sessionRecording, videoRecording, anonymizationSettings }) => {
       this.anonymizationSettings = anonymizationSettings
 
@@ -248,12 +252,32 @@ class CollectorWrapper {
         new BeforeUnloadEventListener(
           this.userActionHandler,
           windowInstance,
-          async () => await this.gravityClient.flush(),
+          async () => {
+            await this.pageConsumptionHandler.handle(this.createPageConsumption(windowInstance))
+            await this.gravityClient.flush()
+          },
         ),
       )
     }
 
     return eventListeners
+  }
+
+  createPageConsumption(windowInstance: Window): PageConsumption {
+    const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
+    let totalSize = 0
+    resources.forEach(resource => {
+      if (resource.transferSize) {
+        totalSize += resource.transferSize
+      }
+    })
+    return {
+      page: windowInstance.location.pathname,
+      consumption: {
+        resourcesTransferSize: totalSize / 1024 / 1024,
+      },
+      recordedAt: new Date().toISOString(),
+    }
   }
 
   private isListenerEnabled(listener: Listener): boolean {

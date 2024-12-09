@@ -1,9 +1,11 @@
 import {
+  AddPageConsumptionsResponse,
   AddSessionRecordingResponse,
   AddSessionUserActionsResponse,
   GravityRecordingSettingsResponse,
   IdentifySessionResponse,
   Logger,
+  PageConsumption,
   SessionTraits,
   SessionUserAction,
 } from '../types'
@@ -11,6 +13,7 @@ import AbstractGravityClient, { GravityClientOptions } from './AbstractGravityCl
 import { IGravityClient } from './IGravityClient'
 import crossfetch from 'cross-fetch'
 import {
+  buildGravityTrackingConsumptionApiUrl,
   buildGravityTrackingIdentifySessionApiUrl,
   buildGravityTrackingPublishApiUrl,
   buildGravityTrackingSessionCollectionSettingsApiUrl,
@@ -45,6 +48,15 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
     return await this.sendRequest<AddSessionUserActionsResponse>(
       buildGravityTrackingPublishApiUrl(this.options.authKey, this.collectorApiUrl),
       sessionUserActions,
+    )
+  }
+
+  async handlePageConsumptions(
+    pageConsumptions: readonly PageConsumption[],
+  ): Promise<AddPageConsumptionsResponse> {
+    return await this.sendRequest<AddPageConsumptionsResponse>(
+      buildGravityTrackingConsumptionApiUrl(this.options.authKey, this.collectorApiUrl),
+      pageConsumptions,
     )
   }
 
