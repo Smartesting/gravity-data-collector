@@ -45,7 +45,10 @@ export default class ConsoleGravityClient extends AbstractGravityClient implemen
 
   async readSessionCollectionSettings(): Promise<GravityRecordingSettingsResponse> {
     return {
-      settings: null,
+      settings: {
+        sessionRecording: true,
+        videoRecording: true,
+      },
       error: null,
     }
   }

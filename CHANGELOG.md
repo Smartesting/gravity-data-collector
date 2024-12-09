@@ -19,6 +19,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- fix logging in "debug" mode
+
 ## [8.1.1](https://github.com/Smartesting/gravity-data-collector/compare/v8.1.0...v8.1.1)
 
 ### Fixed
@@ -186,17 +188,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Some events are not replicated anymore when they are triggered multiple times with the same target to avoid spamming:
-  - `scroll`
-  - `wheel`
-  - `touchmove`
-  - `resize`
+    - `scroll`
+    - `wheel`
+    - `touchmove`
+    - `resize`
 
 ### Removed
 
 - remove the following deprecated options:
-  - `excludeRegex`: use `selectorsOptions` instead
-  - `customSelector`: use `selectorsOptions` instead
-  - `originsToRecord`: use `recordRequestsFor` instead
+    - `excludeRegex`: use `selectorsOptions` instead
+    - `customSelector`: use `selectorsOptions` instead
+    - `originsToRecord`: use `recordRequestsFor` instead
 
 ### Fixed
 
@@ -222,33 +224,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Anonymization of video recordings controllable from Gravity
 - Option to enable/disable video recording anonymization in debug mode
 - Track new HTML events:
-  - `contextmenu`
-  - `dblclick`
-  - `copy`
-  - `cut`
-  - `paste`
-  - `select`
-  - `dragstart`
-  - `drop`
-  - `play`
-  - `pause`
-  - `seeked`
-  - `fullscreenchange`
-  - `resize`
-  - `hashchange`
-  - `focus`
-  - `blur`
-  - `submit`
-  - `reset`
-  - `mouseenter`
-  - `mouseleave`
-  - `scroll`
-  - `wheel`
-  - `toggle`
-  - `touchstart`
-  - `touchmove`
-  - `touchend`
-  - `touchcancel`
+    - `contextmenu`
+    - `dblclick`
+    - `copy`
+    - `cut`
+    - `paste`
+    - `select`
+    - `dragstart`
+    - `drop`
+    - `play`
+    - `pause`
+    - `seeked`
+    - `fullscreenchange`
+    - `resize`
+    - `hashchange`
+    - `focus`
+    - `blur`
+    - `submit`
+    - `reset`
+    - `mouseenter`
+    - `mouseleave`
+    - `scroll`
+    - `wheel`
+    - `toggle`
+    - `touchstart`
+    - `touchmove`
+    - `touchend`
+    - `touchcancel`
 
 ### Changed
 
