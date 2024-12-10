@@ -253,7 +253,7 @@ class CollectorWrapper {
           this.userActionHandler,
           windowInstance,
           async () => {
-            await this.pageConsumptionHandler.handle(this.createPageConsumption(windowInstance))
+            await this.pageConsumptionHandler.handle(this.createPageResourcesConsumption(windowInstance))
             await this.gravityClient.flush()
           },
         ),
@@ -263,7 +263,18 @@ class CollectorWrapper {
     return eventListeners
   }
 
-  createPageConsumption(windowInstance: Window): PageConsumption {
+  logPerformanceData() {
+    const memory = (window.performance as any).memory
+    return memory
+      ? {
+        jsHeapSizeLimit: memory.jsHeapSizeLimit,
+        totalJSHeapSize: memory.totalJSHeapSize,
+        usedJSHeapSize: memory.usedJSHeapSize,
+      }
+      : {}
+  }
+
+  createPageResourcesConsumption(windowInstance: Window): PageConsumption {
     const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
     let totalSize = 0
     resources.forEach(resource => {
@@ -271,10 +282,13 @@ class CollectorWrapper {
         totalSize += resource.transferSize
       }
     })
+
     return {
+      sessionId: this.getSessionId(),
       page: windowInstance.location.pathname,
       consumption: {
-        resourcesTransferSize: totalSize / 1024 / 1024,
+        ...this.logPerformanceData(),
+        resourcesTransferSize: totalSize,
       },
       recordedAt: new Date().toISOString(),
     }

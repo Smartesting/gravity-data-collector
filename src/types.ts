@@ -77,6 +77,7 @@ export enum Listener {
 export type UserAction = SessionStartedUserAction | TargetedUserAction | AsyncRequest
 
 export interface PageConsumption {
+  sessionId: string
   page: string
   consumption: {
     resourcesTransferSize: number

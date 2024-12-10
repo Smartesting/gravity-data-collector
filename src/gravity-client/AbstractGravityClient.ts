@@ -86,7 +86,7 @@ export default abstract class AbstractGravityClient implements IGravityClient {
       handleInterval: options.requestInterval,
       handleData: async (pageConsumptions) => {
         const response = await this.handlePageConsumptions(pageConsumptions)
-        logger(`send ${pageConsumptions.length} page consumption records ${JSON.stringify(pageConsumptions)}`, { response })
+        logger(`send ${pageConsumptions.length} page consumption records ${JSON.stringify(pageConsumptions, undefined, ' ')}`, { response })
         return response
       },
       locked: true,
