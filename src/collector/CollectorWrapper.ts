@@ -97,8 +97,11 @@ class CollectorWrapper {
       this.gravityClient,
       () => this.anonymizationSettings,
     )
-    this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners())
     this.pageConsumptionHandler = new PageConsumptionHandler(timeoutHandler, this.gravityClient)
+    this.eventListenerHandler = new EventListenersHandler(this.makeEventListeners(), () => {
+      void this.pageConsumptionHandler.handle(this.createPageResourcesConsumption(this.options.window))
+      void this.gravityClient.flush()
+    })
     this.recordingSettingsHandler.subscribe(({ sessionRecording, videoRecording, anonymizationSettings }) => {
       this.anonymizationSettings = anonymizationSettings
 
