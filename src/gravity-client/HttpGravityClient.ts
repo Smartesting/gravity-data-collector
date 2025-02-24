@@ -83,6 +83,9 @@ export default class HttpGravityClient extends AbstractGravityClient implements 
       {
         method: 'GET',
         redirect: 'follow',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
       },
     )
     const responseBody: GravityRecordingSettingsResponse = await response.json()

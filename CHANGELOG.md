@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Disable cache-control when requesting `/settings` to avoid (possibly) incorrect response
+
 ### Deprecated
 
 ### Removed
