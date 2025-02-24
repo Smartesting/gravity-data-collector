@@ -38,7 +38,7 @@ jobs:
           start: npm run start-e2e-test-site
       - name: Store Cypress videos
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
           path: |
