@@ -14,6 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Disable cache-control when requesting `/settings` to avoid (possibly) incorrect response
+- Update blocked element color from electric-violet to light-ish gray
 
 ### Deprecated
 
