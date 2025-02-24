@@ -38,7 +38,7 @@ jobs:
           bundle: gravity-logger-min.js
           npm_build_targets: build build-minified pack
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: 'pages'
       - name: Deploy to GitHub Pages
