@@ -27,7 +27,7 @@ export function getRRWebAnonymizationSettings(
     recordingSettings.maskTextFn = maskText
     recordingSettings.maskAllInputs = true
     recordingSettings.blockSelector = HTML_IMAGE_VIDEO_TAGS.join(', ')
-    recordingSettings.blockExtraStyle = 'background-color: #6732d0;'
+    recordingSettings.blockExtraStyle = 'background-color: #D5D5D5;'
   }
 
   return recordingSettings
