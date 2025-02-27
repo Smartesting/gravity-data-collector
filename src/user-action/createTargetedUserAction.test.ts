@@ -11,6 +11,7 @@ import {
   createKeyUpUserAction,
 } from '../test-utils/userActions'
 import { createTargetedUserAction } from './createTargetedUserAction'
+import maskText from '../utils/maskText'
 
 describe('createTargetedUserAction', () => {
   beforeEach(() => {
@@ -34,7 +35,7 @@ describe('createTargetedUserAction', () => {
     expect(action?.location).toEqual(gravityLocation(domWindow.location))
   })
 
-  it('returns document data', () => {
+  it('returns anonymized document title', () => {
     const documentTitle = 'Hello world!'
     const { element, domWindow } = createElementInJSDOM(
       '<html lang="en">' +
@@ -52,7 +53,7 @@ describe('createTargetedUserAction', () => {
 
     const action = createClickUserAction(element, 0, 0, domWindow)
 
-    expect(action?.document.title).toEqual(documentTitle)
+    expect(action?.document.title).toEqual(maskText(documentTitle))
   })
 
   it('returns viewport data', () => {
