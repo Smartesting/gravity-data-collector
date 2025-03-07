@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v8.1.2...main)
+## [Unreleased](https://github.com/Smartesting/gravity-data-collector/compare/v8.1.3...main)
 
 ### Info
 
@@ -15,14 +15,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Disable cache-control when requesting `/settings` to avoid (possibly) incorrect response
-- Update blocked element color from electric-violet to light-ish gray
-
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+## [8.1.3](https://github.com/Smartesting/gravity-data-collector/compare/v8.1.2...v8.1.3)
+
+### Changed
+
+- Disable cache-control when requesting `/settings` to avoid (possibly) incorrect response
+- Update blocked element color from electric-violet to light-ish gray
+- Anonymize document title
 
 ## [8.1.2](https://github.com/Smartesting/gravity-data-collector/compare/v8.1.1...v8.1.2)
 
