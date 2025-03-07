@@ -150,6 +150,10 @@ class CollectorWrapper {
     }
   }
 
+  identifyPage(pageSuffix: string | undefined) {
+    return this.userActionHandler.setPageSuffix(pageSuffix)
+  }
+
   terminateRecording(terminateEventRecording: boolean, terminateVideoRecording?: boolean) {
     if (terminateEventRecording) {
       this.eventListenerHandler.terminateEventListeners()

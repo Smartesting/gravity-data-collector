@@ -59,6 +59,21 @@ export default class GravityCollector {
     }
     void this.collectorWrapper.identifySession(traitName, traitValue)
   }
+
+  static identifyPage(pageSuffix: string | undefined) {
+    const collector: GravityCollector = (window as any)._GravityCollector
+    if (!collector) {
+      throw new Error('No Gravity Data Collector found in window')
+    }
+    collector.identifyPage(pageSuffix)
+  }
+
+  public identifyPage(pageSuffix: string | undefined) {
+    if (this.collectorWrapper === undefined) {
+      throw new Error('Gravity Data Collector was not initialized : please call window.GravityCollector.init() before')
+    }
+    this.collectorWrapper.identifyPage(pageSuffix)
+  }
 }
 
 async function addCollector(options: Partial<CollectorOptions>, overrideExisting: boolean, sessionId?: string) {

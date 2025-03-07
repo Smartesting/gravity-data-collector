@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add `GravityCollector.identifyPage` method to append suffix to location.pathname. This will make it easier for users of single page applications to differentiate their usage.
+
 ### Changed
 
 - Disable cache-control when requesting `/settings` to avoid (possibly) incorrect response

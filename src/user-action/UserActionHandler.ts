@@ -8,6 +8,7 @@ import { computePathname } from '../utils/computePathname'
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
   private readonly listeners: Array<Function> = []
+  private pageSuffix: string | undefined
 
   constructor(
     private readonly sessionIdHandler: ISessionIdHandler,
@@ -19,7 +20,13 @@ export default class UserActionHandler implements IUserActionHandler {
   async handle(action: UserAction): Promise<void> {
     if (!this.active) return
     if (!this.timeoutHandler.isExpired()) {
-      await this.gravityClient.addSessionUserAction(this.toSessionUserAction(action))
+      const sessionUserAction = this.toSessionUserAction(action)
+      if (this.pageSuffix) {
+        sessionUserAction.location.pathname += sessionUserAction.location.pathname.endsWith('/')
+          ? this.pageSuffix
+          : `/${this.pageSuffix}`
+      }
+      await this.gravityClient.addSessionUserAction(sessionUserAction)
     }
     this.listeners.forEach((listener) => listener())
   }
@@ -39,6 +46,7 @@ export default class UserActionHandler implements IUserActionHandler {
   terminate() {
     this.active = false
     this.listeners.splice(0, this.listeners.length)
+    this.pageSuffix = undefined
   }
 
   subscribe(listener: Function) {
@@ -47,5 +55,9 @@ export default class UserActionHandler implements IUserActionHandler {
 
   activate() {
     this.active = true
+  }
+
+  setPageSuffix(pageSuffix: string | undefined) {
+    this.pageSuffix = pageSuffix
   }
 }
