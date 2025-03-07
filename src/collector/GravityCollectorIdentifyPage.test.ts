@@ -48,6 +48,8 @@ describe.each([
     userAction.location.pathname = 'base/path/with/trailing/slash/'
     collector.identifyPage('addedSuffix')
     await collector.userActionHandler.handle(userAction)
-    expect(getLastCallFirstArgument(handleUserAction).location.pathname).toBe('base/path/with/trailing/slash/addedSuffix')
+    expect(getLastCallFirstArgument(handleUserAction).location.pathname).toBe(
+      'base/path/with/trailing/slash/addedSuffix',
+    )
   })
 })
