@@ -160,8 +160,24 @@ For instance, you can identify the sessions of users connected to your app:
 window.GravityCollector.identifySession('connected', true)
 ```
 
-**Note**: Please, keep in mind that each trait can only have a single value. It means if you set the trait `connected`
-to `true` and then to `false`, the first value will be overwritten.
+### Identify pages
+
+If you have a single page application with a unique URL that never changes, this is the feature for you!
+Simply use the following method with the desired path for the current page.
+
+For instance, you can identify the login page like this :
+
+```typescript
+window.GravityCollector.identifyPage('login')
+```
+
+Events retrieved by Gravity will then have the following URL: `https://example.com/login`
+
+You can then stop page identification as follows:
+
+```typescript
+window.GravityCollector.identifyPage(undefined)
+```
 
 ### Send build information to Gravity
 
