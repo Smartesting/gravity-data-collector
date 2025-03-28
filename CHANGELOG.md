@@ -13,6 +13,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Ignore checkbox/select/radio click events to ensure fetching relevant actions only.
+- Update ChangeEventListener to properly handle checkbox values.
+
 ### Deprecated
 
 ### Removed

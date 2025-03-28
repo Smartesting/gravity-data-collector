@@ -4,6 +4,7 @@ import IUserActionHandler from './IUserActionHandler'
 import { IGravityClient } from '../gravity-client/IGravityClient'
 import ITimeoutHandler from '../timeout-handler/ITimeoutHandler'
 import { computePathname } from '../utils/computePathname'
+import isIgnoredAction from '../utils/isIgnoredUserAction'
 
 export default class UserActionHandler implements IUserActionHandler {
   private active = true
@@ -19,6 +20,7 @@ export default class UserActionHandler implements IUserActionHandler {
 
   async handle(action: UserAction): Promise<void> {
     if (!this.active) return
+    if (isIgnoredAction(action)) return
     if (!this.timeoutHandler.isExpired()) {
       const sessionUserAction = this.toSessionUserAction(action)
       if (this.pageSuffix) {

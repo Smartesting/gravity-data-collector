@@ -14,10 +14,14 @@ class ChangeEventListener extends TargetedEventListener {
     const elementTarget = event.target as HTMLInputWithValue
     const userAction = this.createTargetedUserAction(event)
     if (userAction != null) {
-      userAction.target.value = sanitizeHTMLElementValue(
-        elementTarget,
-        this.options.getAnonymizationSettings?.() ?? DEFAULT_ANONYMIZATION_SETTINGS,
-      )
+      if (userAction.target.type === 'checkbox') {
+        userAction.target.value = (event.target as HTMLInputElement).checked.toString()
+      } else {
+        userAction.target.value = sanitizeHTMLElementValue(
+          elementTarget,
+          this.options.getAnonymizationSettings?.() ?? DEFAULT_ANONYMIZATION_SETTINGS,
+        )
+      }
       this.userActionHandler.handle(userAction)
     }
   }
